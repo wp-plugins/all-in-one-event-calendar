@@ -66,3 +66,4 @@ The All-in-One Events Calendar Plugin also has a few features that will prove us
 7. Front-end: Month view of calendar with active category filter
 8. Front-end: Month view of calendar with active tag filter
 9. Front-end: Agenda view of calendar
+10. Settings page
