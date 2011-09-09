@@ -1,7 +1,7 @@
 <?php
 //
 //  class-ai1ec-app-helper.php
-//  all-in-one-events-calendar
+//  all-in-one-event-calendar
 //
 //  Created by The Seed Studio on 2011-07-13.
 //
@@ -619,16 +619,24 @@ class Ai1ec_App_Helper {
     if( ! $ai1ec_settings->calendar_page_id && ! isset( $_REQUEST['ai1ec_save_settings'] ) )
     {
     	$args = array();
-    	// If not on the settings page already, direct user there with a message
-    	if( $plugin_page == 'all-in-one-events-calendar-settings' ) {
-				$args['msg'] = __( 'To set up the plugin, please select an option in the <strong>Calendar page</strong> dropdown list, then click <strong>Update Settings</strong>.', AI1EC_PLUGIN_NAME );
-			// Else instruct user as to what to do on the settings page
+
+    	// Display messages for blog admin
+    	if( current_user_can( 'manage_options' ) ) {
+	    	// If not on the settings page already, direct user there with a message
+	    	if( $plugin_page == 'all-in-one-event-calendar-settings' ) {
+					$args['msg'] = __( 'To set up the plugin, please select an option in the <strong>Calendar page</strong> dropdown list, then click <strong>Update Settings</strong>.', AI1EC_PLUGIN_NAME );
+				// Else instruct user as to what to do on the settings page
+				} else {
+		      $args['msg'] = sprintf(
+			        __( 'The plugin is installed, but has not been configured. <a href="%s">Click here to set it up now »</a>', AI1EC_PLUGIN_NAME ),
+							admin_url( 'edit.php?post_type=ai1ec_event&page=all-in-one-event-calendar-settings' )
+						);
+				}
+			// Else display messages for other blog users
 			} else {
-	      $args['msg'] = sprintf(
-		        __( 'The plugin is installed, but has not been configured. <a href="%s">Click here to set it up now »</a>', AI1EC_PLUGIN_NAME ),
-						admin_url( 'edit.php?post_type=ai1ec_event&page=all-in-one-events-calendar-settings' )
-					);
+				$args['msg'] = __( 'The plugin is installed, but has not been configured. Please log in as a WordPress Administrator to set it up.', AI1EC_PLUGIN_NAME );
 			}
+
       $ai1ec_view_helper->display( 'admin_notices.php', $args );
     }
   }

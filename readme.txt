@@ -1,16 +1,17 @@
-=== All-in-One Events Calendar ===
+=== All-in-One Event Calendar ===
 Contributors: theseed, hubrik, vtowel, yani.iliev
-Donate link: http://theseedstudio.com/software/all-in-one-events-calendar-wordpress/
+Donate link: http://theseedstudio.com/software/all-in-one-event-calendar-wordpress/
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011
 Requires at least: 3.1.3
 Tested up to: 3.2.1
-Stable tag: 1.0
+Stable tag: 1.0.3
 
-An events calendar system with month and agenda calendar views, color-coded categories, recurring events, and import/export of iCalendar (.ics) feeds.
+An event calendar system with month and agenda calendar views, color-coded categories, recurring events, and import/export of iCalendar (.ics) feeds.
 
 == Description ==
+**Important notice:** You need to re-enable the plugin after updating to version `1.0.3`.
 
-Welcome to the All-in-One Events Calendar Plugin, a new way to list your events in WordPress and easily share them with the rest of the world.
+Welcome to the All-in-One Event Calendar Plugin, a new way to list your events in WordPress and easily share them with the rest of the world.
 
 Our new calendar system combines a clean visual design, solid architectural patterns and rigorous testing with a powerful set of features to create the most advanced calendar system available for WordPress and one of the most powerful website calendar systems in the world. Best of all: it’s completely free.
 
@@ -35,13 +36,13 @@ This plugin has many features we hope will prove useful to users, including:
 * Categorize and tag imported calendar feeds automatically
 * Events from [The Events Calendar](http://wordpress.org/extend/plugins/the-events-calendar/) plugin can also be easily imported
 
-Importing and exporting iCalendar (.ics) feeds is one of the strongest features of the All-in-One Events Calendar system. Enter an event on one site and you can have it appear automatically in another website's calendar. You can even send events from a specific category or tag (or combination of categories and tags).
+Importing and exporting iCalendar (.ics) feeds is one of the strongest features of the All-in-One Event Calendar system. Enter an event on one site and you can have it appear automatically in another website's calendar. You can even send events from a specific category or tag (or combination of categories and tags).
 
 Why is this cool? It allows event creators to create one event and have it displayed on a few or thousands of calendars with no extra work. And it also allows calendar owners to populate their calendar from other calendar feeds without having to go through the hassle of creating new events. For example, a soccer league can send its game schedule to a community sports calendar, which, in turn, can send only featured games (from all the sports leagues it aggragates) to a community calendar, which features sports as just one category.
 
 = Additional Features =
 
-The All-in-One Events Calendar Plugin also has a few features that will prove useful for website and blog owners:
+The All-in-One Event Calendar Plugin also has a few features that will prove useful for website and blog owners:
 
 * Each event is SEO-optimized
 * Each event links to the original calendar
@@ -49,11 +50,27 @@ The All-in-One Events Calendar Plugin also has a few features that will prove us
 
 [Check out the demo »](http://thenelsonpost.ca/calendar/)
 
+== Changelog ==
+
+= Version 1.0.3 =
+* Changed plugin name from `All-in-One Events Calendar` to `All-in-One Event Calendar`
+**Important notice:** You need to re-enable the plugin after updating to version `1.0.3`.
+
+= Version 1.0.2 =
+* Fixed the URL for settings page that is displayed in the notice
+
+= Version 1.0.1 =
+* Fixed bug where calendar appears on every page before it's been configured
+* Displayed appropriate setup notice when user lacks administrator capabilities
+
+= Version 1.0 =
+
 == Installation ==
 
-1. Upload `all-in-one-events-calendar` to the `/wp-content/plugins/` directory.
+1. Upload `all-in-one-event-calendar` to the `/wp-content/plugins/` directory.
 1. Activate the plugin through the **Plugins** menu item in the WordPress Dashboard.
 1. Once the plugin is activated, follow the instructions in the notice to configure it.
+**For advanced users:** To place the calendar in an HTML element besides the default page content container, enter a CSS or jQuery-style selector of the element in the **Contain calendar in this DOM element** field of the Settings page.
 
 == Screenshots ==
 
