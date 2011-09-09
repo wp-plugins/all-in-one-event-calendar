@@ -4,7 +4,7 @@ Donate link: http://theseedstudio.com/software/all-in-one-events-calendar-wordpr
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011
 Requires at least: 3.1.3
 Tested up to: 3.2.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 
 An events calendar system with month and agenda calendar views, color-coded categories, recurring events, and import/export of iCalendar (.ics) feeds.
 
@@ -50,6 +50,9 @@ The All-in-One Events Calendar Plugin also has a few features that will prove us
 [Check out the demo »](http://thenelsonpost.ca/calendar/)
 
 == Changelog ==
+
+= Version 1.0.2 =
+* Fixed the URL for settings page that is displayed in the notice
 
 = Version 1.0.1 =
 * Fixed bug where calendar appears on every page before it's been configured
