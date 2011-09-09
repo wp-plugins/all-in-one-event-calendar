@@ -3,7 +3,7 @@
  * Plugin Name: All-in-One Events Calendar Plugin
  * Plugin URI: http://theseedstudio.com/software/all-in-one-events-calendar-wordpress/
  * Description: An events calendar system with month and agenda calendar views, color-coded categories, recurring events, and import/export of iCalendar (.ics) feeds.
- * Version: 1.0
+ * Version: 1.0.2
  * Author: The Seed Studio
  * Author URI: http://theseedstudio.com/
  */
