@@ -54,7 +54,7 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 
 = Version 1.0.3 =
 * Changed plugin name from `All-in-One Events Calendar` to `All-in-One Event Calendar`
-**Important notice:** You need to re-enable the plugin after updating to version `1.0.3`.
+* **Important notice:** You need to re-enable the plugin after updating to version `1.0.3`.
 
 = Version 1.0.2 =
 * Fixed the URL for settings page that is displayed in the notice
