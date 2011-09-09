@@ -1,7 +1,7 @@
 <?php
 //
 //  class-ai1ec-app-controller.php
-//  all-in-one-events-calendar
+//  all-in-one-event-calendar
 //
 //  Created by The Seed Studio on 2011-07-13.
 //
@@ -82,7 +82,7 @@ class Ai1ec_App_Controller {
 		add_action( 'init', 											        array( &$this, 'parse_standalone_request' ) );
 		// General initialization
 		add_action( 'init',                               array( &$ai1ec_events_controller, 'init' ) );
-		// Register The Events Calendar importer
+		// Register The Event Calendar importer
 		add_action( 'admin_init',                         array( &$ai1ec_importer_controller, 'register_importer' ) );
 		// add content for our custom columns
 		add_action( "manage_posts_custom_column",         array( &$ai1ec_app_helper, 'custom_columns' ), 10, 2 );

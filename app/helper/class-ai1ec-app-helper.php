@@ -1,7 +1,7 @@
 <?php
 //
 //  class-ai1ec-app-helper.php
-//  all-in-one-events-calendar
+//  all-in-one-event-calendar
 //
 //  Created by The Seed Studio on 2011-07-13.
 //
@@ -623,13 +623,13 @@ class Ai1ec_App_Helper {
     	// Display messages for blog admin
     	if( current_user_can( 'manage_options' ) ) {
 	    	// If not on the settings page already, direct user there with a message
-	    	if( $plugin_page == $ai1ec_settings->settings_page ) {
+	    	if( $plugin_page == 'all-in-one-event-calendar-settings' ) {
 					$args['msg'] = __( 'To set up the plugin, please select an option in the <strong>Calendar page</strong> dropdown list, then click <strong>Update Settings</strong>.', AI1EC_PLUGIN_NAME );
 				// Else instruct user as to what to do on the settings page
 				} else {
 		      $args['msg'] = sprintf(
 			        __( 'The plugin is installed, but has not been configured. <a href="%s">Click here to set it up now »</a>', AI1EC_PLUGIN_NAME ),
-							admin_url( 'edit.php?post_type=ai1ec_event&page=' . $ai1ec_settings->settings_page )
+							admin_url( 'edit.php?post_type=ai1ec_event&page=all-in-one-event-calendar-settings' )
 						);
 				}
 			// Else display messages for other blog users

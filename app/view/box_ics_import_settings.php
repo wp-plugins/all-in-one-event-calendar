@@ -4,7 +4,7 @@
 <?php echo $cron_freq ?>
 <br class="clear" />
 
-<div class="ai1ec-feed-container">
+<div id="ai1ec-feeds-after" class="ai1ec-feed-container">
 	<h4 class="ai1ec_feed_h4"><?php _e( 'iCalendar/.ics Feed URL:', AI1EC_PLUGIN_NAME ) ?></h4>
 	<div class="ai1ec-feed-url"><input type="text" name="ai1ec_feed_url" id="ai1ec_feed_url" /></div>
 	<div class="ai1ec-feed-category">

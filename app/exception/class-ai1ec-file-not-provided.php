@@ -1,7 +1,7 @@
 <?php
 // 
 //  class-ai1ec-file-not-provided.php
-//  all-in-one-events-calendar
+//  all-in-one-event-calendar
 //  
 //  Created by The Seed Studio on 2011-07-13.
 // 

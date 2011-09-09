@@ -1,7 +1,7 @@
 <?php
 //
 //  class-ai1ec-importer-controller.php
-//  all-in-one-events-calendar
+//  all-in-one-event-calendar
 //
 //  Created by The Seed Studio on 2011-07-13.
 //
@@ -75,7 +75,7 @@ class Ai1ec_Importer_Controller {
 	/**
 	 * register_importer function
 	 *
-	 * Registers the events calendar importer
+	 * Registers the event calendar importer
 	 *
 	 * @return void
 	 **/
@@ -84,8 +84,8 @@ class Ai1ec_Importer_Controller {
 
 		if( ! isset( $wp_importers['ai1ec_the_events_calendar'] ) ) {
 			$wp_importers['ai1ec_the_events_calendar'] = array(
-				__( 'The Events Calendar → All-in-One Events Calendar', AI1EC_PLUGIN_NAME ),
-				__( 'Imports events created using The Events Calendar plugin into the All-in-One Events Calendar', AI1EC_PLUGIN_NAME ),
+				__( 'The Events Calendar → All-in-One Event Calendar', AI1EC_PLUGIN_NAME ),
+				__( 'Imports events created using The Events Calendar plugin into the All-in-One Event Calendar', AI1EC_PLUGIN_NAME ),
 				array( &$this, 'import_the_events_calendar' )
 			);
 		}

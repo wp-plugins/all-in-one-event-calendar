@@ -13,7 +13,6 @@
 			<div class="metabox-holder">
 				<div class="post-box-container column-1-ai1ec left-side"><?php do_meta_boxes( $settings_page, 'left-side', null ); ?></div>
 				<div class="post-box-container column-2-ai1ec right-side"><?php do_meta_boxes( $settings_page, 'right-side', null ); ?></div>
-				<div class="post-box-container column-3-ai1ec full"><?php do_meta_boxes( $settings_page, 'full', null ); ?></div>
 			</div>
 			<?php submit_button( esc_attr__( 'Update Settings', AI1EC_PLUGIN_NAME ), 'primary', 'ai1ec_save_settings' ); ?>
 
