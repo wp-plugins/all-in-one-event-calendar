@@ -321,8 +321,9 @@ class Ai1ec_App_Controller {
 		       $ai1ec_calendar_controller,
 		       $ai1ec_events_controller;
 
-		// Find out if we're on the calendar page
-		if( is_page( $ai1ec_settings->calendar_page_id ) )
+		// Find out if the calendar page ID is defined, and we're on it
+		if( $ai1ec_settings->calendar_page_id &&
+		    is_page( $ai1ec_settings->calendar_page_id ) )
 		{
 			ob_start();
 			// Render view
