@@ -37,5 +37,12 @@
       <li><a href="https://twitter.com/intent/user?screen_name=the_seed_studio" target="_blank"><?php _e( 'Follow us on Twitter', AI1EC_PLUGIN_NAME ) ?></a></li>
     </ol>
   </p>
+
+  <h2><?php _e( 'Donate', AI1EC_PLUGIN_NAME ) ?></h2>
+
+  <p><?php _e( 'If you would like to help support development of this plugin, then by all means...', AI1EC_PLUGIN_NAME ) ?></p>
+  <p class="ai1ec-donate">
+    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=9JJMUW48W2ED8" target="_blank" /><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="PayPal - The safer, easier way to pay online!" /></a>
+  </p>
 </div>
 <br class="clear" />

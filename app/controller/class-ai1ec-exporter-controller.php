@@ -75,8 +75,10 @@ class Ai1ec_Exporter_Controller {
 			$ai1ec_exporter_helper->insert_event_in_calendar( $event, $c );
 		}
 		$str = $c->createCalendar();
+
+		header( 'Content-type: text/calendar' );
 		echo $str;
-		exit();
+		exit;
 	}
 }
 // END class

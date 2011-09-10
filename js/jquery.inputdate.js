@@ -1,1 +1,195 @@
-(function(d){function a(g){g.addClass("error").fadeOut("normal",function(){g.val(g.data("timespan.stored")).removeClass("error").fadeIn("fast")})}function e(){d(this).data("timespan.stored",this.value)}function c(h,i,j,g){i.val(i.data("timespan.initial_value"));var k=parseInt(i.val());if(!isNaN(parseInt(k))){k=new Date(parseInt(k)*1000)}else{k=new Date(g)}h.val(formatDate(k,false));h.each(e)}var f={start_date_input:"date-input",start_time:"time",twentyfour_hour:false,now:new Date()};var b={init:function(i){var l=d.extend({},f,i);var j=d(l.start_date_input);var k=d(l.start_time);var h=j;var g=j;g.bind("focus.timespan",e);h.calendricalDate({today:new Date(l.now.getFullYear(),l.now.getMonth(),l.now.getDate())});h.bind("blur.timespan",function(){var m=parseDate(this.value,false);if(isNaN(m)){a(d(this))}else{d(this).data("timespan.stored",this.value);d(this).val(formatDate(m,false))}});j.bind("focus.timespan",function(){var m=parseDate(j.val(),false).getTime()/1000}).bind("blur.timespan",function(){var m=parseDate(j.data("timespan.stored"),false)});j.closest("form").bind("submit.timespan",function(){var m=parseDate(j.val(),false).getTime()/1000;if(isNaN(m)){m=""}k.val(m)});k.data("timespan.initial_value",k.val());c(j,k,l.twentyfour_hour,l.now);return this},reset:function(g){var h=d.extend({},f,g);c(d(h.start_date_input),d(h.start_time),h.twentyfour_hour,h.now);return this},destroy:function(g){g=d.extend({},f,g);d.each(g,function(i,h){d(h).unbind(".timespan")});d(g.start_date_input).closest("form").unbind(".timespan");return this}};d.inputdate=function(g){if(b[g]){return b[g].apply(this,Array.prototype.slice.call(arguments,1))}else{if(typeof g==="object"||!g){return b.init.apply(this,arguments)}else{d.error("Method "+g+" does not exist on jQuery.timespan")}}}})(jQuery);
+(function( $ )
+{
+	/**
+	 * Private functions
+	 */
+
+	// Helper function - reset contents of current field to stored original
+	// value and alert user.
+	function reset_invalid( field )
+	{
+		field
+			.addClass( 'error' )
+			.fadeOut( 'normal', function() {
+				field
+					.val( field.data( 'timespan.stored' ) )
+					.removeClass( 'error' )
+					.fadeIn( 'fast' );
+			});
+	}
+
+	// Stores the value of the HTML element in context to its "stored" jQuery data.
+	function store_value() {
+		$(this).data( 'timespan.stored', this.value );
+ 	}
+
+	/**
+	 * Value initialization
+	 */
+	function reset( start_date_input, start_time, twentyfour_hour, now )
+	{
+		// Restore original values of fields when the page was loaded
+		start_time.val( start_time.data( 'timespan.initial_value' ) );
+
+		// Fill out input field with default date/time based on this original
+		// value.
+
+		var start = parseInt( start_time.val() );
+		// If start_time field has a valid integer, use it, else use current time
+		// rounded to nearest quarter-hour.
+		if( ! isNaN( parseInt( start ) ) ) {
+			start = new Date( parseInt( start ) * 1000 );
+		} else {
+			start = new Date( now );
+		}
+		start_date_input.val( formatDate( start, false ) );
+
+		// Trigger function (defined above) to internally store values of each
+		// input field (used in calculations later).
+		start_date_input.each( store_value );
+	}
+
+	/**
+	 * Private constants
+	 */
+
+	var default_options = {
+		start_date_input: 'date-input',
+		start_time: 'time',
+		twentyfour_hour: false,
+		now: new Date()
+	};
+
+	/**
+	 * Public methods
+	 */
+
+	var methods = {
+
+		/**
+		 * Initialize settings.
+		 */
+		init: function( options )
+		{
+			var o = $.extend( {}, default_options, options );
+
+			// Shortcut jQuery objects
+			var start_date_input = $(o.start_date_input);
+			var start_time = $(o.start_time);
+			
+			var date_inputs = start_date_input;
+			var all_inputs = start_date_input;
+
+			/**
+			 * Event handlers
+			 */
+
+			// Save original (presumably valid) value of every input field upon focus.
+			all_inputs.bind( 'focus.timespan', store_value );
+			date_inputs.calendricalDate( {
+				today: new Date( o.now.getFullYear(), o.now.getMonth(), o.now.getDate() )
+			} );
+
+			// Validate and update saved value of DATE fields upon blur.
+			date_inputs
+				.bind( 'blur.timespan', function() {
+					// Validate contents of this field.
+					var date = parseDate( this.value, false );
+					if( isNaN( date ) ) {
+						// This field is invalid.
+						reset_invalid( $(this) );
+					} else {
+						// Value is valid, so store it for later use (below).
+						$(this).data( 'timespan.stored', this.value );
+						// Re-format contents of field correctly (in case parsable but not
+						// perfect).
+						$(this).val( formatDate( date, false ) );
+					}
+				});
+
+			// When start date/time are modified, update end date/time by shifting the
+			// appropriate amount.
+			start_date_input.bind( 'focus.timespan', function() {
+					// Calculate the time difference between start & end and save it.
+					var start_date_val = parseDate( start_date_input.val(), false ).getTime() / 1000;
+				} )
+				.bind( 'blur.timespan', function() {
+					var start_date_val = parseDate( start_date_input.data( 'timespan.stored' ), false );
+					// Shift end date/time as appropriate.
+				} );
+
+			// Validation upon form submission
+			start_date_input.closest( 'form' )
+				.bind( 'submit.timespan', function() {
+					// Update hidden field value with chosen date/time.
+
+					// Convert Date object into UNIX timestamp for form submission
+					var unix_start_time = parseDate( start_date_input.val(), false ).getTime() / 1000;
+					// If parsed incorrectly, entire calculation is invalid.
+					if( isNaN( unix_start_time ) ) {
+						unix_start_time = '';
+					}
+					// Set start date value to valid unix time, or empty string, depending
+					// on above validation.
+					start_time.val( unix_start_time );
+				} );
+
+			// Store original form value
+			start_time.data( 'timespan.initial_value', start_time.val() );
+
+			// Initialize input fields
+			reset( start_date_input,
+					start_time,
+					o.twentyfour_hour,
+					o.now )
+
+			return this;
+		},
+
+		/**
+		 * Reset values to defaults.
+		 */
+		reset: function( options )
+		{
+			var o = $.extend( {}, default_options, options );
+
+			reset( $(o.start_date_input),
+					$(o.start_time),
+					o.twentyfour_hour,
+					o.now );
+
+			return this;
+		},
+
+		/**
+		 * Destroy registered event handlers.
+		 */
+		destroy: function( options )
+	 	{
+			options = $.extend( {}, default_options, options );
+
+			$.each( options, function( option_name, value ) {
+				$(value).unbind( '.timespan' );
+			} );
+			$(options.start_date_input).closest('form').unbind( '.timespan' );
+
+			return this;
+		}
+	}
+
+	/**
+	 * Main jQuery plugin definition
+	 */
+
+	$.inputdate = function( arg )
+	{
+		// Method calling logic
+		if( methods[arg] ) {
+			return methods[arg].apply( this, Array.prototype.slice.call( arguments, 1 ));
+		} else if( typeof arg === 'object' || ! arg ) {
+			return methods.init.apply( this, arguments );
+		} else {
+			$.error( 'Method ' + arg + ' does not exist on jQuery.timespan' );
+		}
+	};
+})( jQuery );

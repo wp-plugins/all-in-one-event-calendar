@@ -3,7 +3,7 @@
  * Plugin Name: All-in-One Event Calendar Plugin
  * Plugin URI: http://theseedstudio.com/software/all-in-one-event-calendar-wordpress/
  * Description: An events calendar system with month and agenda calendar views, color-coded categories, recurring events, and import/export of iCalendar (.ics) feeds.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: The Seed Studio
  * Author URI: http://theseedstudio.com/
  */
@@ -117,20 +117,16 @@ define( 'AI1EC_FAKE_CATEGORY_ID', -4113473042 ); // Numeric-only 1337-speak of A
 $ai1ec_script_url = get_option( 'home' ) . '/?plugin=' . AI1EC_PLUGIN_NAME;
 define( 'AI1EC_SCRIPT_URL', 			$ai1ec_script_url );
 
-// ==================================================
-// = Convert https/http to ical in AI1EC_SCRIPT_URL =
-// ==================================================
-$tmp = '';
-if( strpos( AI1EC_SCRIPT_URL, 'https' ) === false ) {
-	$tmp = str_replace( 'http', 'webcal', AI1EC_SCRIPT_URL );
-} else {
-	$tmp = str_replace( 'https', 'webcal', AI1EC_SCRIPT_URL );
-}
+// ====================================================
+// = Convert http:// to webcal:// in AI1EC_SCRIPT_URL =
+// =  (webcal:// protocol does not support https://)  =
+// ====================================================
+$tmp = str_replace( 'http://', 'webcal://', AI1EC_SCRIPT_URL );
 
 // ==============
 // = EXPORT URL =
 // ==============
-define( 'AI1EC_EXPORT_URL', $tmp . '&controller=ai1ec_exporter_controller&action=export_events' );
+define( 'AI1EC_EXPORT_URL', "$tmp&controller=ai1ec_exporter_controller&action=export_events" );
 
 // ====================================
 // = Include iCal parsers and helpers =

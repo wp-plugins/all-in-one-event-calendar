@@ -1,1 +1,3 @@
-<?php echo $selector ?>{visibility:hidden}
+<?php echo $selector ?> {
+	visibility: hidden;
+}

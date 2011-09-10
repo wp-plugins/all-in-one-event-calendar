@@ -26,7 +26,7 @@
 
 <label for="show_create_event_button">
 <input class="checkbox" name="show_create_event_button" id="show_create_event_button" type="checkbox" value="1" <?php echo $show_create_event_button ?> />
-<?php _e( 'Show <strong>Post Your Event</strong> button to privileged users', AI1EC_PLUGIN_NAME ) ?>
+<?php _e( 'Show <strong>Post Your Event</strong> button above the calendar to privileged users', AI1EC_PLUGIN_NAME ) ?>
 </label>
 <br class="clear" />
 

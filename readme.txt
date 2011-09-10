@@ -4,12 +4,11 @@ Donate link: http://theseedstudio.com/software/all-in-one-event-calendar-wordpre
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011
 Requires at least: 3.1.3
 Tested up to: 3.2.1
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 
 An event calendar system with month and agenda calendar views, color-coded categories, recurring events, and import/export of iCalendar (.ics) feeds.
 
 == Description ==
-**Important notice:** You need to re-enable the plugin after updating to version `1.0.3`.
 
 Welcome to the All-in-One Event Calendar Plugin, a new way to list your events in WordPress and easily share them with the rest of the world.
 
@@ -48,13 +47,18 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 * Each event links to the original calendar
 * Your calendar can be embedded into a WordPress page without needing to create template files or modify the theme
 
-[Check out the demo »](http://thenelsonpost.ca/calendar/)
+[Check out the demo »](http://demo.theseedstudio.com/calendar/)
 
 == Changelog ==
 
+= Version 1.0.4 =
+* Improved layout of buttons around map in single event view
+* Set Content-Type to text/calendar for exported iCalendar feeds
+* Added Donate button to Settings screen
+
 = Version 1.0.3 =
 * Changed plugin name from `All-in-One Events Calendar` to `All-in-One Event Calendar`
-* **Important notice:** You need to re-enable the plugin after updating to version `1.0.3`.
+* **Important notice:** When upgrading to version `1.0.3` you must reactivate the plugin.
 
 = Version 1.0.2 =
 * Fixed the URL for settings page that is displayed in the notice
@@ -68,9 +72,18 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 == Installation ==
 
 1. Upload `all-in-one-event-calendar` to the `/wp-content/plugins/` directory.
-1. Activate the plugin through the **Plugins** menu item in the WordPress Dashboard.
-1. Once the plugin is activated, follow the instructions in the notice to configure it.
-**For advanced users:** To place the calendar in an HTML element besides the default page content container, enter a CSS or jQuery-style selector of the element in the **Contain calendar in this DOM element** field of the Settings page.
+2. Activate the plugin through the **Plugins** menu item in the WordPress Dashboard.
+3. Once the plugin is activated, follow the instructions in the notice to configure it.
+
+**Important notice:** When upgrading to version `1.0.3` you must reactivate the plugin.
+
+= For advanced users: =
+
+To place the calendar in a DOM/HTML element besides the default page content container without modifying the theme:
+
+1. Navigate to **Events** > **Settings** in the WordPress Dashboard.
+2. Enter a CSS or jQuery-style selector of the target element in the **Contain calendar in this DOM element** field.
+3. Click **Update Settings**.
 
 == Screenshots ==
 
@@ -84,3 +97,8 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 8. Front-end: Month view of calendar with active tag filter
 9. Front-end: Agenda view of calendar
 10. Settings page
+
+== Upgrade Notice ==
+
+= 1.0.3 =
+When upgrading to version `1.0.3` you must reactivate the plugin.

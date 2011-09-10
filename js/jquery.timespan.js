@@ -1,1 +1,337 @@
-(function(d){function a(g){g.addClass("error").fadeOut("normal",function(){g.val(g.data("timespan.stored")).removeClass("error").fadeIn("fast")})}function e(){d(this).data("timespan.stored",this.value)}function c(l,p,o,j,n,i,q,m,h){o.val(o.data("timespan.initial_value"));i.val(i.data("timespan.initial_value"));q.get(0).checked=q.data("timespan.initial_value");var g=parseInt(o.val());if(!isNaN(parseInt(g))){g=new Date(parseInt(g)*1000);p.val(formatTime(g.getUTCHours(),g.getUTCMinutes(),m))}else{g=new Date(h);p.val(formatTime(g.getUTCHours(),g.getUTCMinutes()-g.getUTCMinutes()%15,m))}l.val(formatDate(g,false));var k=parseInt(i.val());if(!isNaN(parseInt(k))){k=new Date(parseInt(k)*1000);n.val(formatTime(k.getUTCHours(),k.getUTCMinutes(),m))}else{k=new Date(g.getTime()+3600000);n.val(formatTime(k.getUTCHours(),k.getUTCMinutes()-k.getUTCMinutes()%15,m))}if(q.get(0).checked){k.setUTCDate(k.getUTCDate()-1)}j.val(formatDate(k,false));l.each(e);p.each(e);j.each(e);n.each(e);q.trigger("change.timespan")}var f={allday:"#allday",start_date_input:"#start-date-input",start_time_input:"#start-time-input",start_time:"#start-time",end_date_input:"#end-date-input",end_time_input:"#end-time-input",end_time:"#end-time",twentyfour_hour:false,now:new Date(),};var b={init:function(t){var h=d.extend({},f,t);var s=d(h.allday);var k=d(h.start_date_input);var p=d(h.start_time_input);var m=d(h.start_time);var j=d(h.end_date_input);var l=d(h.end_time_input);var g=d(h.end_time);var q=k.add(h.end_date_input);var r=p.add(h.end_time_input);var i=k.add(h.start_time_input).add(h.end_date_input).add(h.end_time_input);i.bind("focus.timespan",e);var n=new Date(h.now.getFullYear(),h.now.getMonth(),h.now.getDate());s.bind("change.timespan",function(){if(this.checked){r.fadeOut();q.calendricalDateRange({today:n})}else{r.fadeIn();i.calendricalDateTimeRange({today:n})}}).get().checked=false;q.bind("blur.timespan",function(){var o=parseDate(this.value,false);if(isNaN(o)){a(d(this))}else{d(this).data("timespan.stored",this.value);d(this).val(formatDate(o,false))}});r.bind("blur.timespan",function(){var o=parseTime(this.value);if(!o){a(d(this))}else{d(this).data("timespan.stored",this.value);d(this).val(formatTime(o.hour,o.minute,false))}});k.add(h.start_time_input).bind("focus.timespan",function(){var o=parseDate(k.val(),false).getTime()/1000;var v=parseTime(p.val());o+=v.hour*3600+v.minute*60;var u=parseDate(j.val(),false).getTime()/1000;var w=parseTime(l.val());u+=w.hour*3600+w.minute*60;k.data("time_diff",u-o)}).bind("blur.timespan",function(){var o=parseDate(k.data("timespan.stored"),false);var u=parseTime(p.data("timespan.stored"));var v=o.getTime()/1000+u.hour*3600+u.minute*60+k.data("time_diff");v=new Date(v*1000);j.val(formatDate(v,false));l.val(formatTime(v.getUTCHours(),v.getUTCMinutes(),false))});k.closest("form").bind("submit.timespan",function(){var o=parseDate(k.val(),false).getTime()/1000;if(!isNaN(o)){if(!s.get(0).checked){var u=parseTime(p.val());if(u){o+=u.hour*3600+u.minute*60}else{o=""}}}else{o=""}m.val(o);var v=parseDate(j.val(),false).getTime()/1000;if(!isNaN(v)){if(s.get(0).checked){v+=24*60*60}else{var u=parseTime(l.val());if(u){v+=u.hour*3600+u.minute*60}else{v=""}}}else{v=""}g.val(v)});m.data("timespan.initial_value",m.val());g.data("timespan.initial_value",g.val());s.data("timespan.initial_value",s.get(0).checked);c(k,p,m,j,l,g,s,h.twentyfour_hour,h.now);return this},reset:function(g){var h=d.extend({},f,g);c(d(h.start_date_input),d(h.start_time_input),d(h.start_time),d(h.end_date_input),d(h.end_time_input),d(h.end_time),d(h.allday),h.twentyfour_hour,h.now);return this},destroy:function(g){g=d.extend({},f,g);d.each(g,function(i,h){d(h).unbind(".timespan")});d(g.start_date_input).closest("form").unbind(".timespan");return this}};d.timespan=function(g){if(b[g]){return b[g].apply(this,Array.prototype.slice.call(arguments,1))}else{if(typeof g==="object"||!g){return b.init.apply(this,arguments)}else{d.error("Method "+g+" does not exist on jQuery.timespan")}}}})(jQuery);
+(function( $ )
+{
+	/**
+	 * Private functions
+	 */
+
+	// Helper function - reset contents of current field to stored original
+	// value and alert user.
+	function reset_invalid( field )
+	{
+		field
+			.addClass( 'error' )
+			.fadeOut( 'normal', function() {
+				field
+					.val( field.data( 'timespan.stored' ) )
+					.removeClass( 'error' )
+					.fadeIn( 'fast' );
+			});
+	}
+
+	// Stores the value of the HTML element in context to its "stored" jQuery data.
+	function store_value() {
+		$(this).data( 'timespan.stored', this.value );
+ 	}
+
+	/**
+	 * Value initialization
+	 */
+	function reset( start_date_input, start_time_input, start_time,
+			end_date_input, end_time_input, end_time, allday, twentyfour_hour, now )
+	{
+		// Restore original values of fields when the page was loaded
+		start_time.val( start_time.data( 'timespan.initial_value' ) );
+		end_time.val( end_time.data( 'timespan.initial_value' ) );
+		allday.get(0).checked = allday.data( 'timespan.initial_value' );
+
+		// Fill out input fields with default date/time based on these original
+		// values.
+
+		var start = parseInt( start_time.val() );
+		// If start_time field has a valid integer, use it, else use current time
+		// rounded to nearest quarter-hour.
+		if( ! isNaN( parseInt( start ) ) ) {
+			start = new Date( parseInt( start ) * 1000 );
+			start_time_input.val( formatTime( start.getUTCHours(), start.getUTCMinutes(), twentyfour_hour ) );
+		} else {
+			start = new Date( now );
+			// Round minutes to nearest quarter-hour.
+			start_time_input.val(
+				formatTime( start.getUTCHours(), start.getUTCMinutes() - start.getUTCMinutes() % 15, twentyfour_hour ) );
+		}
+		start_date_input.val( formatDate( start, false ) );
+
+		var end = parseInt( end_time.val() );
+		// If end_time field has a valid integer, use it, else use start time plus
+		// one hour.
+		if( ! isNaN( parseInt( end ) ) ) {
+			end = new Date( parseInt( end ) * 1000 );
+			end_time_input.val( formatTime( end.getUTCHours(), end.getUTCMinutes(), twentyfour_hour ) );
+		} else {
+			end = new Date( start.getTime() + 3600000 );
+			// Round minutes to nearest quarter-hour.
+			end_time_input.val(
+				formatTime( end.getUTCHours(), end.getUTCMinutes() - end.getUTCMinutes() % 15, twentyfour_hour ) );
+		}
+		// If all-day is checked, end date one day *before* last day of the span,
+		// provided we were given an iCalendar-spec all-day timespan.
+		if( allday.get(0).checked )
+			end.setUTCDate( end.getUTCDate() - 1 );
+		end_date_input.val( formatDate( end, false ) );
+
+		// Trigger function (defined above) to internally store values of each
+		// input field (used in calculations later).
+		start_date_input.each( store_value );
+		start_time_input.each( store_value );
+		end_date_input.each( store_value );
+		end_time_input.each( store_value );
+
+		// Set up visibility of controls and Calendrical activation based on
+		// original "checked" status of "All day" box.
+		allday.trigger( 'change.timespan' );
+	}
+
+	/**
+	 * Private constants
+	 */
+
+	var default_options = {
+		allday: '#allday',
+		start_date_input: '#start-date-input',
+		start_time_input: '#start-time-input',
+		start_time: '#start-time',
+		end_date_input: '#end-date-input',
+		end_time_input: '#end-time-input',
+		end_time: '#end-time',
+		twentyfour_hour: false,
+		now: new Date(),
+	};
+
+	/**
+	 * Public methods
+	 */
+
+	var methods = {
+
+		/**
+		 * Initialize settings.
+		 */
+		init: function( options )
+		{
+			var o = $.extend( {}, default_options, options );
+
+			// Shortcut jQuery objects
+			var allday = $(o.allday);
+			var start_date_input = $(o.start_date_input);
+			var start_time_input = $(o.start_time_input);
+			var start_time = $(o.start_time);
+			var end_date_input = $(o.end_date_input);
+			var end_time_input = $(o.end_time_input);
+			var end_time = $(o.end_time);
+
+			var date_inputs = start_date_input.add( o.end_date_input );
+			var time_inputs = start_time_input.add( o.end_time_input );
+			var all_inputs = start_date_input.add( o.start_time_input )
+				.add( o.end_date_input ).add( o.end_time_input );
+
+			/**
+			 * Event handlers
+			 */
+
+			// Save original (presumably valid) value of every input field upon focus.
+			all_inputs.bind( 'focus.timespan', store_value );
+
+			// When "All day" is toggled, show/hide time.
+			var today = new Date( o.now.getFullYear(), o.now.getMonth(), o.now.getDate() );
+			allday
+				.bind( 'change.timespan', function() {
+					if( this.checked ) {
+						time_inputs.fadeOut();
+						date_inputs.calendricalDateRange( { today: today } );
+					} else {
+						time_inputs.fadeIn();
+						all_inputs.calendricalDateTimeRange( { today: today } );
+					}
+				} )
+				.get().checked = false;
+
+			// Validate and update saved value of DATE fields upon blur.
+			date_inputs
+				.bind( 'blur.timespan', function() {
+					// Validate contents of this field.
+					var date = parseDate( this.value, false );
+					if( isNaN( date ) ) {
+						// This field is invalid.
+						reset_invalid( $(this) );
+					} else {
+						// Value is valid, so store it for later use (below).
+						$(this).data( 'timespan.stored', this.value );
+						// Re-format contents of field correctly (in case parsable but not
+						// perfect).
+						$(this).val( formatDate( date, false ) );
+					}
+				});
+
+			// Validate and update saved value of TIME fields upon blur.
+			time_inputs
+				.bind( 'blur.timespan', function() {
+					// Validate contents of this field.
+					var time = parseTime( this.value );
+					if( ! time ) {
+						// This field is invalid.
+						reset_invalid( $(this) );
+					} else {
+						// Value is valid, so store it for later use (below).
+						$(this).data( 'timespan.stored', this.value );
+						// Re-format contents of field correctly (in case parsable but not
+						// perfect).
+						$(this).val( formatTime( time.hour, time.minute, false ) );
+					}
+				});
+
+			// When start date/time are modified, update end date/time by shifting the
+			// appropriate amount.
+			start_date_input.add( o.start_time_input )
+				.bind( 'focus.timespan', function() {
+					// Calculate the time difference between start & end and save it.
+					var start_date_val = parseDate( start_date_input.val(), false ).getTime() / 1000;
+					var start_time_val = parseTime( start_time_input.val() );
+					start_date_val += start_time_val.hour * 3600 + start_time_val.minute * 60;
+					var end_date_val = parseDate( end_date_input.val(), false ).getTime() / 1000;
+					var end_time_val = parseTime( end_time_input.val() );
+					end_date_val += end_time_val.hour * 3600 + end_time_val.minute * 60;
+					start_date_input.data( 'time_diff', end_date_val - start_date_val );
+				} )
+				.bind( 'blur.timespan', function() {
+					var start_date_val = parseDate( start_date_input.data( 'timespan.stored' ), false );
+					var start_time_val = parseTime( start_time_input.data( 'timespan.stored' ) );
+					// Shift end date/time as appropriate.
+					var end_time_val = start_date_val.getTime() / 1000
+						+ start_time_val.hour * 3600 + start_time_val.minute * 60
+						+ start_date_input.data( 'time_diff' );
+					end_time_val = new Date( end_time_val * 1000 );
+					end_date_input.val( formatDate( end_time_val, false ) );
+					end_time_input.val( formatTime( end_time_val.getUTCHours(), end_time_val.getUTCMinutes(), false ) );
+				} );
+
+			// Validation upon form submission
+			start_date_input.closest( 'form' )
+				.bind( 'submit.timespan', function() {
+					// Update hidden field values with chosen date/time.
+					//
+					// 1. Start date/time
+
+					// Convert Date object into UNIX timestamp for form submission
+					var unix_start_time = parseDate( start_date_input.val(), false ).getTime() / 1000;
+					// If parsed correctly, proceed to add the time.
+					if( ! isNaN( unix_start_time ) ) {
+						// Add time quantity to date, unless "All day" is checked.
+						if( ! allday.get(0).checked ) {
+							var time = parseTime( start_time_input.val() );
+							// If parsed correctly, proceed add its value.
+							if( time ) {
+								unix_start_time += time.hour * 3600 + time.minute * 60;
+							} else {
+								// Else entire calculation is invalid.
+								unix_start_time = '';
+							}
+						}
+					} else {
+						// Else entire calculation is invalid.
+						unix_start_time = '';
+					}
+					// Set start date value to valid unix time, or empty string, depending
+					// on above validation.
+					start_time.val( unix_start_time );
+
+					// 2. End date/time
+
+					// Convert Date object into UNIX timestamp for form submission
+					var unix_end_time = parseDate( end_date_input.val(), false ).getTime() / 1000;
+					// If parsed correctly, proceed to add the time.
+					if( ! isNaN( unix_end_time ) ) {
+						// If "All day" is checked, store an end date that is one day
+						// *after* the start date (following iCalendar spec).
+						if( allday.get(0).checked ) {
+							unix_end_time += 24 * 60 * 60;
+						// Else add time quantity to date.
+						} else {
+							var time = parseTime( end_time_input.val() );
+							// If parsed correctly, proceed add its value.
+							if( time ) {
+								unix_end_time += time.hour * 3600 + time.minute * 60;
+							} else {
+								// Else entire calculation is invalid.
+								unix_end_time = '';
+							}
+						}
+					} else {
+						// Else entire calculation is invalid.
+						unix_end_time = '';
+					}
+					// Set end date value to valid unix time, or empty string, depending
+					// on above validation.
+					end_time.val( unix_end_time );
+				} );
+
+			// Store original form values
+			start_time.data( 'timespan.initial_value', start_time.val() );
+			end_time.data( 'timespan.initial_value', end_time.val() );
+			allday.data( 'timespan.initial_value', allday.get(0).checked );
+
+			// Initialize input fields
+			reset( start_date_input,
+					start_time_input,
+					start_time,
+					end_date_input,
+					end_time_input,
+					end_time,
+					allday,
+					o.twentyfour_hour,
+					o.now )
+
+			return this;
+		},
+
+		/**
+		 * Reset values to defaults.
+		 */
+		reset: function( options )
+		{
+			var o = $.extend( {}, default_options, options );
+
+			reset( $(o.start_date_input),
+					$(o.start_time_input),
+					$(o.start_time),
+					$(o.end_date_input),
+					$(o.end_time_input),
+					$(o.end_time),
+					$(o.allday),
+					o.twentyfour_hour,
+					o.now );
+
+			return this;
+		},
+
+		/**
+		 * Destroy registered event handlers.
+		 */
+		destroy: function( options )
+	 	{
+			options = $.extend( {}, default_options, options );
+
+			$.each( options, function( option_name, value ) {
+				$(value).unbind( '.timespan' );
+			} );
+			$(options.start_date_input).closest('form').unbind( '.timespan' );
+
+			return this;
+		}
+	}
+
+	/**
+	 * Main jQuery plugin definition
+	 */
+
+	$.timespan = function( arg )
+	{
+		// Method calling logic
+		if( methods[arg] ) {
+			return methods[arg].apply( this, Array.prototype.slice.call( arguments, 1 ));
+		} else if( typeof arg === 'object' || ! arg ) {
+			return methods.init.apply( this, arguments );
+		} else {
+			$.error( 'Method ' + arg + ' does not exist on jQuery.timespan' );
+		}
+	};
+})( jQuery );
