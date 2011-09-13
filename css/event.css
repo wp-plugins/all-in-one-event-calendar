@@ -30,10 +30,13 @@ table.ai1ec-full-event {
 	text-shadow: 0 1px 0 #fff;
 	-moz-text-shadow: 0 1px 0 #fff;
 	-webkit-text-shadow: 0 1px 0 #fff;
-	background: -moz-linear-gradient( right, #fff, #ececec 1em, #f8f8f8 );
-	background: -webkit-gradient( linear, 0 0, 100% 0, from(#f8f8f8), to(#ececec) );
-	background: -webkit-linear-gradient( right, #fff, #ececec 1em, #f8f8f8 );
-	background: -o-linear-gradient( right, #fff, #ececec 1em, #f8f8f8 );
+	background: #d0d0d0;
+	background: linear-gradient( right, transparent, rgba(0,0,0,0.07) 1em, rgba(0,0,0,0.03) );
+	background: -o-linear-gradient( right, transparent, rgba(0,0,0,0.07) 1em, rgba(0,0,0,0.03) );
+	background: -ms-linear-gradient( right, transparent, rgba(0,0,0,0.07) 1em, rgba(0,0,0,0.03) );
+	background: -moz-linear-gradient( right, transparent, rgba(0,0,0,0.07) 1em, rgba(0,0,0,0.03) );
+	background: -webkit-gradient( linear, 0 0, 100% 0, from(transparent), to(rgba(0,0,0,0.07)) );
+	background: -webkit-linear-gradient( right, transparent, rgba(0,0,0,0.07) 1em, rgba(0,0,0,0.03) );
 }
 
 /* Event time(s) */
@@ -148,10 +151,13 @@ table.ai1ec-full-event {
 }
 .ai1ec-excerpt label {
 	padding: 0 0.6em !important;
-	background: -moz-linear-gradient( right, #fff, #ececec 1em, #f8f8f8 );
-	background: -webkit-gradient( linear, 0 0, 100% 0, from(#f8f8f8), to(#ececec) );
-	background: -webkit-linear-gradient( right, #fff, #ececec 1em, #f8f8f8 );
-	background: -o-linear-gradient( right, #fff, #ececec 1em, #f8f8f8 );
+	background: #d0d0d0;
+	background: linear-gradient( right, transparent, rgba(0,0,0,0.07) 1em, rgba(0,0,0,0.03) );
+	background: -o-linear-gradient( right, transparent, rgba(0,0,0,0.07) 1em, rgba(0,0,0,0.03) );
+	background: -ms-linear-gradient( right, transparent, rgba(0,0,0,0.07) 1em, rgba(0,0,0,0.03) );
+	background: -moz-linear-gradient( right, transparent, rgba(0,0,0,0.07) 1em, rgba(0,0,0,0.03) );
+	background: -webkit-gradient( linear, 0 0, 100% 0, from(transparent), to(rgba(0,0,0,0.07)) );
+	background: -webkit-linear-gradient( right, transparent, rgba(0,0,0,0.07) 1em, rgba(0,0,0,0.03) );
 	text-align: right;
 	text-shadow: 0 1px 0 #fff;
 	-moz-text-shadow: 0 1px 0 #fff;

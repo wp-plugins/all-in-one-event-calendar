@@ -3,7 +3,7 @@
  * Plugin Name: All-in-One Event Calendar Plugin
  * Plugin URI: http://theseedstudio.com/software/all-in-one-event-calendar-wordpress/
  * Description: An events calendar system with month and agenda calendar views, color-coded categories, recurring events, and import/export of iCalendar (.ics) feeds.
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: The Seed Studio
  * Author URI: http://theseedstudio.com/
  */
@@ -15,6 +15,11 @@
 // = Plugin Name =
 // ===============
 define( 'AI1EC_PLUGIN_NAME', 			basename( dirname( __FILE__ ) ) );
+
+// ===================
+// = Plugin Basename =
+// ===================
+define( 'AI1EC_PLUGIN_BASENAME',  plugin_basename( __FILE__ ) );
 
 // ====================
 // = Database Version =
@@ -149,11 +154,17 @@ function ai1ec_autoload( $class_name )
 {
 	// Convert class name to filename format.
 	$class_name = strtr( strtolower( $class_name ), '_', '-' );
+	$paths = array(
+		AI1EC_CONTROLLER_PATH,
+		AI1EC_MODEL_PATH,
+		AI1EC_HELPER_PATH,
+		AI1EC_EXCEPTION_PATH,
+		AI1EC_LIB_PATH,
+		AI1EC_VIEW_PATH,
+	);
 
 	// Search each path for the class.
-	foreach( array( AI1EC_CONTROLLER_PATH, AI1EC_MODEL_PATH, AI1EC_HELPER_PATH, AI1EC_EXCEPTION_PATH, AI1EC_LIB_PATH )
-	         as $path )
- 	{
+	foreach( $paths as $path ) {
 		if( file_exists( "$path/class-$class_name.php" ) )
 		 	require_once( "$path/class-$class_name.php" );
 	}

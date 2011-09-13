@@ -4,9 +4,9 @@ Donate link: http://theseedstudio.com/software/all-in-one-event-calendar-wordpre
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011
 Requires at least: 3.1.3
 Tested up to: 3.2.1
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 
-An event calendar system with month and agenda calendar views, color-coded categories, recurring events, and import/export of iCalendar (.ics) feeds.
+An event calendar system with month and agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
 == Description ==
 
@@ -25,6 +25,7 @@ This plugin has many features we hope will prove useful to users, including:
 * Color-coded events based on category
 * Event-registration ready
 * Month and agenda views
+* Upcoming Events widget
 * Links to filtered calendar views
 
 (* Limited recurrence patterns available in first release. Full support to come in the next release.)
@@ -51,9 +52,17 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 
 == Changelog ==
 
+= Version 1.0.5 =
+* Added agenda-like Upcoming Events widget
+* Added tooltips to category color squares
+* Fixed Firefox-specific JavaScript errors and layout bugs
+* Added useful links to plugins list page
+* Fixed bug where feed frequency setting wasn't being updated
+* Made iCalendar subscription buttons optional
+
 = Version 1.0.4 =
 * Improved layout of buttons around map in single event view
-* Set Content-Type to text/calendar for exported iCalendar feeds
+* Set Content-Type to `text/calendar` for exported iCalendar feeds
 * Added Donate button to Settings screen
 
 = Version 1.0.3 =
@@ -75,7 +84,7 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 2. Activate the plugin through the **Plugins** menu item in the WordPress Dashboard.
 3. Once the plugin is activated, follow the instructions in the notice to configure it.
 
-**Important notice:** When upgrading to version `1.0.3` you must reactivate the plugin.
+**Important notice:** When upgrading from version `1.0.2` or below you must reactivate the plugin.
 
 = For advanced users: =
 
@@ -97,8 +106,10 @@ To place the calendar in a DOM/HTML element besides the default page content con
 8. Front-end: Month view of calendar with active tag filter
 9. Front-end: Agenda view of calendar
 10. Settings page
+11. Upcoming Events widget
+12. Upcoming Events widget - configuration options
 
 == Upgrade Notice ==
 
 = 1.0.3 =
-When upgrading to version `1.0.3` you must reactivate the plugin.
+When upgrading to from below `1.0.3` you must reactivate the plugin.

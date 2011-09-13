@@ -404,11 +404,11 @@ class Ai1ec_Events_Helper {
 				if( $until ) {
 					$until = strtotime( $rec->getUntil() );
 					$until -= 24 * 60 * 60; // Subtract 1 day (intuitively, last date is included)
-					$end = 2;               // set end value 
+					$end = 2;               // set end value
 				} else if( $count )
-          $end = 1;               // set end value 
+          $end = 1;               // set end value
         else
-          $end = 0;               // set end value 
+          $end = 0;               // set end value
 			}
 		}
 		return array(
@@ -801,7 +801,7 @@ class Ai1ec_Events_Helper {
 	 **/
 	function get_category_color( $term_id = 0 ) {
 	  global $wpdb;
-    
+
     $term_id = (int) $term_id;
 	  $table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
 	  $color = $wpdb->get_var( "SELECT term_color FROM {$table_name} WHERE term_id = {$term_id}" );
@@ -817,8 +817,9 @@ class Ai1ec_Events_Helper {
 	 **/
 	function get_category_color_square( $term_id ) {
 	  $color = $this->get_category_color( $term_id );
+	  $cat = get_term( $term_id, 'events_categories' );
 	  if( ! is_null( $color ) && ! empty( $color ) )
-	    return '<div class="ai1ec-category-color" style="background:' . $color . '"></div>';
+	    return '<div class="ai1ec-category-color" style="background:' . $color . '" title="' . esc_attr( $cat->name ) . '"></div>';
 
 	  return '';
 	}
@@ -851,15 +852,16 @@ class Ai1ec_Events_Helper {
 	 **/
 	function get_event_category_colors( $cats ) {
     $sqrs = '';
-	  foreach( $cats as $cat ) :
+
+	  foreach( $cats as $cat ) {
 	    $tmp = $this->get_category_color_square( $cat->term_id );
 	    if( ! empty( $tmp ) )
 	      $sqrs .= $tmp;
-	  endforeach;
+	  }
 
 	  return $sqrs;
 	}
-	
+
 	/**
 	 * create_end_dropdown function
 	 *

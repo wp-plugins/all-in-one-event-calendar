@@ -21,16 +21,18 @@
 			<td class="ai1ec-location <?php if( ! $location ) echo 'ai1ec-empty' ?>"><?php echo $location ?></td>
 			<td rowspan="5" class="ai1ec-map <?php if( $map ) echo 'ai1ec-has-map' ?>">
 				<?php echo $map ?>
-				<a class="ai1ec-button ai1ec-subscribe"
-					href="<?php echo esc_attr( $subscribe_url ) ?>"
-					title="<?php _e( 'Add this event to your favourite calendar program (iCal, Outlook, etc.)', AI1EC_PLUGIN_NAME ) ?>" />
-					<?php _e( '✔ Add to Calendar', AI1EC_PLUGIN_NAME ) ?></a>
-				<a class="ai1ec-button ai1ec-subscribe-google" target="_blank"
-					href="<?php echo esc_attr( $google_url ) ?>"
-					title="<?php _e( 'Add this event to your Google Calendar', AI1EC_PLUGIN_NAME ) ?>" />
-					<img src="<?php echo AI1EC_IMAGE_URL ?>/google-calendar.png" />
-					<?php _e( 'Add to Google Calendar', AI1EC_PLUGIN_NAME ) ?>
-				</a>
+				<?php if( $show_subscribe_buttons ) : ?>
+  				<a class="ai1ec-button ai1ec-subscribe"
+  					href="<?php echo esc_attr( $subscribe_url ) ?>"
+  					title="<?php _e( 'Add this event to your favourite calendar program (iCal, Outlook, etc.)', AI1EC_PLUGIN_NAME ) ?>" />
+  					<?php _e( '✔ Add to Calendar', AI1EC_PLUGIN_NAME ) ?></a>
+  				<a class="ai1ec-button ai1ec-subscribe-google" target="_blank"
+  					href="<?php echo esc_attr( $google_url ) ?>"
+  					title="<?php _e( 'Add this event to your Google Calendar', AI1EC_PLUGIN_NAME ) ?>" />
+  					<img src="<?php echo AI1EC_IMAGE_URL ?>/google-calendar.png" />
+  					<?php _e( 'Add to Google Calendar', AI1EC_PLUGIN_NAME ) ?>
+  				</a>
+				<?php endif ?>
 			</td>
 		</tr>
 		<tr>

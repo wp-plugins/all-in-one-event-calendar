@@ -1,6 +1,7 @@
 .ai1ec-container {
 	font-size: 13pt !important;
-}
+	clear: both;
+	}
 /* Some plugins mangle styling of standard HTML tags, fix them here */
 .ai1ec-container small {
 	margin: 0 !important;
@@ -43,16 +44,6 @@ table.ai1ec-calendar-toolbar {
 }
 .ai1ec-calendar-toolbar td:first-child {
 	text-align: left;
-}
-.ai1ec-loading {
-	position: absolute;
-	z-index: 9;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background: #fff url( ../img/ajax-loader.gif ) no-repeat center center;
-	display: none;
 }
 
 /* View tabs */
@@ -360,7 +351,7 @@ table.ai1ec-month-view {
 }
 
 /* Agenda view */
-ol.ai1ec-agenda-view {
+.ai1ec-agenda-view {
 	clear: both;
 	overflow: hidden;
 	margin: 0 !important;
@@ -370,12 +361,13 @@ ol.ai1ec-agenda-view {
 	font-size: 10pt !important;
 	font-style: italic;
 }
-ol.ai1ec-date-events {
+.ai1ec-agenda-view .ai1ec-date-events {
 	overflow: hidden;
 	margin: 0 0.75em 0 0 !important;
 	padding: 0 !important;
 }
-ol.ai1ec-agenda-view > li, ol.ai1ec-date-events > li {
+.ai1ec-agenda-view > li,
+.ai1ec-agenda-view .ai1ec-date-events > li {
 	list-style: none !important;
 }
 .ai1ec-agenda-view .ai1ec-date {

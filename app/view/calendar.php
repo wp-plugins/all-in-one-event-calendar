@@ -95,15 +95,17 @@
 	</div>
 </div>
 
-<a class="ai1ec-button ai1ec-subscribe"
-	href="<?php echo AI1EC_EXPORT_URL ?>"
-	title="<?php _e( 'Subscribe to this calendar using your favourite calendar program (iCal, Outlook, etc.)', AI1EC_PLUGIN_NAME ) ?>" />
-	<?php _e( '✔ Subscribe', AI1EC_PLUGIN_NAME ) ?>
-	<span class="ai1ec-subscribe-filtered"><?php _e( 'to this filtered calendar', AI1EC_PLUGIN_NAME ) ?></span>
-</a>
-<a class="ai1ec-button ai1ec-subscribe-google" target="_blank"
-	href="http://www.google.com/calendar/render?cid=<?php echo urlencode( str_replace( 'webcal://', 'http://', AI1EC_EXPORT_URL ) ) ?>"
-	title="<?php _e( 'Subscribe to this calendar in your Google Calendar', AI1EC_PLUGIN_NAME ) ?>" />
-	<img src="<?php echo AI1EC_IMAGE_URL ?>/google-calendar.png" />
-	<?php _e( 'Subscribe in Google Calendar', AI1EC_PLUGIN_NAME ) ?>
-</a>
+<?php if( $show_subscribe_buttons ): ?>
+	<a class="ai1ec-button ai1ec-subscribe"
+		href="<?php echo AI1EC_EXPORT_URL ?>"
+		title="<?php _e( 'Subscribe to this calendar using your favourite calendar program (iCal, Outlook, etc.)', AI1EC_PLUGIN_NAME ) ?>" />
+		<?php _e( '✔ Subscribe', AI1EC_PLUGIN_NAME ) ?>
+		<span class="ai1ec-subscribe-filtered"><?php _e( 'to this filtered calendar', AI1EC_PLUGIN_NAME ) ?></span>
+	</a>
+	<a class="ai1ec-button ai1ec-subscribe-google" target="_blank"
+		href="http://www.google.com/calendar/render?cid=<?php echo urlencode( str_replace( 'webcal://', 'http://', AI1EC_EXPORT_URL ) ) ?>"
+		title="<?php _e( 'Subscribe to this calendar in your Google Calendar', AI1EC_PLUGIN_NAME ) ?>" />
+		<img src="<?php echo AI1EC_IMAGE_URL ?>/google-calendar.png" />
+		<?php _e( 'Subscribe in Google Calendar', AI1EC_PLUGIN_NAME ) ?>
+	</a>
+<?php endif ?>

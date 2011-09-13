@@ -593,22 +593,24 @@ class Ai1ec_Events_Controller {
 	function single_view( &$event )
 	{
 		global $ai1ec_view_helper,
-		       $ai1ec_calendar_helper;
+		       $ai1ec_calendar_helper,
+		       $ai1ec_settings;
 
 		$subscribe_url = AI1EC_EXPORT_URL . "&ai1ec_post_ids=$event->post_id";
 		$subscribe_url = str_replace( 'webcal://', 'http://', $subscribe_url );
 
 		$args = array(
-			'event' => &$event,
-			'recurrence' => $event->recurrence_html,
-			'categories' => $event->categories_html,
-			'tags' => $event->tags_html,
-			'location' => nl2br( $event->location ),
-			'map' => $this->get_map_view( $event ),
-			'contact' => $event->contact_html,
-			'calendar_url' => $ai1ec_calendar_helper->get_calendar_url( $event ),
-			'subscribe_url' => $subscribe_url,
-			'google_url' => 'http://www.google.com/calendar/render?cid=' . urlencode( $subscribe_url ),
+			'event'                   => &$event,
+			'recurrence'              => $event->recurrence_html,
+			'categories'              => $event->categories_html,
+			'tags'                    => $event->tags_html,
+			'location'                => nl2br( $event->location ),
+			'map'                     => $this->get_map_view( $event ),
+			'contact'                 => $event->contact_html,
+			'calendar_url'            => $ai1ec_calendar_helper->get_calendar_url( $event ),
+			'subscribe_url'           => $subscribe_url,
+			'google_url'              => 'http://www.google.com/calendar/render?cid=' . urlencode( $subscribe_url ),
+			'show_subscribe_buttons'  => ! $ai1ec_settings->turn_off_subscription_buttons
 		);
 		$ai1ec_view_helper->display( 'event-single.php', $args );
 	}

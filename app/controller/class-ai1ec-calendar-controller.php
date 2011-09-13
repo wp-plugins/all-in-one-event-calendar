@@ -176,12 +176,13 @@ class Ai1ec_Calendar_Controller {
     }
 		// Define new arguments for overall calendar view
 		$args = array(
-			'view' => $view,
-			'create_event_url' => $create_event_url,
-			'categories'       => $categories,
-			'tags'             => get_terms( 'events_tags', array( 'orderby' => 'name' ) ),
-			'selected_cat_ids' => $cat_ids,
-			'selected_tag_ids' => $tag_ids,
+			'view'                    => $view,
+			'create_event_url'        => $create_event_url,
+			'categories'              => $categories,
+			'tags'                    => get_terms( 'events_tags', array( 'orderby' => 'name' ) ),
+			'selected_cat_ids'        => $cat_ids,
+			'selected_tag_ids'        => $tag_ids,
+			'show_subscribe_buttons'  => ! $ai1ec_settings->turn_off_subscription_buttons
 		);
 
 		// Feed month view into generic calendar view

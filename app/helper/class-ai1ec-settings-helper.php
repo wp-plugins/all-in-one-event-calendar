@@ -252,33 +252,35 @@ class Ai1ec_Settings_Helper {
 					 $ai1ec_settings_helper,
 					 $ai1ec_settings;
 
-		$calendar_page            = $ai1ec_settings_helper->wp_pages_dropdown(
+		$calendar_page                  = $ai1ec_settings_helper->wp_pages_dropdown(
 			'calendar_page_id',
 			$ai1ec_settings->calendar_page_id,
 			__( 'Calendar', AI1EC_PLUGIN_NAME )
 		);
-		$calendar_css_selector    = $ai1ec_settings->calendar_css_selector;
-		$week_start_day           = $ai1ec_settings_helper->get_week_dropdown( get_option( 'start_of_week' ) );
-		$agenda_events_per_page   = $ai1ec_settings->agenda_events_per_page;
-		$include_events_in_rss    =
+		$calendar_css_selector          = $ai1ec_settings->calendar_css_selector;
+		$week_start_day                 = $ai1ec_settings_helper->get_week_dropdown( get_option( 'start_of_week' ) );
+		$agenda_events_per_page         = $ai1ec_settings->agenda_events_per_page;
+		$include_events_in_rss          =
 			'<input type="checkbox" name="include_events_in_rss"
 				id="include_events_in_rss" value="1"'
 				. ( $ai1ec_settings->include_events_in_rss ? ' checked="checked"' : '' )
 				. '/>';
-		$show_publish_button      = $ai1ec_settings->show_publish_button ? 'checked=checked' : '';
-		$show_create_event_button = $ai1ec_settings->show_create_event_button ? 'checked=checked' : '';
-		$inject_categories        = $ai1ec_settings->inject_categories ? 'checked=checked' : '';
-	  $default_calendar_view    = $ai1ec_settings_helper->get_view_dropdown( $ai1ec_settings->default_calendar_view );
+		$show_publish_button            = $ai1ec_settings->show_publish_button ? 'checked=checked' : '';
+		$turn_off_subscription_buttons  = $ai1ec_settings->turn_off_subscription_buttons ? 'checked=checked' : '';
+		$show_create_event_button       = $ai1ec_settings->show_create_event_button ? 'checked=checked' : '';
+		$inject_categories              = $ai1ec_settings->inject_categories ? 'checked=checked' : '';
+	  $default_calendar_view          = $ai1ec_settings_helper->get_view_dropdown( $ai1ec_settings->default_calendar_view );
 
 	  $args = array(
-	    'calendar_page'            => $calendar_page,
-	    'default_calendar_view'    => $default_calendar_view,
-			'calendar_css_selector'    => $calendar_css_selector,
-			'week_start_day'           => $week_start_day,
-			'agenda_events_per_page'   => $agenda_events_per_page,
-			'show_publish_button'		   => $show_publish_button,
-			'show_create_event_button' => $show_create_event_button,
-			'inject_categories'        => $inject_categories,
+	    'calendar_page'                 => $calendar_page,
+	    'default_calendar_view'         => $default_calendar_view,
+			'calendar_css_selector'         => $calendar_css_selector,
+			'week_start_day'                => $week_start_day,
+			'agenda_events_per_page'        => $agenda_events_per_page,
+			'show_publish_button'		        => $show_publish_button,
+			'turn_off_subscription_buttons' => $turn_off_subscription_buttons,
+			'show_create_event_button'      => $show_create_event_button,
+			'inject_categories'             => $inject_categories,
 	  );
 	  $ai1ec_view_helper->display( 'box_general_settings.php', $args );
 	}
@@ -286,13 +288,15 @@ class Ai1ec_Settings_Helper {
 	/**
 	 * ics_import_settings_meta_box function
 	 *
-	 *
+	 * Renders view of iCalendar import meta box on the settings page.
 	 *
 	 * @return void
 	 **/
-	function ics_import_settings_meta_box( $object, $box ) {
+	function ics_import_settings_meta_box( $object, $box )
+	{
 	  global $ai1ec_view_helper,
-					 $ai1ec_settings_helper;
+					 $ai1ec_settings_helper,
+					 $ai1ec_settings;
 
 	  $args = array(
 	    'cron_freq' 						   => $ai1ec_settings_helper->get_cron_freq_dropdown( $ai1ec_settings->cron_freq ),

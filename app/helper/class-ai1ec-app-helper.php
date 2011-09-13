@@ -282,8 +282,8 @@ class Ai1ec_App_Helper {
           'orderby'					=> 'name',
           'selected'				=> $_GET[$tax_slug],
           'hierarchical'		=> $tax_obj->hierarchical,
-          'show_count'			=> false,
-          'hide_empty'			=> true
+          'show_count'			=> true,
+          'hide_if_empty'   => true
 				));
 			}
 		}

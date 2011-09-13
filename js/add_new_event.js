@@ -189,6 +189,47 @@ jQuery( function( $ ){
 			}
 		});
 
+		/**
+		 * Show/hide elements that show selectors for ending until/after events
+		 */
+		function show_end_fields() {
+			var selected = $( '#ai1ec_end option:selected' ).val();
+			switch( selected ) {
+				// Never selected, hide end fields
+				case '0':
+					hide_all_end_fields();
+					break;
+				// After selected
+				case '1':
+					if( $( '#ai1ec_count_holder' ).css( 'display' ) == 'none' ) {
+						hide_all_end_fields();
+						$( '#ai1ec_count_holder' ).fadeIn();
+					}
+					break;
+				// On date selected
+				case '2':
+					if( $( '#ai1ec_until_holder' ).css( 'display' ) == 'none' ) {
+						hide_all_end_fields();
+						$( '#ai1ec_until_holder' ).fadeIn();
+					}
+					break;
+			}
+		}
+		/**
+		 * Show/hide elements that show selectors for repeating events
+		 */
+		function show_all_repeat_fields() {
+			$( '#ai1ec_end_holder' ).fadeIn();
+			show_end_fields();
+		}
+		function hide_all_repeat_fields() {
+			hide_all_end_fields();
+			$( '#ai1ec_end_holder' ).fadeOut();
+		}
+		function hide_all_end_fields() {
+			$( '#ai1ec_count_holder, #ai1ec_until_holder' ).hide();
+		}
+
 		// ===========================
 		// = Repeat dropdown clicked =
 		// ===========================
@@ -217,46 +258,6 @@ jQuery( function( $ ){
 		// ========================
 		$( '#ai1ec_end' ).change( show_end_fields );
 
-		/**
-		 * Show/hide elements that show selectors for repeating events
-		 */
-		function show_all_repeat_fields() {
-			$( '#ai1ec_end_holder' ).fadeIn();
-			show_end_fields();
-		}
-		function hide_all_repeat_fields() {
-			hide_all_end_fields();
-			$( '#ai1ec_end_holder' ).fadeOut();
-		}
-		/**
-		 * Show/hide elements that show selectors for ending until/after events
-		 */
-		function show_end_fields() {
-			var selected = $( '#ai1ec_end option:selected' ).val();
-			switch( selected ) {
-				// Never selected, hide end fields
-				case '0':
-					hide_all_end_fields();
-					break;
-				// After selected
-				case '1':
-					if( $( '#ai1ec_count_holder' ).css( 'display' ) == 'none' ) {
-						hide_all_end_fields();
-						$( '#ai1ec_count_holder' ).fadeIn();
-					}
-					break;
-				// On date selected
-				case '2':
-					if( $( '#ai1ec_until_holder' ).css( 'display' ) == 'none' ) {
-						hide_all_end_fields();
-						$( '#ai1ec_until_holder' ).fadeIn();
-					}
-					break;
-			}
-		}
-		function hide_all_end_fields() {
-			$( '#ai1ec_count_holder, #ai1ec_until_holder' ).hide();
-		}
 		/**
 		 * Bottom publish button click event handler
 		 */

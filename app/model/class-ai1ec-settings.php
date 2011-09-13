@@ -115,6 +115,16 @@ class Ai1ec_Settings {
 	var $show_create_event_button;
 
 	/**
+	 * turn_off_subscription_buttons class variable
+	 *
+	 * Hides "Subscribe"/"Add to Calendar" and same Google buttons in calendar and
+	 * single event views
+	 *
+	 * @var bool
+	 **/
+	var $turn_off_subscription_buttons;
+
+	/**
 	 * inject_categories class variable
 	 *
 	 * Include Event Categories as part of the output of the wp_list_categories()
@@ -123,11 +133,11 @@ class Ai1ec_Settings {
 	 * @var bool
 	 **/
 	var $inject_categories;
-	
+
 	/**
 	 * settings_page class variable
 	 *
-	 * Stores a reference to the settings page added using 
+	 * Stores a reference to the settings page added using
 	 * add_submenu_page function
 	 *
 	 * @var object
@@ -192,19 +202,20 @@ class Ai1ec_Settings {
 	 **/
 	function set_defaults() {
 		$defaults = array(
-			'calendar_page_id'            => 0,
-			'default_calendar_view'       => 'month',
-			'calendar_css_selector'       => '',
-			'week_start_day'              => get_option( 'start_of_week' ),
-			'agenda_events_per_page'      => get_option( 'posts_per_page' ),
-			'include_events_in_rss'       => false,
-			'allow_publish_to_facebook'   => false,
-			'facebook_credentials'        => null,
-			'user_role_can_create_event'  => null,
-			'show_publish_button'         => false,
-			'show_create_event_button'    => false,
-			'inject_categories'           => false,
-			'cron_freq'                   => 'daily'
+			'calendar_page_id'              => 0,
+			'default_calendar_view'         => 'month',
+			'calendar_css_selector'         => '',
+			'week_start_day'                => get_option( 'start_of_week' ),
+			'agenda_events_per_page'        => get_option( 'posts_per_page' ),
+			'include_events_in_rss'         => false,
+			'allow_publish_to_facebook'     => false,
+			'facebook_credentials'          => null,
+			'user_role_can_create_event'    => null,
+			'show_publish_button'           => false,
+			'show_create_event_button'      => false,
+			'turn_off_subscription_buttons' => false,
+			'inject_categories'             => false,
+			'cron_freq'                     => 'daily'
 		);
 
 		foreach( $defaults as $key => $default ) {
@@ -235,6 +246,7 @@ class Ai1ec_Settings {
 		$this->cron_freq							        = $params['cron_freq'];
 		$this->show_publish_button		        = $params['show_publish_button'];
 		$this->show_create_event_button       = $params['show_create_event_button'];
+		$this->turn_off_subscription_buttons  = $params['turn_off_subscription_buttons'];
 		$this->inject_categories              = $params['inject_categories'];
 		$this->include_events_in_rss 					= $params['include_events_in_rss'];
 		$this->allow_events_posting_facebook 	= $params['allow_events_posting_facebook'];

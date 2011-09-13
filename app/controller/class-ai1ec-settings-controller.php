@@ -321,5 +321,34 @@ class Ai1ec_Settings_Controller {
       wp_enqueue_script( 'ai1ec-settings', AI1EC_JS_URL . '/settings.js', array( 'jquery' ) );
     }
 	}
+	
+	/**
+	 * plugin_action_links function
+	 *
+	 * Adds a link to Settings page in plugin list page 
+	 *
+	 * @return array
+	 **/
+	function plugin_action_links( $links ) {
+    $settings = sprintf( __( '<a href="%s">Settings</a>', AI1EC_PLUGIN_NAME ), admin_url( 'edit.php?post_type=ai1ec_event&page=all-in-one-event-calendar-settings' ) );
+    array_unshift( $links, $settings );
+    return $links;
+	}
+	
+	/**
+	 * plugin_row_meta function
+	 *
+	 *
+	 *
+	 * @return void
+	 **/
+	function plugin_row_meta( $links, $file ) {
+	  if( $file == AI1EC_PLUGIN_BASENAME ) :
+	    $links[] = sprintf( __( '<a href="%s" target="_blank">Donate</a>', AI1EC_PLUGIN_NAME ), 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9JJMUW48W2ED8' );
+      $links[] = sprintf( __( '<a href="%s" target="_blank">Get Support</a>', AI1EC_PLUGIN_NAME ), 'http://theseedstudio.com/get-supported/' );
+    endif;
+    
+    return $links;
+	}
 }
 // END class
