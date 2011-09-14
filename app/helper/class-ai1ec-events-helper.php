@@ -469,79 +469,149 @@ class Ai1ec_Events_Helper {
 	 * @return array Matching events
 	 **/
 	function get_matching_events( $start = false, $end = false, $tags = false, $categories = false, $posts = false ) {
-		$args = array(
-			'post_type' 			=> AI1EC_POST_TYPE,
-			'posts_per_page' 	=> -1
-		);
+	  global $wpdb;
 
+		// holds event_categories sql
+    $c_sql = '';
+    $c_where_sql = '';
+    // holds event_tags sql
+    $t_sql = '';
+    $t_where_sql ='';
+    // holds posts sql
+    $p_where_sql = '';
+    // holds start sql
+    $start_where_sql = '';
+    // holds end sql
+    $end_where_sql = '';
+    // hold escape values
+    $args = array();
+    
+    // =============================
+    // = Generating start date sql =
+    // =============================
+    if( $start !== false ) {
+      $start_where_sql = "AND e.start >= FROM_UNIXTIME( %d )";
+      $args[] = $start;
+    }
+    
+    // ===========================
+    // = Generating end date sql =
+    // ===========================
+    if( $end !== false ) {
+      $end_where_sql = "AND e.end <= FROM_UNIXTIME( %d )";
+      $args[] = $end;
+    }
+    
+    // ===================================
+    // = Generating event_categories sql =
+    // ===================================
 		if( $categories !== false ) {
-			// add categories
+		  
+			// sanitize categories var
 			if( strstr( $categories, ',' ) !== false ) {
-				$categories = explode( ',', $categories );
-				// prevent sql injection
-				foreach( $categories as $key => $val ) {
-					$categories[$key] = (int) $val;
-				}
+			  $tmp = array();
+        // prevent sql injection
+        foreach( explode( ',', $categories ) as $cat )
+          $tmp[] = (int) $cat;
+          
+        $categories = $tmp;
+			} else {
+			  // prevent sql injection
+			  $categories = (int) $categories;
 			}
-			$args["tax_query"][] = array(
-				'taxonomy' 	=> 'events_categories',
-				'terms'			=> $categories,
-				'field'			=> 'id'
-			);
+			
+			$c_sql        = "INNER JOIN $wpdb->term_relationships AS tr ON post_id = tr.object_id ";
+			$c_where_sql  = "AND tr.term_taxonomy_id IN ( $categories ) ";
 		}
 
+    // =============================
+    // = Generating event_tags sql =
+    // =============================
 		if( $tags !== false ) {
-			// add tags
+			
+			// sanitize tags var
 			if( strstr( $tags, ',' ) !== false ) {
-				$tags = explode( ',', $tags );
+			  $tmp = array();
 				// prevent sql injection
-				foreach( $tags as $key => $val ) {
-					$tags[$key] = (int) $val;
-				}
+				foreach( explode( ',', $tags ) as $tag )
+				  $tmp[] = (int) $tag;
+				
+				$tags = $tmp;
+			} else {
+			  $tags = (int) $tags;
 			}
-			$args["tax_query"][] = array(
-				'taxonomy' 	=> 'events_tags',
-				'terms'			=> $tags,
-				'field'			=> 'id'
-			);
+			
+			// if category sql is included then don't inner join term_relationships table
+			if( ! empty( $c_sql ) ) {
+			  $t_where_sql = "AND tr.term_taxonomy_id IN ( $tags ) ";
+			} else {
+			  $t_sql =  "INNER JOIN $wpdb->term_relationships AS tr ON e.post_id = tr.object_id ";
+			  $t_where_sql = "AND tr.term_taxonomy_id IN ( $tags ) ";
+			}
 		}
 
+    // ========================
+    // = Generating posts sql =
+    // ========================
 		if( $posts !== false ) {
-			// add posts
+			// sanitize posts var
 			if( strstr( $posts, ',' ) !== false ) {
-				$posts = explode( ',', $posts );
-				// prevent sql injection
-				foreach( $posts as $key => $val ) {
-					$posts[$key] = (int) $val;
-				}
+			  $tmp = array();
+			  
+			  // prevent sql injection
+        foreach( explode( ',', $posts ) as $post )
+          $tmp[] = $post;
+        
+        $posts = $tmp;
 			}
-			if( is_array( $posts ) )
-				$args["post__in"] = $posts;
-			else
-				$args["p"] 				= $posts;
+			
+			$p_where_sql = "AND ID IN ( $posts ) ";
 		}
+		
+		
+		$query = $wpdb->prepare(
+			"SELECT *, e.post_id, UNIX_TIMESTAMP( e.start ) as start, UNIX_TIMESTAMP( e.end ) as end, e.allday, e.recurrence_rules, e.exception_rules,
+				e.recurrence_dates, e.exception_dates, e.venue, e.country, e.address, e.city, e.province, e.postal_code,
+				e.show_map, e.contact_name, e.contact_phone, e.contact_email, e.cost, e.ical_feed_url, e.ical_source_url,
+				e.ical_organizer, e.ical_contact, e.ical_uid " .
+			"FROM $wpdb->posts " .
+			  "INNER JOIN {$wpdb->prefix}ai1ec_events AS e ON e.post_id = ID " .
+			  $c_sql .
+			  $t_sql .
+			"WHERE post_type = '" . AI1EC_POST_TYPE . "' " .
+			  $c_where_sql .
+			  $t_where_sql .
+			  $p_where_sql .
+			  $start_where_sql .
+			  $end_where_sql, 
+			$args );
 
-		$loop = new WP_Query( $args );
-		$events = array();
-		foreach( $loop->posts as $post ) {
-			try{
-				$ev = new Ai1ec_Event( $post->ID );
-			} catch( Ai1ec_Event_Not_Found $n ) {
-				// The event is not found, continue to the next event
-				continue;
-			}
-			// if there are recurrence rules, include the event, else...
-			if( empty( $ev->recurrence_rules ) ) {
+		$events = $wpdb->get_results( $query, ARRAY_A );
+		
+    foreach( $events as &$event ) {
+      try{
+        $event = new Ai1ec_Event( $event );
+      } catch( Ai1ec_Event_Not_Found $n ) {
+        unset( $event );
+        // The event is not found, continue to the next event
+        continue;
+      }
+      
+      // if there are recurrence rules, include the event, else...
+			if( empty( $event->recurrence_rules ) ) {
 				// if start time is set, and event start time is before the range
 				// it, continue to the next event
-				if( $start !== false && $ev->start < $start )
-					continue;
+				if( $start !== false && $event->start < $start ) {
+				  unset( $event );
+				  continue;
+				}
 				// if end time is set, and event end time is after
 				// it, continue to the next event
-				if( $end !== false && $ev->end < $end )
-					continue;
+				if( $end !== false && $ev->end < $end ) {
+				  unset( $event );
+				  continue;
+				}
 			}
-			$events[] = $ev;
 		}
 
 		return $events;

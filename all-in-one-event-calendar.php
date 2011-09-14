@@ -56,6 +56,11 @@ define( 'AI1EC_JS_PATH', 					AI1EC_PATH . '/js' );
 // ============
 define( 'AI1EC_LIB_PATH', 				AI1EC_PATH . '/lib' );
 
+// =================
+// = Language Path =
+// =================
+define( 'AI1EC_LANGUAGE_PATH', 	  AI1EC_PLUGIN_NAME . '/language' );
+
 // ============
 // = App Path =
 // ============

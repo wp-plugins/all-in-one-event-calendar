@@ -62,7 +62,7 @@ class Ai1ec_App_Controller {
 		       $ai1ec_settings;
 
 		// register_activation_hook
-		register_activation_hook( AI1EC_PLUGIN_NAME . '/' . AI1EC_PLUGIN_NAME . '.php', array( &$this, 'rewrite_flush' ) );
+		register_activation_hook( AI1EC_PLUGIN_NAME . '/' . AI1EC_PLUGIN_NAME . '.php', array( &$this, 'activation_hook' ) );
 
 		// Configure MySQL to operate in GMT time
 		$wpdb->query( "SET time_zone = '+0:00'" );
@@ -82,6 +82,8 @@ class Ai1ec_App_Controller {
 		add_action( 'init', 											              array( &$this, 'parse_standalone_request' ) );
 		// General initialization
 		add_action( 'init',                                     array( &$ai1ec_events_controller, 'init' ) );
+		// Load plugin text domain
+		add_action( 'init',                                     array( &$this, 'load_textdomain' ) );
 		// Register The Event Calendar importer
 		add_action( 'admin_init',                               array( &$ai1ec_importer_controller, 'register_importer' ) );
 		// add content for our custom columns
@@ -150,6 +152,33 @@ class Ai1ec_App_Controller {
 		add_action( 'wp_ajax_ai1ec_flush_ics',  array( &$ai1ec_settings_controller, 'flush_ics_feed' ) );
 		// Update iCalendar feed
 		add_action( 'wp_ajax_ai1ec_update_ics', array( &$ai1ec_settings_controller, 'update_ics_feed' ) );
+	}
+	
+	/**
+	 * activation_hook function
+	 *
+	 * This function is called when activating the plugin
+	 *
+	 * @return void
+	 **/
+	function activation_hook() {
+	  
+	  // load plugin text domain
+	  $this->load_textdomain();
+	  
+	  // flush rewrite rules
+	  $this->rewrite_flush();
+	}
+	
+	/**
+	 * load_textdomain function
+	 *
+	 * Loads plugin text domain
+	 *
+	 * @return void
+	 **/
+	function load_textdomain() {
+	  $err = load_plugin_textdomain( AI1EC_PLUGIN_NAME, false, AI1EC_LANGUAGE_PATH );
 	}
 
 	/**
