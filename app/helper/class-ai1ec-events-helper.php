@@ -135,12 +135,10 @@ class Ai1ec_Events_Helper {
 		global $wpdb;
 
 		// Convert event's timestamps to local for correct calculations of
-		// recurrence.
-		// $gm_diff: Needed with SG_iCal_Freq, which doesn't use gm___ version of
-		// PHP date functions and calculates wrong recurrences sometimes
-		$gm_diff = mktime( 0 ) - gmmktime( 0 );
-		$event->start = $this->gmt_to_local( $event->start ) + $gm_diff;
-		$event->end = $this->gmt_to_local( $event->end ) + $gm_diff;
+		// recurrence. Need to also remove PHP timezone offset for each date for
+		// SG_iCal to calculate correct recurring instances.
+		$event->start = $this->gmt_to_local( $event->start ) - date( 'Z', $event->start );
+		$event->end = $this->gmt_to_local( $event->end ) - date( 'Z', $event->end );
 
 		$evs = array();
 		$e	 = array(
@@ -188,7 +186,7 @@ class Ai1ec_Events_Helper {
 					$this->get_matching_event_id(
 						$event->ical_uid,
 						$event->ical_feed_url,
-						$start = $this->local_to_gmt( $e['start'] ) - $gm_diff,
+						$start = $this->local_to_gmt( $e['start'] ) - date( 'Z', $e['start'] ),
 						false,	// Only search events that don't define recurrence (i.e. only search for RECURRENCE-ID events)
 						$event->post_id
 					)
@@ -197,15 +195,19 @@ class Ai1ec_Events_Helper {
 			// If no other instance was found
 			if( is_null( $matching_event_id ) )
 			{
-				$start_day = date( 'j', $e['start'] );
-				$end_day = date( 'j', $e['end'] );
+				$start = getdate( $e['start'] );
+				$end = getdate( $e['end'] );
 
-				// If event spans days, create instance for each spanning day
-				if( $start_day != $end_day || $e['end'] - $e['start'] > 60 * 60 * 24 )
-	        $this->create_cache_table_entries( $e, $gm_diff );
+				// If event spans a day and end time is not midnight, or spans more than
+				// a day, then create instance for each spanning day
+				if( ( $start['mday'] != $end['mday'] &&
+				      ( $end['hours'] || $end['minutes'] || $end['seconds'] ) )
+				    || $e['end'] - $e['start'] > 60 * 60 * 24 ) {
+	        $this->create_cache_table_entries( $e );
 				// Else cache single instance of event
-				else
-				  $this->insert_event_in_cache_table( $e, $gm_diff );
+				} else {
+				  $this->insert_event_in_cache_table( $e );
+				}
 			}
 		}
 	}
@@ -216,16 +218,15 @@ class Ai1ec_Events_Helper {
 	 * Inserts a new record in the cache table
 	 *
 	 * @param array $event Event array
-	 * @param int $gm_diff Different between local time and gmt time
 	 *
 	 * @return void
 	 **/
-	 function insert_event_in_cache_table( $event, $gm_diff ) {
+	 function insert_event_in_cache_table( $event ) {
      global $wpdb;
 
      // Return the start/end times to GMT zone
-     $event['start'] = $this->local_to_gmt( $event['start'] )  - $gm_diff;
-     $event['end']   = $this->local_to_gmt( $event['end'] )    - $gm_diff;
+     $event['start'] = $this->local_to_gmt( $event['start'] ) + date( 'Z', $event['start'] );
+     $event['end']   = $this->local_to_gmt( $event['end'] )   + date( 'Z', $event['end'] );
 
      $wpdb->query(
        $wpdb->prepare(
@@ -243,12 +244,13 @@ class Ai1ec_Events_Helper {
 	  * Create a new entry for each day that the event spans.
 	  *
 	  * @param array $e Event array
-	  * @param int $gm_diff Different between local time and GMT time
 	  *
 	  * @return void
 	  **/
-	  function create_cache_table_entries( $e, $gm_diff )
+	  function create_cache_table_entries( $e )
 	  {
+	  	global $ai1ec_events_helper;
+
 	  	// Decompose start dates into components
 	  	$start_bits = getdate( $e['start'] );
 
@@ -267,7 +269,7 @@ class Ai1ec_Events_Helper {
 				$start_bits['year']      // year
 			);
 			// Cache first day
-			$this->insert_event_in_cache_table( array( 'post_id' => $e['post_id'], 'start' => $event_start, 'end' => $event_end ), $gm_diff );
+			$this->insert_event_in_cache_table( array( 'post_id' => $e['post_id'], 'start' => $event_start, 'end' => $event_end ) );
 
 			// ====================================================
 			// = Calculate the time for event's intermediate days =
@@ -278,7 +280,7 @@ class Ai1ec_Events_Helper {
 			$event_end += 60 * 60 * 24;
 			// Cache intermediate days
 			while( $event_end < $e['end'] ) {
-			  $this->insert_event_in_cache_table( array( 'post_id' => $e['post_id'], 'start' => $event_start, 'end' => $event_end ), $gm_diff );
+			  $this->insert_event_in_cache_table( array( 'post_id' => $e['post_id'], 'start' => $event_start, 'end' => $event_end ) );
 			  $event_start  = $event_end;    // Start time is previous end time
 			  $event_end    += 24 * 60 * 60; // Increment end time by 1 day
 			}
@@ -292,7 +294,7 @@ class Ai1ec_Events_Helper {
 			$event_end = $e['end'];
 			if( $event_end > $event_start )
 				// Cache last day
-				$this->insert_event_in_cache_table( array( 'post_id' => $e['post_id'], 'start' => $event_start, 'end' => $event_end ), $gm_diff );
+				$this->insert_event_in_cache_table( array( 'post_id' => $e['post_id'], 'start' => $event_start, 'end' => $event_end ) );
 	  }
 
 	/**
@@ -403,12 +405,12 @@ class Ai1ec_Events_Helper {
 				$until = $rec->getUntil();
 				if( $until ) {
 					$until = strtotime( $rec->getUntil() );
-					$until -= 24 * 60 * 60; // Subtract 1 day (intuitively, last date is included)
-					$end = 2;               // set end value
-				} else if( $count )
-          $end = 1;               // set end value
+					$until += date( 'Z', $until ); // Add timezone offset
+					$end = 2;
+				} elseif( $count )
+          $end = 1;
         else
-          $end = 0;               // set end value
+          $end = 0;
 			}
 		}
 		return array(
@@ -485,7 +487,7 @@ class Ai1ec_Events_Helper {
     $end_where_sql = '';
     // hold escape values
     $args = array();
-    
+
     // =============================
     // = Generating start date sql =
     // =============================
@@ -493,7 +495,7 @@ class Ai1ec_Events_Helper {
       $start_where_sql = "AND e.start >= FROM_UNIXTIME( %d )";
       $args[] = $start;
     }
-    
+
     // ===========================
     // = Generating end date sql =
     // ===========================
@@ -501,25 +503,25 @@ class Ai1ec_Events_Helper {
       $end_where_sql = "AND e.end <= FROM_UNIXTIME( %d )";
       $args[] = $end;
     }
-    
+
     // ===================================
     // = Generating event_categories sql =
     // ===================================
 		if( $categories !== false ) {
-		  
+
 			// sanitize categories var
 			if( strstr( $categories, ',' ) !== false ) {
 			  $tmp = array();
         // prevent sql injection
         foreach( explode( ',', $categories ) as $cat )
           $tmp[] = (int) $cat;
-          
+
         $categories = $tmp;
 			} else {
 			  // prevent sql injection
 			  $categories = (int) $categories;
 			}
-			
+
 			$c_sql        = "INNER JOIN $wpdb->term_relationships AS tr ON post_id = tr.object_id ";
 			$c_where_sql  = "AND tr.term_taxonomy_id IN ( $categories ) ";
 		}
@@ -528,19 +530,19 @@ class Ai1ec_Events_Helper {
     // = Generating event_tags sql =
     // =============================
 		if( $tags !== false ) {
-			
+
 			// sanitize tags var
 			if( strstr( $tags, ',' ) !== false ) {
 			  $tmp = array();
 				// prevent sql injection
 				foreach( explode( ',', $tags ) as $tag )
 				  $tmp[] = (int) $tag;
-				
+
 				$tags = $tmp;
 			} else {
 			  $tags = (int) $tags;
 			}
-			
+
 			// if category sql is included then don't inner join term_relationships table
 			if( ! empty( $c_sql ) ) {
 			  $t_where_sql = "AND tr.term_taxonomy_id IN ( $tags ) ";
@@ -557,18 +559,18 @@ class Ai1ec_Events_Helper {
 			// sanitize posts var
 			if( strstr( $posts, ',' ) !== false ) {
 			  $tmp = array();
-			  
+
 			  // prevent sql injection
         foreach( explode( ',', $posts ) as $post )
           $tmp[] = $post;
-        
+
         $posts = $tmp;
 			}
-			
+
 			$p_where_sql = "AND ID IN ( $posts ) ";
 		}
-		
-		
+
+
 		$query = $wpdb->prepare(
 			"SELECT *, e.post_id, UNIX_TIMESTAMP( e.start ) as start, UNIX_TIMESTAMP( e.end ) as end, e.allday, e.recurrence_rules, e.exception_rules,
 				e.recurrence_dates, e.exception_dates, e.venue, e.country, e.address, e.city, e.province, e.postal_code,
@@ -583,11 +585,11 @@ class Ai1ec_Events_Helper {
 			  $t_where_sql .
 			  $p_where_sql .
 			  $start_where_sql .
-			  $end_where_sql, 
+			  $end_where_sql,
 			$args );
 
 		$events = $wpdb->get_results( $query, ARRAY_A );
-		
+
     foreach( $events as &$event ) {
       try{
         $event = new Ai1ec_Event( $event );
@@ -596,7 +598,7 @@ class Ai1ec_Events_Helper {
         // The event is not found, continue to the next event
         continue;
       }
-      
+
       // if there are recurrence rules, include the event, else...
 			if( empty( $event->recurrence_rules ) ) {
 				// if start time is set, and event start time is before the range
@@ -640,11 +642,13 @@ class Ai1ec_Events_Helper {
 	 * this is also converted to the local timezone.
 	 *
 	 * @param int $timestamp
+	 * @param bool $convert_from_gmt Whether to convert from GMT time to local
 	 *
 	 * @return string
 	 **/
-	function get_short_time( $timestamp ) {
-		$timestamp = $this->gmt_to_local( $timestamp );
+	function get_short_time( $timestamp, $convert_from_gmt = true ) {
+		if( $convert_from_gmt )
+			$timestamp = $this->gmt_to_local( $timestamp );
 		$ampm = gmstrftime( '%p', $timestamp );
 		$ampm = $ampm[0];
 		$ampm = strtolower( $ampm );
@@ -658,11 +662,13 @@ class Ai1ec_Events_Helper {
 	 * this is also converted to the local timezone.
 	 *
 	 * @param int $timestamp
+	 * @param bool $convert_from_gmt Whether to convert from GMT time to local
 	 *
 	 * @return string
 	 **/
-	function get_short_date( $timestamp ) {
-		$timestamp = $this->gmt_to_local( $timestamp );
+	function get_short_date( $timestamp, $convert_from_gmt = true ) {
+		if( $convert_from_gmt )
+			$timestamp = $this->gmt_to_local( $timestamp );
 		return gmstrftime( '%b %e', $timestamp );
 	}
 
@@ -676,8 +682,9 @@ class Ai1ec_Events_Helper {
 	 *
 	 * @return string
 	 **/
-	function get_medium_time( $timestamp ) {
-		$timestamp = $this->gmt_to_local( $timestamp );
+	function get_medium_time( $timestamp, $convert_from_gmt = true ) {
+		if( $convert_from_gmt )
+			$timestamp = $this->gmt_to_local( $timestamp );
 		$ampm = gmstrftime( '%p', $timestamp );
 		$ampm = strtolower( $ampm );
 		return gmstrftime( '%l:%M', $timestamp ) . $ampm;
@@ -690,11 +697,13 @@ class Ai1ec_Events_Helper {
 	 * this is also converted to the local timezone.
 	 *
 	 * @param int $timestamp
+	 * @param bool $convert_from_gmt Whether to convert from GMT time to local
 	 *
 	 * @return string
 	 **/
-	function get_long_time( $timestamp ) {
-		$timestamp = $this->gmt_to_local( $timestamp );
+	function get_long_time( $timestamp, $convert_from_gmt = true ) {
+		if( $convert_from_gmt )
+			$timestamp = $this->gmt_to_local( $timestamp );
 		$ampm = gmstrftime( '%p', $timestamp );
 		$ampm = strtolower( $ampm );
 		return gmstrftime( '%a, %B %e @ %l:%M', $timestamp ) . $ampm;
@@ -704,14 +713,16 @@ class Ai1ec_Events_Helper {
 	 * get_long_date function
 	 *
 	 * Format a long-length date for use in other views (e.g., single event);
-	 * this is also converted to the local timezone.
+	 * this is also converted to the local timezone if desired.
 	 *
 	 * @param int $timestamp
+	 * @param bool $convert_from_gmt Whether to convert from GMT time to local
 	 *
 	 * @return string
 	 **/
-	function get_long_date( $timestamp ) {
-		$timestamp = $this->gmt_to_local( $timestamp );
+	function get_long_date( $timestamp, $convert_from_gmt = true ) {
+		if( $convert_from_gmt )
+			$timestamp = $this->gmt_to_local( $timestamp );
 		return gmstrftime( '%a, %B %e', $timestamp );
 	}
 
@@ -829,7 +840,7 @@ class Ai1ec_Events_Helper {
 	 *                                comma-separated string
 	 *
 	 * @return array                  Filtered post IDs as an array of ints
-	 **/
+	 */
 	function filter_by_terms( $post_ids, $term_ids )
 	{
 		global $wpdb;
@@ -865,11 +876,12 @@ class Ai1ec_Events_Helper {
 	/**
 	 * get_category_color function
 	 *
+	 * Returns the color of the Event Category having the given term ID.
 	 *
-	 *
-	 * @return void
-	 **/
-	function get_category_color( $term_id = 0 ) {
+	 * @param int $term_id The ID of the Event Category
+	 * @return string
+	 */
+	function get_category_color( $term_id ) {
 	  global $wpdb;
 
     $term_id = (int) $term_id;
@@ -881,9 +893,11 @@ class Ai1ec_Events_Helper {
 	/**
 	 * get_category_color_square function
 	 *
+	 * Returns the HTML markup for the category color square of the given Event
+	 * Category term ID.
 	 *
-	 *
-	 * @return void
+	 * @param int $term_id The Event Category's term ID
+	 * @return string
 	 **/
 	function get_category_color_square( $term_id ) {
 	  $color = $this->get_category_color( $term_id );
@@ -899,6 +913,8 @@ class Ai1ec_Events_Helper {
 	 *
 	 * Returns the style attribute assigning the category color style to an event.
 	 *
+	 * @param int $term_id The Event Category's term ID
+	 * @param bool $allday Whether the event is all-day
 	 * @return string
 	 **/
 	function get_event_category_color_style( $term_id, $allday = false ) {
@@ -916,8 +932,9 @@ class Ai1ec_Events_Helper {
 	/**
 	 * get_event_category_colors function
 	 *
-	 * Returns category color boxes
+	 * Returns category color squares for the list of Event Category objects.
 	 *
+	 * @param array $cats The Event Category objects as returned by get_terms()
 	 * @return string
 	 **/
 	function get_event_category_colors( $cats ) {
@@ -935,8 +952,9 @@ class Ai1ec_Events_Helper {
 	/**
 	 * create_end_dropdown function
 	 *
+	 * Outputs the dropdown list for the recurrence end option.
 	 *
-	 *
+	 * @param int $selected The index of the selected option, if any
 	 * @return void
 	 **/
 	function create_end_dropdown( $selected = null ) {

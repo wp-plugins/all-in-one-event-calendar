@@ -592,10 +592,13 @@ class Ai1ec_Event {
 				if( $rules['until'] ) {
 					$rules['until'] = sprintf(
 						__( 'until <strong>%s</strong>', AI1EC_PLUGIN_NAME ),
-						esc_html( $ai1ec_events_helper->get_long_date( $rules['until'] ) ) );
+						esc_html( $ai1ec_events_helper->get_long_date( $rules['until'], false ) ) );
 				} else {
 					unset( $rules['until'] );
 				}
+
+				// The "end" specifier shouldn't be output
+				unset( $rules['end'] );
 
 				$end = join( __( ' or ', AI1EC_PLUGIN_NAME ), $rules );
 

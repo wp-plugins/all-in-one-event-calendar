@@ -100,6 +100,7 @@ class Ai1ec_App_Helper {
 	 * @return void
 	 **/
 	function create_post_type() {
+	  global $ai1ec_settings;
 
     // if the event contributor role is not created, create it
 		if( !get_role( 'ai1ec_event_assistant' ) ) {
@@ -193,7 +194,8 @@ class Ai1ec_App_Helper {
 	    'has_archive' 				=> true,
 	    'hierarchical' 				=> false,
 	    'menu_position' 			=> 5,
-	    'supports'						=> $supports
+	    'supports'						=> $supports,
+	    'exclude_from_search' => $ai1ec_settings->exclude_from_search
 		);
 
 		// ========================================

@@ -169,7 +169,7 @@ class Ai1ec_Calendar_Controller {
 	  // Validate preselected category/tag IDs
 	  $cat_ids = join( ',', array_filter( split( ',', $this->request['ai1ec_cat_ids'] ), 'is_numeric' ) );
 	  $tag_ids = join( ',', array_filter( split( ',', $this->request['ai1ec_tag_ids'] ), 'is_numeric' ) );
-	  
+
 	  $categories = get_terms( 'events_categories', array( 'orderby' => 'name' ) );
     foreach( $categories as &$cat ) {
       $cat->color = $ai1ec_events_helper->get_category_color_square( $cat->term_id );
@@ -217,19 +217,15 @@ class Ai1ec_Calendar_Controller {
 
 		// Get components of localized time
 		$bits = $ai1ec_events_helper->gmgetdate( $ai1ec_events_helper->gmt_to_local( time() ) );
-		// Use first day of the month as reference timestamp
-		$timestamp = gmmktime( 0, 0, 0, $bits['mon'], 1, $bits['year'] );
-		// Incorporate month offset into date, so we are looking at right month
-		$timestamp = strtotime(
-			$month_offset > 0 ? "+$month_offset months" : "$month_offset months",
-			$timestamp );
+		// Use first day of the month as reference timestamp, and apply month offset
+		$timestamp = gmmktime( 0, 0, 0, $bits['mon'] + $month_offset, 1, $bits['year'] );
 
 		$days_events = $ai1ec_calendar_helper->get_events_for_month( $timestamp, $categories, $tags );
 		$cell_array = $ai1ec_calendar_helper->get_month_cell_array( $timestamp, $days_events );
 		$pagination_links = $ai1ec_calendar_helper->get_month_pagination_links( $month_offset );
 
 		$view_args = array(
-			'title' => strftime( '%B %Y', $timestamp ),
+			'title' => gmstrftime( '%B %Y', $timestamp ),
 			'weekdays' => $ai1ec_calendar_helper->get_weekdays(),
 			'cell_array' => $cell_array,
 			'pagination_links' => $pagination_links,

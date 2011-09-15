@@ -95,6 +95,14 @@ class Ai1ec_Settings {
 	var $cron_freq;
 
 	/**
+	 * exclude_from_search class variable
+	 *
+	 * Whether to exclude events from search results
+	 * @var bool
+	 **/
+	var $exclude_from_search;
+
+	/**
 	 * show_publish_button class variable
 	 *
 	 * Display publish button at the bottom of the
@@ -133,6 +141,15 @@ class Ai1ec_Settings {
 	 * @var bool
 	 **/
 	var $inject_categories;
+
+	/**
+	 * input_us_format class variable
+	 *
+	 * Input dates in US format.
+	 *
+	 * @var bool
+	 **/
+	var $input_us_format;
 
 	/**
 	 * settings_page class variable
@@ -212,9 +229,11 @@ class Ai1ec_Settings {
 			'facebook_credentials'          => null,
 			'user_role_can_create_event'    => null,
 			'show_publish_button'           => false,
+			'exclude_from_search'           => false,
 			'show_create_event_button'      => false,
 			'turn_off_subscription_buttons' => false,
 			'inject_categories'             => false,
+			'input_us_format'               => false,
 			'cron_freq'                     => 'daily'
 		);
 
@@ -245,9 +264,11 @@ class Ai1ec_Settings {
 			$this->agenda_events_per_page = 1;
 		$this->cron_freq							        = $params['cron_freq'];
 		$this->show_publish_button		        = $params['show_publish_button'];
+		$this->exclude_from_search            = $params['exclude_from_search'];
 		$this->show_create_event_button       = $params['show_create_event_button'];
 		$this->turn_off_subscription_buttons  = $params['turn_off_subscription_buttons'];
 		$this->inject_categories              = $params['inject_categories'];
+		$this->input_us_format                = $params['input_us_format'];
 		$this->include_events_in_rss 					= $params['include_events_in_rss'];
 		$this->allow_events_posting_facebook 	= $params['allow_events_posting_facebook'];
 		$this->facebook_credentials 					= $params['facebook_credentials'];

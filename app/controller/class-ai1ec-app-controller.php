@@ -119,7 +119,7 @@ class Ai1ec_App_Controller {
 		// filter the post lists by custom filters
 		add_filter( 'parse_query', 															array( &$ai1ec_app_helper, 'taxonomy_filter_post_type_request' ) );
 		// Filter event post content, in single- and multi-post views
-		add_filter( 'the_content', 															array( &$ai1ec_events_controller, 'event_content' ) );
+		add_filter( 'the_content', 															array( &$ai1ec_events_controller, 'event_content' ), PHP_INT_MAX - 1 );
 		// Override excerpt filters for proper event display in excerpt form
 		add_filter( 'get_the_excerpt', 													array( &$ai1ec_events_controller, 'event_excerpt' ), 11 );
 		add_filter( 'the_excerpt', 															array( &$ai1ec_events_controller, 'event_excerpt_noautop' ), 11 );
@@ -368,8 +368,9 @@ class Ai1ec_App_Controller {
 			$this->page_content = ob_get_contents();
 			ob_end_clean();
 
-			// Replace page content
-			add_filter( 'the_content', array( &$this, 'append_content' ) );
+			// Replace page content - make sure it happens at (almost) the very end of
+			// page content filters (some themes are overly ambitious here)
+			add_filter( 'the_content', array( &$this, 'append_content' ), PHP_INT_MAX - 1 );
 		}
 	}
 

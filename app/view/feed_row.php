@@ -4,10 +4,12 @@
 	</h4>
 	<div class="ai1ec-feed-url"><input type="text" class="ai1ec-feed-url" readonly="readonly" value="<?php echo esc_attr( $feed_url ) ?>" /></div>
 	<input type="hidden" name="feed_id" class="ai1ec_feed_id" value="<?php echo $feed_id;?>" />
-	<div class="ai1ec-feed-category">
-		<?php _e( 'Event category:', AI1EC_PLUGIN_NAME ); ?>
-		<strong><?php echo $event_category; ?></strong>
-	</div>
+	<?php if( $event_category ): ?>
+		<div class="ai1ec-feed-category">
+			<?php _e( 'Event category:', AI1EC_PLUGIN_NAME ); ?>
+			<strong><?php echo $event_category; ?></strong>
+		</div>
+	<?php endif ?>
 	<?php if( $tags ): ?>
 		<div class="ai1ec-feed-tags">
 			<?php _e( 'Tag with', AI1EC_PLUGIN_NAME ); ?>:

@@ -1,7 +1,7 @@
 .ai1ec-container {
 	font-size: 13pt !important;
 	clear: both;
-	}
+}
 /* Some plugins mangle styling of standard HTML tags, fix them here */
 .ai1ec-container small {
 	margin: 0 !important;
@@ -26,7 +26,7 @@
 	margin-bottom: 0.2em;
 }
 table.ai1ec-calendar-toolbar {
-	width: 100%;
+	width: 100% !important;
 	border: 0 !important;
 	margin: 0 !important;
 }
@@ -177,9 +177,9 @@ table.ai1ec-month-view {
 	border: 1px solid #ddd !important;
 	margin: 0 !important;
 	background: #fff;
-	table-layout: fixed;
+	table-layout: fixed !important;
 	clear: both;
-	width: 100%;
+	width: 100% !important;
 }
 .ai1ec-month-view td {
 	border: 1px solid #ddd !important;
@@ -375,24 +375,22 @@ table.ai1ec-month-view {
 	margin: 0 !important;
 	padding: 0 !important;
 	border-top: 1px solid #f2f2f2;
-	border-bottom: 1px solid #fff;
-	background: #f8f8f8;
-	background: -o-linear-gradient( #f2f2f2 1em, #fff );
-	background: -ms-linear-gradient( #f2f2f2 1em, #fff );
-	background: -moz-linear-gradient( #f2f2f2 1em, #fff );
-	background: -webkit-gradient( linear, 0 1em, 0 100%, from(#f2f2f2), to(#fff) );
-	background: -webkit-linear-gradient( #f2f2f2 1em, #fff );
+	background: #f2f2f2 !important;
+	background: -o-linear-gradient( #f2f2f2 1em, rgba(255,255,255,0) ) !important;
+	background: -ms-linear-gradient( #f2f2f2 1em, rgba(255,255,255,0) ) !important;
+	background: -moz-linear-gradient( #f2f2f2 1em, rgba(255,255,255,0) ) !important;
+	background: -webkit-gradient( linear, 0 1em, 0 100%, from(#f2f2f2), to(rgba(255,255,255,0)) ) !important;
+	background: -webkit-linear-gradient( #f2f2f2 1em, rgba(255,255,255,0) ) !important;
 }
 .ai1ec-agenda-view .ai1ec-date.ai1ec-today {
-	border-top: 1px solid #eec;
-	border-bottom: 1px solid #fff;
-	background: #ffd;
-	background: -o-linear-gradient( #f8f8ce 1em, #fff );
-	background: -ms-linear-gradient( #f8f8ce 1em, #fff );
-	background: -moz-linear-gradient( #f8f8ce 1em, #fff );
-	background: -webkit-gradient( linear, 0 1em, 0 100%, from(#f8f8ce), to(#fff) );
-	background: -webkit-linear-gradient( #f8f8ce 1em, #fff );
-	background: -o-linear-gradient( #f8f8ce 1em, #fff );
+	border-top: 1px solid #ffd;
+	background: #ffd !important;
+	background: -o-linear-gradient( #f8f8ce 1em, rgba(255,255,255,0) ) !important;
+	background: -ms-linear-gradient( #f8f8ce 1em, rgba(255,255,255,0) ) !important;
+	background: -moz-linear-gradient( #f8f8ce 1em, rgba(255,255,255,0) ) !important;
+	background: -webkit-gradient( linear, 0 1em, 0 100%, from(#f8f8ce), to(rgba(255,255,255,0)) ) !important;
+	background: -webkit-linear-gradient( #f8f8ce 1em, rgba(255,255,255,0) ) !important;
+	background: -o-linear-gradient( #f8f8ce 1em, rgba(255,255,255,0) ) !important;
 }
 .ai1ec-agenda-view h3.ai1ec-date-title {
 	width: 4em;
@@ -455,7 +453,7 @@ table.ai1ec-month-view {
 	text-decoration: none;
 	padding: 0.1em 0.3em !important;
 	margin: 0.5em 0 !important;
-	background: #fff;
+	background: #fff !important;
 	border: 1px solid #ddd;
 	border-radius: 0.5em;
 	-o-border-radius: 0.5em;

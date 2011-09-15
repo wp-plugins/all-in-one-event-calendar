@@ -29,6 +29,7 @@ jQuery( function( $ ){
 			end_date_input: 	'#ai1ec_end-date-input',
 			end_time_input: 	'#ai1ec_end-time-input',
 			end_time: 				'#ai1ec_end-time',
+			us_format:        ai1ec_add_new_event.us_format,
 			now:              now
 		}
 		$.timespan( data );
@@ -37,6 +38,7 @@ jQuery( function( $ ){
 		data = {
 			start_date_input: '#ai1ec_until-date-input',
 			start_time:       '#ai1ec_until-time',
+			us_format:        ai1ec_add_new_event.us_format,
 			now:              now
 		}
 		$.inputdate( data );
@@ -282,18 +284,42 @@ jQuery( function( $ ){
 		$( '#ai1ec_add_new_ics' ).click( function() {
 			var $button = $( this );
 			var $url = $( '#ai1ec_feed_url' );
-			if( ! isUrl( $url.val() ) ) {
-				// color the feed url input field in red
-				$url.css( 'border-color', '#FF0000' ).focus();
+			var url = $url.val().replace( 'webcal://', 'http://' );
+			var invalid = false;
+			var error_message;
+
+			// restore feed url border colors if it has been changed
+			$('.ai1ec-feed-url, #ai1ec_feed_url').css( 'border-color', '#DFDFDF' );
+			$('#ai1ec-feed-error').remove();
+
+			// Check for duplicates
+			$('.ai1ec-feed-url').each( function() {
+				if( this.value == url ) {
+					// This feed's already been added
+					$(this).css( 'border-color', '#FF0000' );
+					invalid = true;
+					error_message = ai1ec_add_new_event.duplicate_feed_message;
+				}
+			} );
+			// Check for valid URL
+			if( ! isUrl( url ) ) {
+				invalid = true;
+				error_message = ai1ec_add_new_event.invalid_url_message;
+			}
+
+			if( invalid ) {
+				// color the feed url input field in red and output error message
+				$url
+					.css( 'border-color', '#FF0000' )
+					.focus()
+					.before( '<div class="error" id="ai1ec-feed-error"><p>' + error_message + '</p></div>' );
 			} else {
 				// disable the add button for now
 				$button.attr( 'disabled', true );
-				// restore feed url color if it has been changed
-				$url.css( 'border-color', '#DFDFDF' );
 				// create the data to send
 				var data = {
 					action: 'ai1ec_add_ics',
-					feed_url: $url.val(),
+					feed_url: url,
 					feed_category: $( '#ai1ec_feed_category option:selected' ).val(),
 					feed_tags: $( '#ai1ec_feed_tags' ).val()
 				};

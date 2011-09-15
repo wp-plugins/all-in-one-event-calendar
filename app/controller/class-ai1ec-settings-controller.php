@@ -140,15 +140,21 @@ class Ai1ec_Settings_Controller {
 	 *
 	 * Deletes all event posts that are from that selected feed
 	 *
+	 * @param bool $ajax When set to true, the data is outputted using json_response
+	 * @param bool|string $feed_url Feed URL
+	 *
 	 * @return void
 	 **/
-	function flush_ics_feed()
+	function flush_ics_feed( $ajax = true, $feed_url = false )
 	{
 		global $wpdb,
 		       $ai1ec_view_helper;
 		$ics_id = (int) $_REQUEST['ics_id'];
 		$table_name = $wpdb->prefix . 'ai1ec_event_feeds';
-		$feed_url = $wpdb->get_var( $wpdb->prepare( "SELECT feed_url FROM $table_name WHERE feed_id = %d", $ics_id ) );
+		
+		if( $feed_url === false )
+		  $feed_url = $wpdb->get_var( $wpdb->prepare( "SELECT feed_url FROM $table_name WHERE feed_id = %d", $ics_id ) );
+		  
 		if( $feed_url )
 		{
 			$table_name = $wpdb->prefix . 'ai1ec_events';
@@ -174,8 +180,9 @@ class Ai1ec_Settings_Controller {
 				'message'	=> 'Invalid feed'
 			);
 		}
-
-		$ai1ec_view_helper->json_response( $output );
+		
+    if( $ajax )
+      $ai1ec_view_helper->json_response( $output );
 	}
 
 	/**
@@ -197,7 +204,11 @@ class Ai1ec_Settings_Controller {
 
 		if( $feed )
 		{
+      // flush the feed
+      $this->flush_ics_feed( false, $feed->feed_url );
+      // reimport the feed
 			$count = $ai1ec_importer_helper->parse_ics_feed( $feed );
+			
 			$output = array(
 				'error'       => false,
 				'message'     => sprintf( __( 'Imported %d events', AI1EC_PLUGIN_NAME ), $count ),
@@ -212,7 +223,7 @@ class Ai1ec_Settings_Controller {
 				'message'	=> 'Invalid feed'
 			);
 		}
-
+    
 		$ai1ec_view_helper->json_response( $output );
 	}
 
@@ -235,7 +246,7 @@ class Ai1ec_Settings_Controller {
 			'error' 	=> false,
 			'message'	=> 'Request successful.'
 		);
-
+  
 		$ai1ec_view_helper->json_response( $output );
 	}
 	

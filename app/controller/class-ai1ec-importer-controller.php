@@ -55,7 +55,8 @@ class Ai1ec_Importer_Controller {
 	{
 		global $wpdb,
 					 $ai1ec_importer_helper,
-					 $ai1ec_events_helper;
+					 $ai1ec_events_helper,
+					 $ai1ec_settings_controller;
 
 		// ====================
 		// = Select all feeds =
@@ -68,6 +69,9 @@ class Ai1ec_Importer_Controller {
 		// = go over each iCalendar feed =
 		// ===============================
 		foreach( $feeds as $feed ) {
+		  // flush the feed
+		  $ai1ec_settings_controller->flush_ics_feed( false, $feed->feed_url );
+		  // import the feed
 			$ai1ec_importer_helper->parse_ics_feed( $feed );
 		}
 	}

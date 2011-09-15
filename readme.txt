@@ -1,10 +1,10 @@
 === All-in-One Event Calendar ===
 Contributors: theseed, hubrik, vtowel, yani.iliev
 Donate link: http://theseedstudio.com/software/all-in-one-event-calendar-wordpress/
-Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011
+Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
 Tested up to: 3.2.1
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 
 An event calendar system with month and agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
@@ -51,6 +51,17 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 [Check out the demo »](http://demo.theseedstudio.com/calendar/)
 
 == Changelog ==
+
+= Version 1.0.6 =
+* Fixed issue with importing of iCalendar feeds that define time zone per-property (e.g., Yahoo! Calendar feeds)
+* Fixed numerous theme-related layout/formatting issues
+* Fixed issue with all-day events after daylight savings time showing in duplicate
+* Fixed issue where private events would not show at all in the front-end
+* Fixed duplicate import issue with certain feeds that do not uniquely identify events (e.g., ESPN)
+* Added option to General Settings for inputting dates in US format
+* Added option to General Settings for excluding events from search results
+* Added error messages for iCalendar feed validation
+* Improved support for multiple locales
 
 = Version 1.0.5 =
 * Added agenda-like Upcoming Events widget

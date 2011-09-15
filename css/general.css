@@ -170,15 +170,18 @@ label.ai1ec-label {
 /* Subscribe buttons */
 .ai1ec-subscribe-google img {
 	float: left;
-	width: 30px;
-	height: 32px;
-	margin: -10px 0.5em -8px 0;
+	width: 30px !important;
+	height: 32px !important;
+	margin: -10px 0.5em -8px 0 !important;
 	padding: 0 !important;
 	border: none !important;
 	background: none !important;
 }
 
 /* Widget views */
+.ai1ec-agenda-widget-view div {
+	margin: 0;
+}
 .ai1ec-agenda-widget-view {
 	font-size: 0.8em !important;
 	overflow: hidden;

@@ -96,7 +96,7 @@ class Ai1ec_Events_Controller {
 	 **/
 	function init()
 	{
-		global $ai1ec_events_helper;
+		global $ai1ec_events_helper, $ai1ec_settings;
 
 		// Initialize dashboard view
 		if( is_admin() ) {
@@ -126,7 +126,12 @@ class Ai1ec_Events_Controller {
 			// Supply custom value to JavaScript from PHP
 			wp_localize_script( 'ai1ec-add_new_event', 'ai1ec_add_new_event', array(
 				// Current time, used for date/time pickers
-				'now' => $ai1ec_events_helper->gmt_to_local( time() ),
+				'now'                    => $ai1ec_events_helper->gmt_to_local( time() ),
+				// US input format for date pickers
+				'us_format'              => $ai1ec_settings->input_us_format,
+				// ICS feed error messages
+				'duplicate_feed_message' => esc_html__( 'This feed is already being imported.', AI1EC_PLUGIN_NAME ),
+				'invalid_url_message'    => esc_html__( 'Please enter a valid iCalendar URL.', AI1EC_PLUGIN_NAME ),
 			) );
 
 			// =======
@@ -221,7 +226,7 @@ class Ai1ec_Events_Controller {
 			'repeat'          => $ai1ec_events_helper->create_repeat_dropdown( $repeat ),
 			'count'           => $ai1ec_events_helper->create_count_input( $count ),
 			'end'             => $ai1ec_events_helper->create_end_dropdown( $end ),
-			'until'           => $ai1ec_events_helper->gmt_to_local( $until ),
+			'until'           => $until,
 			'repeating_event' => $repeating_event,
 			'timezone'        => $timezone,
 			'ending'          => $end
@@ -296,7 +301,7 @@ class Ai1ec_Events_Controller {
 
 		  // verify this came from the our screen and with proper authorization,
 		  // because save_post can be triggered at other times
-		  if ( !wp_verify_nonce( $_POST[AI1EC_POST_TYPE], 'ai1ec' ) ) {
+		  if ( ! wp_verify_nonce( $_POST[AI1EC_POST_TYPE], 'ai1ec' ) ) {
 			  return;
 		  }
 	  }
@@ -328,7 +333,7 @@ class Ai1ec_Events_Controller {
 			// = Repeating event, build rrule =
 			// ================================
 			$end = (int) $_POST['ai1ec_end'];
-			switch( $end ) :
+			switch( $end ) {
 			  // Never
 			  case 0:
 			    $end = '';
@@ -340,75 +345,75 @@ class Ai1ec_Events_Controller {
 			  // On date
 			  case 2:
 			    $until = $_POST['ai1ec_until_time'];
-    			$until = $ai1ec_events_helper->local_to_gmt( $until );
-    			$until += 24 * 60 * 60;	                                // Add 1 day (intuitively, the last day is included)
-    			$until = gmdate( 'Ymd\THis\Z', $until );	              // Convert to Zulu time
+    			$until = gmdate( 'Ymd', $until );
 			    $end = ';UNTIL=' . $until;
 			    break;
-			endswitch;
+			}
 
 			switch( $_POST['ai1ec_repeat'] ) {
 			  // Daily
 				case 'DAILY':
-					$rrule = 'FREQ=DAILY' . $end;
+					$rrule = 'FREQ=DAILY';
 					break;
 				// Mondays
 				case 'MO':
-					$rrule = 'FREQ=DAILY;BYDAY=MO' . $end;
+					$rrule = 'FREQ=DAILY;BYDAY=MO';
 					break;
 				// Tuesdays
 				case 'TU':
-					$rrule = 'FREQ=DAILY;BYDAY=TU' . $end;
+					$rrule = 'FREQ=DAILY;BYDAY=TU';
 					break;
 				// Wednesdays
 				case 'WE':
-					$rrule = 'FREQ=DAILY;BYDAY=WE' . $end;
+					$rrule = 'FREQ=DAILY;BYDAY=WE';
 					break;
 				// Thursdays
 				case 'TH':
-					$rrule = 'FREQ=DAILY;BYDAY=TH' . $end;
+					$rrule = 'FREQ=DAILY;BYDAY=TH';
 					break;
 				// Fridays
 				case 'FR':
-					$rrule = 'FREQ=DAILY;BYDAY=FR' . $end;
+					$rrule = 'FREQ=DAILY;BYDAY=FR';
 					break;
 				// Tuesdays and Thursdays
 				case 'TU+TH':
-					$rrule = 'FREQ=DAILY;BYDAY=TU,TH' . $end;
+					$rrule = 'FREQ=DAILY;BYDAY=TU,TH';
 					break;
 				// Mondays Wednesdays Fridays
 				case 'MO+WE+FR':
-					$rrule = 'FREQ=DAILY;BYDAY=MO,WE,FR' . $end;
+					$rrule = 'FREQ=DAILY;BYDAY=MO,WE,FR';
 					break;
 				// Weekends
 				case 'WEEKDAYS':
-					$rrule = 'FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR' . $end;
+					$rrule = 'FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR';
 					break;
 				// Saturdays
 				case 'SA':
-					$rrule = 'FREQ=DAILY;BYDAY=SA' . $end;
+					$rrule = 'FREQ=DAILY;BYDAY=SA';
 					break;
 				// Sundays
 				case 'SU':
-					$rrule = 'FREQ=DAILY;BYDAY=SU' . $end;
+					$rrule = 'FREQ=DAILY;BYDAY=SU';
 					break;
 				// Weekends
 				case 'WEEKENDS':
-					$rrule = 'FREQ=DAILY;BYDAY=SA+SU' . $end;
+					$rrule = 'FREQ=DAILY;BYDAY=SA+SU';
 					break;
 			  // Weekly
 				case 'WEEKLY':
-					$rrule = 'FREQ=WEEKLY' . $end;
+					$rrule = 'FREQ=WEEKLY';
 					break;
 				// Monthly
 				case 'MONTHLY':
-					$rrule = 'FREQ=MONTHLY' . $end;
+					$rrule = 'FREQ=MONTHLY';
 					break;
 				// Yearly
 				case 'YEARLY':
-					$rrule = 'FREQ=YEARLY' . $end;
+					$rrule = 'FREQ=YEARLY';
 					break;
 			}
+
+			$rrule .= $end;
 		}
 
 		$is_new = false;

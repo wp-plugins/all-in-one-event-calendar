@@ -51,19 +51,25 @@ class Ai1ec_Importer_Helper {
 	 * Passed array: Array( 'year', 'month', 'day', ['hour', 'min', 'sec', ['tz']] )
 	 * Return int: UNIX timestamp in GMT
 	 *
-	 * @param array $t Time array
+	 * @param array $t iCalcreator's time property array (*full* format expected)
 	 * @param string $def_timezone Default time zone in case not defined in $t
 	 *
 	 * @return int UNIX timestamp
 	 **/
 	function time_array_to_timestamp( $t, $def_timezone ) {
-		$ret = $t['year'] . '-' . $t['month'] . '-' . $t['day'];
-		if( isset( $t['hour'] ) )
-			$ret .= ' ' . $t['hour'] . ':' . $t['min'] . ':' . $t['sec'];
-		$timezone = $t['tz'];
+		$ret = $t['value']['year'] .
+			'-' . $t['value']['month'] .
+			'-' . $t['value']['day'];
+		if( isset( $t['value']['hour'] ) )
+			$ret .= ' ' . $t['value']['hour'] .
+				':' . $t['value']['min'] .
+				':' . $t['value']['sec'];
+		$timezone = $t['params']['TZID'];
+
 		if( ! $timezone ) $timezone = $def_timezone;
 		if( $timezone )
 			$ret .= ' ' . $timezone;
+
 		return strtotime( $ret );
 	}
 
@@ -89,7 +95,7 @@ class Ai1ec_Importer_Helper {
 		// create new instance
 		$v = new vcalendar( array(
 			'unique_id' => $feed->feed_url,
-			'url' => str_replace( 'webcal', 'http', $feed->feed_url ),
+			'url' => $feed->feed_url,
 		) );
 
 		// actual parse of the feed
@@ -111,11 +117,11 @@ class Ai1ec_Importer_Helper {
 			// go over each event
 			while( $e = $v->getComponent( 'vevent' ) )
 			{
-				$start = $e->getProperty( 'dtstart' );
-				$end = $e->getProperty( 'dtend' );
+				$start = $e->getProperty( 'dtstart', 1, true );
+				$end = $e->getProperty( 'dtend', 1, true );
 
 				// Event is all-day if no time components are defined
-				$allday = ! isset( $start['hour'] );
+				$allday = ! isset( $start['value']['hour'] );
 
 				// convert times to GMT UNIX timestamps
 				$start = $this->time_array_to_timestamp( $start, $timezone );

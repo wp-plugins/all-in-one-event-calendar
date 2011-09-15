@@ -163,7 +163,7 @@ class Ai1ec_Calendar_Helper {
 	 * @return array              list of matching event objects
 	 **/
 	function get_events_between( $start_time, $end_time, $post_status = 'publish' ) {
-		global $wpdb, $ai1ec_events_helper;
+		global $wpdb, $ai1ec_events_helper, $current_user;
 
 		// Convert timestamps to MySQL format in GMT time
 		$start_time = $ai1ec_events_helper->local_to_gmt( $start_time );
@@ -174,7 +174,43 @@ class Ai1ec_Calendar_Helper {
 			$start_time,
 			$end_time,
 	 	);
-		if( $post_status != null ) $args[] = $post_status;
+	 	
+	 	if( current_user_can( 'administrator' ) || current_user_can( 'editor' ) ) {
+      $post_status = "AND ( post_status = %s OR post_status = %s ) ";
+      $args[] = 'publish';
+      $args[] = 'private';
+    }
+    else if( is_user_logged_in() ) {
+      // get user info
+      get_currentuserinfo();
+      
+      /**
+       * include post_status = published
+       * or
+       * post_status = private and author = logged in user
+       */
+      $post_status = "AND " .
+                        "( " .
+                          "post_status = %s " .
+                          
+                          "OR " .
+                          
+                          "( " .
+                            "post_status = %s " .
+                            
+                            "AND " .
+                            
+                            "post_author = %d " .
+                          ") " .
+                        ") ";
+
+      $args[] = 'publish';
+      $args[] = 'private';
+      $args[] = $current_user->ID;
+    } else {
+      $post_status = "AND post_status = %s ";
+      $args[] = 'publish';
+    }
 
 		$query = $wpdb->prepare(
 			"SELECT p.*, e.post_id, i.id AS instance_id, " .
@@ -192,9 +228,10 @@ class Ai1ec_Calendar_Helper {
 			"WHERE post_type = '" . AI1EC_POST_TYPE . "' " .
 			"AND i.start >= FROM_UNIXTIME( %d ) " .
 			"AND i.start < FROM_UNIXTIME( %d ) " .
-			( $post_status == null ? '' : "AND post_status = %s " ) .
+			$post_status .
 			"ORDER BY allday DESC, i.start ASC, post_title ASC",
 			$args );
+
 		$events = $wpdb->get_results( $query, ARRAY_A );
 		foreach( $events as &$event ) {
 			$event = new Ai1ec_Event( $event );

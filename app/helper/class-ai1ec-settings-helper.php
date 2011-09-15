@@ -243,7 +243,7 @@ class Ai1ec_Settings_Helper {
 	/**
 	 * general_settings_meta_box function
 	 *
-	 *
+	 * Displays the General Settings meta box.
 	 *
 	 * @return void
 	 **/
@@ -265,10 +265,12 @@ class Ai1ec_Settings_Helper {
 				id="include_events_in_rss" value="1"'
 				. ( $ai1ec_settings->include_events_in_rss ? ' checked="checked"' : '' )
 				. '/>';
+		$exclude_from_search            = $ai1ec_settings->exclude_from_search ? 'checked=checked' : '';
 		$show_publish_button            = $ai1ec_settings->show_publish_button ? 'checked=checked' : '';
 		$turn_off_subscription_buttons  = $ai1ec_settings->turn_off_subscription_buttons ? 'checked=checked' : '';
 		$show_create_event_button       = $ai1ec_settings->show_create_event_button ? 'checked=checked' : '';
 		$inject_categories              = $ai1ec_settings->inject_categories ? 'checked=checked' : '';
+		$input_us_format                = $ai1ec_settings->input_us_format ? 'checked=checked' : '';
 	  $default_calendar_view          = $ai1ec_settings_helper->get_view_dropdown( $ai1ec_settings->default_calendar_view );
 
 	  $args = array(
@@ -277,10 +279,12 @@ class Ai1ec_Settings_Helper {
 			'calendar_css_selector'         => $calendar_css_selector,
 			'week_start_day'                => $week_start_day,
 			'agenda_events_per_page'        => $agenda_events_per_page,
+			'exclude_from_search'           => $exclude_from_search,
 			'show_publish_button'		        => $show_publish_button,
 			'turn_off_subscription_buttons' => $turn_off_subscription_buttons,
 			'show_create_event_button'      => $show_create_event_button,
 			'inject_categories'             => $inject_categories,
+			'input_us_format'               => $input_us_format,
 	  );
 	  $ai1ec_view_helper->display( 'box_general_settings.php', $args );
 	}

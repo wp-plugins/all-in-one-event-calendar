@@ -4,7 +4,7 @@
   </div>
   <p><?php _e( 'The Seed Studio provides web development and support services for clients and web developers.', AI1EC_PLUGIN_NAME ) ?></p>
   <div class="ai1ec-follow-fan">
-    <div class="facebook-like-top">
+    <div class="ai1ec-facebook-like-top">
       <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script>
       <fb:like href="http://www.facebook.com/pages/The-Seed-Agency/66657743707" layout="button_count" show_faces="true" width="110" font="lucida grande"></fb:like>
     </div>

@@ -1,3 +1,5 @@
+<h2>Viewing Events</h2>
+
 <label class="textinput" for="calendar_page_id"><?php _e( 'Calendar page:', AI1EC_PLUGIN_NAME ) ?></label>
 <div class="alignleft"><?php echo $calendar_page ?></div>
 <br class="clear" />
@@ -18,9 +20,9 @@
 <input name="agenda_events_per_page" id="agenda_events_per_page" type="text" size="1" value="<?php echo esc_attr( $agenda_events_per_page ) ?>" />&nbsp;<?php _e( 'events', AI1EC_PLUGIN_NAME ) ?>
 <br class="clear" />
 
-<label for="show_publish_button">
-<input class="checkbox" name="show_publish_button" id="show_publish_button" type="checkbox" value="1" <?php echo $show_publish_button ?> />
-<?php _e( 'Display <strong>Publish</strong> at bottom of Edit Event form', AI1EC_PLUGIN_NAME ) ?>
+<label for="exclude_from_search">
+<input class="checkbox" name="exclude_from_search" id="exclude_from_search" type="checkbox" value="1" <?php echo $exclude_from_search ?> />
+<?php _e( '<strong>Exclude</strong> events from search results', AI1EC_PLUGIN_NAME ) ?>
 </label>
 <br class="clear" />
 
@@ -39,5 +41,19 @@
 <label for="inject_categories">
 <input class="checkbox" name="inject_categories" id="inject_categories" type="checkbox" value="1" <?php echo $inject_categories ?> />
 <?php _e( 'Include <strong>event categories</strong> in post category lists', AI1EC_PLUGIN_NAME ) ?>
+</label>
+<br class="clear" />
+
+<h2>Adding/Editing Events</h2>
+
+<label for="input_us_format">
+<input class="checkbox" name="input_us_format" id="input_us_format" type="checkbox" value="1" <?php echo $input_us_format ?> />
+<?php _e( 'Input dates in <strong>US format</strong>', AI1EC_PLUGIN_NAME ) ?>
+</label>
+<br class="clear" />
+
+<label for="show_publish_button">
+<input class="checkbox" name="show_publish_button" id="show_publish_button" type="checkbox" value="1" <?php echo $show_publish_button ?> />
+<?php _e( 'Display <strong>Publish</strong> at bottom of Edit Event form', AI1EC_PLUGIN_NAME ) ?>
 </label>
 <br class="clear" />
