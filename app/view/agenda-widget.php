@@ -8,16 +8,16 @@
 
 	<?php if( ! $dates ): ?>
 		<p class="ai1ec-no-results">
-			<?php _e( 'There are no upcoming events.' ) ?>
+			<?php _e( 'There are no upcoming events.', AI1EC_PLUGIN_NAME ) ?>
 		</p>
 	<?php else: ?>
 		<ol>
 			<?php foreach( $dates as $timestamp => $date_info ): ?>
 				<li class="ai1ec-date <?php if( $date_info['today'] ) echo 'ai1ec-today' ?>">
 					<h3 class="ai1ec-date-title">
-						<div class="ai1ec-month"><?php echo strftime( '%b', $timestamp ) ?></div>
-						<div class="ai1ec-day"><?php echo strftime( '%e', $timestamp ) ?></div>
-						<div class="ai1ec-weekday"><?php echo strftime( '%a', $timestamp ) ?></div>
+						<div class="ai1ec-month"><?php echo gmstrftime( '%b', $timestamp ) ?></div>
+						<div class="ai1ec-day"><?php echo gmstrftime( '%e', $timestamp ) ?></div>
+						<div class="ai1ec-weekday"><?php echo gmstrftime( '%a', $timestamp ) ?></div>
 					</h3>
 					<ol class="ai1ec-date-events">
 						<?php foreach( $date_info['events'] as $category ): ?>

@@ -2,14 +2,14 @@
 <span class="ai1ec-title-buttons">
 	<?php if( $dates ): ?>
 		<a id="ai1ec-expand-all" class="ai1ec-button">
-			<?php _e( '+ Expand All', AI1EC_JS_URL ) ?>
+			<?php _e( '+ Expand All', AI1EC_PLUGIN_NAME ) ?>
 		</a><a
 		id="ai1ec-collapse-all" class="ai1ec-button">
-			<?php _e( '− Collapse All', AI1EC_JS_URL ) ?>
+			<?php _e( '− Collapse All', AI1EC_PLUGIN_NAME ) ?>
 		</a
 	><?php endif ?><a
 		id="ai1ec-today" class="ai1ec-load-view ai1ec-button" href="#action=ai1ec_agenda">
-		<?php _e( 'Today', AI1EC_JS_URL ) ?>
+		<?php _e( 'Today', AI1EC_PLUGIN_NAME ) ?>
 	</a>
 </span>
 <ul class="ai1ec-pagination">
@@ -25,15 +25,15 @@
 <ol class="ai1ec-agenda-view">
 	<?php if( ! $dates ): ?>
 		<p class="ai1ec-no-results">
-			<?php _e( 'There are no upcoming events to display at this time.' ) ?>
+			<?php _e( 'There are no upcoming events to display at this time.', AI1EC_PLUGIN_NAME ) ?>
 		</p>
 	<?php else: ?>
 		<?php foreach( $dates as $timestamp => $date_info ): ?>
 			<li class="ai1ec-date <?php if( $date_info['today'] ) echo 'ai1ec-today' ?>">
 				<h3 class="ai1ec-date-title">
-					<div class="ai1ec-month"><?php echo strftime( '%b', $timestamp ) ?></div>
-					<div class="ai1ec-day"><?php echo strftime( '%e', $timestamp ) ?></div>
-					<div class="ai1ec-weekday"><?php echo strftime( '%a', $timestamp ) ?></div>
+					<div class="ai1ec-month"><?php echo date_i18n( 'M', $timestamp ) ?></div>
+					<div class="ai1ec-day"><?php echo date_i18n( 'j', $timestamp ) ?></div>
+					<div class="ai1ec-weekday"><?php echo date_i18n( 'D', $timestamp ) ?></div>
 				</h3>
 				<ol class="ai1ec-date-events">
 					<?php foreach( $date_info['events'] as $category ): ?>
@@ -54,7 +54,7 @@
 										<div class="ai1ec-event-title">
 											<?php echo esc_html( $event->post->post_title ) ?>
 											<?php if( $event->allday ): ?>
-												<span class="ai1ec-allday-label"><?php _e( '(all-day)' ) ?></span>
+												<span class="ai1ec-allday-label"><?php _e( '(all-day)', AI1EC_PLUGIN_NAME ) ?></span>
 											<?php endif ?>
 										</div>
 										<div class="ai1ec-event-time">
@@ -72,7 +72,7 @@
 										<div class="ai1ec-event-overlay">
 											<a class="ai1ec-read-more ai1ec-button"
 												href="<?php echo esc_attr( get_permalink( $event->post_id ) ) ?>">
-												<?php _e( 'Read more »', AI1EP_PLUGIN_NAME ) ?>
+												<?php _e( 'Read more »', AI1EC_PLUGIN_NAME ) ?>
 											</a>
 											<?php if( $event->categories_html ): ?>
 												<div class="ai1ec-categories">
@@ -104,7 +104,7 @@
 									<div class="ai1ec-event-title">
 										<?php echo esc_html( $event->post->post_title ) ?>
 										<?php if( $event->allday ): ?>
-											<span class="ai1ec-allday-label"><?php _e( '(all-day)' ) ?></span>
+											<span class="ai1ec-allday-label"><?php _e( '(all-day)', AI1EC_PLUGIN_NAME ) ?></span>
 										<?php endif ?>
 									</div>
 								</div>

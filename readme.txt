@@ -88,6 +88,7 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 * Displayed appropriate setup notice when user lacks administrator capabilities
 
 = Version 1.0 =
+* Initial release
 
 == Installation ==
 

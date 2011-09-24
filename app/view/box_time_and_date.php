@@ -1,11 +1,11 @@
 <?php wp_nonce_field( 'ai1ec', AI1EC_POST_TYPE ); ?>
-<h4 class="ai1ec-section-title"><?php _e( 'Event date and time'); ?></h4>
+<h4 class="ai1ec-section-title"><?php _e( 'Event date and time', AI1EC_PLUGIN_NAME ); ?></h4>
 <table class="ai1ec-form">
 	<tbody>
 		<tr>
 			<td class="ai1ec-first">
 				<label for="ai1ec_all_day_event">
-					<?php _e( 'All-day event', 'ai1ec' ); ?>?
+					<?php _e( 'All-day event', AI1EC_PLUGIN_NAME ); ?>?
 				</label>
 			</td>
 			<td>
@@ -15,7 +15,7 @@
 		<tr>
 			<td>
 				<label for="ai1ec_start-date-input">
-					<?php _e( 'Start date / time', 'ai1ec' ); ?>:
+					<?php _e( 'Start date / time', AI1EC_PLUGIN_NAME ); ?>:
 				</label>
 			</td>
 			<td>
@@ -28,7 +28,7 @@
 		<tr>
 			<td>
 				<label for="ai1ec_end-date-input">
-					<?php _e( 'End date / time', 'ai1ec' ) ?>:
+					<?php _e( 'End date / time', AI1EC_PLUGIN_NAME ) ?>:
 				</label>
 			</td>
 			<td>
@@ -41,7 +41,7 @@
 		<tr>
 			<td>
 				<label for="ai1ec_repeat">
-					<?php _e( 'Repeat', 'ai1ec' ) ?>:
+					<?php _e( 'Repeat', AI1EC_PLUGIN_NAME ) ?>:
 				</label>
 			</td>
 			<td>
@@ -51,7 +51,7 @@
 		<tr id="ai1ec_end_holder" <?php if( ! $repeating_event ) echo 'class="ai1ec_hidden"' ?>>
 			<td>
 				<label for="ai1ec_end">
-					<?php _e( 'End', 'ai1ec' ) ?>:
+					<?php _e( 'End', AI1EC_PLUGIN_NAME ) ?>:
 				</label>
 			</td>
 			<td>
@@ -61,7 +61,7 @@
 		<tr id="ai1ec_count_holder" <?php if( $ending != 1 ) echo 'class="ai1ec_hidden"' ?>>
 			<td>
 				<label for="ai1ec_count">
-					<?php _e( 'Ending after', 'ai1ec' ) ?>:
+					<?php _e( 'Ending after', AI1EC_PLUGIN_NAME ) ?>:
 				</label>
 			</td>
 			<td>
@@ -71,7 +71,7 @@
 		<tr id="ai1ec_until_holder" <?php if( $ending != 2 ) echo 'class="ai1ec_hidden"' ?>>
 			<td>
 				<label for="ai1ec_until-date-input">
-					<?php _e( 'On date', 'ai1ec' ) ?>:
+					<?php _e( 'On date', AI1EC_PLUGIN_NAME ) ?>:
 				</label>
 			</td>
 			<td>

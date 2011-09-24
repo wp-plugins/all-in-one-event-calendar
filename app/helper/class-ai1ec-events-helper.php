@@ -305,27 +305,32 @@ class Ai1ec_Events_Helper {
 	 *                       equivalents
 	 */
 	function get_repeat_patterns() {
-		static $options = array(
-			' '        => 'No repeat',
-			'DAILY'    => 'Daily',
-			'MO'       => 'Mondays',
-			'TU'       => 'Tuesdays',
-			'WE'       => 'Wednesdays',
-			'TH'       => 'Thursdays',
-			'FR'       => 'Fridays',
-			'SA'       => 'Saturdays',
-			'SU'       => 'Sundays',
-			'TU+TH'    => 'Tuesdays & Thursdays',
-			'MO+WE+FR' => 'Mondays, Wednesdays & Fridays',
-			'WEEKDAYS' => 'Weekdays',
-			'WEEKENDS' => 'Weekends',
-			'WEEKLY'   => 'Weekly',
-			'MONTHLY'  => 'Monthly',
-			'YEARLY'   => 'Yearly',
-		);
-
-		return $options;
-	}
+    // Calling functions when creating an array does not seem to work when
+    // the assigned to variable is static. This is a workaround.
+    static $options;
+    if( !isset( $options ) ) {
+      $temp = array(
+        ' '        => __( 'No repeat', AI1EC_PLUGIN_NAME ),
+        'DAILY'    => __( 'Daily', AI1EC_PLUGIN_NAME ),
+        'MO'       => __( 'Mondays', AI1EC_PLUGIN_NAME ),
+        'TU'       => __( 'Tuesdays', AI1EC_PLUGIN_NAME ),
+        'WE'       => __( 'Wednesdays', AI1EC_PLUGIN_NAME ),
+        'TH'       => __( 'Thursdays', AI1EC_PLUGIN_NAME ),
+        'FR'       => __( 'Fridays', AI1EC_PLUGIN_NAME ),
+        'SA'       => __( 'Saturdays', AI1EC_PLUGIN_NAME ),
+        'SU'       => __( 'Sundays', AI1EC_PLUGIN_NAME ),
+        'TU+TH'    => __( 'Tuesdays & Thursdays', AI1EC_PLUGIN_NAME ),
+        'MO+WE+FR' => __( 'Mondays, Wednesdays & Fridays', AI1EC_PLUGIN_NAME ),
+        'WEEKDAYS' => __( 'Weekdays', AI1EC_PLUGIN_NAME ),
+        'WEEKENDS' => __( 'Weekends', AI1EC_PLUGIN_NAME ),
+        'WEEKLY'   => __( 'Weekly', AI1EC_PLUGIN_NAME ),
+        'MONTHLY'  => __( 'Monthly', AI1EC_PLUGIN_NAME ),
+        'YEARLY'   => __( 'Yearly', AI1EC_PLUGIN_NAME )
+      );
+      $options = $temp;
+    }
+    return $options;
+  }
 
 	/**
 	 * Generates and returns repeat dropdown
@@ -647,12 +652,10 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 **/
 	function get_short_time( $timestamp, $convert_from_gmt = true ) {
+	  $time_format = get_option( 'time_format', 'g:ia' );
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
-		$ampm = gmstrftime( '%p', $timestamp );
-		$ampm = $ampm[0];
-		$ampm = strtolower( $ampm );
-		return gmstrftime( '%l:%M', $timestamp ) . $ampm;
+		return date_i18n( $time_format, $timestamp, true );
 	}
 
 	/**
@@ -669,7 +672,7 @@ class Ai1ec_Events_Helper {
 	function get_short_date( $timestamp, $convert_from_gmt = true ) {
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
-		return gmstrftime( '%b %e', $timestamp );
+		return date_i18n( 'M j', $timestamp );
 	}
 
 	/**
@@ -683,11 +686,10 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 **/
 	function get_medium_time( $timestamp, $convert_from_gmt = true ) {
+	  $time_format = get_option( 'time_format', 'g:ia' );
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
-		$ampm = gmstrftime( '%p', $timestamp );
-		$ampm = strtolower( $ampm );
-		return gmstrftime( '%l:%M', $timestamp ) . $ampm;
+		return date_i18n( $time_format, $timestamp, true );
 	}
 
 	/**
@@ -702,11 +704,11 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 **/
 	function get_long_time( $timestamp, $convert_from_gmt = true ) {
+	  $date_format = get_option( 'date_format', 'D, F j' );
+	  $time_format = get_option( 'time_format', 'g:i' );
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
-		$ampm = gmstrftime( '%p', $timestamp );
-		$ampm = strtolower( $ampm );
-		return gmstrftime( '%a, %B %e @ %l:%M', $timestamp ) . $ampm;
+		return date_i18n( $date_format, $timestamp ) . ' @ ' . date_i18n( $time_format, $timestamp );
 	}
 
 	/**
@@ -721,9 +723,10 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 **/
 	function get_long_date( $timestamp, $convert_from_gmt = true ) {
+	  $date_format = get_option( 'date_format', 'D, F j' );
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
-		return gmstrftime( '%a, %B %e', $timestamp );
+		return date_i18n( $date_format, $timestamp );
 	}
 
 	/**
@@ -961,16 +964,16 @@ class Ai1ec_Events_Helper {
     ob_start();
 
 		$options = array(
-		  0 => 'Never',
-		  1 => 'After',
-		  2 => 'On date'
+		  0 => __( 'Never', AI1EC_PLUGIN_NAME ),
+		  1 => __( 'After', AI1EC_PLUGIN_NAME ),
+		  2 => __( 'On date', AI1EC_PLUGIN_NAME )
 		);
 
 		?>
 		<select name="ai1ec_end" id="ai1ec_end">
 			<?php foreach( $options as $key => $val ): ?>
 				<option value="<?php echo $key ?>" <?php if( $key === $selected ) echo 'selected="selected"' ?>>
-					<?php _e( $val, AI1EC_PLUGIN_NAME ) ?>
+					<?php echo $val ?>
 				</option>
 			<?php endforeach ?>
 		</select>

@@ -1,7 +1,7 @@
 <h2 class="ai1ec-calendar-title"><?php echo esc_html( $title ) ?></h2>
 <span class="ai1ec-title-buttons">
 	<a id="ai1ec-today" class="ai1ec-load-view ai1ec-button" href="#action=ai1ec_month">
-		<?php _e( 'Today', AI1EC_JS_URL ) ?>
+		<?php _e( 'Today', AI1EC_PLUGIN_NAME ) ?>
 	</a>
 </span>
 <ul class="ai1ec-pagination">

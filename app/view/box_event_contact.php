@@ -1,10 +1,10 @@
-<h4 class="ai1ec-section-title"><?php _e( 'Organizer contact info', 'ai1ec' ); ?></h4>
+<h4 class="ai1ec-section-title"><?php _e( 'Organizer contact info', AI1EC_PLUGIN_NAME ); ?></h4>
 <table class="ai1ec-form">
 	<tbody>
 		<tr>
 			<td class="ai1ec-first">
 				<label for="ai1ec_contact_name">
-					<?php _e( 'Contact name:', 'ai1ec' ); ?>
+					<?php _e( 'Contact name:', AI1EC_PLUGIN_NAME ); ?>
 				</label>
 			</td>
 			<td>
@@ -14,7 +14,7 @@
 		<tr>
 			<td>
 				<label for="ai1ec_contact_phone">
-					<?php _e( 'Phone:', 'ai1ec' ); ?>
+					<?php _e( 'Phone:', AI1EC_PLUGIN_NAME ); ?>
 				</label>
 			</td>
 			<td>
@@ -24,7 +24,7 @@
 		<tr>
 			<td>
 				<label for="ai1ec_contact_email">
-					<?php _e( 'E-mail:', 'ai1ec' ); ?>
+					<?php _e( 'E-mail:', AI1EC_PLUGIN_NAME ); ?>
 				</label>
 			</td>
 			<td>

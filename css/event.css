@@ -78,7 +78,6 @@ table.ai1ec-full-event {
 }
 .ai1ec-full-event td.ai1ec-map {
 	text-align: right;
-	vertical-align: bottom;
 }
 .ai1ec-full-event td.ai1ec-map.ai1ec-has-map {
 	width: 55%;
@@ -107,6 +106,28 @@ table.ai1ec-full-event {
 }
 .ai1ec-full-event #ai1ec-gmap-canvas input {
 	margin: 0 !important;
+}
+.ai1ec-gmap-placeholder {
+	min-width: 18em;
+	width: 100%;
+	height: 12em;
+	border: 1px dashed #ddd;
+	text-align: center;
+	cursor: pointer;
+	color: #ddd;
+	margin-bottom: 0.3em;
+}
+.ai1ec-gmap-placeholder:hover {
+	border-color: #000;
+	color: #000;
+}
+.ai1ec-gmap-placeholder strong {
+	position: relative;
+	top: 45%;
+}
+.ai1ec-gmap-container-hidden {
+	position: absolute !important;
+	visibility: hidden;
 }
 
 /* Contact info */

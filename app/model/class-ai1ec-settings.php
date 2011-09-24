@@ -111,6 +111,17 @@ class Ai1ec_Settings {
 	 * @var bool
 	 **/
 	var $show_publish_button;
+	
+	/**
+	 * hide_maps_until_clicked class variable
+	 *
+	 * When this setting is on, instead of showing the Google Map, 
+	 * show a dotted-line box containing the text "Click to view map", 
+	 * and when clicked, this box is replaced by the Google Map.
+	 *
+	 * @var bool
+	 **/
+	var $hide_maps_until_clicked;
 
 	/**
 	 * show_create_event_button class variable
@@ -229,6 +240,7 @@ class Ai1ec_Settings {
 			'facebook_credentials'          => null,
 			'user_role_can_create_event'    => null,
 			'show_publish_button'           => false,
+			'hide_maps_until_clicked'       => false,
 			'exclude_from_search'           => false,
 			'show_create_event_button'      => false,
 			'turn_off_subscription_buttons' => false,
@@ -264,6 +276,7 @@ class Ai1ec_Settings {
 			$this->agenda_events_per_page = 1;
 		$this->cron_freq							        = $params['cron_freq'];
 		$this->show_publish_button		        = $params['show_publish_button'];
+		$this->hide_maps_until_clicked        = $params['hide_maps_until_clicked'];
 		$this->exclude_from_search            = $params['exclude_from_search'];
 		$this->show_create_event_button       = $params['show_create_event_button'];
 		$this->turn_off_subscription_buttons  = $params['turn_off_subscription_buttons'];

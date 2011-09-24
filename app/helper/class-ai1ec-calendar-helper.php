@@ -261,7 +261,7 @@ class Ai1ec_Calendar_Helper {
 	 *															['next'] true if more next events
 	 **/
 	function get_events_relative_to( $time, $limit = 0, $page_offset = 0, $post_status = 'publish' ) {
-		global $wpdb, $ai1ec_events_helper;
+		global $wpdb, $ai1ec_events_helper, $current_user;
 
 		// Figure out what the beginning of the day is to properly query all-day
 		// events; then convert to GMT time
@@ -272,12 +272,49 @@ class Ai1ec_Calendar_Helper {
 
 		// Query arguments
 		$args = array( $time );
-		if( $post_status != null ) $args[] = $post_status;
 
 		if( $page_offset >= 0 )
 			$first_record = $page_offset * $limit;
 		else
 			$first_record = ( -$page_offset - 1 ) * $limit;
+		
+		// administrators and editors can see private posts
+		if( current_user_can( 'administrator' ) || current_user_can( 'editor' ) ) {
+      $post_status = "AND ( post_status = %s OR post_status = %s ) ";
+      $args[] = 'publish';
+      $args[] = 'private';
+    }
+    else if( is_user_logged_in() ) {
+      // get user info
+      get_currentuserinfo();
+      
+      /**
+       * include post_status = published
+       * or
+       * post_status = private and author = logged in user
+       */
+      $post_status = "AND " .
+                        "( " .
+                          "post_status = %s " .
+                          
+                          "OR " .
+                          
+                          "( " .
+                            "post_status = %s " .
+                            
+                            "AND " .
+                            
+                            "post_author = %d " .
+                          ") " .
+                        ") ";
+
+      $args[] = 'publish';
+      $args[] = 'private';
+      $args[] = $current_user->ID;
+    } else {
+      $post_status = "AND post_status = %s ";
+      $args[] = 'publish';
+    }
 
 		$query = $wpdb->prepare(
 			"SELECT SQL_CALC_FOUND_ROWS p.*, e.post_id, i.id AS instance_id, " .
@@ -297,7 +334,7 @@ class Ai1ec_Calendar_Helper {
 				( $page_offset >= 0 ? "i.end >= FROM_UNIXTIME( %d ) "
 					: "i.start < FROM_UNIXTIME( %d ) "
 				) .
-			( $post_status == null ? '' : "AND post_status = %s " ) .
+      $post_status .
 			// Reverse order when viewing negative pages, to get correct set of
 			// records. Then reverse results later to order them properly.
 			"ORDER BY i.start " . ( $page_offset >= 0 ? 'ASC' : 'DESC' ) .
@@ -483,7 +520,7 @@ class Ai1ec_Calendar_Helper {
 
 			$weekdays = array();
 			for( $i = 0; $i < 7; $i++ ) {
-				$weekdays[] = strftime( '%a', $time );
+				$weekdays[] = date_i18n( 'D', $time );
 				$time += 60 * 60 * 24; // Add a day
 			}
 		}
@@ -521,12 +558,12 @@ class Ai1ec_Calendar_Helper {
 		);
 		$links[] = array(
 			'id' => 'ai1ec-prev-month',
-			'text' => '‹ ' . gmstrftime( '%B', gmmktime( 0, 0, 0, $bits['mon'] - 1, 1, $bits['year'] ) ),
+			'text' => '‹ ' . date_i18n( 'M', gmmktime( 0, 0, 0, $bits['mon'] - 1, 1, $bits['year'] ) ),
 			'href' => '#action=ai1ec_month&ai1ec_month_offset=' . ( $cur_offset - 1 ),
 		);
 		$links[] = array(
 			'id' => 'ai1ec-next-month',
-			'text' => gmstrftime( '%B', gmmktime( 0, 0, 0, $bits['mon'] + 1, 1, $bits['year'] ) ) . ' ›',
+			'text' => date_i18n( 'M', gmmktime( 0, 0, 0, $bits['mon'] + 1, 1, $bits['year'] ) ) . ' ›',
 			'href' => '#action=ai1ec_month&ai1ec_month_offset=' . ( $cur_offset + 1 ),
 		);
 		$links[] = array(
