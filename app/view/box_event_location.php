@@ -1,10 +1,10 @@
-<h4 class="ai1ec-section-title"><?php _e( 'Event location details', 'ai1ec' ); ?></h4>
+<h4 class="ai1ec-section-title"><?php _e( 'Event location details', AI1EC_PLUGIN_NAME ); ?></h4>
 <table class="ai1ec-form ai1ec-location-form">
 	<tbody>
 		<tr>
 			<td class="ai1ec-first">
 				<label for="ai1ec_venue">
-					<?php _e( 'Venue name:', 'ai1ec' ); ?>
+					<?php _e( 'Venue name:', AI1EC_PLUGIN_NAME ); ?>
 				</label>
 			</td>
 			<td>
@@ -14,7 +14,7 @@
 		<tr>
 			<td>
 				<label for="ai1ec_address">
-					<?php _e( 'Address:', 'ai1ec' ); ?>
+					<?php _e( 'Address:', AI1EC_PLUGIN_NAME ); ?>
 				</label>
 			</td>
 			<td>
@@ -24,7 +24,7 @@
 		<tr>
 			<td>
 				<label for="ai1ec_google_map">
-					<?php _e( 'Show Google Map:', 'ai1ec' ); ?>
+					<?php _e( 'Show Google Map:', AI1EC_PLUGIN_NAME ); ?>
 				</label>
 			</td>
 			<td>

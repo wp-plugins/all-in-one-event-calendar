@@ -212,8 +212,8 @@ table.ai1ec-month-view {
 	min-height: 5em;
 }
 .ai1ec-month-view .ai1ec-today {
-	background: #ffd;
-	background: rgba(255,255,128,0.3);
+	background: #ffd !important;
+	background: rgba(255,255,128,0.3) !important;
 }
 .ai1ec-month-view .ai1ec-date {
 	text-align: right;
@@ -632,4 +632,8 @@ table.ai1ec-month-view {
 }
 .ai1ec-subscribe-filtered {
 	display: none;
+}
+/* Category and Tags */
+.ai1ec-filter-selector-container:hover > .ai1ec-filter-selector{
+	display: block;
 }

@@ -82,7 +82,7 @@ class Ai1ec_Settings_Helper {
 		        class="wafp-dropdown wafp-pages-dropdown">
 			<?php if( ! empty( $auto_page ) ) { ?>
 				<option value="__auto_page:<?php echo $auto_page; ?>">
-					<?php _e( '- Auto-Create New Page -', THE_PLUGIN_NAME ); ?>
+					<?php _e( '- Auto-Create New Page -', AI1EC_PLUGIN_NAME ); ?>
 				</option>
 			<?php }
 			foreach( $pages as $page ) {
@@ -267,6 +267,7 @@ class Ai1ec_Settings_Helper {
 				. '/>';
 		$exclude_from_search            = $ai1ec_settings->exclude_from_search ? 'checked=checked' : '';
 		$show_publish_button            = $ai1ec_settings->show_publish_button ? 'checked=checked' : '';
+		$hide_maps_until_clicked        = $ai1ec_settings->hide_maps_until_clicked ? 'checked=checked' : '';
 		$turn_off_subscription_buttons  = $ai1ec_settings->turn_off_subscription_buttons ? 'checked=checked' : '';
 		$show_create_event_button       = $ai1ec_settings->show_create_event_button ? 'checked=checked' : '';
 		$inject_categories              = $ai1ec_settings->inject_categories ? 'checked=checked' : '';
@@ -281,6 +282,7 @@ class Ai1ec_Settings_Helper {
 			'agenda_events_per_page'        => $agenda_events_per_page,
 			'exclude_from_search'           => $exclude_from_search,
 			'show_publish_button'		        => $show_publish_button,
+			'hide_maps_until_clicked'       => $hide_maps_until_clicked,
 			'turn_off_subscription_buttons' => $turn_off_subscription_buttons,
 			'show_create_event_button'      => $show_create_event_button,
 			'inject_categories'             => $inject_categories,

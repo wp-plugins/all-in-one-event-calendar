@@ -298,7 +298,8 @@ class Ai1ec_Event {
 					"LEFT JOIN $wpdb->term_relationships tr ON post_id = tr.object_id " .
 					"LEFT JOIN $wpdb->term_taxonomy ttc ON tr.term_taxonomy_id = ttc.term_taxonomy_id AND ttc.taxonomy = 'events_categories' " .
 					"LEFT JOIN $wpdb->term_taxonomy ttt ON tr.term_taxonomy_id = ttt.term_taxonomy_id AND ttt.taxonomy = 'events_tags' " .
-				"WHERE post_id = %d",
+				"WHERE post_id = %d " .
+				"GROUP BY post_id",
 				$data );
 			$event = $wpdb->get_row( $query );
 

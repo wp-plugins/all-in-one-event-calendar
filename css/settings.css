@@ -89,28 +89,28 @@
 	text-transform: lowercase;
 }
 
-.ai1ec_event_page_all-in-one-event-calendar-settings #general-settings {
+.column-1-ai1ec #general-settings {
 	line-height: 1.7em;
 }
-.ai1ec_event_page_all-in-one-event-calendar-settings #general-settings div.inside label {
+.column-1-ai1ec #general-settings div.inside label {
 	float: left;
 	clear: left;
 	margin: 0.25em 0;
 }
-.ai1ec_event_page_all-in-one-event-calendar-settings #general-settings .checkbox {
+.column-1-ai1ec #general-settings .checkbox {
 	float: left;
 	margin: 0.5em 0.5em 0 0;
 }
-.ai1ec_event_page_all-in-one-event-calendar-settings #general-settings div.description {
+.column-1-ai1ec #general-settings div.description {
 	clear: left;
 	font-size: 0.95em;
 	line-height: 1.5em;
 	margin-bottom: 1em;
 }
-.ai1ec_event_page_all-in-one-event-calendar-settings #general-settings label.textinput {
+.column-1-ai1ec #general-settings label.textinput {
 	width: 230px;
 }
-.ai1ec_event_page_all-in-one-event-calendar-settings #general-settings h2 {
+.column-1-ai1ec #general-settings h2 {
 	margin-bottom: 0;
 	margin-top: 10px;
 }

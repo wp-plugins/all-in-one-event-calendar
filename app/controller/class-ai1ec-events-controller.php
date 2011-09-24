@@ -683,7 +683,7 @@ class Ai1ec_Events_Controller {
 	 **/
 	function get_map_view( &$event )
 	{
-		global $ai1ec_view_helper, $ai1ec_events_helper;
+		global $ai1ec_view_helper, $ai1ec_events_helper, $ai1ec_settings;
 
 		if( ! $event->show_map )
 			return '';
@@ -691,6 +691,7 @@ class Ai1ec_Events_Controller {
 		$args = array(
 			'address' => $event->address,
 			'gmap_url_link' => $ai1ec_events_helper->get_gmap_url( $event, false ),
+			'hide_maps_until_clicked' => $ai1ec_settings->hide_maps_until_clicked
 		);
 		return $ai1ec_view_helper->get_view( 'event-map.php', $args );
 	}

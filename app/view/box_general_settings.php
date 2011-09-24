@@ -38,6 +38,12 @@
 </label>
 <br class="clear" />
 
+<label for="hide_maps_until_clicked">
+<input class="checkbox" name="hide_maps_until_clicked" id="hide_maps_until_clicked" type="checkbox" value="1" <?php echo $hide_maps_until_clicked ?> />
+<?php _e( 'Hide <strong>Google Maps</strong> until clicked', AI1EC_PLUGIN_NAME ) ?>
+</label>
+<br class="clear" />
+
 <label for="inject_categories">
 <input class="checkbox" name="inject_categories" id="inject_categories" type="checkbox" value="1" <?php echo $inject_categories ?> />
 <?php _e( 'Include <strong>event categories</strong> in post category lists', AI1EC_PLUGIN_NAME ) ?>

@@ -361,16 +361,20 @@ class Ai1ec_App_Controller {
 		if( $ai1ec_settings->calendar_page_id &&
 		    is_page( $ai1ec_settings->calendar_page_id ) )
 		{
-			ob_start();
-			// Render view
-			$ai1ec_calendar_controller->view();
-			// Save page content to local variable
-			$this->page_content = ob_get_contents();
-			ob_end_clean();
+		  // Proceed only if the page password is correctly entered OR
+		  // the page doesn't require a password
+		  if( ! post_password_required( $ai1ec_settings->calendar_page_id ) ) {
+		    ob_start();
+  			// Render view
+  			$ai1ec_calendar_controller->view();
+  			// Save page content to local variable
+  			$this->page_content = ob_get_contents();
+  			ob_end_clean();
 
-			// Replace page content - make sure it happens at (almost) the very end of
-			// page content filters (some themes are overly ambitious here)
-			add_filter( 'the_content', array( &$this, 'append_content' ), PHP_INT_MAX - 1 );
+  			// Replace page content - make sure it happens at (almost) the very end of
+  			// page content filters (some themes are overly ambitious here)
+  			add_filter( 'the_content', array( &$this, 'append_content' ), PHP_INT_MAX - 1 );
+		  }
 		}
 	}
 

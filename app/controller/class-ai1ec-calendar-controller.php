@@ -225,7 +225,7 @@ class Ai1ec_Calendar_Controller {
 		$pagination_links = $ai1ec_calendar_helper->get_month_pagination_links( $month_offset );
 
 		$view_args = array(
-			'title' => gmstrftime( '%B %Y', $timestamp ),
+			'title' => date_i18n( 'F Y', $timestamp ),
 			'weekdays' => $ai1ec_calendar_helper->get_weekdays(),
 			'cell_array' => $cell_array,
 			'pagination_links' => $pagination_links,
@@ -277,7 +277,7 @@ class Ai1ec_Calendar_Controller {
 
 		// Incorporate offset into date
 		$args = array(
-			'title' => __( 'Agenda' ),
+			'title' => __( 'Agenda', AI1EC_PLUGIN_NAME ),
 			'dates' => $dates,
 			'page_offset' => $page_offset,
 			'pagination_links' => $pagination_links,

@@ -75,8 +75,9 @@ jQuery( document ).ready( function( $ ) {
 	 */
 	function load_view( hash ) {
 
-		// Display loader
-		$('#ai1ec-calendar-view-loading').fadeTo( 'fast', 0.7,
+		// Reveal loader behind view
+		$('#ai1ec-calendar-view-loading').fadeIn( 'fast' );
+		$('#ai1ec-calendar-view').fadeTo( 'fast', 0.3,
 			// After loader is visible, fetch new content
 			function() {
 				var query = hash.substring( 1 );
@@ -105,6 +106,7 @@ jQuery( document ).ready( function( $ ) {
 
 						// Hide loader
 						$('#ai1ec-calendar-view-loading').fadeOut( 'fast' );
+						$('#ai1ec-calendar-view').fadeTo( 'fast', 1.0 );
 
 						// Do any general view initialization after loading
 						initialize_view();
@@ -248,26 +250,6 @@ jQuery( document ).ready( function( $ ) {
 			'ai1ec-tags',
 			'#ai1ec-selected-tags' );
 
-	// Category/tag drop-down click actions
-	$('.ai1ec-dropdown').click( function()
-		{
-			// Bring this selector to the front
-			$('.ai1ec-filter-selector').css( 'zIndex', 10 );
-			var $this_selector =
-				$(this).siblings( '.ai1ec-filter-selector' )
-					.css( 'zIndex', 11 );
-
-			// Slide it down or up
-			if( $(this).hasClass( 'ai1ec-active' ) ) {
-				$(this).removeClass( 'ai1ec-active' );
-				$this_selector.slideUp( 150 );
-			} else {
-				$(this).addClass( 'ai1ec-active' );
-				$this_selector.slideDown( 150 );
-			}
-		}
-	);
-
 	// Category/tag filtering actions
 
 	/**
@@ -323,12 +305,16 @@ jQuery( document ).ready( function( $ ) {
 		// is quick enough
 		var $loading = $('#ai1ec-calendar-view-loading')
 			.delay( 500 )
-			.fadeTo( 'fast', 0.7 );
+			.fadeIn( 'fast' );
+		var $view = $('#ai1ec-calendar-view')
+			.delay( 500 )
+			.fadeTo( 'fast', 0.3 );
 
 		$.getJSON( ai1ec_calendar.ajaxurl, query, function( data )
 			{
 				// Cancel loading animation or fade out if faded in.
 				$loading.clearQueue().fadeOut( 'fast' );
+				$view.clearQueue().fadeTo( 'fast', 1.0 );
 
 				// Fade in events that should be displayed (or leave them visible)
 				var jq_selector = new Array();	// Build our jQuery selector string

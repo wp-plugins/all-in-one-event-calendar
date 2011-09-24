@@ -42,3 +42,15 @@ window.onload = function()
 		document.body.appendChild( script );
 	}
 }
+
+jQuery( function( $ ) {
+	$( '.ai1ec-gmap-placeholder:first' ).click( function() {
+		var map_el = $( '.ai1ec-gmap-container-hidden:first');
+		// delete placeholder
+		$( this ).remove();
+		// hide map
+		map_el.hide();
+		map_el.removeClass( 'ai1ec-gmap-container-hidden' );
+		map_el.fadeIn();
+	});
+});
