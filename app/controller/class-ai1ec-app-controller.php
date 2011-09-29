@@ -22,6 +22,15 @@ class Ai1ec_App_Controller {
 	 * @var null | object
 	 **/
 	private static $_instance = NULL;
+	
+	/**
+	 * _load_domain class variable
+	 *
+	 * Load domain
+	 *
+	 * @var bool
+	 **/
+	private static $_load_domain = FALSE;
 
 	/**
 	 * page_content class variable
@@ -66,7 +75,10 @@ class Ai1ec_App_Controller {
 
 		// Configure MySQL to operate in GMT time
 		$wpdb->query( "SET time_zone = '+0:00'" );
-
+		
+		// Load plugin text domain
+		$this->load_textdomain();
+		
 		// Install/update database schema as necessary
 		$this->install_schema();
 
@@ -178,7 +190,10 @@ class Ai1ec_App_Controller {
 	 * @return void
 	 **/
 	function load_textdomain() {
-	  $err = load_plugin_textdomain( AI1EC_PLUGIN_NAME, false, AI1EC_LANGUAGE_PATH );
+	  if( self::$_load_domain === FALSE ) {
+	    load_plugin_textdomain( AI1EC_PLUGIN_NAME, false, AI1EC_LANGUAGE_PATH );
+	    self::$_load_domain = TRUE;
+	  }
 	}
 
 	/**

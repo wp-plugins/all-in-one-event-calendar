@@ -242,7 +242,7 @@ function parseTime(text)
                         } else if (duration == 60) {
                             fullText += ' (1 hr)';
                         } else {
-                            fullText += ' (' + Math.round( duration / 60.0 ) + ' hr ' + ( duration % 60 ) + ' min)';
+                            fullText += ' (' + Math.floor( duration / 60.0 ) + ' hr ' + ( duration % 60 ) + ' min)';
                         }
                     }
                     var li = $('<li />').append(

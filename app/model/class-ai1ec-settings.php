@@ -93,6 +93,13 @@ class Ai1ec_Settings {
 	 * @var string
 	 **/
 	var $cron_freq;
+	
+	/**
+	 * timezone class variable
+	 *
+	 * @var string
+	 **/
+	var $timezone;
 
 	/**
 	 * exclude_from_search class variable
@@ -161,6 +168,15 @@ class Ai1ec_Settings {
 	 * @var bool
 	 **/
 	var $input_us_format;
+	
+	/**
+	 * input_24h_time class variable
+	 *
+	 * Use 24h time in time pickers. 
+	 *
+	 * @var bool
+	 **/
+	var $input_24h_time;
 
 	/**
 	 * settings_page class variable
@@ -219,6 +235,7 @@ class Ai1ec_Settings {
 		update_option( 'ai1ec_settings', $this );
 		update_option( 'start_of_week', $this->week_start_day );
 		update_option( 'ai1ec_cron_version', get_option( 'ai1ec_cron_version' ) + 1 );
+		update_option( 'timezone_string', $this->timezone );
 	}
 
 	/**
@@ -246,7 +263,9 @@ class Ai1ec_Settings {
 			'turn_off_subscription_buttons' => false,
 			'inject_categories'             => false,
 			'input_us_format'               => false,
-			'cron_freq'                     => 'daily'
+			'input_24h_time'                => false,
+			'cron_freq'                     => 'daily',
+			'timezone'                      => get_option( 'timezone_string' )
 		);
 
 		foreach( $defaults as $key => $default ) {
@@ -272,8 +291,6 @@ class Ai1ec_Settings {
 		$this->week_start_day 				        = $params['week_start_day'];
 		$this->agenda_events_per_page         = $params['agenda_events_per_page'];
 		$this->agenda_events_per_page         = intval( $this->agenda_events_per_page );
-		if( $this->agenda_events_per_page <= 0 )
-			$this->agenda_events_per_page = 1;
 		$this->cron_freq							        = $params['cron_freq'];
 		$this->show_publish_button		        = $params['show_publish_button'];
 		$this->hide_maps_until_clicked        = $params['hide_maps_until_clicked'];
@@ -282,10 +299,14 @@ class Ai1ec_Settings {
 		$this->turn_off_subscription_buttons  = $params['turn_off_subscription_buttons'];
 		$this->inject_categories              = $params['inject_categories'];
 		$this->input_us_format                = $params['input_us_format'];
+		$this->input_24h_time                 = $params['input_24h_time'];
 		$this->include_events_in_rss 					= $params['include_events_in_rss'];
 		$this->allow_events_posting_facebook 	= $params['allow_events_posting_facebook'];
 		$this->facebook_credentials 					= $params['facebook_credentials'];
 		$this->user_role_can_create_event 		= $params['user_role_can_create_event'];
+		
+		if( $this->agenda_events_per_page <= 0 )  $this->agenda_events_per_page = 1;
+		if( isset( $params['timezone'] ) )        $this->timezone = $params['timezone'];
 	}
 
 	/**

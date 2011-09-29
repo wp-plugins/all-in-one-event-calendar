@@ -672,7 +672,7 @@ class Ai1ec_Events_Helper {
 	function get_short_date( $timestamp, $convert_from_gmt = true ) {
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
-		return date_i18n( 'M j', $timestamp );
+		return date_i18n( 'M j', $timestamp, true );
 	}
 
 	/**
@@ -708,7 +708,7 @@ class Ai1ec_Events_Helper {
 	  $time_format = get_option( 'time_format', 'g:i' );
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
-		return date_i18n( $date_format, $timestamp ) . ' @ ' . date_i18n( $time_format, $timestamp );
+		return date_i18n( $date_format, $timestamp, true ) . ' @ ' . date_i18n( $time_format, $timestamp, true );
 	}
 
 	/**
@@ -726,7 +726,7 @@ class Ai1ec_Events_Helper {
 	  $date_format = get_option( 'date_format', 'D, F j' );
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
-		return date_i18n( $date_format, $timestamp );
+		return date_i18n( $date_format, $timestamp, true );
 	}
 
 	/**

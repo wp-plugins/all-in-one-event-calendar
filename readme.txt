@@ -4,7 +4,7 @@ Donate link: http://theseedstudio.com/software/all-in-one-event-calendar-wordpre
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
 Tested up to: 3.2.1
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 
 An event calendar system with month and agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
@@ -51,6 +51,19 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 [Check out the demo »](http://demo.theseedstudio.com/calendar/)
 
 == Changelog ==
+= Version 1.0.8 =
+* Added better if not full lozalization support (http://trac.the-seed.ca/ticket/25 http://trac.the-seed.ca/ticket/23 http://trac.the-seed.ca/ticket/10)- thank you josjo
+* Added qTranslate support and output to post data using wordpress filters (http://trac.the-seed.ca/ticket/1)
+* Added uninstall support (http://trac.the-seed.ca/ticket/7)
+* Added 24h time in time pickers (http://trac.the-seed.ca/ticket/26) - thank you josjo
+* Fixed an issue when event duration time is decremented in single (detailed) view (http://trac.the-seed.ca/ticket/2)
+* Fixed an issue with times for ics imported events (http://trac.the-seed.ca/ticket/6)
+* Better timezone control (http://trac.the-seed.ca/ticket/27)
+* Fixed the category filter in agenda view (http://trac.the-seed.ca/ticket/12)
+* Fixed event date being set to null when using quick edit (http://trac.the-seed.ca/ticket/16)
+* Fixed a bug in time pickers (http://trac.the-seed.ca/ticket/17) - thank you josjo
+* Deprecated function split() is removed (http://trac.the-seed.ca/ticket/8)
+
 = Version 1.0.7 =
 * Fixed issue with some MySQL version
 * Added better localization support - thank you josjo

@@ -129,6 +129,8 @@ class Ai1ec_Events_Controller {
 				'now'                    => $ai1ec_events_helper->gmt_to_local( time() ),
 				// US input format for date pickers
 				'us_format'              => $ai1ec_settings->input_us_format,
+        // 24h time format for time pickers
+        'twentyfour_hour'        => $ai1ec_settings->input_24h_time,
 				// ICS feed error messages
 				'duplicate_feed_message' => esc_html__( 'This feed is already being imported.', AI1EC_PLUGIN_NAME ),
 				'invalid_url_message'    => esc_html__( 'Please enter a valid iCalendar URL.', AI1EC_PLUGIN_NAME ),
@@ -295,7 +297,7 @@ class Ai1ec_Events_Controller {
 	 **/
 	function save_post( $post_id ) {
 		global $wpdb, $ai1ec_events_helper;
-
+		
 		// verify if this is not an auto save routine.
 		if( ! defined( 'DOING_AUTOSAVE' ) && ! DOING_AUTOSAVE ) {
 
@@ -304,6 +306,11 @@ class Ai1ec_Events_Controller {
 		  if ( ! wp_verify_nonce( $_POST[AI1EC_POST_TYPE], 'ai1ec' ) ) {
 			  return;
 		  }
+	  }
+	  
+	  // verify if this is not inline-editing
+	  if( $_REQUEST['action'] == 'inline-save' ) {
+	    return;
 	  }
 
 		// verify that the post_type is that of an event
