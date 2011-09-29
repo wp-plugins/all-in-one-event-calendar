@@ -167,8 +167,8 @@ class Ai1ec_Calendar_Controller {
 	  	$create_event_url = false;
 
 	  // Validate preselected category/tag IDs
-	  $cat_ids = join( ',', array_filter( split( ',', $this->request['ai1ec_cat_ids'] ), 'is_numeric' ) );
-	  $tag_ids = join( ',', array_filter( split( ',', $this->request['ai1ec_tag_ids'] ), 'is_numeric' ) );
+	  $cat_ids = join( ',', array_filter( explode( ',', $this->request['ai1ec_cat_ids'] ), 'is_numeric' ) );
+	  $tag_ids = join( ',', array_filter( explode( ',', $this->request['ai1ec_tag_ids'] ), 'is_numeric' ) );
 
 	  $categories = get_terms( 'events_categories', array( 'orderby' => 'name' ) );
     foreach( $categories as &$cat ) {
@@ -225,7 +225,7 @@ class Ai1ec_Calendar_Controller {
 		$pagination_links = $ai1ec_calendar_helper->get_month_pagination_links( $month_offset );
 
 		$view_args = array(
-			'title' => date_i18n( 'F Y', $timestamp ),
+			'title' => date_i18n( 'F Y', $timestamp, true ),
 			'weekdays' => $ai1ec_calendar_helper->get_weekdays(),
 			'cell_array' => $cell_array,
 			'pagination_links' => $pagination_links,

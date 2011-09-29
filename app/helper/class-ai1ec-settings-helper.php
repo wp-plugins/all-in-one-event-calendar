@@ -154,7 +154,38 @@ class Ai1ec_Settings_Helper {
 		<?php
 		return ob_get_clean();
 	}
+	
+	/**
+	 * get_timezone_dropdown function
+	 *
+	 *
+	 *
+	 * @return void
+	 **/
+  function get_timezone_dropdown( $timezone = null ) {
+    $timezone_identifiers = DateTimeZone::listIdentifiers();
+    ob_start();
+    ?>
+    <select id="timezone" name="timezone">
+      <?php foreach( $timezone_identifiers as $value ) : ?>
+        <?php if( preg_match( '/^(America|Antartica|Arctic|Asia|Atlantic|Europe|Indian|Pacific)\//', $value ) ) : ?>
+          <?php $ex = explode( "/", $value );  //obtain continent,city ?>
+          <?php if( $continent != $ex[0] ) : ?>
+            <?php if( ! empty( $continent ) ) : ?>
+              </optgroup>
+            <?php endif ?>
+            <optgroup label="<?php echo $ex[0] ?>">
+          <?php endif ?>
 
+          <?php $city = isset( $ex[2] ) ? $ex[2] : $ex[1]; $continent = $ex[0]; ?>
+          <option value="<?php echo $value ?>" <?php echo $value == $timezone ? 'selected' : '' ?>><?php echo $city ?></option>
+        <?php endif ?>
+    <?php endforeach ?>
+      </optgroup>
+    </select>
+    <?php
+    return ob_get_clean();
+  }
 	/**
 	 * get_cron_freq_dropdown function
 	 *
@@ -272,7 +303,9 @@ class Ai1ec_Settings_Helper {
 		$show_create_event_button       = $ai1ec_settings->show_create_event_button ? 'checked=checked' : '';
 		$inject_categories              = $ai1ec_settings->inject_categories ? 'checked=checked' : '';
 		$input_us_format                = $ai1ec_settings->input_us_format ? 'checked=checked' : '';
+    $input_24h_time                 = $ai1ec_settings->input_24h_time ? 'checked=checked' : '';
 	  $default_calendar_view          = $ai1ec_settings_helper->get_view_dropdown( $ai1ec_settings->default_calendar_view );
+	  $timezone_control               = $ai1ec_settings_helper->get_timezone_dropdown( $ai1ec_settings->timezone );
 
 	  $args = array(
 	    'calendar_page'                 => $calendar_page,
@@ -287,6 +320,9 @@ class Ai1ec_Settings_Helper {
 			'show_create_event_button'      => $show_create_event_button,
 			'inject_categories'             => $inject_categories,
 			'input_us_format'               => $input_us_format,
+      'input_24h_time'                => $input_24h_time,
+			'show_timezone'                 => ! get_option( 'timezone_string' ),
+			'timezone_control'              => $timezone_control
 	  );
 	  $ai1ec_view_helper->display( 'box_general_settings.php', $args );
 	}

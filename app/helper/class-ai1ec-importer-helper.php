@@ -64,12 +64,11 @@ class Ai1ec_Importer_Helper {
 			$ret .= ' ' . $t['value']['hour'] .
 				':' . $t['value']['min'] .
 				':' . $t['value']['sec'];
-		$timezone = $t['params']['TZID'];
+		$timezone = ( isset( $t['value']['tz'] ) && $t['value']['tz'] == 'Z' ) ? 'Z' : $t['params']['TZID'];
 
 		if( ! $timezone ) $timezone = $def_timezone;
 		if( $timezone )
 			$ret .= ' ' . $timezone;
-
 		return strtotime( $ret );
 	}
 
@@ -149,13 +148,13 @@ class Ai1ec_Importer_Helper {
 				}
 
 				if( $rrule = $e->createRrule() )
-					$rrule = trim( end( split( ':', $rrule ) ) );
+					$rrule = trim( end( explode( ':', $rrule ) ) );
 				if( $exrule = $e->createExrule() )
-					$exrule = trim( end( split( ':', $exrule ) ) );
+					$exrule = trim( end( explode( ':', $exrule ) ) );
 				if( $rdate = $e->createRdate() )
-					$rdate = trim( end( split( ':', $rdate ) ) );
+					$rdate = trim( end( explode( ':', $rdate ) ) );
 				if( $exdate = $e->createExdate() )
-					$exdate = trim( end( split( ':', $exdate ) ) );
+					$exdate = trim( end( explode( ':', $exdate ) ) );
 
 				$data = array(
 					'start' 						=> $start,

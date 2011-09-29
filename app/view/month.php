@@ -56,7 +56,14 @@
 												<?php if( ! $event->allday ): ?>
 													<span class="ai1ec-event-time"><?php echo esc_html( $event->short_start_time ) ?></span>
 												<?php endif ?>
-												<span class="ai1ec-event-title"><?php echo esc_html( mb_strimwidth( $event->post->post_title, 0, 35, '...' ) ) ?></span>
+												<span class="ai1ec-event-title">
+												  <?php if( function_exists( 'mb_strimwidth' ) ) : ?>
+												    <?php echo esc_html( mb_strimwidth( apply_filters( 'the_title', $event->post->post_title ), 0, 35, '...' ) ) ?></span>
+												  <?php else : ?>
+												    <?php $read_more = strlen( apply_filters( 'the_title', $event->post->post_title ) ) > 35 ? '...' : '' ?>
+                            <?php echo esc_html( substr( apply_filters( 'the_title', $event->post->post_title ), 0, 35 ) . $read_more );  ?>
+												  <?php endif; ?>
+												</span>
 												<?php if( $event->allday ): ?>
 													<small><?php esc_html_e( '(all-day)', AI1EC_PLUGIN_NAME ) ?></small>
 												<?php endif ?>
@@ -67,7 +74,7 @@
 											<?php if( ! $event->allday ): ?>
 												<span class="ai1ec-event-time"><?php echo esc_html( $event->short_start_time ) ?></span>
 											<?php endif ?>
-											<span class="ai1ec-event-title"><?php echo esc_html( $event->post->post_title ) ?></span>
+											<span class="ai1ec-event-title"><?php echo esc_html( apply_filters( 'the_title', $event->post->post_title ) ) ?></span>
 										</div>
 
 									</a>

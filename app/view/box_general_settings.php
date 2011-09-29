@@ -1,4 +1,4 @@
-<h2>Viewing Events</h2>
+<h2><?php _e( 'Viewing Events', AI1EC_PLUGIN_NAME ) ?></h2>
 
 <label class="textinput" for="calendar_page_id"><?php _e( 'Calendar page:', AI1EC_PLUGIN_NAME ) ?></label>
 <div class="alignleft"><?php echo $calendar_page ?></div>
@@ -6,6 +6,12 @@
 
 <label class="textinput" for="default_calendar_view"><?php _e( 'Default calendar view:', AI1EC_PLUGIN_NAME ) ?></label>
 <?php echo $default_calendar_view ?>
+<br class="clear" />
+
+<?php if( $show_timezone ) : ?>
+  <label class="textinput" for="default_calendar_view"><?php _e( 'Timezone:', AI1EC_PLUGIN_NAME ) ?></label>
+  <?php echo $timezone_control ?>
+<?php endif; ?>
 <br class="clear" />
 
 <label class="textinput" for="calendar_css_selector"><?php _e( 'Contain calendar in this DOM element:', AI1EC_PLUGIN_NAME ) ?></label>
@@ -50,12 +56,18 @@
 </label>
 <br class="clear" />
 
-<h2>Adding/Editing Events</h2>
+<h2><?php _e( 'Adding/Editing Events', AI1EC_PLUGIN_NAME ) ?></h2>
 
 <label for="input_us_format">
 <input class="checkbox" name="input_us_format" id="input_us_format" type="checkbox" value="1" <?php echo $input_us_format ?> />
 <?php _e( 'Input dates in <strong>US format</strong>', AI1EC_PLUGIN_NAME ) ?>
 </label>
+<br class="clear" />
+
+<label for="input_24h_time"> 
+<input class="checkbox" name="input_24h_time" id="input_24h_time" type="checkbox" value="1" <?php echo $input_24h_time ?> /> 
+<?php _e( 'Use <strong>24h time</strong> in time pickers', AI1EC_PLUGIN_NAME ) ?> 
+</label> 
 <br class="clear" />
 
 <label for="show_publish_button">

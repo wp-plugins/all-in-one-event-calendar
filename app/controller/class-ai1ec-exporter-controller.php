@@ -68,9 +68,11 @@ class Ai1ec_Exporter_Controller {
 		$c->setProperty( 'X-WR-CALDESC', get_bloginfo( 'description' ) );
 		// Timezone setup
 		$tz = get_option( 'timezone_string' );
-		$c->setProperty( 'X-WR-TIMEZONE', $tz );
-		$tz_xprops = array( 'X-LIC-LOCATION' => $tz );
-		iCalUtilityFunctions::createTimezone( $c, $tz, $tz_xprops );
+		if( $tz ) {
+		  $c->setProperty( 'X-WR-TIMEZONE', $tz );
+  		$tz_xprops = array( 'X-LIC-LOCATION' => $tz );
+  		iCalUtilityFunctions::createTimezone( $c, $tz, $tz_xprops );
+		}
 
 		foreach( $events as $event ) {
 			$ai1ec_exporter_helper->insert_event_in_calendar( $event, $c );

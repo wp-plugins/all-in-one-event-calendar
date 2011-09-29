@@ -558,12 +558,12 @@ class Ai1ec_Calendar_Helper {
 		);
 		$links[] = array(
 			'id' => 'ai1ec-prev-month',
-			'text' => '‹ ' . date_i18n( 'M', gmmktime( 0, 0, 0, $bits['mon'] - 1, 1, $bits['year'] ) ),
+			'text' => '‹ ' . date_i18n( 'M', gmmktime( 0, 0, 0, $bits['mon'] - 1, 1, $bits['year'] ), true ),
 			'href' => '#action=ai1ec_month&ai1ec_month_offset=' . ( $cur_offset - 1 ),
 		);
 		$links[] = array(
 			'id' => 'ai1ec-next-month',
-			'text' => date_i18n( 'M', gmmktime( 0, 0, 0, $bits['mon'] + 1, 1, $bits['year'] ) ) . ' ›',
+			'text' => date_i18n( 'M', gmmktime( 0, 0, 0, $bits['mon'] + 1, 1, $bits['year'] ), true ) . ' ›',
 			'href' => '#action=ai1ec_month&ai1ec_month_offset=' . ( $cur_offset + 1 ),
 		);
 		$links[] = array(

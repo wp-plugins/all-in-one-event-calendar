@@ -142,7 +142,7 @@
 						date_inputs.calendricalDateRange( { today: today, usa: o.us_format } );
 					} else {
 						time_inputs.fadeIn();
-						all_inputs.calendricalDateTimeRange( { today: today, usa: o.us_format } );
+						all_inputs.calendricalDateTimeRange( { today: today, usa: o.us_format, isoTime: o.twentyfour_hour } );
 					}
 				} )
 				.get().checked = false;
@@ -177,7 +177,7 @@
 						$(this).data( 'timespan.stored', this.value );
 						// Re-format contents of field correctly (in case parsable but not
 						// perfect).
-						$(this).val( formatTime( time.hour, time.minute, false ) );
+						$(this).val( formatTime( time.hour, time.minute, o.twentyfour_hour ) );
 					}
 				});
 
@@ -203,7 +203,7 @@
 						+ start_date_input.data( 'time_diff' );
 					end_time_val = new Date( end_time_val * 1000 );
 					end_date_input.val( formatDate( end_time_val, o.us_format ) );
-					end_time_input.val( formatTime( end_time_val.getUTCHours(), end_time_val.getUTCMinutes(), false ) );
+					end_time_input.val( formatTime( end_time_val.getUTCHours(), end_time_val.getUTCMinutes(), o.twentyfour_hour ) );
 				} );
 
 			// Validation upon form submission
