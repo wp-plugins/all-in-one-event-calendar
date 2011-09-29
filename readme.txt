@@ -48,21 +48,25 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 * Each event links to the original calendar
 * Your calendar can be embedded into a WordPress page without needing to create template files or modify the theme
 
-[Check out the demo »](http://demo.theseedstudio.com/calendar/)
+[Check out the DEMO »](http://demo.theseedstudio.com/calendar/)
+
+[Track the development process »](http://trac.the-seed.ca/roadmap)
+
+[Bug reports (only for registered users) »](http://trac.the-seed.ca/newticket)
 
 == Changelog ==
 = Version 1.0.8 =
-* Added better if not full lozalization support (http://trac.the-seed.ca/ticket/25 http://trac.the-seed.ca/ticket/23 http://trac.the-seed.ca/ticket/10)- thank you josjo
-* Added qTranslate support and output to post data using wordpress filters (http://trac.the-seed.ca/ticket/1)
-* Added uninstall support (http://trac.the-seed.ca/ticket/7)
-* Added 24h time in time pickers (http://trac.the-seed.ca/ticket/26) - thank you josjo
-* Fixed an issue when event duration time is decremented in single (detailed) view (http://trac.the-seed.ca/ticket/2)
-* Fixed an issue with times for ics imported events (http://trac.the-seed.ca/ticket/6)
-* Better timezone control (http://trac.the-seed.ca/ticket/27)
-* Fixed the category filter in agenda view (http://trac.the-seed.ca/ticket/12)
-* Fixed event date being set to null when using quick edit (http://trac.the-seed.ca/ticket/16)
-* Fixed a bug in time pickers (http://trac.the-seed.ca/ticket/17) - thank you josjo
-* Deprecated function split() is removed (http://trac.the-seed.ca/ticket/8)
+* Added better if not full lozalization support [#25](http://trac.the-seed.ca/ticket/25) [#23](http://trac.the-seed.ca/ticket/23) [#10](http://trac.the-seed.ca/ticket/10) - thank you josjo
+* Added qTranslate support and output to post data using wordpress filters [#1](http://trac.the-seed.ca/ticket/1)
+* Added uninstall support [#7](http://trac.the-seed.ca/ticket/7)
+* Added 24h time in time pickers [#26](http://trac.the-seed.ca/ticket/26) - thank you josjo
+* Fixed an issue when event duration time is decremented in single (detailed) view [#2](http://trac.the-seed.ca/ticket/2)
+* Fixed an issue with times for ics imported events [#6](http://trac.the-seed.ca/ticket/6)
+* Better timezone control [#27](http://trac.the-seed.ca/ticket/27)
+* Fixed the category filter in agenda view [#12](http://trac.the-seed.ca/ticket/12)
+* Fixed event date being set to null when using quick edit [#16](http://trac.the-seed.ca/ticket/16)
+* Fixed a bug in time pickers [#17](http://trac.the-seed.ca/ticket/17) - thank you josjo
+* Deprecated function split() is removed [#8](http://trac.the-seed.ca/ticket/8)
 
 = Version 1.0.7 =
 * Fixed issue with some MySQL version
