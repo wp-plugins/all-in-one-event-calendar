@@ -40,7 +40,7 @@
 											</span>
 										<?php endif ?>
 										<span class="ai1ec-event-title">
-											<?php echo esc_html( $event->post->post_title ) ?>
+											<?php echo esc_html( apply_filters( 'the_title', $event->post->post_title ) ) ?>
 										</span>
 									</a>
 

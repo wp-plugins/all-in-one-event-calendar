@@ -30,6 +30,7 @@ jQuery( function( $ ){
 			end_time_input: 	'#ai1ec_end-time-input',
 			end_time: 				'#ai1ec_end-time',
 			us_format:        ai1ec_add_new_event.us_format,
+			twentyfour_hour:  ai1ec_add_new_event.twentyfour_hour,
 			now:              now
 		}
 		$.timespan( data );

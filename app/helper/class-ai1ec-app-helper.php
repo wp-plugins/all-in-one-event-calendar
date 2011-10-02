@@ -144,8 +144,8 @@ class Ai1ec_App_Helper {
 		// = labels for custom post type =
 		// ===============================
 		$labels = array(
-			'name' 								=> _x( 'Events', AI1EC_PLUGIN_NAME ),
-			'singular_name' 			=> _x( 'Event', AI1EC_PLUGIN_NAME ),
+			'name' 								=> _x( 'Events', 'Custom post type name', AI1EC_PLUGIN_NAME ),
+			'singular_name' 			=> _x( 'Event', 'Custom post type name (singular)', AI1EC_PLUGIN_NAME ),
 			'add_new'							=> __( 'Add New', AI1EC_PLUGIN_NAME ),
 			'add_new_item'				=> __( 'Add New Event', AI1EC_PLUGIN_NAME ),
 			'edit_item'						=> __( 'Edit Event', AI1EC_PLUGIN_NAME ),
@@ -202,16 +202,16 @@ class Ai1ec_App_Helper {
 		// = labels for event categories taxonomy =
 		// ========================================
 		$events_categories_labels = array(
-			'name'					=> _x( 'Event Categories', AI1EC_PLUGIN_NAME ),
-			'singular_name'	=> _x( 'Event Category', AI1EC_PLUGIN_NAME )
+			'name'					=> _x( 'Event Categories', 'Event categories taxonomy', AI1EC_PLUGIN_NAME ),
+			'singular_name'	=> _x( 'Event Category', 'Event categories taxonomy (singular)', AI1EC_PLUGIN_NAME )
 		);
 
 		// ==================================
 		// = labels for event tags taxonomy =
 		// ==================================
 		$events_tags_labels = array(
-			'name'					=> _x( 'Event Tags', AI1EC_PLUGIN_NAME ),
-			'singular_name'	=> _x( 'Event Tag', AI1EC_PLUGIN_NAME )
+			'name'					=> _x( 'Event Tags', 'Event tags taxonomy', AI1EC_PLUGIN_NAME ),
+			'singular_name'	=> _x( 'Event Tag', 'Event tags taxonomy (singular)', AI1EC_PLUGIN_NAME )
 		);
 
 		// ======================================
@@ -578,7 +578,7 @@ class Ai1ec_App_Helper {
   	// First check if current page is calendar
   	if( is_page( $ai1ec_settings->calendar_page_id ) )
   	{
-	  	$cat_ids = array_filter( split( ',', $ai1ec_calendar_controller->get_requested_categories() ), 'is_numeric' );
+	  	$cat_ids = array_filter( explode( ',', $ai1ec_calendar_controller->get_requested_categories() ), 'is_numeric' );
 	  	if( $cat_ids ) {
 	  		// Mark each filtered event category link as selected
 		  	foreach( $cat_ids as $cat_id ) {
@@ -618,7 +618,7 @@ class Ai1ec_App_Helper {
 
     // If calendar page ID has not been set, and we're not updating the settings
     // page, the calendar is not properly set up yet
-    if( ! $ai1ec_settings->calendar_page_id && ! isset( $_REQUEST['ai1ec_save_settings'] ) )
+    if( ! $ai1ec_settings->calendar_page_id || ! get_option( 'timezone_string' ) && ! isset( $_REQUEST['ai1ec_save_settings'] ) )
     {
     	$args = array();
 
@@ -626,7 +626,12 @@ class Ai1ec_App_Helper {
     	if( current_user_can( 'manage_options' ) ) {
 	    	// If not on the settings page already, direct user there with a message
 	    	if( $plugin_page == 'all-in-one-event-calendar-settings' ) {
-					$args['msg'] = __( 'To set up the plugin, please select an option in the <strong>Calendar page</strong> dropdown list, then click <strong>Update Settings</strong>.', AI1EC_PLUGIN_NAME );
+	    	  if( ! $ai1ec_settings->calendar_page_id && ! get_option( 'timezone_string' ) )
+					  $args['msg'] = sprintf( __( '%sTo set up the plugin: %s 1. Select an option in the <strong>Calendar page</strong> dropdown list. %s 2. Select an option in the <strong>Timezone</strong> dropdown list. %s 3. Click <strong>Update Settings</strong>. %s', AI1EC_PLUGIN_NAME ), '<br /><br />', '<ul><ol>', '</ol><ol>', '</ol><ol>', '</ol><ul>' );
+					else if( ! $ai1ec_settings->calendar_page_id )
+					  $args['msg'] = __( 'To set up the plugin: Select an option in the <strong>Calendar page</strong> dropdown list, the click <strong>Update Settings</strong>.', AI1EC_PLUGIN_NAME );
+					else
+					  $args['msg'] = __( 'To set up the plugin: Select an option in the <strong>Timezone</strong> dropdown list, the click <strong>Update Settings</strong>.', AI1EC_PLUGIN_NAME );
 				// Else instruct user as to what to do on the settings page
 				} else {
 		      $args['msg'] = sprintf(

@@ -64,24 +64,27 @@ class Ai1ec_Exporter_Helper {
 		$uid = $event->ical_uid ? $event->ical_uid : $event->post->guid;
 		$e->setProperty( 'uid', $uid );
 		$e->setProperty( 'url', get_permalink( $event->post_id ) );
-		$e->setProperty( 'summary', html_entity_decode( $event->post->post_title, ENT_QUOTES ) );
+		$e->setProperty( 'summary', html_entity_decode( apply_filters( 'the_title', $event->post->post_title ), ENT_QUOTES ) );
 		$content = apply_filters( 'the_content', $event->post->post_content );
 		$content = str_replace(']]>', ']]&gt;', $content);
 		$e->setProperty( 'description', $content );
 		if( $event->allday ) {
-			$e->setProperty( 'dtstart',
-				gmdate( "Ymd\T", $ai1ec_events_helper->gmt_to_local( $event->start ) ),
-				array( 'VALUE' => 'DATE', 'TZID' => $tz ) );
-			$e->setProperty( 'dtend',
-				gmdate( "Ymd\T", $ai1ec_events_helper->gmt_to_local( $event->end ) ),
-				array( 'VALUE' => 'DATE', 'TZID' => $tz ) );
+		  $dtstart = $dtend = array();
+		  $dtstart["VALUE"] = $dtend["VALUE"] = 'DATE';
+		  if( $tz )
+		    $dtstart["TZID"] = $dtend["TZID"] = $tz;
+
+			$e->setProperty( 'dtstart', gmdate( "Ymd\T", $ai1ec_events_helper->gmt_to_local( $event->start ) ), $dtstart );
+
+			$e->setProperty( 'dtend', gmdate( "Ymd\T", $ai1ec_events_helper->gmt_to_local( $event->end ) ), $dtend );
 		} else {
-			$e->setProperty( 'dtstart',
-				gmdate( "Ymd\THis\Z", $ai1ec_events_helper->gmt_to_local( $event->start ) ),
-				array( 'TZID' => $tz ) );
-			$e->setProperty( 'dtend',
-				gmdate( "Ymd\THis\Z", $ai1ec_events_helper->gmt_to_local( $event->end ) ),
-				array( 'TZID' => $tz ) );
+		  $dtstart = $dtend = array();
+		  if( $tz )
+		    $dtstart["TZID"] = $dtend["TZID"] = $tz;
+
+			$e->setProperty( 'dtstart', gmdate( "Ymd\THis\Z", $ai1ec_events_helper->gmt_to_local( $event->start ) ), $dtstart );
+
+			$e->setProperty( 'dtend', gmdate( "Ymd\THis\Z", $ai1ec_events_helper->gmt_to_local( $event->end ) ), $dtend );
 		}
 		$e->setProperty( 'location', $event->address );
 		

@@ -251,6 +251,17 @@ jQuery( document ).ready( function( $ ) {
 			'#ai1ec-selected-tags' );
 
 	// Category/tag filtering actions
+	
+	/**
+	 * Checks if the element has visibile events
+	 */
+	function has_visible_events( el ) {
+		var ret = false;
+		$( el ).find( 'ol.ai1ec-date-events li.ai1ec-event' ).each( function() {
+			if( $( this ).css( 'display' ) != 'none' ) ret = true;
+		});
+		return ret;
+	}
 
 	/**
 	 * Applies the active category/tag filters to the current view.
@@ -321,14 +332,18 @@ jQuery( document ).ready( function( $ ) {
 				$.each( data.matching_ids, function( i, val ) {
 					jq_selector.push( '.ai1ec-event-id-' + val );
 				} );
-				$( jq_selector.join() ).fadeIn( 'fast' );
+				$( jq_selector.join() ).css( 'display', 'block' );
 
 				// Fade out events that should be hidden (or leave them hidden)
 				jq_selector = new Array();
 				$.each( data.unmatching_ids, function( i, val ) {
 					jq_selector.push( '.ai1ec-event-id-' + val );
 				} );
-				$( jq_selector.join() ).fadeOut( 'fast' );
+				$( jq_selector.join() ).css( 'display', 'none' );
+				$( 'ol.ai1ec-agenda-view > li.ai1ec-date' ).each( function() {
+					if( has_visible_events( $( this ) ) ) $( this ).slideDown( 'fast' );
+					else 																	$( this ).slideUp( 'fast' );
+				});
 			}
 		);
 	}
