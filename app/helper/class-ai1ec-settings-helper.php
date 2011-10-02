@@ -168,7 +168,7 @@ class Ai1ec_Settings_Helper {
     ?>
     <select id="timezone" name="timezone">
       <?php foreach( $timezone_identifiers as $value ) : ?>
-        <?php if( preg_match( '/^(America|Antartica|Arctic|Asia|Atlantic|Europe|Indian|Pacific)\//', $value ) ) : ?>
+        <?php if( preg_match( '/^(Africa|America|Antartica|Arctic|Asia|Atlantic|Australia|Europe|Indian|Pacific)\//', $value ) ) : ?>
           <?php $ex = explode( "/", $value );  //obtain continent,city ?>
           <?php if( $continent != $ex[0] ) : ?>
             <?php if( ! empty( $continent ) ) : ?>
