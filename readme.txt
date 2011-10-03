@@ -54,6 +54,8 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 
 [Bug reports (only for registered users) »](http://trac.the-seed.ca/newticket)
 
+[Get Premium Support »](http://theseedstudio.com/get-supported-2/) from [The Seed Studio »](http://theseedstudio.com/)
+
 == Changelog ==
 = Version 1.0.9 =
 * Fixed a problem with timezone dropdown list
