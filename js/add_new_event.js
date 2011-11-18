@@ -337,7 +337,23 @@ jQuery( function( $ ){
 			// On Date
 			if( ending == '2' ) {
 				var until = parseDate( $( '#ai1ec_until-date-input' ).val(), ai1ec_add_new_event.date_format );
-				until     = until.getUTCFullYear() + '' + ( until.getUTCMonth() + 1 ) + until.getUTCDate() + 'T000000Z';
+				var start = new Date( parseDate( $( '#ai1ec_start-time' ).val(), ai1ec_add_new_event.date_format ) );
+				// Get UTC Day and UTC Month, and then add leading zeroes if required
+				var d     = until.getUTCDate();
+				var m     = until.getUTCMonth() + 1;
+				var hh    = start.getUTCHours();
+				var mm    = start.getUTCMinutes();
+				var ss    = '00';
+				// months
+				m         = ( m < 10 )  ? '0' + m  : m;
+				// days
+				d         = ( d < 10 )  ? '0' + d  : d;
+				// hours
+				hh        = ( hh < 10 ) ? '0' + hh : hh;
+				// minutes
+				mm        = ( mm < 10 ) ? '0' + mm : mm;
+				// Now, set the UTC friendly date string
+				until     = until.getUTCFullYear() + '' + m + d + 'T' + hh + mm + ss +'Z';
 				rule += 'UNTIL=' + until + ';';
 			}
 

@@ -72,7 +72,7 @@
 									<div class="ai1ec-event-description">
 										<div class="ai1ec-event-overlay">
 											<a class="ai1ec-read-more ai1ec-button"
-												href="<?php echo esc_attr( get_permalink( $event->post_id ) ) ?>?instance_id=<?php echo $event->instance_id ?>">
+												href="<?php echo esc_attr( get_permalink( $event->post_id ) . $event->instance_id ) ?>">
 												<?php _e( 'Read more »', AI1EC_PLUGIN_NAME ) ?>
 											</a>
 											<?php if( $event->categories_html ): ?>
