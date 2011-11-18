@@ -1571,11 +1571,14 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function post_type_link( $permalink, $post, $leavename ) {
-	  $pm = get_option( 'permalink_structure', false );
-    if( empty( $pm ) )
-	    return $permalink . '&instance_id=';
-	  else
-	    return $permalink . '?instance_id=';
+		global $ai1ec_app_helper;
+		
+		if( $post->post_type == AI1EC_POST_TYPE ) {
+			$delimiter = $ai1ec_app_helper->get_param_delimiter_char( $permalink );
+			return $permalink . $delimiter . 'instance_id=';
+		}
+		
+		return $permalink;
 	}
 }
 // END class

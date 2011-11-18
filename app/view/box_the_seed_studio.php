@@ -8,7 +8,7 @@
       <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script>
       <fb:like href="http://www.facebook.com/pages/The-Seed-Agency/66657743707" layout="button_count" show_faces="true" width="110" font="lucida grande"></fb:like>
     </div>
-    <a href="http://twitter.com/the_seed_studio" class="twitter-follow-button"><?php _e( 'Follow @the_seed_studio', AI1EC_PLUGIN_NAME ) ?></a>
+    <a href="http://twitter.com/theseednet" class="twitter-follow-button"><?php _e( 'Follow @theseednet', AI1EC_PLUGIN_NAME ) ?></a>
     <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
     <div class="clear"></div>
   </div>
@@ -34,7 +34,7 @@
       <li><?php _e( '<a href="http://wordpress.org/extend/plugins/all-in-one-event-calendar/" target="_blank">Give it a five-star rating on wordpress.org</a> (if you think it deserves it!)', AI1EC_PLUGIN_NAME ) ?></li>
       <li><a href="http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/" target="_blank"><?php _e( 'Link to the plugin page on our website', AI1EC_PLUGIN_NAME ) ?></a></li>
       <li><a href="http://www.facebook.com/theseednet" target="_blank"><?php _e( 'Become a Fan on Facebook', AI1EC_PLUGIN_NAME ) ?></a></li>
-      <li><a href="https://twitter.com/intent/user?screen_name=the_seed_studio" target="_blank"><?php _e( 'Follow us on Twitter', AI1EC_PLUGIN_NAME ) ?></a></li>
+      <li><a href="https://twitter.com/intent/user?screen_name=theseednet" target="_blank"><?php _e( 'Follow us on Twitter', AI1EC_PLUGIN_NAME ) ?></a></li>
     </ol>
   </p>
 

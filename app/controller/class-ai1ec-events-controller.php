@@ -242,10 +242,10 @@ class Ai1ec_Events_Controller {
 			$repeating_event  = empty( $rrule ) ? false : true;
 			if( $repeating_event ) {
 			  $rc = new SG_iCal_Recurrence( new SG_iCal_Line( 'RRULE:' . $rrule ) );
-        if( $rc->getUntil() )
-          $until  = $rc->getUntil();
-        else if( $rc->getCount() )
-          $count  = $rc->getCount();
+        if( $until = $rc->getUntil() )
+					$until = ( is_numeric( $until ) ) ? $until : strtotime( $until );
+        else if( $count = $rc->getCount() )
+					$count = ( is_numeric( $count ) ) ? $count : 100;
         $rrule_text = $ai1ec_events_helper->rrule_to_text( $rrule );
 			}
 			

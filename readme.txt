@@ -4,7 +4,7 @@ Donate link: http://theseednetwork.com/software/all-in-one-event-calendar-wordpr
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
 Tested up to: 3.2.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 
 An event calendar system with month and agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
@@ -57,6 +57,12 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 [Get Premium Support »](http://theseednetwork.com/get-supported) from [The Seed Studio »](http:/theseednetwork.com/)
 
 == Changelog ==
+= Version 1.1.2 =
+* Fixed: Problem in repeat UI when selecting months before October [#136](http://trac.the-seed.ca/ticket/136)
+* Fixed: Append instance_id only to events permalink [#140](http://trac.the-seed.ca/ticket/140)
+* Fixed: Events ending on date problem [#141](http://trac.the-seed.ca/ticket/141)
+* Feature: Added French translations
+
 = Version 1.1.1 =
 * Fixes a problem when plugin is enabled for first time
 
