@@ -66,19 +66,29 @@ class Ai1ec_Calendar_Helper {
 		$bits = $ai1ec_events_helper->gmgetdate( $time );
 		$last_day = gmdate( 't', $time );
 
+    $start_time = gmmktime( 0, 0, 0, $bits['mon'], 1, $bits['year'] );
+    $end_time   = gmmktime( 0, 0, 0, $bits['mon'], $last_day + 1, $bits['year'] );
+    
+    $events_between = $this->get_events_between( $start_time, $end_time, 'publish', $categories, $tags );
+
 		// ==========================================
 		// = Iterate through each date of the month =
 		// ==========================================
 		for( $day = 1; $day <= $last_day; $day++ )
 	 	{
+	 	  $_events = array();
 			$start_time = gmmktime( 0, 0, 0, $bits['mon'], $day, $bits['year'] );
 			$end_time = gmmktime( 0, 0, 0, $bits['mon'], $day + 1, $bits['year'] );
-
-			$days_events[$day] = $this->get_events_between(
-				$start_time, $end_time, 'publish', $categories, $tags );
+			
+      foreach( $events_between as $event ) {
+        if( $ai1ec_events_helper->gmt_to_local( $event->start ) >= $start_time && $ai1ec_events_helper->gmt_to_local( $event->start ) < $end_time ) {
+          $_events[] = $event;
+        }
+      }
+      $days_events[$day] = $_events;
 		}
 
-		return $days_events;
+		return apply_filters( 'ai1ec_get_events_for_month', $days_events, $time, $categories, $tags );
 	}
 
 	/**
@@ -155,7 +165,7 @@ class Ai1ec_Calendar_Helper {
 	 * given end time. If there are any all-day events spanning this period,
 	 * then return those as well. All-day events are returned first.
 	 *
-	 * @param	int	$start_time     limit to events starting after this (local) UNIX time
+	 * @param int $start_time     limit to events starting after this (local) UNIX time
 	 * @param int $end_time       limit to events starting before this (local) UNIX time
 	 * @param string $post_status limit to events matching this post_status
 	 *                            (null for no restriction)
@@ -248,19 +258,19 @@ class Ai1ec_Calendar_Helper {
 	 * negative $page_offset can be provided, which will return events *before*
 	 * the reference time, as expected.
 	 *
-	 * @param	int	$time	          limit to events starting after this (local) UNIX time
+	 * @param int $time	          limit to events starting after this (local) UNIX time
 	 * @param int $limit          return a maximum of this number of items
 	 * @param int $page_offset    offset the result set by $limit times this number
-	 * @param string $post_status limit to events matching this post_status
-	 *                            (null for no restriction)
-	 *
+	 * @param array $filter       Array of filters for the events returned. 
+	 *		                      ['cat_ids']   => non-associatative array of category IDs
+	 *		                      ['tag_ids']   => non-associatative array of tag IDs
 	 *
 	 * @return array              three-element array:
 	 *                              ['events'] an array of matching event objects
 	 *															['prev'] true if more previous events
 	 *															['next'] true if more next events
 	 **/
-	function get_events_relative_to( $time, $limit = 0, $page_offset = 0, $post_status = 'publish' ) {
+	function get_events_relative_to( $time, $limit = 0, $page_offset = 0, $filter = array() ) {
 		global $wpdb, $ai1ec_events_helper, $current_user;
 
 		// Figure out what the beginning of the day is to properly query all-day
@@ -280,42 +290,44 @@ class Ai1ec_Calendar_Helper {
 		
 		// administrators and editors can see private posts
 		if( current_user_can( 'administrator' ) || current_user_can( 'editor' ) ) {
-      $post_status = "AND ( post_status = %s OR post_status = %s ) ";
-      $args[] = 'publish';
-      $args[] = 'private';
-    }
-    else if( is_user_logged_in() ) {
-      // get user info
-      get_currentuserinfo();
-      
-      /**
-       * include post_status = published
-       * or
-       * post_status = private and author = logged in user
-       */
-      $post_status = "AND " .
-                        "( " .
-                          "post_status = %s " .
-                          
-                          "OR " .
-                          
-                          "( " .
-                            "post_status = %s " .
-                            
-                            "AND " .
-                            
-                            "post_author = %d " .
-                          ") " .
-                        ") ";
+			$post_status = "AND ( post_status = %s OR post_status = %s ) ";
+			$args[] = 'publish';
+			$args[] = 'private';
+		}
+		else if( is_user_logged_in() ) {
+			// get user info
+			get_currentuserinfo();
 
-      $args[] = 'publish';
-      $args[] = 'private';
-      $args[] = $current_user->ID;
-    } else {
-      $post_status = "AND post_status = %s ";
-      $args[] = 'publish';
-    }
+			/**
+			* include post_status = published
+			* or
+			* post_status = private and author = logged in user
+			*/
+			$post_status = "AND " .
+							"( " .
+								"post_status = %s " .
 
+								"OR " .
+
+								"( " .
+									"post_status = %s " .
+
+									"AND " .
+
+									"post_author = %d " .
+								") " .
+							") ";
+
+			$args[] = 'publish';
+			$args[] = 'private';
+			$args[] = $current_user->ID;
+		} else {
+			$post_status = "AND post_status = %s ";
+			$args[] = 'publish';
+		}
+
+		// Get the Join (filter_join) and Where (filter_where) statements based on $filter elements specified 
+		$filter = $this->_get_filter_sql( $filter );
 		$query = $wpdb->prepare(
 			"SELECT SQL_CALC_FOUND_ROWS p.*, e.post_id, i.id AS instance_id, " .
 			"UNIX_TIMESTAMP( i.start ) AS start, " .
@@ -329,12 +341,14 @@ class Ai1ec_Calendar_Helper {
 			"FROM {$wpdb->prefix}ai1ec_events e " .
 				"INNER JOIN $wpdb->posts p ON e.post_id = p.ID " .
 				"INNER JOIN {$wpdb->prefix}ai1ec_event_instances i ON e.post_id = i.post_id " .
+				$filter['filter_join'] .
 			"WHERE post_type = '" . AI1EC_POST_TYPE . "' " .
 			"AND " .
 				( $page_offset >= 0 ? "i.end >= FROM_UNIXTIME( %d ) "
 					: "i.start < FROM_UNIXTIME( %d ) "
 				) .
-      $post_status .
+			$filter['filter_where'] .
+			$post_status .
 			// Reverse order when viewing negative pages, to get correct set of
 			// records. Then reverse results later to order them properly.
 			"ORDER BY i.start " . ( $page_offset >= 0 ? 'ASC' : 'DESC' ) .
@@ -360,12 +374,12 @@ class Ai1ec_Calendar_Helper {
 			$next = $more;
 		}
 		// Navigating in the past
-	 	elseif( $page_offset < 0 ) {
+		elseif( $page_offset < 0 ) {
 			$prev = $more;
 			$next = true;
 		}
 		// Navigating from the reference time
-	 	else {
+		else {
 			$query = $wpdb->prepare(
 				"SELECT COUNT(*) " .
 				"FROM {$wpdb->prefix}ai1ec_events e " .
@@ -612,5 +626,66 @@ class Ai1ec_Calendar_Helper {
 
 		return $links;
 	}
+
+	/**
+	 * _get_filter_sql function
+	 *
+	 * Takes an array of filtering options and turns it into JOIN and WHERE statements
+	 * for running an SQL query limited to the specified options
+	 *
+	 * @param array $filter       Array of filters for the events returned. 
+	 *		                        ['cat_ids']   => non-associatative array of category IDs
+	 *		                        ['tag_ids']   => non-associatative array of tag IDs
+	 *		                        ['post_ids']  => non-associatative array of event post IDs
+	 *
+	 * @return array              Returns the same $filter array modified to have:
+	 *                              ['filter_join']  the Join statements for the SQL
+	 *                              ['filter_where'] the Where statements for the SQL
+	 **/
+	function _get_filter_sql( $filter ) {
+		global $wpdb;
+
+		// Set up the filter join and where strings
+		$filter['filter_join']  = '';
+		$filter['filter_where'] = '';
+
+		// By default open the Where with an AND ( .. ) to group all statements. Later, set it to OR to join statements together.
+		// TODO - make this cleaner by supporting the choice of AND/OR logic
+		$where_logic = ' AND (';
+
+		foreach( $filter as $filter_type => $filter_ids ) {
+			// If no filter elements specified, don't do anything
+			if( $filter_ids && is_array( $filter_ids ) ) {
+				switch ( $filter_type ) {
+					// Limit by Category IDs
+					case 'cat_ids':
+						$filter['filter_join']   .= " LEFT JOIN $wpdb->term_relationships AS trc ON e.post_id = trc.object_id ";
+						$filter['filter_join']   .= " LEFT JOIN $wpdb->term_taxonomy ttc ON trc.term_taxonomy_id = ttc.term_taxonomy_id AND ttc.taxonomy = 'events_categories' ";
+						$filter['filter_where']  .= $where_logic . " ttc.term_id IN ( " . join( ',', $filter_ids ) . " ) ";
+						$where_logic = ' OR ';
+						break;
+					// Limit by Tag IDs
+					case 'tag_ids':
+						$filter['filter_join']   .= " LEFT JOIN $wpdb->term_relationships AS trt ON e.post_id = trt.object_id ";
+						$filter['filter_join']   .= " LEFT JOIN $wpdb->term_taxonomy ttt ON trt.term_taxonomy_id = ttt.term_taxonomy_id AND ttt.taxonomy = 'events_tags' ";
+						$filter['filter_where']  .= $where_logic . " ttt.term_id IN ( " . join( ',', $filter_ids ) . " ) ";
+						$where_logic = ' OR ';
+						break;
+					// Limit by post IDs
+					case 'post_ids':
+						$filter['filter_where']  .= $where_logic . " e.post_id IN ( " . join( ',', $filter_ids ) . " ) ";
+						$where_logic = ' OR ';
+						break;
+				}
+			}
+		}
+
+		// Close the Where statement bracket if any Where statements were set
+		if( $filter['filter_where'] != '') {
+			$filter['filter_where'] .= ' ) ';
+		}
+
+		return $filter;
+	}	
 }
 // END class

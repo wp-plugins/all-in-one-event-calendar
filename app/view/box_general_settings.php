@@ -26,6 +26,12 @@
 <input name="agenda_events_per_page" id="agenda_events_per_page" type="text" size="1" value="<?php echo esc_attr( $agenda_events_per_page ) ?>" />&nbsp;<?php _e( 'events', AI1EC_PLUGIN_NAME ) ?>
 <br class="clear" />
 
+<label for="agenda_events_expanded">
+<input class="checkbox" name="agenda_events_expanded" id="agenda_events_expanded" type="checkbox" value="1" <?php echo $agenda_events_expanded ?> />
+<?php _e( 'Keep all events <strong>expanded</strong> in the agenda view', AI1EC_PLUGIN_NAME ) ?>
+</label>
+<br class="clear" />
+
 <label for="exclude_from_search">
 <input class="checkbox" name="exclude_from_search" id="exclude_from_search" type="checkbox" value="1" <?php echo $exclude_from_search ?> />
 <?php _e( '<strong>Exclude</strong> events from search results', AI1EC_PLUGIN_NAME ) ?>
@@ -58,10 +64,8 @@
 
 <h2><?php _e( 'Adding/Editing Events', AI1EC_PLUGIN_NAME ) ?></h2>
 
-<label for="input_us_format">
-<input class="checkbox" name="input_us_format" id="input_us_format" type="checkbox" value="1" <?php echo $input_us_format ?> />
-<?php _e( 'Input dates in <strong>US format</strong>', AI1EC_PLUGIN_NAME ) ?>
-</label>
+<label class="textinput" for="input_date_format"><?php _e( 'Input dates in this format:', AI1EC_PLUGIN_NAME ) ?></label>
+<?php echo $input_date_format ?>
 <br class="clear" />
 
 <label for="input_24h_time"> 

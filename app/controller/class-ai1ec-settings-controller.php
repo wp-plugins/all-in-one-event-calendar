@@ -118,7 +118,8 @@ class Ai1ec_Settings_Controller {
 			'feed_url' 			 => $_REQUEST["feed_url"],
 			'event_category' => $feed_category->name,
 			'tags'					 => $_REQUEST["feed_tags"],
-			'feed_id'				 => $feed_id
+			'feed_id'				 => $feed_id,
+			'events'         => 0
 		);
 		// display added feed row
 		$ai1ec_view_helper->display( 'feed_row.php', $args );
@@ -149,12 +150,12 @@ class Ai1ec_Settings_Controller {
 	{
 		global $wpdb,
 		       $ai1ec_view_helper;
-		$ics_id = (int) $_REQUEST['ics_id'];
+		$ics_id = isset( $_REQUEST['ics_id'] ) ? (int) $_REQUEST['ics_id'] : 0;
 		$table_name = $wpdb->prefix . 'ai1ec_event_feeds';
-		
+
 		if( $feed_url === false )
 		  $feed_url = $wpdb->get_var( $wpdb->prepare( "SELECT feed_url FROM $table_name WHERE feed_id = %d", $ics_id ) );
-		  
+
 		if( $feed_url )
 		{
 			$table_name = $wpdb->prefix . 'ai1ec_events';
@@ -180,7 +181,7 @@ class Ai1ec_Settings_Controller {
 				'message'	=> 'Invalid feed'
 			);
 		}
-		
+
     if( $ajax )
       $ai1ec_view_helper->json_response( $output );
 	}
@@ -208,7 +209,7 @@ class Ai1ec_Settings_Controller {
       $this->flush_ics_feed( false, $feed->feed_url );
       // reimport the feed
 			$count = $ai1ec_importer_helper->parse_ics_feed( $feed );
-			
+
 			$output = array(
 				'error'       => false,
 				'message'     => sprintf( __( 'Imported %d events', AI1EC_PLUGIN_NAME ), $count ),
@@ -223,7 +224,7 @@ class Ai1ec_Settings_Controller {
 				'message'	=> 'Invalid feed'
 			);
 		}
-    
+
 		$ai1ec_view_helper->json_response( $output );
 	}
 
@@ -246,10 +247,10 @@ class Ai1ec_Settings_Controller {
 			'error' 	=> false,
 			'message'	=> 'Request successful.'
 		);
-  
+
 		$ai1ec_view_helper->json_response( $output );
 	}
-	
+
 	/**
 	 * add_meta_boxes function
 	 *
@@ -260,83 +261,72 @@ class Ai1ec_Settings_Controller {
 	function add_meta_boxes() {
 	  global $ai1ec_settings_helper,
 	         $ai1ec_settings;
-
+		
 	  /* Add the 'General Settings' meta box. */
-    add_meta_box( 'general-settings', 
-                  _x( 'General Settings', 'meta box', AI1EC_PLUGIN_NAME ), 
-                  array( &$ai1ec_settings_helper, 'general_settings_meta_box' ), 
-                  $ai1ec_settings->settings_page, 
-                  'left-side', 
+    add_meta_box( 'general-settings',
+                  _x( 'General Settings', 'meta box', AI1EC_PLUGIN_NAME ),
+                  array( &$ai1ec_settings_helper, 'general_settings_meta_box' ),
+                  $ai1ec_settings->settings_page,
+                  'left-side',
                   'default' );
+
     /* Add the 'The Seed Studio' meta box. */
-    add_meta_box( 'the-seed-studio-settings', 
-                  _x( 'The Seed Studio Support', 'meta box', AI1EC_PLUGIN_NAME ), 
-                  array( &$ai1ec_settings_helper, 'the_seed_studio_meta_box' ), 
-                  $ai1ec_settings->settings_page, 
-                  'right-side', 
+    add_meta_box( 'the-seed-studio-settings',
+                  _x( 'The Seed Studio Support', 'meta box', AI1EC_PLUGIN_NAME ),
+                  array( &$ai1ec_settings_helper, 'the_seed_studio_meta_box' ),
+                  $ai1ec_settings->settings_page,
+                  'right-side',
                   'default' );
     /* Add the 'ICS Import Settings' meta box. */
-    add_meta_box( 'ics-import-settings', 
-                  _x( 'ICS Import Settings', 'meta box', AI1EC_PLUGIN_NAME ), 
-                  array( &$ai1ec_settings_helper, 'ics_import_settings_meta_box' ), 
-                  $ai1ec_settings->settings_page, 
-                  'left-side', 
+    add_meta_box( 'ics-import-settings',
+                  _x( 'ICS Import Settings', 'meta box', AI1EC_PLUGIN_NAME ),
+                  array( &$ai1ec_settings_helper, 'ics_import_settings_meta_box' ),
+                  $ai1ec_settings->settings_page,
+                  'left-side',
                   'default' );
-                  
+
 	}
-	
-	/**
-	 * admin_print_styles function
-	 *
-	 *
-	 *
-	 * @return void
-	 **/
-	function admin_print_styles() {
-	  global $ai1ec_view_helper;
-	  $ai1ec_view_helper->display_css( 'settings.css' );
-	}
-	
-	/**
-	 * admin_print_scripts function
-	 *
-	 *
-	 *
-	 * @return void
-	 **/
-	function admin_print_scripts() {
-	  global $ai1ec_settings;
-	  ?>
-	  <script type="text/javascript">
-  		//<![CDATA[
-  		var ai1ec_settings_page = '<?php echo $ai1ec_settings->settings_page; ?>';
-  		//]]>
-  	</script>
-	  <?php
-	}
-	
+
 	/**
 	 * admin_enqueue_scripts function
 	 *
-	 *
+	 * Enqueue any scripts and styles in the admin side, depending on context.
 	 *
 	 * @return void
 	 **/
 	function admin_enqueue_scripts( $hook_suffix ) {
-	  global $ai1ec_settings;
+		global $ai1ec_settings;
 
-    if( isset( $ai1ec_settings->settings_page ) && $hook_suffix == $ai1ec_settings->settings_page ) {
-      wp_enqueue_script( 'common' );
-      wp_enqueue_script( 'wp-lists' );
-      wp_enqueue_script( 'postbox' );
-      wp_enqueue_script( 'ai1ec-settings', AI1EC_JS_URL . '/settings.js', array( 'jquery' ) );
-    }
+		if( $hook_suffix == 'widgets.php' ) {
+			// Scripts
+			wp_enqueue_script( 'jquery-bsmselect', AI1EC_JS_URL  . '/jquery.bsmselect.js', array( 'jquery' ) );
+			wp_enqueue_script( 'ai1ec-widget',     AI1EC_JS_URL  . '/widget.js',           array( 'jquery', 'jquery-bsmselect' ) );
+			// Styles
+			wp_enqueue_style(  'ai1ec-widget', AI1EC_CSS_URL . '/widget.css' );
+			wp_enqueue_style(  'bsmselect',    AI1EC_CSS_URL . '/jquery.bsmselect.css' );
+		}
+
+		if( isset( $ai1ec_settings->settings_page ) && $hook_suffix == $ai1ec_settings->settings_page ) {
+			// Scripts
+			wp_enqueue_script( 'common' );
+			wp_enqueue_script( 'wp-lists' );
+			wp_enqueue_script( 'postbox' );
+			
+			wp_enqueue_script( 'ai1ec-cycle', AI1EC_JS_URL . '/jquery.cycle.lite.js', array( 'jquery' ) );
+			wp_enqueue_script( 'ai1ec-settings', AI1EC_JS_URL . '/settings.js', array( 'jquery', 'ai1ec-cycle' ) );
+			
+			wp_localize_script( 'ai1ec-settings', 'ai1ec_settings', array(
+					'page' => $ai1ec_settings->settings_page,
+				) );
+			// Styles
+			wp_enqueue_style(  'ai1ec-widget', AI1EC_CSS_URL . '/settings.css' );
+		}
 	}
-	
+
 	/**
 	 * plugin_action_links function
 	 *
-	 * Adds a link to Settings page in plugin list page 
+	 * Adds a link to Settings page in plugin list page
 	 *
 	 * @return array
 	 **/
@@ -345,7 +335,7 @@ class Ai1ec_Settings_Controller {
     array_unshift( $links, $settings );
     return $links;
 	}
-	
+
 	/**
 	 * plugin_row_meta function
 	 *
@@ -356,9 +346,9 @@ class Ai1ec_Settings_Controller {
 	function plugin_row_meta( $links, $file ) {
 	  if( $file == AI1EC_PLUGIN_BASENAME ) :
 	    $links[] = sprintf( __( '<a href="%s" target="_blank">Donate</a>', AI1EC_PLUGIN_NAME ), 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9JJMUW48W2ED8' );
-      $links[] = sprintf( __( '<a href="%s" target="_blank">Get Support</a>', AI1EC_PLUGIN_NAME ), 'http://theseedstudio.com/get-supported/' );
+      $links[] = sprintf( __( '<a href="%s" target="_blank">Get Support</a>', AI1EC_PLUGIN_NAME ), 'http://theseednetwork.com/get-supported/' );
     endif;
-    
+
     return $links;
 	}
 }

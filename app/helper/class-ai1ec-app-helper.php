@@ -282,7 +282,7 @@ class Ai1ec_App_Helper {
 					'taxonomy'				=> $tax_slug,
           'name'						=> $tax_obj->name,
           'orderby'					=> 'name',
-          'selected'				=> $_GET[$tax_slug],
+          'selected'				=> isset( $_GET[$tax_slug] ) ? $_GET[$tax_slug] : '',
           'hierarchical'		=> $tax_obj->hierarchical,
           'show_count'			=> true,
           'hide_if_empty'   => true
@@ -397,6 +397,22 @@ class Ai1ec_App_Helper {
 		        AI1EC_POST_TYPE
 		    );
 	}
+	
+	/**
+	 * screen_layout_columns function
+	 *
+	 * Since WordPress 2.8 we have to tell, that we support 2 columns!
+	 *
+	 * @return void
+	 **/
+	function screen_layout_columns( $columns, $screen ) {
+		global $ai1ec_settings;
+    
+		if( isset( $ai1ec_settings->settings_page ) && $screen == $ai1ec_settings->settings_page )
+			$columns[$ai1ec_settings->settings_page] = 2;
+
+		return $columns;
+	}
 
 	/**
 	 * change_columns function
@@ -455,11 +471,11 @@ class Ai1ec_App_Helper {
 	 * @return mixed
 	 **/
 	function get_param( $param, $default='' ) {
-    return isset( $_POST[$param] )
-    	? $_POST[$param]
-    	: isset( $_GET[$param] )
-    		? $_GET[$param]
-    		: $default;
+	  if( isset( $_POST[$param] ) )
+	    return $_POST[$param];
+	  if( isset( $_GET[$param] ) )
+	    return $_GET[$param];
+	  return $default;
   }
 
 	/**
