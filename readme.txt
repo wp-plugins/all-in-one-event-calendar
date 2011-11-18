@@ -1,16 +1,16 @@
 === All-in-One Event Calendar ===
 Contributors: theseed, hubrik, vtowel, yani.iliev
-Donate link: http://theseedstudio.com/software/all-in-one-event-calendar-wordpress/
+Donate link: http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
 Tested up to: 3.2.1
-Stable tag: 1.0.9
+Stable tag: 1.1
 
 An event calendar system with month and agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
 == Description ==
 
-Welcome to the All-in-One Event Calendar Plugin, a new way to list your events in WordPress and easily share them with the rest of the world.
+Welcome to the [All-in-One Event Calendar Plugin](http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/), from [The Seed Studio](http:/theseednetwork.com), a [web development](http://theseednetwork.com) company. The All-in-One Event Calendar is a new way to list your events in WordPress and easily share them with the rest of the world.
 
 Our new calendar system combines a clean visual design, solid architectural patterns and rigorous testing with a powerful set of features to create the most advanced calendar system available for WordPress and one of the most powerful website calendar systems in the world. Best of all: it’s completely free.
 
@@ -48,15 +48,29 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 * Each event links to the original calendar
 * Your calendar can be embedded into a WordPress page without needing to create template files or modify the theme
 
-[Check out the DEMO »](http://demo.theseedstudio.com/calendar/)
+[Check out the DEMO »](http://demo.theseedstudio.com/)
 
 [Track the development process »](http://trac.the-seed.ca/roadmap)
 
 [Bug reports (only for registered users) »](http://trac.the-seed.ca/newticket)
 
-[Get Premium Support »](http://theseedstudio.com/get-supported-2/) from [The Seed Studio »](http://theseedstudio.com/)
+[Get Premium Support »](http://theseednetwork.com/get-supported) from [The Seed Studio »](http:/theseednetwork.com/)
 
 == Changelog ==
+= Version 1.1 =
+* Feature: New recurrence UI when adding events [#40](http://trac.the-seed.ca/ticket/40)
+* Feature: Translate recurrence rule to Human readable format that allows localization [#40](http://trac.the-seed.ca/ticket/40)
+* Feature: Add Filter by Categories, Tags to Widget [#44](http://trac.the-seed.ca/ticket/44)
+* Feature: Add option to keep all events expanded in the agenda view [#33](http://trac.the-seed.ca/ticket/33)
+* Feature: Make it possible to globalize the date picker. Thank you josjo! [#52](http://trac.the-seed.ca/ticket/52)
+* Fixed: On recurring events show the date time of the current event and NOT the original event [#39](http://trac.the-seed.ca/ticket/39)
+* Fixed: Events posted in Standard time from Daylight Savings Time are wrong [#42](http://trac.the-seed.ca/ticket/42)
+* Fixed: Multi-day Events listing twice [#56](http://trac.the-seed.ca/ticket/56)
+* Fixed: %e is not supported in gmstrftime on Windows [#53](http://trac.the-seed.ca/ticket/53)
+* Improved: IE9 Support [#11](http://trac.the-seed.ca/ticket/11)
+* Improved: Corrected as many as possible HTML validation errors [#9](http://trac.the-seed.ca/ticket/9)
+* Improved: Optimization changes for better performance.
+
 = Version 1.0.9 =
 * Fixed a problem with timezone dropdown list
 

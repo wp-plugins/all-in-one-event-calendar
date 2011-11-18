@@ -349,6 +349,50 @@ table.ai1ec-month-view {
 	color: #aaa;
 	color: rgba(0,0,0,0.4);
 }
+/* Month view date scrolling */
+.ai1ec-month-view .ai1ec-obscured {
+	display: none !important;
+}
+.ai1ec-month-view a.ai1ec-scroll-up,
+.ai1ec-month-view a.ai1ec-scroll-down {
+	display: block;
+	position: relative;
+	background: #fff no-repeat center center;
+	border: 1px solid #ccc;
+	border-radius: 0.2em;
+	-moz-border-radius: 0.2em;
+	-webkit-border-radius: 0.2em;
+	width: 15px;
+	height: 11px;
+	left: 50%;
+	margin-left: -8px;
+}
+.ai1ec-month-view a.ai1ec-scroll-up:hover,
+.ai1ec-month-view a.ai1ec-scroll-down:hover {
+	background-color: #ccc;
+}
+.ai1ec-month-view a.ai1ec-scroll-up.ai1ec-disabled:hover,
+.ai1ec-month-view a.ai1ec-scroll-down.ai1ec-disabled:hover {
+	background-color: transparent;
+}
+.ai1ec-month-view a.ai1ec-scroll-up {
+	background-image: url(../img/scroll-up.png);
+	margin-top: -13px;
+	margin-bottom: 2px;
+}
+.ai1ec-month-view a.ai1ec-scroll-down {
+	background-image: url(../img/scroll-down.png);
+}
+.ai1ec-month-view a.ai1ec-scroll-up.ai1ec-disabled,
+.ai1ec-month-view a.ai1ec-scroll-down.ai1ec-disabled {
+	opacity: 0.2;
+	-moz-opacity: 0.2;
+	filter: alpha(opacity=2);
+	background-color: transparent;
+	border: none;
+	padding: 1px; /* To compensate for height lost by invisible border */
+	cursor: default;
+}
 
 /* Agenda view */
 .ai1ec-agenda-view {

@@ -1,48 +1,105 @@
-function formatDate(date, usa)
+calendricalDateFormats = {
+	us  : { //US date format (eg. 12/1/2011)
+		pattern : /([\d]{1,2})\/([\d]{1,2})\/([\d]{4}|[\d]{2})/,
+		format  : 'm/d/y',
+		order   : 'middleEndian',
+		zeroPad : false },
+	iso : { //ISO 8601 (eg. 2011-12-01)
+		pattern : /([\d]{4}|[\d]{2})-([\d]{1,2})-([\d]{1,2})/,
+		format  : 'y-m-d',
+		order   : 'bigEndian',
+		zeroPad : true },
+	dot : { //Little endian with dots (eg. 1.12.2011)
+		pattern : /([\d]{1,2}).([\d]{1,2}).([\d]{4}|[\d]{2})/,
+		format  : 'd.m.y',
+		order   : 'littleEndian',
+		zeroPad : false },
+	def : { //Default (eg. 1/12/2011)
+		pattern : /([\d]{1,2})\/([\d]{1,2})\/([\d]{4}|[\d]{2})/,
+		format  : 'd/m/y',
+		order   : 'littleEndian',
+		zeroPad : false }
+};
+
+function formatDate(date, format)
 {
-	return (usa ?
-		((date.getUTCMonth() + 1) + '/' + date.getUTCDate()) :
-		(date.getUTCDate() + '/' + (date.getUTCMonth() + 1))
-	) + '/' + date.getUTCFullYear(); 
+	if( typeof calendricalDateFormats[format] === 'undefined' )
+		format = 'def';
+		
+	var y = ( date.getUTCFullYear() ).toString();
+	var m = ( date.getUTCMonth() + 1 ).toString();
+	var d = ( date.getUTCDate() ).toString();
+	if( calendricalDateFormats[format].zeroPad ) {
+		if( m.length == 1 ) m = '0' + m;
+		if( d.length == 1 ) d = '0' + d;
+	}
+	var dt = calendricalDateFormats[format].format;
+	dt = dt.replace('d', d);
+	dt = dt.replace('m', m);
+	dt = dt.replace('y', y);
+	return dt;
 }
 
 function formatTime(hour, minute, iso)
 {
 	var printMinute = minute;
-	if (minute < 10) printMinute = '0' + minute;
+	if( minute < 10 ) printMinute = '0' + minute;
 
-	if (iso) {
+	if( iso ) {
 		var printHour = hour
-		if (printHour < 10) printHour = '0' + hour;
+		if( printHour < 10 ) printHour = '0' + hour;
 		return printHour + ':' + printMinute;
 	} else {
 		var printHour = hour % 12;
-		if (printHour == 0) printHour = 12;
-		var half = (hour < 12) ? 'am' : 'pm';
+		if( printHour == 0 ) printHour = 12;
+		var half = ( hour < 12 ) ? 'am' : 'pm';
 		return printHour + ':' + printMinute + half;
 	}
 }
 
-function parseDate(date, usa)
+function parseDate(date, format)
 {
-	date += " GMT";
-	if (usa) return new Date(date);
-	a = date.split(/[\.\-\/]/);
-	var day = a.shift();
-	var month = a.shift();
-	a.unshift(day);
-	a.unshift(month);
-	return new Date(a.join('/'));
+	if( typeof calendricalDateFormats[format] === 'undefined' )
+		format = 'def';
+	
+	var matches = date.match(calendricalDateFormats[format].pattern);
+	if( !matches || matches.length != 4 ) {
+		// Return an "invalid date" date instance like the original parseDate
+		return Date( 'invalid' );
+	}
+	
+	switch( calendricalDateFormats[format].order ) {
+		case 'bigEndian' :
+			var d = matches[3];	var m = matches[2];	var y = matches[1];
+			break;
+		case 'littleEndian' :
+			var d = matches[1];	var m = matches[2];	var y = matches[3];
+			break;
+		case 'middleEndian' :
+			var d = matches[2];	var m = matches[1];	var y = matches[3];
+			break;
+		default : //Default to little endian
+			var d = matches[1];	var m = matches[2];	var y = matches[3];
+			break;
+	}
+		
+	// Add century to a two digit year
+	if( y.length == 2 ) {
+		y = new Date().getUTCFullYear().toString().substr(0, 2) + y;
+	}
+ 	
+	// This is how the original parseDate does it
+	return new Date( m + '/' + d + '/' + y + ' GMT' );
 }
 
 function parseTime(text)
 {
 	var match = match = /(\d+)\s*[:\-\.,]\s*(\d+)\s*(am|pm)?/i.exec(text);
-	if (match && match.length >= 3) {
+	if( match && match.length >= 3 ) {
 		var hour = Number(match[1]);
 		var minute = Number(match[2]);
-		if (hour == 12 && match[3]) hour -= 12;
-		if (match[3] && match[3].toLowerCase() == 'pm') hour += 12;
+		if( hour == 12 && match[3] ) hour -= 12;
+		if( match[3] && match[3].toLowerCase() == 'pm' ) hour += 12;
 		return {
 			hour:   hour,
 			minute: minute
@@ -53,9 +110,7 @@ function parseTime(text)
 }
 
 (function($) {    
-    var monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'];
-        
+
     function getToday()
     {
         var date = new Date();
@@ -64,7 +119,20 @@ function parseTime(text)
     
     function areDatesEqual(date1, date2)
     {
-        return String(date1) == String(date2);
+			if( typeof date1 === 'string' )
+				date1 = new Date( date1 );
+				
+			if( typeof date2 === 'string' )
+				date2 = new Date(date2);
+			
+			if( date1.getUTCDate() === date2.getUTCDate() ) {
+				if( date1.getUTCMonth() === date2.getUTCMonth() ) {
+					if( date1.getUTCFullYear() === date2.getUTCFullYear() ) {
+						return true;
+					}
+				}
+			}
+			return false;
     }
     
     function daysInMonth(year, month)
@@ -106,6 +174,7 @@ function parseTime(text)
      */
     function renderCalendarHeader(element, year, month, options)
     {
+				var monthNames = options.monthNames.split(',');
         //Prepare thead element
         var thead = $('<thead />');
         var titleRow = $('<tr />').appendTo(thead);
@@ -141,9 +210,15 @@ function parseTime(text)
                 })
         ).appendTo(titleRow);
         
-        //Generate weekday initials row
+        // Generate weekday initials row. Adjust for week start day 
+				var names = options.dayNames.split(','); 
+				var startDay = parseInt(options.weekStartDay); 
+				var adjustedNames = []; 
+				for( var i = 0, len = names.length; i < len; i++ ) { 
+					adjustedNames[i] = names[(i + startDay) % len]; 
+				}
         var dayNames = $('<tr />').appendTo(thead);
-        $.each(String('SMTWTFS').split(''), function(k, v) {
+        $.each( adjustedNames, function( k, v ) {
             $('<td />').addClass('dayName').append(v).appendTo(dayNames);
         });
         
@@ -154,14 +229,34 @@ function parseTime(text)
     {
         options = options || {};
         
+				var startDay = parseInt(options.weekStartDay);
         var today = options.today ? options.today : getToday();
-        
+        // Normalize
+				today.setHours(0);
+				today.setMinutes(0);
+				
         var date = new Date(year, month, 1);
+				var endDate = monthAfter(year, month);
         
-        //Wind end date forward to saturday week after month
-        var endDate = monthAfter(year, month);
-        var ff = 6 - endDate.getUTCDay();
-        if (ff < 6) ff += 7;
+        //Adjust dates for current timezone. This is a workaround to get
+				//date comparison to work properly.
+				var tzOffset = Math.abs(today.getTimezoneOffset());
+				if (tzOffset != 0) {
+					today.setHours(today.getHours() + tzOffset / 60);
+					today.setMinutes(today.getMinutes() + tzOffset % 60);
+					date.setHours(date.getHours() + tzOffset / 60);
+					date.setMinutes(date.getMinutes() + tzOffset % 60);
+					endDate.setHours(endDate.getHours() + tzOffset / 60);
+					endDate.setMinutes(endDate.getMinutes() + tzOffset % 60);
+				}
+				
+				//Wind end date forward to last day of week
+				var ff = endDate.getUTCDay() - startDay;
+				if (ff < 0) {
+					ff = Math.abs(ff) - 1;
+				} else {
+					ff = 6 - ff;
+				}
         for (var i = 0; i < ff; i++) endDate = dayAfter(endDate);
         
         var table = $('<table />');
@@ -170,8 +265,9 @@ function parseTime(text)
         var tbody = $('<tbody />').appendTo(table);
         var row = $('<tr />');
 
-        //Rewind date to monday week before month
-        var rewind = date.getUTCDay() + 7;
+				//Rewind date to first day of week
+				var rewind = date.getUTCDay() - startDay;
+				if (rewind < 0) rewind = 7 + rewind;
         for (var i = 0; i < rewind; i++) date = dayBefore(date);
         
         while (date <= endDate) {
@@ -201,8 +297,8 @@ function parseTime(text)
             if (isToday && isSelected)      td.addClass('today_selected');
             if (date.getUTCMonth() != month)   td.addClass('nonMonth');
             
-            dow = date.getUTCDay();
-            if (dow == 6) {
+           	var dow = date.getUTCDay();
+						if (((dow + 1) % 7) == startDay) {
                 tbody.append(row);
                 row = $('<tr />');
             }
@@ -296,6 +392,10 @@ function parseTime(text)
     {
         options = options || {};
         options.padding = options.padding || 4;
+				options.monthNames = options.monthNames ||
+														 'January,February,March,April,May,June,July,August,September,October,November,December';
+				options.dayNames = options.dayNames || 'S,M,T,W,T,F,S';
+				options.weekStartDay = options.weekStartDay || 0;
         
         return this.each(function() {
             var element = $(this);
@@ -321,7 +421,7 @@ function parseTime(text)
                     });
                 element.after(div); 
                 
-                var selected = parseDate(element.val(), options.usa);
+                var selected = parseDate(element.val(), options.dateFormat);
                 if (!selected.getUTCFullYear()) selected = options.today ? options.today : getToday();
                 
                 renderCalendarPage(
@@ -330,14 +430,17 @@ function parseTime(text)
                     selected.getUTCMonth(), {
 												today: options.today,
                         selected: selected,
+												monthNames: options.monthNames,
+												dayNames: options.dayNames,
+												weekStartDay: options.weekStartDay,
                         selectDate: function(date) {
                             within = false;
-                            element.val(formatDate(date, options.usa));
+                            element.val(formatDate(date, options.dateFormat));
                             div.remove();
                             div = null;
                             if (options.endDate) {
                                 var endDate = parseDate(
-                                    options.endDate.val(), options.usa
+                                    options.endDate.val(), options.dateFormat
                                 );
                                 if (endDate >= selected) {
                                     options.endDate.val(formatDate(
@@ -346,7 +449,7 @@ function parseTime(text)
                                             endDate.getTime() -
                                             selected.getTime()
                                         ),
-                                        options.usa
+                                        options.dateFormat
                                     ));
                                 }
                             }

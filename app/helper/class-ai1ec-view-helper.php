@@ -91,7 +91,7 @@ class Ai1ec_View_Helper {
 
 		$file = AI1EC_CSS_PATH . "/" . $file;
 
-		if( $displayed[$file] === $args )	// Skip if already displayed
+		if( isset( $displayed[$file] ) && $displayed[$file] === $args )	// Skip if already displayed
 			return;
 
 		if( ! file_exists( $file ) ) {

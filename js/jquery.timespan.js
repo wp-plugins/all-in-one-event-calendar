@@ -28,7 +28,7 @@
 	 */
 	function reset( start_date_input, start_time_input, start_time,
 			end_date_input, end_time_input, end_time, allday, twentyfour_hour,
-			us_format, now )
+			date_format, now )
 	{
 		// Restore original values of fields when the page was loaded
 		start_time.val( start_time.data( 'timespan.initial_value' ) );
@@ -50,7 +50,7 @@
 			start_time_input.val(
 				formatTime( start.getUTCHours(), start.getUTCMinutes() - start.getUTCMinutes() % 15, twentyfour_hour ) );
 		}
-		start_date_input.val( formatDate( start, us_format ) );
+		start_date_input.val( formatDate( start, date_format ) );
 
 		var end = parseInt( end_time.val() );
 		// If end_time field has a valid integer, use it, else use start time plus
@@ -68,7 +68,7 @@
 		// provided we were given an iCalendar-spec all-day timespan.
 		if( allday.get(0).checked )
 			end.setUTCDate( end.getUTCDate() - 1 );
-		end_date_input.val( formatDate( end, us_format ) );
+		end_date_input.val( formatDate( end, date_format ) );
 
 		// Trigger function (defined above) to internally store values of each
 		// input field (used in calculations later).
@@ -95,7 +95,7 @@
 		end_time_input: '#end-time-input',
 		end_time: '#end-time',
 		twentyfour_hour: false,
-		us_format: false,
+		date_format: 'def',
 		now: new Date(),
 	};
 
@@ -139,10 +139,16 @@
 				.bind( 'change.timespan', function() {
 					if( this.checked ) {
 						time_inputs.fadeOut();
-						date_inputs.calendricalDateRange( { today: today, usa: o.us_format } );
+						date_inputs.calendricalDateRange( {
+							today: today, dateFormat: o.date_format, monthNames: o.month_names,
+							dayNames: o.day_names, weekStartDay: o.week_start_day
+						} );
 					} else {
 						time_inputs.fadeIn();
-						all_inputs.calendricalDateTimeRange( { today: today, usa: o.us_format, isoTime: o.twentyfour_hour } );
+						all_inputs.calendricalDateTimeRange( { 
+							today: today, dateFormat: o.date_format, isoTime: o.twentyfour_hour,
+							monthNames: o.month_names, dayNames: o.day_names, weekStartDay: o.week_start_day
+						} );
 					}
 				} )
 				.get().checked = false;
@@ -151,7 +157,7 @@
 			date_inputs
 				.bind( 'blur.timespan', function() {
 					// Validate contents of this field.
-					var date = parseDate( this.value, o.us_format );
+					var date = parseDate( this.value, o.date_format );
 					if( isNaN( date ) ) {
 						// This field is invalid.
 						reset_invalid( $(this) );
@@ -160,7 +166,7 @@
 						$(this).data( 'timespan.stored', this.value );
 						// Re-format contents of field correctly (in case parsable but not
 						// perfect).
-						$(this).val( formatDate( date, o.us_format ) );
+						$(this).val( formatDate( date, o.date_format ) );
 					}
 				});
 
@@ -186,23 +192,23 @@
 			start_date_input.add( o.start_time_input )
 				.bind( 'focus.timespan', function() {
 					// Calculate the time difference between start & end and save it.
-					var start_date_val = parseDate( start_date_input.val(), o.us_format ).getTime() / 1000;
+					var start_date_val = parseDate( start_date_input.val(), o.date_format ).getTime() / 1000;
 					var start_time_val = parseTime( start_time_input.val() );
 					start_date_val += start_time_val.hour * 3600 + start_time_val.minute * 60;
-					var end_date_val = parseDate( end_date_input.val(), o.us_format ).getTime() / 1000;
+					var end_date_val = parseDate( end_date_input.val(), o.date_format ).getTime() / 1000;
 					var end_time_val = parseTime( end_time_input.val() );
 					end_date_val += end_time_val.hour * 3600 + end_time_val.minute * 60;
 					start_date_input.data( 'time_diff', end_date_val - start_date_val );
 				} )
 				.bind( 'blur.timespan', function() {
-					var start_date_val = parseDate( start_date_input.data( 'timespan.stored' ), o.us_format );
+					var start_date_val = parseDate( start_date_input.data( 'timespan.stored' ), o.date_format );
 					var start_time_val = parseTime( start_time_input.data( 'timespan.stored' ) );
 					// Shift end date/time as appropriate.
 					var end_time_val = start_date_val.getTime() / 1000
 						+ start_time_val.hour * 3600 + start_time_val.minute * 60
 						+ start_date_input.data( 'time_diff' );
 					end_time_val = new Date( end_time_val * 1000 );
-					end_date_input.val( formatDate( end_time_val, o.us_format ) );
+					end_date_input.val( formatDate( end_time_val, o.date_format ) );
 					end_time_input.val( formatTime( end_time_val.getUTCHours(), end_time_val.getUTCMinutes(), o.twentyfour_hour ) );
 				} );
 
@@ -214,7 +220,7 @@
 					// 1. Start date/time
 
 					// Convert Date object into UNIX timestamp for form submission
-					var unix_start_time = parseDate( start_date_input.val(), o.us_format ).getTime() / 1000;
+					var unix_start_time = parseDate( start_date_input.val(), o.date_format ).getTime() / 1000;
 					// If parsed correctly, proceed to add the time.
 					if( ! isNaN( unix_start_time ) ) {
 						// Add time quantity to date, unless "All day" is checked.
@@ -239,7 +245,7 @@
 					// 2. End date/time
 
 					// Convert Date object into UNIX timestamp for form submission
-					var unix_end_time = parseDate( end_date_input.val(), o.us_format ).getTime() / 1000;
+					var unix_end_time = parseDate( end_date_input.val(), o.date_format ).getTime() / 1000;
 					// If parsed correctly, proceed to add the time.
 					if( ! isNaN( unix_end_time ) ) {
 						// If "All day" is checked, store an end date that is one day
@@ -280,7 +286,7 @@
 					end_time,
 					allday,
 					o.twentyfour_hour,
-					o.us_format,
+					o.date_format,
 					o.now )
 
 			return this;
@@ -301,7 +307,7 @@
 					$(o.end_time),
 					$(o.allday),
 					o.twentyfour_hour,
-					o.us_format,
+					o.date_format,
 					o.now );
 
 			return this;

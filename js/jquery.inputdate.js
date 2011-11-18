@@ -26,7 +26,7 @@
 	/**
 	 * Value initialization
 	 */
-	function reset( start_date_input, start_time, twentyfour_hour, us_format, now )
+	function reset( start_date_input, start_time, twentyfour_hour, date_format, now )
 	{
 		// Restore original values of fields when the page was loaded
 		start_time.val( start_time.data( 'timespan.initial_value' ) );
@@ -42,7 +42,7 @@
 		} else {
 			start = new Date( now );
 		}
-		start_date_input.val( formatDate( start, us_format ) );
+		start_date_input.val( formatDate( start, date_format ) );
 
 		// Trigger function (defined above) to internally store values of each
 		// input field (used in calculations later).
@@ -57,7 +57,7 @@
 		start_date_input: 'date-input',
 		start_time: 'time',
 		twentyfour_hour: false,
-		us_format: false,
+		date_format: 'def',
 		now: new Date()
 	};
 
@@ -89,14 +89,15 @@
 			all_inputs.bind( 'focus.timespan', store_value );
 			date_inputs.calendricalDate( {
 				today: new Date( o.now.getFullYear(), o.now.getMonth(), o.now.getDate() ),
-				usa: o.us_format
+				dateFormat: o.date_format, monthNames: o.month_names, dayNames: o.day_names,
+				weekStartDay: o.week_start_day
 			} );
 
 			// Validate and update saved value of DATE fields upon blur.
 			date_inputs
 				.bind( 'blur.timespan', function() {
 					// Validate contents of this field.
-					var date = parseDate( this.value, o.us_format );
+					var date = parseDate( this.value, o.date_format );
 					if( isNaN( date ) ) {
 						// This field is invalid.
 						reset_invalid( $(this) );
@@ -105,7 +106,7 @@
 						$(this).data( 'timespan.stored', this.value );
 						// Re-format contents of field correctly (in case parsable but not
 						// perfect).
-						$(this).val( formatDate( date, o.us_format ) );
+						$(this).val( formatDate( date, o.date_format ) );
 					}
 				});
 
@@ -113,10 +114,10 @@
 			// appropriate amount.
 			start_date_input.bind( 'focus.timespan', function() {
 					// Calculate the time difference between start & end and save it.
-					var start_date_val = parseDate( start_date_input.val(), o.us_format ).getTime() / 1000;
+					var start_date_val = parseDate( start_date_input.val(), o.date_format ).getTime() / 1000;
 				} )
 				.bind( 'blur.timespan', function() {
-					var start_date_val = parseDate( start_date_input.data( 'timespan.stored' ), o.us_format );
+					var start_date_val = parseDate( start_date_input.data( 'timespan.stored' ), o.date_format );
 					// Shift end date/time as appropriate.
 				} );
 
@@ -126,7 +127,7 @@
 					// Update hidden field value with chosen date/time.
 
 					// Convert Date object into UNIX timestamp for form submission
-					var unix_start_time = parseDate( start_date_input.val(), o.us_format ).getTime() / 1000;
+					var unix_start_time = parseDate( start_date_input.val(), o.date_format ).getTime() / 1000;
 					// If parsed incorrectly, entire calculation is invalid.
 					if( isNaN( unix_start_time ) ) {
 						unix_start_time = '';
@@ -143,7 +144,7 @@
 			reset( start_date_input,
 					start_time,
 					o.twentyfour_hour,
-					o.us_format,
+					o.date_format,
 					o.now )
 
 			return this;
@@ -159,7 +160,7 @@
 			reset( $(o.start_date_input),
 					$(o.start_time),
 					o.twentyfour_hour,
-					o.us_format,
+					o.date_format,
 					o.now );
 
 			return this;

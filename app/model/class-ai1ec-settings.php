@@ -129,6 +129,16 @@ class Ai1ec_Settings {
 	 * @var bool
 	 **/
 	var $hide_maps_until_clicked;
+	
+	/**
+	 * agenda_events_expanded class variable
+	 *
+	 * When this setting is on, events are expanded
+	 * in agenda view
+	 *
+	 * @var bool
+	 **/
+	var $agenda_events_expanded;
 
 	/**
 	 * show_create_event_button class variable
@@ -161,13 +171,14 @@ class Ai1ec_Settings {
 	var $inject_categories;
 
 	/**
-	 * input_us_format class variable
+	 * input_date_format class variable
 	 *
-	 * Input dates in US format.
+	 * Date format used for date input. For supported formats
+	 * @see jquery.calendrical.js
 	 *
-	 * @var bool
+	 * @var string
 	 **/
-	var $input_us_format;
+	var $input_date_format;
 	
 	/**
 	 * input_24h_time class variable
@@ -252,6 +263,7 @@ class Ai1ec_Settings {
 			'calendar_css_selector'         => '',
 			'week_start_day'                => get_option( 'start_of_week' ),
 			'agenda_events_per_page'        => get_option( 'posts_per_page' ),
+			'agenda_events_expanded'        => false,
 			'include_events_in_rss'         => false,
 			'allow_publish_to_facebook'     => false,
 			'facebook_credentials'          => null,
@@ -262,7 +274,7 @@ class Ai1ec_Settings {
 			'show_create_event_button'      => false,
 			'turn_off_subscription_buttons' => false,
 			'inject_categories'             => false,
-			'input_us_format'               => false,
+			'input_date_format'             => 'def',
 			'input_24h_time'                => false,
 			'cron_freq'                     => 'daily',
 			'timezone'                      => get_option( 'timezone_string' )
@@ -286,27 +298,26 @@ class Ai1ec_Settings {
 	 **/
 	function update( $params ) {
 		$this->update_page( 'calendar_page_id', $params );
-		$this->default_calendar_view          = $params['default_calendar_view'];
-		$this->calendar_css_selector          = $params['calendar_css_selector'];
-		$this->week_start_day 				        = $params['week_start_day'];
-		$this->agenda_events_per_page         = $params['agenda_events_per_page'];
-		$this->agenda_events_per_page         = intval( $this->agenda_events_per_page );
-		$this->cron_freq							        = $params['cron_freq'];
-		$this->show_publish_button		        = $params['show_publish_button'];
-		$this->hide_maps_until_clicked        = $params['hide_maps_until_clicked'];
-		$this->exclude_from_search            = $params['exclude_from_search'];
-		$this->show_create_event_button       = $params['show_create_event_button'];
-		$this->turn_off_subscription_buttons  = $params['turn_off_subscription_buttons'];
-		$this->inject_categories              = $params['inject_categories'];
-		$this->input_us_format                = $params['input_us_format'];
-		$this->input_24h_time                 = $params['input_24h_time'];
-		$this->include_events_in_rss 					= $params['include_events_in_rss'];
-		$this->allow_events_posting_facebook 	= $params['allow_events_posting_facebook'];
-		$this->facebook_credentials 					= $params['facebook_credentials'];
-		$this->user_role_can_create_event 		= $params['user_role_can_create_event'];
-		
-		if( $this->agenda_events_per_page <= 0 )  $this->agenda_events_per_page = 1;
-		if( isset( $params['timezone'] ) )        $this->timezone = $params['timezone'];
+		if( isset( $params['default_calendar_view']         ) ) $this->default_calendar_view          = $params['default_calendar_view'];
+		if( isset( $params['calendar_css_selector']         ) ) $this->calendar_css_selector          = $params['calendar_css_selector'];
+		if( isset( $params['week_start_day']                ) ) $this->week_start_day                 = $params['week_start_day'];
+		if( isset( $params['agenda_events_per_page']        ) ) $this->agenda_events_per_page         = intval( $params['agenda_events_per_page'] );
+		if( isset( $params['cron_freq']                     ) ) $this->cron_freq                      = $params['cron_freq'];
+		if( isset( $params['show_publish_button']           ) ) $this->show_publish_button            = $params['show_publish_button'];
+		if( isset( $params['hide_maps_until_clicked']       ) ) $this->hide_maps_until_clicked        = $params['hide_maps_until_clicked'];
+		if( isset( $params['agenda_events_expanded']        ) ) $this->agenda_events_expanded         = $params['agenda_events_expanded'];
+		if( isset( $params['exclude_from_search']           ) ) $this->exclude_from_search            = $params['exclude_from_search'];
+		if( isset( $params['show_create_event_button']      ) ) $this->show_create_event_button       = $params['show_create_event_button'];
+		if( isset( $params['turn_off_subscription_buttons'] ) ) $this->turn_off_subscription_buttons  = $params['turn_off_subscription_buttons'];
+		if( isset( $params['inject_categories']             ) ) $this->inject_categories              = $params['inject_categories'];
+		if( isset( $params['input_date_format']             ) ) $this->input_date_format              = $params['input_date_format'];
+		if( isset( $params['input_24h_time']                ) ) $this->input_24h_time                 = $params['input_24h_time'];
+		if( isset( $params['include_events_in_rss']         ) ) $this->include_events_in_rss          = $params['include_events_in_rss'];
+		if( isset( $params['allow_events_posting_facebook'] ) ) $this->allow_events_posting_facebook  = $params['allow_events_posting_facebook'];
+		if( isset( $params['facebook_credentials']          ) ) $this->facebook_credentials           = $params['facebook_credentials'];
+		if( isset( $params['user_role_can_create_event']    ) ) $this->user_role_can_create_event     = $params['user_role_can_create_event'];
+		if( isset( $params['timezone']                      ) ) $this->timezone                       = $params['timezone'];
+		if( $this->agenda_events_per_page <= 0                ) $this->agenda_events_per_page         = 1;
 	}
 
 	/**

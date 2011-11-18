@@ -64,9 +64,13 @@ class Ai1ec_Importer_Helper {
 			$ret .= ' ' . $t['value']['hour'] .
 				':' . $t['value']['min'] .
 				':' . $t['value']['sec'];
-		$timezone = ( isset( $t['value']['tz'] ) && $t['value']['tz'] == 'Z' ) ? 'Z' : $t['params']['TZID'];
+		$timezone = '';
+		if( isset( $t['value']['tz'] ) && $t['value']['tz'] == 'Z' ) 
+			$timezone = 'Z';
+		elseif( isset( $t['params']['TZID'] ) )
+			$timezone = $t['params']['TZID'];
 
-		if( ! $timezone ) $timezone = $def_timezone;
+		if( empty( $timezone ) ) $timezone = $def_timezone;
 		if( $timezone )
 			$ret .= ' ' . $timezone;
 		return strtotime( $ret );

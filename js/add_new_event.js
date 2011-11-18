@@ -5,14 +5,6 @@ jQuery( function( $ ){
 	 */
 	if( $('#ai1ec_event' ).length )
 	{
-		// Selector for repeat weekly
-		element_selector( '.ai1ec_week_days_list > li', 'ai1ec_selected', 'ai1ec_weekday_value', '#ai1ec_weekly_days' );
-
-		// Selector for repeat monthly
-		element_selector( '.ai1ec_month_days_list > li', 'ai1ec_selected', 'ai1ec_monthday_value', '#ai1ec_monthly_days' );
-
-		// Selector for repeat yearly
-		element_selector( '.ai1ec_yearly_months_list > li', 'ai1ec_selected', 'ai1ec_yearmonth_value', '#ai1ec_yearly_months' );
 
 		var now = new Date( ai1ec_add_new_event.now * 1000 );
 
@@ -22,30 +14,37 @@ jQuery( function( $ ){
 
 		// Initialize timespan plugin on our date/time inputs.
 		var data = {
-			allday: 					'#ai1ec_all_day_event',
-			start_date_input: '#ai1ec_start-date-input',
-			start_time_input: '#ai1ec_start-time-input',
-			start_time: 			'#ai1ec_start-time',
-			end_date_input: 	'#ai1ec_end-date-input',
-			end_time_input: 	'#ai1ec_end-time-input',
-			end_time: 				'#ai1ec_end-time',
-			us_format:        ai1ec_add_new_event.us_format,
-			twentyfour_hour:  ai1ec_add_new_event.twentyfour_hour,
-			now:              now
+			allday: 						'#ai1ec_all_day_event',
+			start_date_input: 	'#ai1ec_start-date-input',
+			start_time_input: 	'#ai1ec_start-time-input',
+			start_time: 				'#ai1ec_start-time',
+			end_date_input: 		'#ai1ec_end-date-input',
+			end_time_input: 		'#ai1ec_end-time-input',
+			end_time: 					'#ai1ec_end-time',
+			date_format:				ai1ec_add_new_event.date_format,
+			month_names:				ai1ec_add_new_event.month_names,
+			day_names:					ai1ec_add_new_event.day_names,
+			week_start_day:			ai1ec_add_new_event.week_start_day,
+			twentyfour_hour:  	ai1ec_add_new_event.twentyfour_hour,
+			now:              	now
 		}
 		$.timespan( data );
 
 		// Initialize inputdate plugin on our "until" date input.
 		data = {
-			start_date_input: '#ai1ec_until-date-input',
-			start_time:       '#ai1ec_until-time',
-			us_format:        ai1ec_add_new_event.us_format,
-			now:              now
+			start_date_input: 	'#ai1ec_until-date-input',
+			start_time:       	'#ai1ec_until-time',
+			date_format:				ai1ec_add_new_event.date_format,
+			month_names:				ai1ec_add_new_event.month_names,
+			day_names:					ai1ec_add_new_event.day_names,
+			week_start_day:			ai1ec_add_new_event.week_start_day,
+			twentyfour_hour:  	ai1ec_add_new_event.twentyfour_hour,
+			now:              	now
 		}
 		$.inputdate( data );
 
 		// Initialize count range slider
-		$( '#ai1ec_count' ).rangeinput( {
+		$( '#ai1ec_count, #ai1ec_daily_count, #ai1ec_weekly_count, #ai1ec_monthly_count, #ai1ec_yearly_count' ).rangeinput( {
 			css: {
 				input: 'ai1ec-range',
 				slider: 'ai1ec-slider',
@@ -227,35 +226,36 @@ jQuery( function( $ ){
 		}
 		function hide_all_repeat_fields() {
 			hide_all_end_fields();
+			hide_custom_repeat_elements();
+			hide_frequency();
 			$( '#ai1ec_end_holder' ).fadeOut();
 		}
 		function hide_all_end_fields() {
 			$( '#ai1ec_count_holder, #ai1ec_until_holder' ).hide();
 		}
-
-		// ===========================
-		// = Repeat dropdown clicked =
-		// ===========================
-		$( '#ai1ec_repeat' ).change( function() {
-			// hide all helper elements
-
-			var selected = $( '#ai1ec_repeat option:selected' ).val();
-			switch( selected ) {
-				// =============================
-				// = None selected, hide repeating fields =
-				// =============================
-				case ' ':
-					hide_all_repeat_fields();
-					break;
-
-				// =====================
-				// = Repeating event, show repeating fields =
-				// =====================
-				default:
-					show_all_repeat_fields();
-					break;
-			}
-		});
+		
+		function ai1ec_selector( selector ) {
+			$( selector + ' > li' ).click( function() {
+				if( $( this ).hasClass( 'ai1ec_selected' ) ) {
+					$( this ).removeClass( 'ai1ec_selected' );
+				} else {
+					$( this ).addClass( 'ai1ec_selected' );
+				}
+				var data = new Array();
+				$( selector + ' > li' ).each( function() {
+					if( $( this ).hasClass( 'ai1ec_selected' ) ) {
+						var value = $( this ).children( 'input[type="hidden"]:first' ).val();
+						data.push( value );
+					}
+				});
+				$( selector ).next().val( data.join() );
+			});
+		}
+		
+		ai1ec_selector( '#ai1ec_weekly_date_select' );
+		ai1ec_selector( '#ai1ec_montly_date_select' );
+		ai1ec_selector( '#ai1ec_yearly_date_select' );
+		
 		// ========================
 		// = End dropdown clicked =
 		// ========================
@@ -267,6 +267,160 @@ jQuery( function( $ ){
 		if( $( '#ai1ec_bottom_publish' ).length > 0 ) {
 			$( '#ai1ec_bottom_publish' ).click( function() {
 				$( '#publish' ).trigger( 'click' );
+			});
+		}
+		
+		$( '.ai1ec_tab' ).live( 'click', function() {
+			if( ! $( this ).hasClass( 'ai1ec_active' ) ) {
+				var $active_tab = $( '.ai1ec_repeat_tabs > li > a.ai1ec_active' );
+				var $active_content = $( $active_tab.attr( 'href' ) );
+				
+				var $becoming_active = $( $( this ).attr( 'href' ) );
+				
+				$active_tab.removeClass( 'ai1ec_active' );
+				$active_content.hide();
+
+				$( this ).addClass( 'ai1ec_active' );
+				$becoming_active.append( $( '#ai1ec_repeat_tab_append' ) );
+				$( '#ai1ec_ending_box' ).show();
+				$becoming_active.show();
+			}
+			return false;
+		});
+		$( '.ai1ec_repeat_apply' ).live( 'click', function() {
+			var $button = $( this );
+			var rule = '';
+			var $active_tab = $( $( '.ai1ec_active' ).attr( 'href' ) );
+			var frequency = $active_tab.attr( 'title' );
+			switch( frequency ) {
+				case 'daily':
+					rule += 'FREQ=DAILY;';
+					var interval = $( '#ai1ec_daily_count' ).val();
+					if( interval > 1 )
+						rule += 'INTERVAL=' + interval + ';';
+					break;
+				case 'weekly':
+					rule += 'FREQ=WEEKLY;';
+					var interval = $( '#ai1ec_weekly_count' ).val();
+					if( interval > 1 )
+						rule += 'INTERVAL=' + interval + ';';
+					var week_days = $( 'input[name="ai1ec_weekly_date_select"]:first' ).val();
+					var wkst = $( '#ai1ec_weekly_date_select > li:first > input[type="hidden"]:first' ).val();
+					if( week_days.length > 0 )
+						rule += 'WKST=' + wkst + ';BYDAY=' + week_days + ';';
+					break;
+				case 'monthly':
+					rule += 'FREQ=MONTHLY;';
+					var interval = $( '#ai1ec_monthly_count' ).val();
+					if( interval > 1 )
+						rule += 'INTERVAL=' + interval + ';';
+					var month_days = $( 'input[name="ai1ec_montly_date_select"]:first' ).val();
+					if( month_days.length > 0 )
+						rule += 'BYMONTHDAY=' + month_days + ';';
+					break;
+				case 'yearly':
+					rule += 'FREQ=YEARLY;';
+					var interval = $( '#ai1ec_yearly_count' ).val();
+					if( interval > 1 )
+						rule += 'INTERVAL=' + interval + ';';
+					var months = $( 'input[name="ai1ec_yearly_date_select"]:first' ).val();
+					if( months.length > 0 )
+						rule += 'BYMONTH=' + months + ';';
+					break;
+			}
+			
+			var ending = $( '#ai1ec_end' ).val();
+			// After
+			if( ending == '1' ) {
+				rule += 'COUNT=' + $( '#ai1ec_count' ).val() + ';';
+			}
+			// On Date
+			if( ending == '2' ) {
+				var until = parseDate( $( '#ai1ec_until-date-input' ).val(), ai1ec_add_new_event.date_format );
+				until     = until.getUTCFullYear() + '' + ( until.getUTCMonth() + 1 ) + until.getUTCDate() + 'T000000Z';
+				rule += 'UNTIL=' + until + ';';
+			}
+
+			var data = {
+				action: 'ai1ec_rrule_to_text',
+				rrule:  rule
+			};
+			$( this ).attr( 'disabled', true );
+			$.post( 
+				ajaxurl, 
+				data, 
+				function( response ) {
+					if( response.error ) {
+						$.growlUI( 'Error', response.message );
+						$button.attr( 'disabled', false );
+						$( '#ai1ec_rrule' ).val( '' );
+						var txt = $.trim( $( '#ai1ec_repeat_label' ).text() );
+						if( txt.lastIndexOf( '...' ) == -1 ) {
+							txt = txt.substring( 0, txt.length - 1 );
+							$( '#ai1ec_repeat_label' ).text( txt + '...' );
+						}
+					} else {
+						$( '#ai1ec_rrule' ).val( rule );
+						$.unblockUI();
+						var txt = $.trim( $( '#ai1ec_repeat_label' ).text() );
+						if( txt.lastIndexOf( ':' ) == -1 ) {
+							txt = txt.substring( 0, txt.length - 3 );
+							$( '#ai1ec_repeat_label' ).text( txt + ':' );
+						}
+						$button.attr( 'disabled', false );
+						$( '#ai1ec_repeat_text > a' ).fadeOut( 'fast', function() {
+							$( this ).text( response.message );
+							$( this ).fadeIn( 'fast' );
+						})
+					}
+				},
+				'json'
+			);
+		})
+		
+		$( '#ai1ec_repeat_text > a' ).live( 'click', function() {
+			if( ! $( '#ai1ec_repeat' ).is( ':checked' ) ) {
+				$( '#ai1ec_repeat' ).attr( 'checked', true );
+				var txt = $.trim( $( '#ai1ec_repeat_label' ).text() );
+				txt = txt.substring( 0, txt.length - 3 );
+				$( '#ai1ec_repeat_label' ).text( txt + ':' );
+			}
+			ai1ec_show_repeat_tabs();
+			return false;
+		});
+		
+		$( '#ai1ec_repeat' ).click( function() {
+			if( $(this).is( ':checked' ) ) {
+				ai1ec_show_repeat_tabs();
+			} else {
+				$( '#ai1ec_repeat_text > a' ).text( '' );
+				var txt = $.trim( $( '#ai1ec_repeat_label' ).text() );
+				txt = txt.substring( 0, txt.length - 1 );
+				$( '#ai1ec_repeat_label' ).text( txt + '...' );
+			}
+		})
+		$( 'a.ai1ec_repeat_cancel' ).live( 'click', function() {
+			if( $.trim( $( '#ai1ec_repeat_text > a' ).text() ) == '' ) {
+				$( '#ai1ec_repeat' ).attr( 'checked', false );
+				var txt = $.trim( $( '#ai1ec_repeat_label' ).text() );
+				if( txt.lastIndexOf( '...' ) == -1 ) {
+					txt = txt.substring( 0, txt.length - 1 );
+					$( '#ai1ec_repeat_label' ).text( txt + '...' );
+				}
+			}
+			$.unblockUI();
+			return false;
+		});
+		
+		var ai1ec_show_repeat_tabs = function() {
+			$.blockUI( { 
+				message: $('#ai1ec_repeat_box'), 
+				css: { 
+					width: '358px',
+					border: '0',
+					background: 'transparent',
+					cursor: 'normal'
+				} 
 			});
 		}
 	}
@@ -325,7 +479,9 @@ jQuery( function( $ ){
 					feed_tags: $( '#ai1ec_feed_tags' ).val()
 				};
 				// make an ajax call to save the new feed
-				$.getJSON( ajaxurl, data,
+				$.post( 
+					ajaxurl, 
+					data,
 					function( response ) {
 						// restore add button
 						$button.removeAttr( 'disabled' );
@@ -338,7 +494,8 @@ jQuery( function( $ ){
 							// Add the feed to the settings screen
 							$( '#ai1ec-feeds-after' ).after( response.message );
 						}
-					}
+					},
+					'json'
 				);
 			}
 
@@ -363,7 +520,7 @@ jQuery( function( $ ){
 				ics_id: ics_id
 			};
 			// remove the feed from the database
-			$.getJSON( ajaxurl, data,
+			$.post( ajaxurl, data,
 				function( response ) {
 					// restore the delete button
 					$button.removeAttr( 'disabled' );
@@ -374,7 +531,8 @@ jQuery( function( $ ){
 						// remove the feed from the settings screen
 						$feed_row.remove();
 					}
-				}
+				},
+				'json'
 			);
 		});
 
@@ -396,7 +554,7 @@ jQuery( function( $ ){
 				ics_id: ics_id
 			};
 			// remove the feed from the database
-			$.getJSON( ajaxurl, data,
+			$.post( ajaxurl, data,
 				function( response ) {
 					if( response.error ) {
 						// tell the user there is an error
@@ -405,7 +563,8 @@ jQuery( function( $ ){
 						$button.fadeOut();
 					}
 					$button.siblings( '.ajax-loading' ).css( 'visibility', 'hidden' );
-				}
+				},
+				'json'
 			);
 		});
 
@@ -427,7 +586,7 @@ jQuery( function( $ ){
 				ics_id: ics_id
 			};
 			// remove the feed from the database
-			$.getJSON( ajaxurl, data,
+			$.post( ajaxurl, data,
 				function( response ) {
 					if( response.error ) {
 						// tell the user there is an error
@@ -443,7 +602,8 @@ jQuery( function( $ ){
 					$button
 						.attr( 'disabled', false )
 						.siblings( '.ajax-loading' ).css( 'visibility', 'hidden' );
-				}
+				},
+				'json'
 			);
 		});
 

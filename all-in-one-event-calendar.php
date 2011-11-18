@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: All-in-One Event Calendar Plugin
- * Plugin URI: http://theseedstudio.com/software/all-in-one-event-calendar-wordpress/
+ * Plugin URI: http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/
  * Description: An event calendar system with month and agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
- * Version: 1.0.9
+ * Version: 1.1
  * Author: The Seed Studio
- * Author URI: http://theseedstudio.com/
+ * Author URI: http://theseednetwork.com/
  */
 @set_time_limit( 0 );
 @ini_set( "memory_limit", 				"256M" );
@@ -115,6 +115,11 @@ define( 'AI1EC_JS_URL', 					AI1EC_URL . '/js' );
 // = POST TYPE =
 // =============
 define( 'AI1EC_POST_TYPE', 				'ai1ec_event' );
+
+// ================
+// = RSS FEED URL =
+// ================
+define( 'AI1EC_RSS_FEED', 'http://feeds.feedburner.com/ai1ec' );
 
 // ======================================
 // = FAKE CATEGORY ID FOR CALENDAR PAGE =

@@ -265,7 +265,7 @@ class Ai1ec_Event {
 	 *
 	 * @return void
 	 **/
-	function __construct( $data = null ) {
+	function __construct( $data = null, $instance = false ) {
 		global $wpdb;
 
 		if( $data == null )
@@ -283,23 +283,35 @@ class Ai1ec_Event {
 
 			if( ! $post || $post->post_status == 'auto-draft' )
 				throw new Ai1ec_Event_Not_Found( "Post with ID '$data' could not be retrieved from the database." );
-
+      
+      $left_join      = "";
+      $select_sql     = "e.post_id, e.recurrence_rules, e.exception_rules, e.allday, " .
+				                "e.recurrence_dates, e.exception_dates, e.venue, e.country, e.address, e.city, e.province, e.postal_code, " .
+				                "e.show_map, e.contact_name, e.contact_phone, e.contact_email, e.cost, e.ical_feed_url, e.ical_source_url, " .
+				                "e.ical_organizer, e.ical_contact, e.ical_uid, " .
+				                "GROUP_CONCAT( ttc.term_id ) AS categories, " .
+				                "GROUP_CONCAT( ttt.term_id ) AS tags ";
+      
+      if( $instance ) {
+        $select_sql .= ", UNIX_TIMESTAMP( aei.start ) as start, UNIX_TIMESTAMP( aei.end ) as end ";
+        
+        $instance = (int) $instance;
+        $left_join = 	"LEFT JOIN {$wpdb->prefix}ai1ec_event_instances aei ON aei.id = $instance ";
+      } else {
+        $select_sql .= ", UNIX_TIMESTAMP( e.start ) as start, UNIX_TIMESTAMP( e.end ) as end, e.allday ";
+      }
 			// =============================
 			// = Fetch event from database =
 			// =============================
 			$query = $wpdb->prepare(
-				"SELECT e.post_id, UNIX_TIMESTAMP( e.start ) as start, UNIX_TIMESTAMP( e.end ) as end, e.allday, e.recurrence_rules, e.exception_rules,
-					e.recurrence_dates, e.exception_dates, e.venue, e.country, e.address, e.city, e.province, e.postal_code,
-					e.show_map, e.contact_name, e.contact_phone, e.contact_email, e.cost, e.ical_feed_url, e.ical_source_url,
-					e.ical_organizer, e.ical_contact, e.ical_uid, " .
-					"GROUP_CONCAT( ttc.term_id ) AS categories, " .
-					"GROUP_CONCAT( ttt.term_id ) AS tags " .
+				"SELECT {$select_sql}" .
 				"FROM {$wpdb->prefix}ai1ec_events e " .
 					"LEFT JOIN $wpdb->term_relationships tr ON post_id = tr.object_id " .
 					"LEFT JOIN $wpdb->term_taxonomy ttc ON tr.term_taxonomy_id = ttc.term_taxonomy_id AND ttc.taxonomy = 'events_categories' " .
 					"LEFT JOIN $wpdb->term_taxonomy ttt ON tr.term_taxonomy_id = ttt.term_taxonomy_id AND ttt.taxonomy = 'events_tags' " .
-				"WHERE post_id = %d " .
-				"GROUP BY post_id",
+					"{$left_join}" .
+				"WHERE e.post_id = %d " .
+				"GROUP BY e.post_id",
 				$data );
 			$event = $wpdb->get_row( $query );
 
@@ -315,8 +327,10 @@ class Ai1ec_Event {
 			// = Assign values to $this =
 			// ==========================
 			foreach( $this as $property => $value ) {
-				if( $property != 'post' )
-					$this->{$property} = $event->{$property};
+				if( $property != 'post' ) {
+				  if( isset( $event->{$property} ) )
+				    $this->{$property} = $event->{$property};
+				}
 			}
 		}
 		// ===================
@@ -541,7 +555,8 @@ class Ai1ec_Event {
 			case 'color_style':
 			  if( $this->color_style === null ) {
 			    $categories = wp_get_post_terms( $this->post_id, 'events_categories' );
-			    $this->color_style = $ai1ec_events_helper->get_event_category_color_style( $categories[0]->term_id, $this->allday );
+			    if( $categories && ! empty( $categories ) )
+			      $this->color_style = $ai1ec_events_helper->get_event_category_color_style( $categories[0]->term_id, $this->allday );
 		    }
 			  return $this->color_style;
 
@@ -572,41 +587,10 @@ class Ai1ec_Event {
 			// = Recurrence info as HTML =
 			// ===========================
 			case 'recurrence_html':
-				if( ! $this->recurrence_rules )
+				if( ! $this->recurrence_rules || empty( $this->recurrence_rules ) )
 					return null;
-				$rules = $ai1ec_events_helper->parse_recurrence_rules( $this );
-				$patterns = $ai1ec_events_helper->get_repeat_patterns();
 
-				$recurrence_html = '<strong>' . esc_html( $patterns[$rules['repeat']] ) . '</strong>';
-				unset( $rules['repeat'] );
-
-				if( $rules['count'] ) {
-					$rules['count'] = sprintf( _n(
-						'ending after <strong>%d</strong> time',
-						'ending after <strong>%d</strong> times',
-						$rules['count'], AI1EC_PLUGIN_NAME ),
-						$rules['count'] );
-				} else {
-					unset( $rules['count'] );
-				}
-
-				if( $rules['until'] ) {
-					$rules['until'] = sprintf(
-						__( 'until <strong>%s</strong>', AI1EC_PLUGIN_NAME ),
-						esc_html( $ai1ec_events_helper->get_long_date( $rules['until'], false ) ) );
-				} else {
-					unset( $rules['until'] );
-				}
-
-				// The "end" specifier shouldn't be output
-				unset( $rules['end'] );
-
-				$end = join( __( ' or ', AI1EC_PLUGIN_NAME ), $rules );
-
-				if( $end )
-					$recurrence_html .= ', ' . $end;
-
-				return $recurrence_html;
+				return '<strong>' . esc_html( $ai1ec_events_helper->rrule_to_text( $this->recurrence_rules  ) ) . '</strong>';
 		}
 	}
 

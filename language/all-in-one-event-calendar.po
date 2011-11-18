@@ -950,7 +950,7 @@ msgid "All-in-One Event Calendar Plugin"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
-msgid "http://theseedstudio.com/software/all-in-one-event-calendar-wordpress/"
+msgid "http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/"
 msgstr ""
 
 #. Description of the plugin/theme
@@ -958,6 +958,6 @@ msgid "An event calendar system with month and agenda views, upcoming events wid
 msgstr ""
 
 #. Author URI of the plugin/theme
-msgid "http://theseedstudio.com/"
+msgid "http://theseednetwork.com/"
 msgstr ""
 
