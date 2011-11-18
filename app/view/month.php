@@ -32,7 +32,7 @@
 							<div class="ai1ec-day">
 								<div class="ai1ec-date"><?php echo $day['date'] ?></div>
 								<?php foreach( $day['events'] as $event ): ?>
-									<a href="<?php echo esc_attr( get_permalink( $event->post_id ) ) ?>"
+									<a href="<?php echo esc_attr( get_permalink( $event->post_id ) ) . $event->instance_id ?>"
 										class="ai1ec-event-container
 											ai1ec-event-id-<?php echo $event->post_id ?>
 											ai1ec-event-instance-id-<?php echo $event->instance_id ?>

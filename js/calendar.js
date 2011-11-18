@@ -1,3 +1,27 @@
+//Used to ensure that Entities used in L10N strings are correct
+function ai1ec_convert_entities(o) {
+	var c, v;
+	c = function(s) {
+		if (/&[^;]+;/.test(s)) {
+			var e = document.createElement("div");
+			e.innerHTML = s;
+			return !e.firstChild ? s : e.firstChild.nodeValue;
+		}
+		return s;
+	}
+
+	if ( typeof o === 'string' ) {
+		return c(o);
+	} else if ( typeof o === 'object' ) {
+		for (v in o) {
+			if ( typeof o[v] === 'string' ) {
+				o[v] = c(o[v]);
+			}
+		}
+	}
+	return o;
+}
+
 jQuery( document ).ready( function( $ ) {
 
 	// =====================================
@@ -53,7 +77,7 @@ jQuery( document ).ready( function( $ ) {
 	 */
 	function check_hash() {
 		var live_hash = document.location.hash;
-		var default_hash = convertEntities( ai1ec_calendar.default_hash );
+		var default_hash = ai1ec_convert_entities( ai1ec_calendar.default_hash );
 		// If current_hash doesn't match live hash, and the document's live hash
 		// isn't empty, or if it is, the current_hash isn't equivalent to empty
 		// (i.e., default hash), the page needs to be updated.
@@ -83,7 +107,7 @@ jQuery( document ).ready( function( $ ) {
 				var query = hash.substring( 1 );
 
 				// Fetch AJAX result
-				$.getJSON( ai1ec_calendar.ajaxurl, query, function( data )
+				$.post( ai1ec_calendar.ajaxurl, query, function( data )
 					{
 						// Replace action body class with new one
 						var classes = $('body').attr( 'class' );
@@ -110,7 +134,8 @@ jQuery( document ).ready( function( $ ) {
 
 						// Do any general view initialization after loading
 						initialize_view();
-					}
+					},
+					'json'
 				);
 			} );
 
@@ -187,6 +212,118 @@ jQuery( document ).ready( function( $ ) {
 		} );
 	}
 
+	/**
+	 * Trims date boxes for which there are too many listed events.
+	 */
+	function truncate_month_view()
+	{
+		if( $( '.ai1ec-month-view' ).length )
+		{
+			// First undo any previous truncation
+			$( '.ai1ec-day .ai1ec-obscured' ).removeClass( 'ai1ec-obscured' );
+			$( '.ai1ec-day .ai1ec-scroll-up, .ai1ec-day .ai1ec-scroll-down' ).remove();
+
+			// Now set up truncation on any days with max visible events.
+			$( '.ai1ec-month-view .ai1ec-day' ).each( function()
+			{
+				var max_visible = 8;
+				var $events = $( '.ai1ec-event-container:visible', this );
+
+				if( $events.length > max_visible )
+				{
+					/**
+					 * Scroll up by one event.
+					 */
+					function scroll_up( $el ) {
+						if( ! $el.hasClass( 'ai1ec-disabled' ) ) {
+							var $first_visible =
+								$el.siblings( '.ai1ec-event-container:not(.ai1ec-obscured)' )
+									.last().addClass( 'ai1ec-obscured' ).end()
+									.first().prev( '.ai1ec-event-container' ).removeClass( 'ai1ec-obscured' );
+							if( $first_visible.prev( '.ai1ec-event-container' ).length == 0 )
+								$el.addClass( 'ai1ec-disabled' );
+							$el.parent().find( '.ai1ec-scroll-down' ).removeClass( 'ai1ec-disabled' );
+						}
+					}
+
+					/**
+					 * Scroll down by one event.
+					 */
+					function scroll_down( $el ) {
+						if( ! $el.hasClass( 'ai1ec-disabled' ) ) {
+							var $last_visible =
+								$el.siblings( '.ai1ec-event-container:not(.ai1ec-obscured)' )
+									.first().addClass( 'ai1ec-obscured' ).end()
+									.last().next( '.ai1ec-event-container' ).removeClass( 'ai1ec-obscured' );
+							if( $last_visible.next( '.ai1ec-event-container' ).length == 0 )
+								$el.addClass( 'ai1ec-disabled' );
+							$el.parent().find( '.ai1ec-scroll-up' ).removeClass( 'ai1ec-disabled' );
+						}
+					}
+
+					/**
+					 * Mouse button held down on a scroll button.
+					 */
+					function scroll_hold( $el, func ) {
+						$el.delay( 100 ).queue( function( next ) {
+							func( $el );
+							scroll_hold( $el, func );
+							next();
+						} );
+					}
+					/**
+					 * Mouse button let go of a scroll button.
+					 */
+					function scroll_cancel() {
+						$( this ).clearQueue();
+					}
+
+					/**
+					 * Register mousedown action. Trigger once right away, then again
+					 * after 600 ms delay, then again every 100 ms while held down.
+					 */
+					function register_mousedown( $button, func ) {
+						$button.mousedown( function( e ) {
+							if( e.button == 0 ) {
+								func( $( this ) ); // Scroll once
+								$( this )
+									.delay( 600 )
+									.queue( function( next ) {
+										func( $( this ) ); // Scroll again after 600 ms
+										scroll_hold( $( this ), func ); // Scroll repeatedly
+										next();
+									} );
+							}
+						} );
+					}
+
+					// Scroll up button, and register mousedown
+					$scroll_up = $( '<a href="#" class="ai1ec-scroll-up ai1ec-disabled"></a>' )
+					register_mousedown( $scroll_up, scroll_up );
+
+					// Scroll down button, and register mousedown
+					$scroll_down = $( '<a href="#" class="ai1ec-scroll-down"></a>' );
+					register_mousedown( $scroll_down, scroll_down );
+
+					// Register scroll cancel events
+					$scroll_up.add( $scroll_down )
+						.mouseup( function ( e ) {
+							if( e.button == 0 )
+								$( this ).each( scroll_cancel );
+						} )
+						.mouseout( scroll_cancel )
+						.click( function() { return false } );
+
+					// Attach scroll buttons to date DIV
+					$events
+						.first().before( $scroll_up ).end()
+						.last().after( $scroll_down ).end()
+						.filter( ':gt(' + max_visible + ')' ).addClass( 'ai1ec-obscured' );
+				}
+			} );
+		}
+	}
+
 	// *** Agenda view ***
 
 	/**
@@ -235,9 +372,9 @@ jQuery( document ).ready( function( $ ) {
 
 	// *** All views ***
 
-	/**
-	 * Category/tag filters
-	 */
+	// ========================
+	// = Category/tag filters =
+	// ========================
 
 	element_selector(
 			'.ai1ec-category-filter-selector li',
@@ -250,14 +387,16 @@ jQuery( document ).ready( function( $ ) {
 			'ai1ec-tags',
 			'#ai1ec-selected-tags' );
 
-	// Category/tag filtering actions
-	
+	// ==================================
+	// = Category/tag filtering actions =
+	// ==================================
+
 	/**
-	 * Checks if the element has visibile events
+	 * Checks if the date element in Agenda view contains visible events
 	 */
-	function has_visible_events( el ) {
+	function has_visible_events( $el ) {
 		var ret = false;
-		$( el ).find( 'ol.ai1ec-date-events li.ai1ec-event' ).each( function() {
+		$el.find( 'ol.ai1ec-date-events li.ai1ec-event' ).each( function() {
 			if( $( this ).css( 'display' ) != 'none' ) ret = true;
 		});
 		return ret;
@@ -294,12 +433,11 @@ jQuery( document ).ready( function( $ ) {
 		selected_ids = selected_ids.join();
 
 		// Modify export URL
-		var export_url;
+		var export_url = ai1ec_convert_entities( ai1ec_calendar.export_url );
 		if( selected_ids.length ) {
-			export_url = convertEntities( ai1ec_calendar.export_url ) + selected_cats + selected_tags;
+			export_url += selected_cats + selected_tags;
 			$( '.ai1ec-subscribe-filtered' ).fadeIn( 'fast' );
 		} else {
-			export_url = convertEntities( ai1ec_calendar.export_url );
 			$( '.ai1ec-subscribe-filtered' ).fadeOut( 'fast' );
 		}
 		$( '.ai1ec-subscribe' ).attr( 'href', export_url );
@@ -321,30 +459,38 @@ jQuery( document ).ready( function( $ ) {
 			.delay( 500 )
 			.fadeTo( 'fast', 0.3 );
 
-		$.getJSON( ai1ec_calendar.ajaxurl, query, function( data )
+		$.post( ai1ec_calendar.ajaxurl, query, function( data )
 			{
 				// Cancel loading animation or fade out if faded in.
 				$loading.clearQueue().fadeOut( 'fast' );
 				$view.clearQueue().fadeTo( 'fast', 1.0 );
 
-				// Fade in events that should be displayed (or leave them visible)
+				// Show events that should be displayed (or leave them visible)
 				var jq_selector = new Array();	// Build our jQuery selector string
 				$.each( data.matching_ids, function( i, val ) {
 					jq_selector.push( '.ai1ec-event-id-' + val );
 				} );
 				$( jq_selector.join() ).css( 'display', 'block' );
 
-				// Fade out events that should be hidden (or leave them hidden)
+				// Hide events that should be hidden (or leave them hidden)
 				jq_selector = new Array();
 				$.each( data.unmatching_ids, function( i, val ) {
 					jq_selector.push( '.ai1ec-event-id-' + val );
 				} );
 				$( jq_selector.join() ).css( 'display', 'none' );
+
+				// Agenda view only: Slide up dates for which there are no events, and
+				// slide down those for which there are
 				$( 'ol.ai1ec-agenda-view > li.ai1ec-date' ).each( function() {
 					if( has_visible_events( $( this ) ) ) $( this ).slideDown( 'fast' );
 					else 																	$( this ).slideUp( 'fast' );
-				});
-			}
+				} );
+
+				// Month view only: Trim down date boxes for which there are too many
+				// listed events.
+				truncate_month_view();
+			},
+			'json'
 		);
 	}
 
@@ -422,6 +568,9 @@ jQuery( document ).ready( function( $ ) {
 		if( $('.ai1ec-dropdown.ai1ec-selected').length ) {
 			$('.ai1ec-month-view .ai1ec-event-container, .ai1ec-agenda-view .ai1ec-event').hide();
 			apply_filters();
+		} else {
+			// Else do month view trimming
+			truncate_month_view();
 		}
 	}
 

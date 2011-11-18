@@ -70,7 +70,7 @@ class Ai1ec_Calendar_Controller {
 		// Find out which view of the calendar page was requested, then validate
 		// request parameters accordingly and save them to our custom request
 		// object
-		$this->request['action'] = $_REQUEST['action'];
+		$this->request['action'] = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : '';
 		if( ! in_array( $this->request['action'],
 			      array( 'ai1ec_month', 'ai1ec_agenda', 'ai1ec_term_filter' ) ) )
 			$this->request['action'] = 'ai1ec_' . $ai1ec_settings->default_calendar_view;
@@ -79,29 +79,29 @@ class Ai1ec_Calendar_Controller {
 		{
 			case 'ai1ec_month':
 				$this->request['ai1ec_month_offset'] =
-					$_REQUEST['ai1ec_month_offset'] ?
+					isset( $_REQUEST['ai1ec_month_offset'] ) ?
 					intval( $_REQUEST['ai1ec_month_offset'] ) : 0;
 				// Parse active event parameter as an integer ID
-				$this->request['ai1ec_active_event'] = intval( $_REQUEST['ai1ec_active_event'] );
+				$this->request['ai1ec_active_event'] = isset( $_REQUEST['ai1ec_active_event'] ) ? intval( $_REQUEST['ai1ec_active_event'] ) : 0;
 				// Category/tag filter parameters
-				$this->request['ai1ec_cat_ids'] = $_REQUEST['ai1ec_cat_ids'];
-				$this->request['ai1ec_tag_ids'] = $_REQUEST['ai1ec_tag_ids'];
+				$this->request['ai1ec_cat_ids'] = isset( $_REQUEST['ai1ec_cat_ids'] ) ? $_REQUEST['ai1ec_cat_ids'] : 0;
+				$this->request['ai1ec_tag_ids'] = isset( $_REQUEST['ai1ec_tag_ids'] ) ? $_REQUEST['ai1ec_tag_ids'] : 0;
 				break;
 
 			case 'ai1ec_agenda':
 				$this->request['ai1ec_page_offset'] =
-					$_REQUEST['ai1ec_page_offset'] ?
+					isset( $_REQUEST['ai1ec_page_offset'] ) ?
 					intval( $_REQUEST['ai1ec_page_offset'] ) : 0;
 				// Parse active event parameter as an integer ID
-				$this->request['ai1ec_active_event'] = intval( $_REQUEST['ai1ec_active_event'] );
+				$this->request['ai1ec_active_event'] = isset( $_REQUEST['ai1ec_active_event'] ) ? intval( $_REQUEST['ai1ec_active_event'] ) : 0;
 				// Category/tag filter parameters
-				$this->request['ai1ec_cat_ids'] = $_REQUEST['ai1ec_cat_ids'];
-				$this->request['ai1ec_tag_ids'] = $_REQUEST['ai1ec_tag_ids'];
+				$this->request['ai1ec_cat_ids'] = isset( $_REQUEST['ai1ec_cat_ids'] ) ? $_REQUEST['ai1ec_cat_ids'] : 0;
+				$this->request['ai1ec_tag_ids'] = isset( $_REQUEST['ai1ec_tag_ids'] ) ? $_REQUEST['ai1ec_tag_ids'] : 0;
 				break;
 
 			case 'ai1ec_term_filter':
-				$this->request['ai1ec_post_ids'] = $_REQUEST['ai1ec_post_ids'];
-				$this->request['ai1ec_term_ids'] = $_REQUEST['ai1ec_term_ids'];
+				$this->request['ai1ec_post_ids'] = isset( $_REQUEST['ai1ec_post_ids'] ) ? $_REQUEST['ai1ec_post_ids'] : 0;
+				$this->request['ai1ec_term_ids'] = isset( $_REQUEST['ai1ec_term_ids'] ) ? $_REQUEST['ai1ec_term_ids'] : 0;
 				break;
 		}
 	}
@@ -186,7 +186,7 @@ class Ai1ec_Calendar_Controller {
 		);
 
 		// Feed month view into generic calendar view
-		$ai1ec_view_helper->display( 'calendar.php', $args );
+		echo apply_filters( 'ai1ec_view', $ai1ec_view_helper->get_view( 'calendar.php', $args ), $args );
 	}
 
 	/**
@@ -213,6 +213,14 @@ class Ai1ec_Calendar_Controller {
 		       $ai1ec_events_helper,
 		       $ai1ec_calendar_helper;
 
+    $defaults = array(
+      'month_offset'  => 0,
+      'active_event'  => 0,
+      'categories'    => array(),
+      'tags'          => array()
+    );
+    $args = wp_parse_args( $args, $defaults );
+    
 		extract( $args );
 
 		// Get components of localized time
@@ -231,7 +239,7 @@ class Ai1ec_Calendar_Controller {
 			'pagination_links' => $pagination_links,
 			'active_event' => $active_event,
 		);
-		return $ai1ec_view_helper->get_view( 'month.php', $view_args );
+		return apply_filters( 'ai1ec_get_month_view', $ai1ec_view_helper->get_view( 'month.php', $view_args ), $view_args );
 	}
 
 	/**
@@ -277,13 +285,14 @@ class Ai1ec_Calendar_Controller {
 
 		// Incorporate offset into date
 		$args = array(
-			'title' => __( 'Agenda', AI1EC_PLUGIN_NAME ),
-			'dates' => $dates,
-			'page_offset' => $page_offset,
-			'pagination_links' => $pagination_links,
-			'active_event' => $active_event,
+			'title'             => __( 'Agenda', AI1EC_PLUGIN_NAME ),
+			'dates'             => $dates,
+			'page_offset'       => $page_offset,
+			'pagination_links'  => $pagination_links,
+			'active_event'      => $active_event,
+			'expanded'          => $ai1ec_settings->agenda_events_expanded
 		);
-		return $ai1ec_view_helper->get_view( 'agenda.php', $args );
+		return apply_filters( 'ai1ec_get_agenda_view', $ai1ec_view_helper->get_view( 'agenda.php', $args ), $args );
 	}
 
 	/**
@@ -387,8 +396,8 @@ class Ai1ec_Calendar_Controller {
 		$action = preg_replace( '/^ai1ec-/', '', $action );
 
 		$classes[] = "ai1ec-action-$action";
-		if( ! $this->request['ai1ec_month_offset'] &&
-				! $this->request['ai1ec_page_offset'] ) {
+		if( isset( $this->request['ai1ec_month_offset'] ) && ! $this->request['ai1ec_month_offset'] &&
+				isset( $this->request['ai1ec_page_offset'] ) && ! $this->request['ai1ec_page_offset'] ) {
 			$classes[] = 'ai1ec-today';
 		}
 		return $classes;

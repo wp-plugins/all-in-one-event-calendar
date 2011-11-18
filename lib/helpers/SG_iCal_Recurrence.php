@@ -63,10 +63,12 @@ class SG_iCal_Recurrence {
 		//split up the properties
 		$recurProperties = explode(';', $line);
 		$recur = array();
-
 		//loop through the properties in the line and set their associated
 		//member variables
 		foreach ($recurProperties as $property) {
+		  if( empty( $property ) )
+		    continue;
+		    
 			$nameAndValue = explode('=', $property);
 
 			//need the lower-case name for setting the member variable

@@ -176,3 +176,10 @@
 .ai1ec-donate {
 	text-align: center;
 }
+#ai1ec-rss-news {
+	margin: 0;
+	padding: 0px 0px 0px 20px;
+}
+#ai1ec-rss-news > li {
+	list-style: disc;
+}
