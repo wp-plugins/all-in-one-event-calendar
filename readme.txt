@@ -10,7 +10,7 @@ An event calendar system with month and agenda views, upcoming events widget, co
 
 == Description ==
 
-Welcome to the [All-in-One Event Calendar Plugin](http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/), from [The Seed Studio](http:/theseednetwork.com), a [web development](http://theseednetwork.com) company. The All-in-One Event Calendar is a new way to list your events in WordPress and easily share them with the rest of the world.
+The [All-in-One Event Calendar Plugin](http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/), from [The Seed Network](http:/theseednetwork.com), is a new way to list your events in WordPress and easily share them with the rest of the world.
 
 Our new calendar system combines a clean visual design, solid architectural patterns and rigorous testing with a powerful set of features to create the most advanced calendar system available for WordPress and one of the most powerful website calendar systems in the world. Best of all: it’s completely free.
 
