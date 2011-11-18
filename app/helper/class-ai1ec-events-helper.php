@@ -1048,12 +1048,17 @@ class Ai1ec_Events_Helper {
 		if( $origin_tz === null )
 			if( ! is_string( $origin_tz = date_default_timezone_get() ) )
 				return false; // A UTC timestamp was returned -- bail out!
+		
+		try {
+			$origin_dtz = new DateTimeZone( $origin_tz );
+			$remote_dtz = new DateTimeZone( $remote_tz );
 
-		$origin_dtz = new DateTimeZone( $origin_tz );
-		$remote_dtz = new DateTimeZone( $remote_tz );
-		$origin_dt  = new DateTime( gmdate( 'Y-m-d H:i:s', $timestamp ), $origin_dtz );
-		$remote_dt  = new DateTime( gmdate( 'Y-m-d H:i:s', $timestamp ), $remote_dtz );
-		$offset     = $origin_dtz->getOffset( $origin_dt ) - $remote_dtz->getOffset( $remote_dt );
+			$origin_dt  = new DateTime( gmdate( 'Y-m-d H:i:s', $timestamp ), $origin_dtz );
+			$remote_dt  = new DateTime( gmdate( 'Y-m-d H:i:s', $timestamp ), $remote_dtz );
+			$offset     = $origin_dtz->getOffset( $origin_dt ) - $remote_dtz->getOffset( $remote_dt );
+		} catch( Exception $e ) {
+			return false;
+		}
 		
 		return $offset;
 	}
