@@ -56,6 +56,12 @@
 </label>
 <br class="clear" />
 
+<label for="geo_region_biasing">
+<input class="checkbox" name="geo_region_biasing" id="geo_region_biasing" type="checkbox" value="1" <?php echo $geo_region_biasing ?> />
+<?php _e( 'Use the configured <strong>region</strong> (WordPress locale) to bias the address autocomplete function', AI1EC_PLUGIN_NAME ) ?>
+</label>
+<br class="clear" />
+
 <label for="inject_categories">
 <input class="checkbox" name="inject_categories" id="inject_categories" type="checkbox" value="1" <?php echo $inject_categories ?> />
 <?php _e( 'Include <strong>event categories</strong> in post category lists', AI1EC_PLUGIN_NAME ) ?>

@@ -198,6 +198,17 @@ class Ai1ec_Settings {
 	 * @var object
 	 **/
 	var $settings_page;
+	
+	/**
+	 * geo_region_biasing class variable
+	 *
+	 * If set to true the ISO-3166 part of the configured
+	 * locale in WordPress is going to be used to bias the
+	 * geo autocomplete plugin towards a specific region.
+	 *
+	 * @var bool
+	 **/
+	var $geo_region_biasing;
 
 	/**
 	 * __construct function
@@ -277,7 +288,8 @@ class Ai1ec_Settings {
 			'input_date_format'             => 'def',
 			'input_24h_time'                => false,
 			'cron_freq'                     => 'daily',
-			'timezone'                      => get_option( 'timezone_string' )
+			'timezone'                      => get_option( 'timezone_string' ),
+			'geo_region_biasing'            => false
 		);
 
 		foreach( $defaults as $key => $default ) {
@@ -303,21 +315,24 @@ class Ai1ec_Settings {
 		if( isset( $params['week_start_day']                ) ) $this->week_start_day                 = $params['week_start_day'];
 		if( isset( $params['agenda_events_per_page']        ) ) $this->agenda_events_per_page         = intval( $params['agenda_events_per_page'] );
 		if( isset( $params['cron_freq']                     ) ) $this->cron_freq                      = $params['cron_freq'];
-		if( isset( $params['show_publish_button']           ) ) $this->show_publish_button            = $params['show_publish_button'];
-		if( isset( $params['hide_maps_until_clicked']       ) ) $this->hide_maps_until_clicked        = $params['hide_maps_until_clicked'];
-		if( isset( $params['agenda_events_expanded']        ) ) $this->agenda_events_expanded         = $params['agenda_events_expanded'];
-		if( isset( $params['exclude_from_search']           ) ) $this->exclude_from_search            = $params['exclude_from_search'];
-		if( isset( $params['show_create_event_button']      ) ) $this->show_create_event_button       = $params['show_create_event_button'];
-		if( isset( $params['turn_off_subscription_buttons'] ) ) $this->turn_off_subscription_buttons  = $params['turn_off_subscription_buttons'];
-		if( isset( $params['inject_categories']             ) ) $this->inject_categories              = $params['inject_categories'];
 		if( isset( $params['input_date_format']             ) ) $this->input_date_format              = $params['input_date_format'];
-		if( isset( $params['input_24h_time']                ) ) $this->input_24h_time                 = $params['input_24h_time'];
-		if( isset( $params['include_events_in_rss']         ) ) $this->include_events_in_rss          = $params['include_events_in_rss'];
 		if( isset( $params['allow_events_posting_facebook'] ) ) $this->allow_events_posting_facebook  = $params['allow_events_posting_facebook'];
 		if( isset( $params['facebook_credentials']          ) ) $this->facebook_credentials           = $params['facebook_credentials'];
 		if( isset( $params['user_role_can_create_event']    ) ) $this->user_role_can_create_event     = $params['user_role_can_create_event'];
 		if( isset( $params['timezone']                      ) ) $this->timezone                       = $params['timezone'];
 		if( $this->agenda_events_per_page <= 0                ) $this->agenda_events_per_page         = 1;
+		
+		// checkboxes
+		$this->agenda_events_expanded        = ( isset( $params['agenda_events_expanded'] ) )        ? true : false;
+		$this->include_events_in_rss         = ( isset( $params['include_events_in_rss'] ) )         ? true : false;
+		$this->show_publish_button           = ( isset( $params['show_publish_button'] ) )           ? true : false;
+		$this->hide_maps_until_clicked       = ( isset( $params['hide_maps_until_clicked'] ) )       ? true : false;
+		$this->exclude_from_search           = ( isset( $params['exclude_from_search'] ) )           ? true : false;
+		$this->show_create_event_button      = ( isset( $params['show_create_event_button'] ) )      ? true : false;
+		$this->turn_off_subscription_buttons = ( isset( $params['turn_off_subscription_buttons'] ) ) ? true : false;
+		$this->inject_categories             = ( isset( $params['inject_categories'] ) )             ? true : false;
+		$this->input_24h_time                = ( isset( $params['input_24h_time'] ) )                ? true : false;
+		$this->geo_region_biasing            = ( isset( $params['geo_region_biasing'] ) )            ? true : false;
 	}
 
 	/**

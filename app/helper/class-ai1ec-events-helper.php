@@ -316,13 +316,13 @@ class Ai1ec_Events_Helper {
     static $options;
     if( !isset( $options ) ) {
       $temp = array(
-        ' '       => __( 'No repeat', AI1EC_PLUGIN_NAME ),
-        '1'        => __( 'Every day', AI1EC_PLUGIN_NAME ),
-        '2'        => __( 'Every week', AI1EC_PLUGIN_NAME ),
-        '3'        => __( 'Every month', AI1EC_PLUGIN_NAME ),
-        '4'        => __( 'Every year', AI1EC_PLUGIN_NAME ),
-        '5'        => __( '-----------', AI1EC_PLUGIN_NAME ),
-        '6'        => __( 'Custom...', AI1EC_PLUGIN_NAME ),
+        ' ' => __( 'No repeat', AI1EC_PLUGIN_NAME ),
+        '1' => __( 'Every day', AI1EC_PLUGIN_NAME ),
+        '2' => __( 'Every week', AI1EC_PLUGIN_NAME ),
+        '3' => __( 'Every month', AI1EC_PLUGIN_NAME ),
+        '4' => __( 'Every year', AI1EC_PLUGIN_NAME ),
+        '5' => '-----------',
+        '6' => __( 'Custom...', AI1EC_PLUGIN_NAME ),
       );
       $options = $temp;
     }
@@ -343,7 +343,7 @@ class Ai1ec_Events_Helper {
       2   => __( 'Every week', AI1EC_PLUGIN_NAME ),
       3   => __( 'Every month', AI1EC_PLUGIN_NAME ),
       4   => __( 'Every year', AI1EC_PLUGIN_NAME ),
-      5   => __( '-----------', AI1EC_PLUGIN_NAME ),
+      5   => '-----------',
       6   => __( 'Custom...', AI1EC_PLUGIN_NAME ),
     );
 	  return $this->create_select_element( 'ai1ec_repeat', $options, $selected, array( 5 ) );
@@ -469,7 +469,7 @@ class Ai1ec_Events_Helper {
 	    '1' => __( 'second', AI1EC_PLUGIN_NAME ),
 	    '2' => __( 'third', AI1EC_PLUGIN_NAME ),
 	    '3' => __( 'fourth', AI1EC_PLUGIN_NAME ),
-	    '4' => __( '------', AI1EC_PLUGIN_NAME ),
+	    '4' => '------',
 	    '5' => __( 'last', AI1EC_PLUGIN_NAME )
 	  );
 	  $ret = $this->create_select_element( 'ai1ec_monthly_each_select', $first_options, $f_selected, array( 4 ) );
@@ -482,7 +482,7 @@ class Ai1ec_Events_Helper {
 	    '4'   => __( 'Thursday', AI1EC_PLUGIN_NAME ),
 	    '5'   => __( 'Friday', AI1EC_PLUGIN_NAME ),
 	    '6'   => __( 'Saturday', AI1EC_PLUGIN_NAME ),
-	    '7'   => __( '--------', AI1EC_PLUGIN_NAME ),
+	    '7'   => '--------',
 	    '8'   => __( 'day', AI1EC_PLUGIN_NAME ),
 	    '9'   => __( 'weekday', AI1EC_PLUGIN_NAME ),
 	    '10'  => __( 'weekend day', AI1EC_PLUGIN_NAME )
@@ -726,13 +726,15 @@ class Ai1ec_Events_Helper {
 	 *
 	 * @param int | bool          $start      Events start before this (GMT) time
 	 * @param int | bool          $end        Events end before this (GMT) time
-	 * @param int | array | bool  $tags       Tag(s) of events
-	 * @param int | array | bool  $categories Category(ies) of events
+	 * @param array $filter       Array of filters for the events returned. 
+	 *		                      ['cat_ids']   => non-associatative array of category IDs
+	 *		                      ['tag_ids']   => non-associatative array of tag IDs
+	 *                          ['post_ids']  => non-associatative array of post IDs
 	 *
 	 * @return array Matching events
 	 **/
-	function get_matching_events( $start = false, $end = false, $tags = false, $categories = false, $posts = false ) {
-	  global $wpdb;
+	function get_matching_events( $start = false, $end = false, $filter = array() ) {
+	  global $wpdb, $ai1ec_calendar_helper;
 
 		// holds event_categories sql
     $c_sql = '';
@@ -765,78 +767,8 @@ class Ai1ec_Events_Helper {
       $args[] = $end;
     }
 
-    // ===================================
-    // = Generating event_categories sql =
-    // ===================================
-		if( $categories !== false ) {
-
-			// sanitize categories var
-			if( strstr( $categories, ',' ) !== false ) {
-			  $tmp = array();
-        // prevent sql injection
-        foreach( explode( ',', $categories ) as $cat )
-          $tmp[] = (int) $cat;
-
-        $categories = implode( ',', $tmp );
-			} else {
-			  // prevent sql injection
-			  $categories = (int) $categories;
-			}
-
-			$c_sql        = "INNER JOIN $wpdb->term_relationships AS tr1 ON post_id = tr1.object_id ";
-			$c_sql        .= "INNER JOIN $wpdb->term_taxonomy AS ttc ON tr1.term_taxonomy_id = ttc.term_taxonomy_id ";
-			$c_where_sql  = "AND ( ttc.term_id IN ( $categories ) ";
-		}
-
-    // =============================
-    // = Generating event_tags sql =
-    // =============================
-		if( $tags !== false ) {
-
-			// sanitize tags var
-			if( strstr( $tags, ',' ) !== false ) {
-			  $tmp = array();
-				// prevent sql injection
-				foreach( explode( ',', $tags ) as $tag )
-				  $tmp[] = (int) $tag;
-
-				$tags = implode( ',', $tmp );
-			} else {
-			  $tags = (int) $tags;
-			}
-			
-			if( $categories !== false ) {
-			  $t_sql =  "INNER JOIN $wpdb->term_relationships AS tr2 ON e.post_id = tr2.object_id ";
-        $t_sql .=  "INNER JOIN $wpdb->term_taxonomy AS ttt ON tr2.term_taxonomy_id = ttt.term_taxonomy_id ";
-        $c_where_sql .= "AND ttt.term_id IN ( $tags ) ) ";
-			} else {
-			  $t_sql =  "INNER JOIN $wpdb->term_relationships AS tr2 ON e.post_id = tr2.object_id ";
-        $t_sql .=  "INNER JOIN $wpdb->term_taxonomy AS ttt ON tr2.term_taxonomy_id = ttt.term_taxonomy_id ";
-        $t_where_sql = "AND ttt.term_id IN ( $tags ) ";
-			}
-      
-		} else {
-		  $c_where_sql .= ") ";
-		}
-
-    // ========================
-    // = Generating posts sql =
-    // ========================
-		if( $posts !== false ) {
-			// sanitize posts var
-			if( strstr( $posts, ',' ) !== false ) {
-			  $tmp = array();
-
-			  // prevent sql injection
-        foreach( explode( ',', $posts ) as $post )
-          $tmp[] = $post;
-
-        $posts = $tmp;
-			}
-
-			$p_where_sql = "AND ID IN ( $posts ) ";
-		}
-
+    // Get the Join (filter_join) and Where (filter_where) statements based on $filter elements specified 
+		$filter = $ai1ec_calendar_helper->_get_filter_sql( $filter );
 
 		$query = $wpdb->prepare(
 			"SELECT *, e.post_id, UNIX_TIMESTAMP( e.start ) as start, UNIX_TIMESTAMP( e.end ) as end, e.allday, e.recurrence_rules, e.exception_rules,
@@ -845,12 +777,10 @@ class Ai1ec_Events_Helper {
 				e.ical_organizer, e.ical_contact, e.ical_uid " .
 			"FROM $wpdb->posts " .
 			  "INNER JOIN {$wpdb->prefix}ai1ec_events AS e ON e.post_id = ID " .
-			  $c_sql .
-			  $t_sql .
+				$filter['filter_join'] .
 			"WHERE post_type = '" . AI1EC_POST_TYPE . "' " .
-			  $c_where_sql .
-			  $t_where_sql .
-			  $p_where_sql .
+			  "AND post_status = 'publish' " .
+			  $filter['filter_where'] .
 			  $start_where_sql .
 			  $end_where_sql,
 			$args );
@@ -1103,7 +1033,40 @@ class Ai1ec_Events_Helper {
 	 **/
 	function get_gmap_url( &$event ) {
 		$location_arg = urlencode( $event->address );
-		return "http://www.google.com/maps?f=q&hl=en&source=embed&q=$location_arg";
+		$lang         = $this->get_lang();
+		
+		return "http://www.google.com/maps?f=q&hl=" . $lang . "&source=embed&q=" . $location_arg;
+	}
+	
+	/**
+	 * get_lang function
+	 *
+	 * Returns the ISO-639 part of the configured locale. The default
+	 * language is English (en).
+	 *
+	 * @return string
+	 **/
+	function get_lang() {
+		$locale = explode( '_', get_locale() );
+
+		return ( isset( $locale[0] ) && $locale[0] != '' ) ? $locale[0] : 'en';
+	}
+	
+	/**
+	 * get_region function
+	 *
+	 * Returns the ISO-3166 part of the configured locale as a ccTLD.
+	 * Used for region biasing in the geo autocomplete plugin.
+	 *
+	 * @return string
+	 **/
+	function get_region() {
+		$locale = explode( '_', get_locale() );
+		
+		$region = ( isset( $locale[1] ) && $locale[1] != '' ) ? strtolower( $locale[1] ) : '';
+
+		// Primary ccTLD for United Kingdom is uk.
+		return ( $region == 'gb' ) ? 'uk' : $region;
 	}
 
 	/**
@@ -1353,7 +1316,7 @@ class Ai1ec_Events_Helper {
   	          }
   	          // remove the last ' and'
   	          $_days = substr( $_days, 0, -1 );
-  	          $txt .= ' ' . __( 'on' ) . $_days;
+  	          $txt .= ' ' . _x( 'on', 'Recurrence editor - weekly tab', AI1EC_PLUGIN_NAME ) . $_days;
 	          } else {
 	            $_days = '';
   	          foreach( $rc->getByDay() as $d ) {
@@ -1362,7 +1325,7 @@ class Ai1ec_Events_Helper {
   	          }
   	          // remove the last ' and'
   	          $_days = substr( $_days, 0, -4 );
-  	          $txt .= ' ' . __( 'on' ) . $_days;
+  	          $txt .= ' ' . _x( 'on', 'Recurrence editor - weekly tab', AI1EC_PLUGIN_NAME ) . $_days;
 	          }
 	        } else {
 	          $_days = '';
@@ -1370,7 +1333,7 @@ class Ai1ec_Events_Helper {
 	            $day = $this->get_weekday_by_id( $d, true );
 	            $_days .= ' ' . $wp_locale->weekday[$day];
 	          }
-	          $txt .= ' ' . __( 'on' ) . $_days;
+	          $txt .= ' ' . _x( 'on', 'Recurrence editor - weekly tab', AI1EC_PLUGIN_NAME ) . $_days;
 	        }
 	      }
 	      break;
@@ -1383,20 +1346,20 @@ class Ai1ec_Events_Helper {
 	            $_days .= ' ' . $this->_ordinal( $m_day ) . ',';
 	          }
 	          $_days = substr( $_days, 0, -1 );
-	          $txt .= ' ' . __( 'on' ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
+	          $txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
 	        } else if( count( $rc->getByMonthDay() ) > 1 ) {
 	          $_days = '';
 	          foreach( $rc->getByMonthDay() as $m_day ) {
 	            $_days .= ' ' . $this->_ordinal( $m_day ) . ' ' . __( 'and', AI1EC_PLUGIN_NAME );
 	          }
 	          $_days = substr( $_days, 0, -4 );
-	          $txt .= ' ' . __( 'on' ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
+	          $txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
 	        } else {
 	          $_days = '';
 	          foreach( $rc->getByMonthDay() as $m_day ) {
 	            $_days .= ' ' . $this->_ordinal( $m_day );
 	          }
-	          $txt .= ' ' . __( 'on' ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
+	          $txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
 	        }
 	      }
 	      break;
@@ -1410,7 +1373,7 @@ class Ai1ec_Events_Helper {
 	            $_months .= ' ' . $wp_locale->month_abbrev[$wp_locale->month[$_m]] . ',';
 	          }
 	          $_months = substr( $_months, 0, -1 );
-	          $txt .= ' ' . __( 'on' ) . $_months;
+	          $txt .= ' ' . _x( 'on', 'Recurrence editor - yearly tab', AI1EC_PLUGIN_NAME ) . $_months; 
 	        } else if( count( $rc->getByMonth() ) > 1 ) {
 	          $_months = '';
 	          foreach( $rc->getByMonth() as $_m ) {
@@ -1418,14 +1381,14 @@ class Ai1ec_Events_Helper {
 	            $_months .= ' ' . $wp_locale->month[$_m] . ' ' . __( 'and', AI1EC_PLUGIN_NAME );
 	          }
 	          $_months = substr( $_months, 0, -4 );
-	          $txt .= ' ' . __( 'on' ) . $_months;
+	          $txt .= ' ' . _x( 'on', 'Recurrence editor - yearly tab', AI1EC_PLUGIN_NAME ) . $_months; 
 	        } else {
 	          $_months = '';
 	          foreach( $rc->getByMonth() as $_m ) {
 	            $_m = $_m < 10 ? 0 . $_m : $_m;
 	            $_months .= ' ' . $wp_locale->month[$_m];
 	          }
-	          $txt .= ' ' . __( 'on' ) . $_months;
+	          $txt .= ' ' . _x( 'on', 'Recurrence editor - yearly tab', AI1EC_PLUGIN_NAME ) . $_months; 
 	        }
 	      }
 	      break;
@@ -1439,7 +1402,12 @@ class Ai1ec_Events_Helper {
 	 *
 	 * @return void
 	 **/
-	function _ordinal( $cdnl ) { 
+	function _ordinal( $cdnl ) {
+		$locale = explode( '_', get_locale() );
+		
+		if( isset( $locale[0] ) && $locale[0] != 'en' )
+			return $cdnl;
+		
     $test_c = abs($cdnl) % 10; 
     $ext = ( ( abs( $cdnl ) % 100 < 21 && abs( $cdnl ) % 100 > 4 ) ? 'th' 
               : ( ( $test_c < 4 ) ? ( $test_c < 3 ) ? ( $test_c < 2 ) ? ( $test_c < 1 ) 

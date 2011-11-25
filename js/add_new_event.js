@@ -97,6 +97,8 @@ jQuery( function( $ ){
 			var state = '';
 			var postal_code = 0;
 			var country = 0;
+			var province = '';
+			
 			for( var i = 0; i < result.address_components.length; i++ ) {
 				switch( result.address_components[i].types[0] ) {
 					case 'street_number':
@@ -143,7 +145,8 @@ jQuery( function( $ ){
 					cacheLength: 50,
 					width: 300,
 					scroll: true,
-					scrollHeight: 330
+					scrollHeight: 330,
+					region: ai1ec_add_new_event.region
 				}
 			).result(
 				function( _event, _data ) {
@@ -163,7 +166,8 @@ jQuery( function( $ ){
 
 						ai1ec_geocoder.geocode(
 							{
-								'address': address
+								'address': address,
+								'region': ai1ec_add_new_event.region
 							},
 							function( results, status ) {
 								if( status == google.maps.GeocoderStatus.OK ) {
@@ -353,7 +357,7 @@ jQuery( function( $ ){
 				// minutes
 				mm        = ( mm < 10 ) ? '0' + mm : mm;
 				// Now, set the UTC friendly date string
-				until     = until.getUTCFullYear() + '' + m + d + 'T' + hh + mm + ss +'Z';
+				until     = until.getUTCFullYear() + '' + m + d + 'T235959Z';
 				rule += 'UNTIL=' + until + ';';
 			}
 

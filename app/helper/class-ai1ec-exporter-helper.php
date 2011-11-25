@@ -97,6 +97,8 @@ class Ai1ec_Exporter_Helper {
 		if( ! empty( $event->recurrence_rules ) ) {
 			$rules = array();
 			foreach( explode( ';', $event->recurrence_rules ) AS $v) {
+				if( strpos( $v, '=' ) === false ) continue;
+				
 				list($k, $v) = explode( '=', $v );
 				// If $v is a comma-separated list, turn it into array for iCalcreator
 				switch( $k ) {
