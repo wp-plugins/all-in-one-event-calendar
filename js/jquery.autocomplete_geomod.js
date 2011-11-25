@@ -353,7 +353,11 @@ $.Autocompleter = function(input, options) {
 		// request handler for google geocoder
 		} else if (options.geocoder) {
 			var _query = lastWord(term);
-			options.geocoder.geocode({'address': _query}, function(_results, _status) {
+			var _opts = { 'address': _query };
+			if( options.region )
+				_opts.region = options.region;
+			
+			options.geocoder.geocode( _opts, function(_results, _status) {
 				var parsed = options.parse(_results, _status, _query);
 				cache.add(term, parsed);
 				success(term, parsed);

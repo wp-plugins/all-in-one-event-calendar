@@ -38,7 +38,7 @@ window.onload = function()
 		// when script has loaded.
 		var script = document.createElement( 'script' );
 		script.type = 'text/javascript';
-		script.src = 'http://maps.google.com/maps/api/js?sensor=false&callback=ai1ec_load_map';
+		script.src = 'http://maps.google.com/maps/api/js?sensor=false&callback=ai1ec_load_map&language=' + ai1ec_event.language;
 		document.body.appendChild( script );
 	}
 }

@@ -3,7 +3,7 @@
 	  <?php _e( 'Every', AI1EC_PLUGIN_NAME ) ?>:
   </label>
   <?php echo $count ?>
-  <label><?php _e( 'On', AI1EC_PLUGIN_NAME ) ?>:</label>
+  <label><?php _ex( 'On', 'Recurrence editor - weekly tab', AI1EC_PLUGIN_NAME ) ?>:</label>
   <div style="clear: both;"></div>
   <?php echo $week_days ?>
 </div>

@@ -4,13 +4,13 @@ Donate link: http://theseednetwork.com/software/all-in-one-event-calendar-wordpr
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
 Tested up to: 3.2.1
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 
 An event calendar system with month and agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
 == Description ==
 
-The [All-in-One Event Calendar Plugin](http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/), from [The Seed Network](http:/theseednetwork.com), is a new way to list your events in WordPress and easily share them with the rest of the world.
+Welcome to the [All-in-One Event Calendar Plugin](http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/), from [The Seed Studio](http://theseednetwork.com), a [web development](http://theseednetwork.com) company. The All-in-One Event Calendar is a new way to list your events in WordPress and easily share them with the rest of the world.
 
 Our new calendar system combines a clean visual design, solid architectural patterns and rigorous testing with a powerful set of features to create the most advanced calendar system available for WordPress and one of the most powerful website calendar systems in the world. Best of all: it’s completely free.
 
@@ -54,9 +54,19 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 
 [Bug reports (only for registered users) »](http://trac.the-seed.ca/newticket)
 
-[Get Premium Support »](http://theseednetwork.com/get-supported) from [The Seed Studio »](http:/theseednetwork.com/)
+[Get Premium Support »](http://theseednetwork.com/get-supported) from [The Seed Studio »](http://theseednetwork.com/)
 
 == Changelog ==
+= Version 1.1.3 =
+* Fixed: last date issue for recurring events "until" end date [#147](http://trac.the-seed.ca/ticket/147)
+* Fixed an issue with settings page not saving changes.
+* Fixed issues when subscribing to calendars.
+* Export only published events [#95](http://trac.the-seed.ca/ticket/95)
+* Added translation patch. Thank you josjo! [#150](http://trac.the-seed.ca/ticket/150)
+* Add language and region awareness in functions for Google Map. Thank you josjo! [#102](http://trac.the-seed.ca/ticket/102)
+* Small translation error in class-ai1ec-app-helper.php. Thank you josjo! [#94](http://trac.the-seed.ca/ticket/94)
+* Added Dutch, Spanish, and Swedish translations. For up to date language files, visit: [http://trac.the-seed.ca/ticket/78](http://trac.the-seed.ca/ticket/78)
+
 = Version 1.1.2 =
 * Fixed: Problem in repeat UI when selecting months before October [#136](http://trac.the-seed.ca/ticket/136)
 * Fixed: Append instance_id only to events permalink [#140](http://trac.the-seed.ca/ticket/140)

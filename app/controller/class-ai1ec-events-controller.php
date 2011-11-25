@@ -110,7 +110,7 @@ class Ai1ec_Events_Controller {
 			// Include timespan plugin
 			wp_enqueue_script( 'jquery.inputdate', 				AI1EC_JS_URL . '/jquery.inputdate.js', array( 'jquery', 'jquery.calendrical' ) );
 			// Include Google Maps API
-			wp_enqueue_script( 'gmap_api', 								'http://maps.google.com/maps/api/js?sensor=false' );
+			wp_enqueue_script( 'gmap_api', 								'http://maps.google.com/maps/api/js?sensor=false&language=' . $ai1ec_events_helper->get_lang() );
 			// Include autocomplete_geomod plugin
 			wp_enqueue_script( 'autocomplete_geomod', 		AI1EC_JS_URL . '/jquery.autocomplete_geomod.js', array( 'jquery' ) );
 			// Include geo_autocomplete plugin
@@ -140,9 +140,11 @@ class Ai1ec_Events_Controller {
         // Names for days in date picker header (escaping is done in wp_localize_script)
         'day_names'              => implode( ',', $wp_locale->weekday_initial ),
         // Start the week on this day in the date picker
-        'week_start_day'     => $ai1ec_settings->week_start_day,
+        'week_start_day'         => $ai1ec_settings->week_start_day,
         // 24h time format for time pickers
         'twentyfour_hour'        => $ai1ec_settings->input_24h_time,
+				// Set region biasing for geo_autocomplete plugin
+				'region'                 => ( $ai1ec_settings->geo_region_biasing ) ? $ai1ec_events_helper->get_region() : '',
 				// ICS feed error messages
 				'duplicate_feed_message' => esc_html__( 'This feed is already being imported.', AI1EC_PLUGIN_NAME ),
 				'invalid_url_message'    => esc_html__( 'Please enter a valid iCalendar URL.', AI1EC_PLUGIN_NAME ),
@@ -165,6 +167,11 @@ class Ai1ec_Events_Controller {
 			// = JS =
 			// ======
 			wp_enqueue_script( 'ai1ec-event', AI1EC_JS_URL . '/event.js', array( 'jquery' ), 1 );
+			// Supply custom value to JavaScript from PHP
+			wp_localize_script( 'ai1ec-event', 'ai1ec_event', array(
+				// Language for Google Map
+				'language' => $ai1ec_events_helper->get_lang()
+			) );
 
 			// =======
 			// = CSS =

@@ -312,8 +312,7 @@ class Ai1ec_Settings_Controller {
 			wp_enqueue_script( 'wp-lists' );
 			wp_enqueue_script( 'postbox' );
 			
-			wp_enqueue_script( 'ai1ec-cycle', AI1EC_JS_URL . '/jquery.cycle.lite.js', array( 'jquery' ) );
-			wp_enqueue_script( 'ai1ec-settings', AI1EC_JS_URL . '/settings.js', array( 'jquery', 'ai1ec-cycle' ) );
+			wp_enqueue_script( 'ai1ec-settings', AI1EC_JS_URL . '/settings.js', array( 'jquery' ) );
 			
 			wp_localize_script( 'ai1ec-settings', 'ai1ec_settings', array(
 					'page' => $ai1ec_settings->settings_page,

@@ -331,6 +331,7 @@ class Ai1ec_Settings_Helper {
 		$turn_off_subscription_buttons  = $ai1ec_settings->turn_off_subscription_buttons ? 'checked=checked' : '';
 		$show_create_event_button       = $ai1ec_settings->show_create_event_button ? 'checked=checked' : '';
 		$inject_categories              = $ai1ec_settings->inject_categories ? 'checked=checked' : '';
+		$geo_region_biasing             = $ai1ec_settings->geo_region_biasing ? 'checked=checked' : '';
 		$input_date_format              = $ai1ec_settings_helper->get_date_format_dropdown( $ai1ec_settings->input_date_format );
     $input_24h_time                 = $ai1ec_settings->input_24h_time ? 'checked=checked' : '';
 	  $default_calendar_view          = $ai1ec_settings_helper->get_view_dropdown( $ai1ec_settings->default_calendar_view );
@@ -352,7 +353,8 @@ class Ai1ec_Settings_Helper {
 			'input_date_format'             => $input_date_format,
       'input_24h_time'                => $input_24h_time,
 			'show_timezone'                 => ! get_option( 'timezone_string' ),
-			'timezone_control'              => $timezone_control
+			'timezone_control'              => $timezone_control,
+			'geo_region_biasing'            => $geo_region_biasing
 	  );
 	  $ai1ec_view_helper->display( 'box_general_settings.php', $args );
 	}

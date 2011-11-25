@@ -278,7 +278,7 @@ class Ai1ec_App_Helper {
 			foreach( $filters as $tax_slug ) {
 				$tax_obj = get_taxonomy( $tax_slug );
 				wp_dropdown_categories( array(
-					'show_option_all'	=> __( 'Show All ' . $tax_obj->label, AI1EC_PLUGIN_NAME ),
+					'show_option_all'	=> __( 'Show All ', AI1EC_PLUGIN_NAME ) . $tax_obj->label,
 					'taxonomy'				=> $tax_slug,
           'name'						=> $tax_obj->name,
           'orderby'					=> 'name',
