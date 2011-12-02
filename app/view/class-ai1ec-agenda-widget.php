@@ -136,7 +136,7 @@ class Ai1ec_Agenda_Widget extends WP_Widget
 		       $ai1ec_events_helper,
 		       $ai1ec_calendar_helper,
 		       $ai1ec_settings;
-		
+
 		$defaults = array(
 			'hide_on_calendar_page'  => true,
 			'event_cat_ids'          => array(),
@@ -160,10 +160,10 @@ class Ai1ec_Agenda_Widget extends WP_Widget
 		$timestamp = $ai1ec_events_helper->gmt_to_local( time() );
 
 		// Set $limit to the specified category/tag
-		$limit = array( 
-		                "cat_ids"   => $instance['event_cat_ids'],
-		                "tag_ids"   => $instance['event_tag_ids'],
-		                "post_ids" => $instance['event_post_ids'],
+		$limit = array(
+		                'cat_ids'   => $instance['event_cat_ids'],
+		                'tag_ids'   => $instance['event_tag_ids'],
+		                'post_ids'  => $instance['event_post_ids'],
 		              );
 
 		// Get events, then classify into date array
@@ -175,7 +175,7 @@ class Ai1ec_Agenda_Widget extends WP_Widget
 		$args['show_subscribe_buttons'] = $instance['show_subscribe_buttons'];
 		$args['show_calendar_button']   = $instance['show_calendar_button'];
 		$args['dates']                  = $dates;
-		$args['calendar_url']           = $ai1ec_calendar_helper->get_calendar_url( null, $instance['event_cat_ids'], $instance['event_tag_ids'] );
+		$args['calendar_url']           = $ai1ec_calendar_helper->get_calendar_url( null, $limit );
 		$args['subscribe_url']          = AI1EC_EXPORT_URL . $subscribe_filter;
 
 		$ai1ec_view_helper->display( 'agenda-widget.php', $args );

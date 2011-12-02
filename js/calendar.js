@@ -1,21 +1,22 @@
-//Used to ensure that Entities used in L10N strings are correct
-function ai1ec_convert_entities(o) {
+// Used to ensure that Entities used in L10N strings are correct
+function ai1ec_convert_entities( o ) {
 	var c, v;
-	c = function(s) {
-		if (/&[^;]+;/.test(s)) {
-			var e = document.createElement("div");
+
+	c = function( s ) {
+		if( /&[^;]+;/.test( s ) ) {
+			var e = document.createElement( 'div' );
 			e.innerHTML = s;
-			return !e.firstChild ? s : e.firstChild.nodeValue;
+			return ! e.firstChild ? s : e.firstChild.nodeValue;
 		}
 		return s;
 	}
 
-	if ( typeof o === 'string' ) {
-		return c(o);
-	} else if ( typeof o === 'object' ) {
-		for (v in o) {
-			if ( typeof o[v] === 'string' ) {
-				o[v] = c(o[v]);
+	if( typeof o === 'string' ) {
+		return c( o );
+	} else if( typeof o === 'object' ) {
+		for( v in o ) {
+			if( typeof o[v] === 'string' ) {
+				o[v] = c( o[v] );
 			}
 		}
 	}
@@ -149,7 +150,7 @@ jQuery( document ).ready( function( $ ) {
 		load_view( $(this).attr( 'href' ) );
 	} );
 
-	// *** Month view ***
+	// *** Month/week views ***
 
 	/**
 	 * Callback for mouseenter event on .ai1ec-event element
@@ -196,21 +197,34 @@ jQuery( document ).ready( function( $ ) {
 			.data( 'ai1ec_mouseinside', false );
 	}
 
-	// Register popup hover handlers for month view
-	$('.ai1ec-month-view .ai1ec-event')
+	// Register popup hover handlers for month/week views
+	$('.ai1ec-month-view .ai1ec-event, .ai1ec-week-view .ai1ec-event')
 		.live( 'mouseenter', show_popup );
-	$('.ai1ec-month-view .ai1ec-event-popup')
+	$('.ai1ec-month-view .ai1ec-event-popup, .ai1ec-week-view .ai1ec-event-popup')
 		.live( 'mouseleave', hide_popup )
 		.live( 'mousemove', function() {
 			// Track whether popup contains mouse cursor
 			$(this).data( 'ai1ec_mouseinside', true );
 		} );
 	// Hide any popups that were visible when the window lost focus
-	if( $('.ai1ec-month-view').length ) {
+	if( $('.ai1ec-month-view, .ai1ec-week-view').length ) {
 		$(window).blur( function() {
 			$('.ai1ec-event-popup:visible').each( hide_popup );
 		} );
 	}
+
+	// ================================
+	// = Week view hover-raise effect =
+	// ================================
+	$( '.ai1ec-week-view .ai1ec-week a.ai1ec-event-container' )
+		.live( 'mouseenter',
+			function() {
+				$(this).delay( 500 ).queue( function() { $(this).css( 'z-index', 5 ) } );
+			} )
+		.live( 'mouseleave',
+			function() {
+				$(this).clearQueue().css( 'z-index', 'auto' );
+			} );
 
 	/**
 	 * Trims date boxes for which there are too many listed events.
@@ -539,12 +553,16 @@ jQuery( document ).ready( function( $ ) {
 		} );
 		post_ids = post_ids.join();	// Store IDs as comma-separated values
 
+		// Make week view table scrollable
+		$( 'table.ai1ec-week-view-original' ).tableScroll( { height: 400, containerClass: 'ai1ec-week-view' } );
+
 		// ===========================
 		// = Pop up the active event =
 		// ===========================
 		if( $( '.ai1ec-active-event:first' ).length ) {
-			// Pop up any active event in month view
-			$( '.ai1ec-month-view .ai1ec-active-event:first' ).each( function() {
+			// Pop up any active event in month/week view views
+			$( '.ai1ec-month-view .ai1ec-active-event:first, .ai1ec-week-view .ai1ec-active-event:first' )
+				.each( function() {
 				$(this)
 					.each( show_popup )
 					.prev() // .ai1ec-popup
@@ -562,11 +580,15 @@ jQuery( document ).ready( function( $ ) {
 				}
 			);
 		}
+		else if( $( '.ai1ec-week-view' ).length ) {
+			// If no active event, then in week view, scroll down to 6am.
+			$( '.ai1ec-week-view .tablescroll_wrapper' ).scrollTo( '.ai1ec-hour-marker:eq(6)' );
+		}
 
 		// Apply category/tag filters if any; hide all events by default, then fade
 		// in filtered ones.
 		if( $('.ai1ec-dropdown.ai1ec-selected').length ) {
-			$('.ai1ec-month-view .ai1ec-event-container, .ai1ec-agenda-view .ai1ec-event').hide();
+			$('.ai1ec-month-view .ai1ec-event-container, .ai1ec-week-view .ai1ec-event-container, .ai1ec-agenda-view .ai1ec-event').hide();
 			apply_filters();
 		} else {
 			// Else do month view trimming

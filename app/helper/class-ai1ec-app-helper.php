@@ -570,7 +570,9 @@ class Ai1ec_App_Helper {
 	  	if( $term->term_id == AI1EC_FAKE_CATEGORY_ID )
 	  		$link = $ai1ec_calendar_helper->get_calendar_url( null );
 	  	else
-	  		$link = $ai1ec_calendar_helper->get_calendar_url( null, array( $term->term_id ) );
+	  		$link = $ai1ec_calendar_helper->get_calendar_url( null,
+		  		array( 'cat_ids' => array( $term->term_id ) )
+		  	);
 	  }
 
   	return $link;

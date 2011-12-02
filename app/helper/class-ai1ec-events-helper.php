@@ -55,11 +55,11 @@ class Ai1ec_Events_Helper {
 	 * @return Ai1ec_Event  The associated event object
 	 **/
 	static function get_event( $post_id )
- 	{
+	{
 		$event = wp_cache_get( $post_id, AI1EC_POST_TYPE );
 		if( $event === false ) {
-		  // try to get the event instance id, if it is not set get the post id
-		  $instance_id = isset( $_REQUEST["instance_id"] ) ? (int) $_REQUEST["instance_id"] : false;
+			// try to get the event instance id, if it is not set get the post id
+			$instance_id = isset( $_REQUEST["instance_id"] ) ? (int) $_REQUEST["instance_id"] : false;
 			$event = new Ai1ec_Event( $post_id, $instance_id );
 
 			if( ! $event->post_id )
@@ -95,7 +95,7 @@ class Ai1ec_Events_Helper {
 			"WHERE ical_feed_url = %s " .
 			"AND ical_uid = %s " .
 			"AND start = FROM_UNIXTIME( %d ) " .
-		  ( $has_recurrence ? 'AND NOT ' : 'AND ' ) .
+			( $has_recurrence ? 'AND NOT ' : 'AND ' ) .
 			"( recurrence_rules IS NULL OR recurrence_rules = '' )";
 		$args = array( $feed, $uid, $start );
 		if( ! is_null( $exclude_post_id ) ) {
@@ -161,7 +161,7 @@ class Ai1ec_Events_Helper {
 
 			$freq->firstOccurrence();
 			while( ( $next = $freq->nextOccurrence( $start ) ) > 0 &&
-			       $count < 1000 )
+						 $count < 1000 )
 			{
 				$count++;
 				$start      = $next;
@@ -205,12 +205,12 @@ class Ai1ec_Events_Helper {
 				// If event spans a day and end time is not midnight, or spans more than
 				// a day, then create instance for each spanning day
 				if( ( $start['mday'] != $end['mday'] &&
-				      ( $end['hours'] || $end['minutes'] || $end['seconds'] ) )
-				    || $e['end'] - $e['start'] > 60 * 60 * 24 ) {
-	        $this->create_cache_table_entries( $e );
+							( $end['hours'] || $end['minutes'] || $end['seconds'] ) )
+						|| $e['end'] - $e['start'] > 60 * 60 * 24 ) {
+					$this->create_cache_table_entries( $e );
 				// Else cache single instance of event
 				} else {
-				  $this->insert_event_in_cache_table( $e );
+					$this->insert_event_in_cache_table( $e );
 				}
 				*/
 				$this->insert_event_in_cache_table( $e );
@@ -228,42 +228,42 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	 function insert_event_in_cache_table( $event ) {
-     global $wpdb;
+		 global $wpdb;
 
-     // Return the start/end times to GMT zone
-     $event['start'] = $this->local_to_gmt( $event['start'] ) + date( 'Z', $event['start'] );
-     $event['end']   = $this->local_to_gmt( $event['end'] )   + date( 'Z', $event['end'] );
+		 // Return the start/end times to GMT zone
+		 $event['start'] = $this->local_to_gmt( $event['start'] ) + date( 'Z', $event['start'] );
+		 $event['end']   = $this->local_to_gmt( $event['end'] )   + date( 'Z', $event['end'] );
 
-     $wpdb->query(
-       $wpdb->prepare(
-         "INSERT INTO {$wpdb->prefix}ai1ec_event_instances " .
-         "       ( post_id,  start,               end                 ) " .
-         "VALUES ( %d,       FROM_UNIXTIME( %d ), FROM_UNIXTIME( %d ) )",
-         $event
-       )
-     );
+		 $wpdb->query(
+			 $wpdb->prepare(
+				 "INSERT INTO {$wpdb->prefix}ai1ec_event_instances " .
+				 "       ( post_id,  start,               end                 ) " .
+				 "VALUES ( %d,       FROM_UNIXTIME( %d ), FROM_UNIXTIME( %d ) )",
+				 $event
+			 )
+		 );
 	 }
 
 	 /**
-	  * create_cache_table_entries function
-	  *
-	  * Create a new entry for each day that the event spans.
-	  *
-	  * @param array $e Event array
-	  *
-	  * @return void
-	  **/
-	  function create_cache_table_entries( $e )
-	  {
-	  	global $ai1ec_events_helper;
+		* create_cache_table_entries function
+		*
+		* Create a new entry for each day that the event spans.
+		*
+		* @param array $e Event array
+		*
+		* @return void
+		**/
+		function create_cache_table_entries( $e )
+		{
+			global $ai1ec_events_helper;
 
-	  	// Decompose start dates into components
-	  	$start_bits = getdate( $e['start'] );
+			// Decompose start dates into components
+			$start_bits = getdate( $e['start'] );
 
-	    // ============================================
-	    // = Calculate the time for event's first day =
-	    // ============================================
-	    // Start time is event's original start time
+			// ============================================
+			// = Calculate the time for event's first day =
+			// ============================================
+			// Start time is event's original start time
 			$event_start = $e['start'];
 			// End time is beginning of next day
 			$event_end = mktime(
@@ -286,9 +286,9 @@ class Ai1ec_Events_Helper {
 			$event_end += 60 * 60 * 24;
 			// Cache intermediate days
 			while( $event_end < $e['end'] ) {
-			  $this->insert_event_in_cache_table( array( 'post_id' => $e['post_id'], 'start' => $event_start, 'end' => $event_end ) );
-			  $event_start  = $event_end;    // Start time is previous end time
-			  $event_end    += 24 * 60 * 60; // Increment end time by 1 day
+				$this->insert_event_in_cache_table( array( 'post_id' => $e['post_id'], 'start' => $event_start, 'end' => $event_end ) );
+				$event_start  = $event_end;    // Start time is previous end time
+				$event_end    += 24 * 60 * 60; // Increment end time by 1 day
 			}
 
 			// ===========================================
@@ -301,7 +301,7 @@ class Ai1ec_Events_Helper {
 			if( $event_end > $event_start )
 				// Cache last day
 				$this->insert_event_in_cache_table( array( 'post_id' => $e['post_id'], 'start' => $event_start, 'end' => $event_end ) );
-	  }
+		}
 
 	/**
 	 * Returns the various preset recurrence options available (e.g.,
@@ -311,23 +311,23 @@ class Ai1ec_Events_Helper {
 	 *                       equivalents
 	 */
 	function get_repeat_patterns() {
-    // Calling functions when creating an array does not seem to work when
-    // the assigned to variable is static. This is a workaround.
-    static $options;
-    if( !isset( $options ) ) {
-      $temp = array(
-        ' ' => __( 'No repeat', AI1EC_PLUGIN_NAME ),
-        '1' => __( 'Every day', AI1EC_PLUGIN_NAME ),
-        '2' => __( 'Every week', AI1EC_PLUGIN_NAME ),
-        '3' => __( 'Every month', AI1EC_PLUGIN_NAME ),
-        '4' => __( 'Every year', AI1EC_PLUGIN_NAME ),
-        '5' => '-----------',
-        '6' => __( 'Custom...', AI1EC_PLUGIN_NAME ),
-      );
-      $options = $temp;
-    }
-    return $options;
-  }
+		// Calling functions when creating an array does not seem to work when
+		// the assigned to variable is static. This is a workaround.
+		static $options;
+		if( !isset( $options ) ) {
+			$temp = array(
+				' ' => __( 'No repeat', AI1EC_PLUGIN_NAME ),
+				'1' => __( 'Every day', AI1EC_PLUGIN_NAME ),
+				'2' => __( 'Every week', AI1EC_PLUGIN_NAME ),
+				'3' => __( 'Every month', AI1EC_PLUGIN_NAME ),
+				'4' => __( 'Every year', AI1EC_PLUGIN_NAME ),
+				'5' => '-----------',
+				'6' => __( 'Custom...', AI1EC_PLUGIN_NAME ),
+			);
+			$options = $temp;
+		}
+		return $options;
+	}
 
 	/**
 	 * Generates and returns repeat dropdown
@@ -337,16 +337,16 @@ class Ai1ec_Events_Helper {
 	 * @return String Repeat dropdown
 	 */
 	function create_repeat_dropdown( $selected = null ) {
-	  $options = array(
-      ' ' => __( 'No repeat', AI1EC_PLUGIN_NAME ),
-      1   => __( 'Every day', AI1EC_PLUGIN_NAME ),
-      2   => __( 'Every week', AI1EC_PLUGIN_NAME ),
-      3   => __( 'Every month', AI1EC_PLUGIN_NAME ),
-      4   => __( 'Every year', AI1EC_PLUGIN_NAME ),
-      5   => '-----------',
-      6   => __( 'Custom...', AI1EC_PLUGIN_NAME ),
-    );
-	  return $this->create_select_element( 'ai1ec_repeat', $options, $selected, array( 5 ) );
+		$options = array(
+			' ' => __( 'No repeat', AI1EC_PLUGIN_NAME ),
+			1   => __( 'Every day', AI1EC_PLUGIN_NAME ),
+			2   => __( 'Every week', AI1EC_PLUGIN_NAME ),
+			3   => __( 'Every month', AI1EC_PLUGIN_NAME ),
+			4   => __( 'Every year', AI1EC_PLUGIN_NAME ),
+			5   => '-----------',
+			6   => __( 'Custom...', AI1EC_PLUGIN_NAME ),
+		);
+		return $this->create_select_element( 'ai1ec_repeat', $options, $selected, array( 5 ) );
 	}
 
 	/**
@@ -402,9 +402,9 @@ class Ai1ec_Events_Helper {
 					$until += date( 'Z', $until ); // Add timezone offset
 					$end = 2;
 				} elseif( $count )
-          $end = 1;
-        else
-          $end = 0;
+					$end = 1;
+				else
+					$end = 0;
 			}
 		}
 		return array(
@@ -432,7 +432,7 @@ class Ai1ec_Events_Helper {
 		<?php
 		return ob_get_clean();
 	}
-	
+
 	/**
 	 * create_select_element function
 	 *
@@ -441,7 +441,7 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function create_select_element( $name, $options = array(), $selected = false, $disabled_keys = array() ) {
-	  ob_start();
+		ob_start();
 		?>
 		<select name="<?php echo $name ?>" id="<?php echo $name ?>">
 			<?php foreach( $options as $key => $val ): ?>
@@ -453,7 +453,7 @@ class Ai1ec_Events_Helper {
 		<?php
 		return ob_get_clean();
 	}
-	
+
 	/**
 	 * create_on_the_select function
 	 *
@@ -462,35 +462,35 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function create_on_the_select( $f_selected = false, $s_selected = false ) {
-	  $ret = "";
-	  
-	  $first_options = array(
-	    '0' => __( 'first', AI1EC_PLUGIN_NAME ),
-	    '1' => __( 'second', AI1EC_PLUGIN_NAME ),
-	    '2' => __( 'third', AI1EC_PLUGIN_NAME ),
-	    '3' => __( 'fourth', AI1EC_PLUGIN_NAME ),
-	    '4' => '------',
-	    '5' => __( 'last', AI1EC_PLUGIN_NAME )
-	  );
-	  $ret = $this->create_select_element( 'ai1ec_monthly_each_select', $first_options, $f_selected, array( 4 ) );
-	  
-	  $second_options = array(
-	    '0'   => __( 'Sunday', AI1EC_PLUGIN_NAME ),
-	    '1'   => __( 'Monday', AI1EC_PLUGIN_NAME ),
-	    '2'   => __( 'Tuesday', AI1EC_PLUGIN_NAME ),
-	    '3'   => __( 'Wednesday', AI1EC_PLUGIN_NAME ),
-	    '4'   => __( 'Thursday', AI1EC_PLUGIN_NAME ),
-	    '5'   => __( 'Friday', AI1EC_PLUGIN_NAME ),
-	    '6'   => __( 'Saturday', AI1EC_PLUGIN_NAME ),
-	    '7'   => '--------',
-	    '8'   => __( 'day', AI1EC_PLUGIN_NAME ),
-	    '9'   => __( 'weekday', AI1EC_PLUGIN_NAME ),
-	    '10'  => __( 'weekend day', AI1EC_PLUGIN_NAME )
-	  );
+		$ret = "";
 
-	  return $ret . $this->create_select_element( 'ai1ec_monthly_on_the_select', $second_options, $s_selected, array( 7 ) );
+		$first_options = array(
+			'0' => __( 'first', AI1EC_PLUGIN_NAME ),
+			'1' => __( 'second', AI1EC_PLUGIN_NAME ),
+			'2' => __( 'third', AI1EC_PLUGIN_NAME ),
+			'3' => __( 'fourth', AI1EC_PLUGIN_NAME ),
+			'4' => '------',
+			'5' => __( 'last', AI1EC_PLUGIN_NAME )
+		);
+		$ret = $this->create_select_element( 'ai1ec_monthly_each_select', $first_options, $f_selected, array( 4 ) );
+
+		$second_options = array(
+			'0'   => __( 'Sunday', AI1EC_PLUGIN_NAME ),
+			'1'   => __( 'Monday', AI1EC_PLUGIN_NAME ),
+			'2'   => __( 'Tuesday', AI1EC_PLUGIN_NAME ),
+			'3'   => __( 'Wednesday', AI1EC_PLUGIN_NAME ),
+			'4'   => __( 'Thursday', AI1EC_PLUGIN_NAME ),
+			'5'   => __( 'Friday', AI1EC_PLUGIN_NAME ),
+			'6'   => __( 'Saturday', AI1EC_PLUGIN_NAME ),
+			'7'   => '--------',
+			'8'   => __( 'day', AI1EC_PLUGIN_NAME ),
+			'9'   => __( 'weekday', AI1EC_PLUGIN_NAME ),
+			'10'  => __( 'weekend day', AI1EC_PLUGIN_NAME )
+		);
+
+		return $ret . $this->create_select_element( 'ai1ec_monthly_on_the_select', $second_options, $s_selected, array( 7 ) );
 	}
-	
+
 	/**
 	 * undocumented function
 	 *
@@ -499,21 +499,21 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function create_list_element( $name, $options = array(), $selected = array() ) {
-	  ob_start();
+		ob_start();
 		?>
 		<ul class="ai1ec_date_select <?php echo $name?>" id="<?php echo $name?>">
-		  <?php foreach( $options as $key => $val ): ?>
-		    <li<?php echo in_array( $key, $selected ) ? 'class="ai1ec_selected"' : '' ?>>
-		      <?php echo $val ?>
-		      <input type="hidden" name="<?php echo $name . '_' . $key ?>" value="<?php echo $key ?>" />
-		    </li>
+			<?php foreach( $options as $key => $val ): ?>
+				<li<?php echo in_array( $key, $selected ) ? 'class="ai1ec_selected"' : '' ?>>
+					<?php echo $val ?>
+					<input type="hidden" name="<?php echo $name . '_' . $key ?>" value="<?php echo $key ?>" />
+				</li>
 			<?php endforeach ?>
 		</ul>
 		<input type="hidden" name="<?php echo $name ?>" value="<?php echo implode( ',', $selected ) ?>" />
 		<?php
 		return ob_get_clean();
 	}
-	
+
 	/**
 	 * create_montly_date_select function
 	 *
@@ -522,14 +522,14 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function create_montly_date_select( $selected = array() ) {
-	  $options = array();
-	  
-	  for( $i = 1; $i <= 31; ++$i )
-	    $options[$i] = $i;
-	    
-	  return $this->create_list_element( 'ai1ec_montly_date_select', $options, $selected );
+		$options = array();
+
+		for( $i = 1; $i <= 31; ++$i )
+			$options[$i] = $i;
+
+		return $this->create_list_element( 'ai1ec_montly_date_select', $options, $selected );
 	}
-	
+
 	/**
 	 * create_yearly_date_select function
 	 *
@@ -538,27 +538,27 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function create_yearly_date_select( $selected = array() ) {
-	  global $wp_locale;
-	  $options = array();
-	  
-	  for( $i = 1; $i <= 12; ++$i ) {
-	    $x = $i < 10 ? 0 . $i : $i;
-	    $options[$i] = $wp_locale->month_abbrev[$wp_locale->month[$x]];
-	  }
-	  
-	  return $this->create_list_element( 'ai1ec_yearly_date_select', $options, $selected );
+		global $wp_locale;
+		$options = array();
+
+		for( $i = 1; $i <= 12; ++$i ) {
+			$x = $i < 10 ? 0 . $i : $i;
+			$options[$i] = $wp_locale->month_abbrev[$wp_locale->month[$x]];
+		}
+
+		return $this->create_list_element( 'ai1ec_yearly_date_select', $options, $selected );
 	}
-	
+
 	function get_frequency( $index ) {
-	  $frequency = array(
-	    0 => __( 'Daily', AI1EC_PLUGIN_NAME ),
-	    1 => __( 'Weekly', AI1EC_PLUGIN_NAME ),
-	    2 => __( 'Monthly', AI1EC_PLUGIN_NAME ),
-	    3 => __( 'Yearly', AI1EC_PLUGIN_NAME ),
-	  );
-	  return $frequency[$index];
+		$frequency = array(
+			0 => __( 'Daily', AI1EC_PLUGIN_NAME ),
+			1 => __( 'Weekly', AI1EC_PLUGIN_NAME ),
+			2 => __( 'Monthly', AI1EC_PLUGIN_NAME ),
+			3 => __( 'Yearly', AI1EC_PLUGIN_NAME ),
+		);
+		return $frequency[$index];
 	}
-	
+
 	/**
 	 * row_frequency function
 	 *
@@ -567,22 +567,22 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function row_frequency( $visible = false, $selected = false ) {
-	  global $ai1ec_view_helper;
-	  
-	  $frequency = array(
-	    0 => __( 'Daily', AI1EC_PLUGIN_NAME ),
-	    1 => __( 'Weekly', AI1EC_PLUGIN_NAME ),
-	    2 => __( 'Monthly', AI1EC_PLUGIN_NAME ),
-	    3 => __( 'Yearly', AI1EC_PLUGIN_NAME ),
-	  );
-	  
-	  $args = array(
-	   'visible'    => $visible,
-	   'frequency'  => $this->create_select_element( 'ai1ec_frequency', $frequency, $selected )
-	  );
-	  return $ai1ec_view_helper->get_view( 'row_frequency.php', $args );
+		global $ai1ec_view_helper;
+
+		$frequency = array(
+			0 => __( 'Daily', AI1EC_PLUGIN_NAME ),
+			1 => __( 'Weekly', AI1EC_PLUGIN_NAME ),
+			2 => __( 'Monthly', AI1EC_PLUGIN_NAME ),
+			3 => __( 'Yearly', AI1EC_PLUGIN_NAME ),
+		);
+
+		$args = array(
+		 'visible'    => $visible,
+		 'frequency'  => $this->create_select_element( 'ai1ec_frequency', $frequency, $selected )
+		);
+		return $ai1ec_view_helper->get_view( 'row_frequency.php', $args );
 	}
-	
+
 	/**
 	 * row_daily function
 	 *
@@ -591,15 +591,15 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function row_daily( $visible = false, $selected = 1 ) {
-	  global $ai1ec_view_helper;
-	  
-	  $args = array(
-	   'visible'  => $visible,
-	   'count'    => $this->create_count_input( 'ai1ec_daily_count', $selected, 365 ) . __( 'day(s)', AI1EC_PLUGIN_NAME )
-	  );
-	  return $ai1ec_view_helper->get_view( 'row_daily.php', $args );
+		global $ai1ec_view_helper;
+
+		$args = array(
+		 'visible'  => $visible,
+		 'count'    => $this->create_count_input( 'ai1ec_daily_count', $selected, 365 ) . __( 'day(s)', AI1EC_PLUGIN_NAME )
+		);
+		return $ai1ec_view_helper->get_view( 'row_daily.php', $args );
 	}
-	
+
 	/**
 	 * row_weekly function
 	 *
@@ -608,28 +608,28 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function row_weekly( $visible = false, $count = 1, $selected = array() ) {
-	  global $ai1ec_view_helper, $wp_locale;
-    $start_of_week = get_option( 'start_of_week', 1 );
-    
-	  $options = array();
-	  // get days from start_of_week until the last day
-	  for( $i = $start_of_week; $i <= 6; ++$i )
-	    $options[$this->get_weekday_by_id( $i )] = $wp_locale->weekday_initial[$wp_locale->weekday[$i]];
-	  
-	  // get days from 0 until start_of_week
-    if( $start_of_week > 0 ) {
-      for( $i = 0; $i < $start_of_week; $i++ )
-        $options[$this->get_weekday_by_id( $i )] = $wp_locale->weekday_initial[$wp_locale->weekday[$i]];
-    }
+		global $ai1ec_view_helper, $wp_locale;
+		$start_of_week = get_option( 'start_of_week', 1 );
 
-	  $args = array(
-	   'visible'    => $visible,
-	   'count'      => $this->create_count_input( 'ai1ec_weekly_count', $count, 52 ) . __( 'week(s)', AI1EC_PLUGIN_NAME ),
-	   'week_days'  => $this->create_list_element( 'ai1ec_weekly_date_select', $options, $selected )
-	  );
-	  return $ai1ec_view_helper->get_view( 'row_weekly.php', $args );
+		$options = array();
+		// get days from start_of_week until the last day
+		for( $i = $start_of_week; $i <= 6; ++$i )
+			$options[$this->get_weekday_by_id( $i )] = $wp_locale->weekday_initial[$wp_locale->weekday[$i]];
+
+		// get days from 0 until start_of_week
+		if( $start_of_week > 0 ) {
+			for( $i = 0; $i < $start_of_week; $i++ )
+				$options[$this->get_weekday_by_id( $i )] = $wp_locale->weekday_initial[$wp_locale->weekday[$i]];
+		}
+
+		$args = array(
+		 'visible'    => $visible,
+		 'count'      => $this->create_count_input( 'ai1ec_weekly_count', $count, 52 ) . __( 'week(s)', AI1EC_PLUGIN_NAME ),
+		 'week_days'  => $this->create_list_element( 'ai1ec_weekly_date_select', $options, $selected )
+		);
+		return $ai1ec_view_helper->get_view( 'row_weekly.php', $args );
 	}
-	
+
 	/**
 	 * get_weekday_by_id function
 	 *
@@ -640,30 +640,30 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 **/
 	function get_weekday_by_id( $day_id, $by_value = false ) {
-	  // do not translate this !!!
-    $week_days = array(
-	   0 => 'SU',
-	   1 => 'MO',
-	   2 => 'TU',
-	   3 => 'WE',
-	   4 => 'TH',
-	   5 => 'FR',
-	   6 => 'SA'
-	  );
+		// do not translate this !!!
+		$week_days = array(
+		 0 => 'SU',
+		 1 => 'MO',
+		 2 => 'TU',
+		 3 => 'WE',
+		 4 => 'TH',
+		 5 => 'FR',
+		 6 => 'SA'
+		);
 
-	  if( $by_value ) {
-	    while( $_name = current( $week_days ) ) {
-          if( $_name == $day_id ) {
-              return key( $week_days );
-          }
-          next( $week_days );
-      }
-      return false;
-	  }
-	  else
-	    return $week_days[$day_id];
+		if( $by_value ) {
+			while( $_name = current( $week_days ) ) {
+					if( $_name == $day_id ) {
+							return key( $week_days );
+					}
+					next( $week_days );
+			}
+			return false;
+		}
+		else
+			return $week_days[$day_id];
 	}
-	
+
 	/**
 	 * row_monthly function
 	 *
@@ -672,19 +672,19 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function row_monthly( $visible = false, $count = 1, $ai1ec_monthly_each = 0, $ai1ec_monthly_on_the = 0, $month = array(), $first = false, $second = false ) {
-	  global $ai1ec_view_helper;
-	  
-	  $args = array(
-	   'visible'              => $visible,
-	   'count'                => $this->create_count_input( 'ai1ec_monthly_count', $count, 12 ) . __( 'month(s)', AI1EC_PLUGIN_NAME ),
-	   'ai1ec_monthly_each'   => $ai1ec_monthly_each,
-	   'ai1ec_monthly_on_the' => $ai1ec_monthly_on_the,
-	   'month'                => $this->create_montly_date_select( $month ),
-	   'on_the_select'        => $this->create_on_the_select( $first, $second )
-	  );
-	  return $ai1ec_view_helper->get_view( 'row_monthly.php', $args );
+		global $ai1ec_view_helper;
+
+		$args = array(
+		 'visible'              => $visible,
+		 'count'                => $this->create_count_input( 'ai1ec_monthly_count', $count, 12 ) . __( 'month(s)', AI1EC_PLUGIN_NAME ),
+		 'ai1ec_monthly_each'   => $ai1ec_monthly_each,
+		 'ai1ec_monthly_on_the' => $ai1ec_monthly_on_the,
+		 'month'                => $this->create_montly_date_select( $month ),
+		 'on_the_select'        => $this->create_on_the_select( $first, $second )
+		);
+		return $ai1ec_view_helper->get_view( 'row_monthly.php', $args );
 	}
-	
+
 	/**
 	 * row_yearly function
 	 *
@@ -693,15 +693,15 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function row_yearly( $visible = false, $count = 1, $year = array(), $first = false, $second = false ) {
-	  global $ai1ec_view_helper;
-	  
-	  $args = array(
-	   'visible'              => $visible,
-	   'count'                => $this->create_count_input( 'ai1ec_yearly_count', $count, 10 ) . __( 'year(s)', AI1EC_PLUGIN_NAME ),
-	   'year'                 => $this->create_yearly_date_select( $year ),
-	   'on_the_select'        => $this->create_on_the_select( $first, $second )
-	  );
-	  return $ai1ec_view_helper->get_view( 'row_yearly.php', $args );
+		global $ai1ec_view_helper;
+
+		$args = array(
+		 'visible'              => $visible,
+		 'count'                => $this->create_count_input( 'ai1ec_yearly_count', $count, 10 ) . __( 'year(s)', AI1EC_PLUGIN_NAME ),
+		 'year'                 => $this->create_yearly_date_select( $year ),
+		 'on_the_select'        => $this->create_on_the_select( $first, $second )
+		);
+		return $ai1ec_view_helper->get_view( 'row_yearly.php', $args );
 	}
 
 	/**
@@ -726,7 +726,7 @@ class Ai1ec_Events_Helper {
 	 *
 	 * @param int | bool          $start      Events start before this (GMT) time
 	 * @param int | bool          $end        Events end before this (GMT) time
-	 * @param array $filter       Array of filters for the events returned. 
+	 * @param array $filter       Array of filters for the events returned.
 	 *		                      ['cat_ids']   => non-associatative array of category IDs
 	 *		                      ['tag_ids']   => non-associatative array of tag IDs
 	 *                          ['post_ids']  => non-associatative array of post IDs
@@ -734,40 +734,40 @@ class Ai1ec_Events_Helper {
 	 * @return array Matching events
 	 **/
 	function get_matching_events( $start = false, $end = false, $filter = array() ) {
-	  global $wpdb, $ai1ec_calendar_helper;
+		global $wpdb, $ai1ec_calendar_helper;
 
 		// holds event_categories sql
-    $c_sql = '';
-    $c_where_sql = '';
-    // holds event_tags sql
-    $t_sql = '';
-    $t_where_sql ='';
-    // holds posts sql
-    $p_where_sql = '';
-    // holds start sql
-    $start_where_sql = '';
-    // holds end sql
-    $end_where_sql = '';
-    // hold escape values
-    $args = array();
+		$c_sql = '';
+		$c_where_sql = '';
+		// holds event_tags sql
+		$t_sql = '';
+		$t_where_sql ='';
+		// holds posts sql
+		$p_where_sql = '';
+		// holds start sql
+		$start_where_sql = '';
+		// holds end sql
+		$end_where_sql = '';
+		// hold escape values
+		$args = array();
 
-    // =============================
-    // = Generating start date sql =
-    // =============================
-    if( $start !== false ) {
-      $start_where_sql = "AND (e.start >= FROM_UNIXTIME( %d ) OR e.recurrence_rules != '')";
-      $args[] = $start;
-    }
+		// =============================
+		// = Generating start date sql =
+		// =============================
+		if( $start !== false ) {
+			$start_where_sql = "AND (e.start >= FROM_UNIXTIME( %d ) OR e.recurrence_rules != '')";
+			$args[] = $start;
+		}
 
-    // ===========================
-    // = Generating end date sql =
-    // ===========================
-    if( $end !== false ) {
-      $end_where_sql = "AND (e.end <= FROM_UNIXTIME( %d ) OR e.recurrence_rules != '')";
-      $args[] = $end;
-    }
+		// ===========================
+		// = Generating end date sql =
+		// ===========================
+		if( $end !== false ) {
+			$end_where_sql = "AND (e.end <= FROM_UNIXTIME( %d ) OR e.recurrence_rules != '')";
+			$args[] = $end;
+		}
 
-    // Get the Join (filter_join) and Where (filter_where) statements based on $filter elements specified 
+		// Get the Join (filter_join) and Where (filter_where) statements based on $filter elements specified
 		$filter = $ai1ec_calendar_helper->_get_filter_sql( $filter );
 
 		$query = $wpdb->prepare(
@@ -776,39 +776,39 @@ class Ai1ec_Events_Helper {
 				e.show_map, e.contact_name, e.contact_phone, e.contact_email, e.cost, e.ical_feed_url, e.ical_source_url,
 				e.ical_organizer, e.ical_contact, e.ical_uid " .
 			"FROM $wpdb->posts " .
-			  "INNER JOIN {$wpdb->prefix}ai1ec_events AS e ON e.post_id = ID " .
+				"INNER JOIN {$wpdb->prefix}ai1ec_events AS e ON e.post_id = ID " .
 				$filter['filter_join'] .
 			"WHERE post_type = '" . AI1EC_POST_TYPE . "' " .
-			  "AND post_status = 'publish' " .
-			  $filter['filter_where'] .
-			  $start_where_sql .
-			  $end_where_sql,
+				"AND post_status = 'publish' " .
+				$filter['filter_where'] .
+				$start_where_sql .
+				$end_where_sql,
 			$args );
 
 		$events = $wpdb->get_results( $query, ARRAY_A );
 
-    foreach( $events as &$event ) {
-      try{
-        $event = new Ai1ec_Event( $event );
-      } catch( Ai1ec_Event_Not_Found $n ) {
-        unset( $event );
-        // The event is not found, continue to the next event
-        continue;
-      }
+		foreach( $events as &$event ) {
+			try{
+				$event = new Ai1ec_Event( $event );
+			} catch( Ai1ec_Event_Not_Found $n ) {
+				unset( $event );
+				// The event is not found, continue to the next event
+				continue;
+			}
 
-      // if there are recurrence rules, include the event, else...
+			// if there are recurrence rules, include the event, else...
 			if( empty( $event->recurrence_rules ) ) {
 				// if start time is set, and event start time is before the range
 				// it, continue to the next event
 				if( $start !== false && $event->start < $start ) {
-				  unset( $event );
-				  continue;
+					unset( $event );
+					continue;
 				}
 				// if end time is set, and event end time is after
 				// it, continue to the next event
 				if( $end !== false && $ev->end < $end ) {
-				  unset( $event );
-				  continue;
+					unset( $event );
+					continue;
 				}
 			}
 		}
@@ -844,7 +844,7 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 **/
 	function get_short_time( $timestamp, $convert_from_gmt = true ) {
-	  $time_format = get_option( 'time_format', 'g:ia' );
+		$time_format = get_option( 'time_format', 'g:ia' );
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
 		return date_i18n( $time_format, $timestamp, true );
@@ -878,7 +878,7 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 **/
 	function get_medium_time( $timestamp, $convert_from_gmt = true ) {
-	  $time_format = get_option( 'time_format', 'g:ia' );
+		$time_format = get_option( 'time_format', 'g:ia' );
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
 		return date_i18n( $time_format, $timestamp, true );
@@ -896,8 +896,8 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 **/
 	function get_long_time( $timestamp, $convert_from_gmt = true ) {
-	  $date_format = get_option( 'date_format', 'D, F j' );
-	  $time_format = get_option( 'time_format', 'g:i' );
+		$date_format = get_option( 'date_format', 'D, F j' );
+		$time_format = get_option( 'time_format', 'g:i' );
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
 		return date_i18n( $date_format, $timestamp, true ) . ' @ ' . date_i18n( $time_format, $timestamp, true );
@@ -915,7 +915,7 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 **/
 	function get_long_date( $timestamp, $convert_from_gmt = true ) {
-	  $date_format = get_option( 'date_format', 'D, F j' );
+		$date_format = get_option( 'date_format', 'D, F j' );
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
 		return date_i18n( $date_format, $timestamp, true );
@@ -933,12 +933,12 @@ class Ai1ec_Events_Helper {
 	function gmt_to_local( $timestamp ) {
 		$offset = get_option( 'gmt_offset' );
 		$tz     = get_option( 'timezone_string', 'America/Los_Angeles' );
-		
+
 		$offset = $this->get_timezone_offset( 'UTC', $tz, $timestamp );
 
 		if( ! $offset )
 			$offset = get_option( 'gmt_offset' ) * 3600;
-			
+
 		return $timestamp + $offset;
 	}
 
@@ -954,15 +954,15 @@ class Ai1ec_Events_Helper {
 	function local_to_gmt( $timestamp ) {
 		$offset = get_option( 'gmt_offset' );
 		$tz     = get_option( 'timezone_string', 'America/Los_Angeles' );
-		
+
 		$offset = $this->get_timezone_offset( 'UTC', $tz, $timestamp );
 
 		if( ! $offset )
 			$offset = get_option( 'gmt_offset' ) * 3600;
-			
+
 		return $timestamp - $offset;
 	}
-	
+
 	/**
 	 * get_timezone_offset function
 	 *
@@ -978,7 +978,7 @@ class Ai1ec_Events_Helper {
 		if( $origin_tz === null )
 			if( ! is_string( $origin_tz = date_default_timezone_get() ) )
 				return false; // A UTC timestamp was returned -- bail out!
-		
+
 		try {
 			$origin_dtz = new DateTimeZone( $origin_tz );
 			$remote_dtz = new DateTimeZone( $remote_tz );
@@ -989,7 +989,7 @@ class Ai1ec_Events_Helper {
 		} catch( Exception $e ) {
 			return false;
 		}
-		
+
 		return $offset;
 	}
 
@@ -1034,10 +1034,10 @@ class Ai1ec_Events_Helper {
 	function get_gmap_url( &$event ) {
 		$location_arg = urlencode( $event->address );
 		$lang         = $this->get_lang();
-		
+
 		return "http://www.google.com/maps?f=q&hl=" . $lang . "&source=embed&q=" . $location_arg;
 	}
-	
+
 	/**
 	 * get_lang function
 	 *
@@ -1051,7 +1051,7 @@ class Ai1ec_Events_Helper {
 
 		return ( isset( $locale[0] ) && $locale[0] != '' ) ? $locale[0] : 'en';
 	}
-	
+
 	/**
 	 * get_region function
 	 *
@@ -1062,7 +1062,7 @@ class Ai1ec_Events_Helper {
 	 **/
 	function get_region() {
 		$locale = explode( '_', get_locale() );
-		
+
 		$region = ( isset( $locale[1] ) && $locale[1] != '' ) ? strtolower( $locale[1] ) : '';
 
 		// Primary ccTLD for United Kingdom is uk.
@@ -1081,7 +1081,7 @@ class Ai1ec_Events_Helper {
 	 * @return string      The excerpt.
 	 **/
 	function trim_excerpt( $text )
- 	{
+	{
 		$raw_excerpt = $text;
 
 		$text = strip_shortcodes( $text );
@@ -1123,14 +1123,14 @@ class Ai1ec_Events_Helper {
 		// = Sanitize provided IDs against SQL injection =
 		// ===============================================
 		if( ! is_array( $post_ids ) )
-		 	$post_ids = explode( ',', $post_ids );
+			$post_ids = explode( ',', $post_ids );
 		foreach( $post_ids as &$post_id ) {
 			$post_id = intval( $post_id );
 		}
 		$post_ids = join( ',', $post_ids );
 
 		if( ! is_array( $term_ids ) )
-		 	$term_ids = explode( ',', $term_ids );
+			$term_ids = explode( ',', $term_ids );
 		foreach( $term_ids as &$term_id ) {
 			$term_id = intval( $term_id );
 		}
@@ -1156,12 +1156,12 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 */
 	function get_category_color( $term_id ) {
-	  global $wpdb;
+		global $wpdb;
 
-    $term_id = (int) $term_id;
-	  $table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
-	  $color = $wpdb->get_var( "SELECT term_color FROM {$table_name} WHERE term_id = {$term_id}" );
-	  return $color;
+		$term_id = (int) $term_id;
+		$table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
+		$color = $wpdb->get_var( "SELECT term_color FROM {$table_name} WHERE term_id = {$term_id}" );
+		return $color;
 	}
 
 	/**
@@ -1174,12 +1174,12 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 **/
 	function get_category_color_square( $term_id ) {
-	  $color = $this->get_category_color( $term_id );
-	  $cat = get_term( $term_id, 'events_categories' );
-	  if( ! is_null( $color ) && ! empty( $color ) )
-	    return '<div class="ai1ec-category-color" style="background:' . $color . '" title="' . esc_attr( $cat->name ) . '"></div>';
+		$color = $this->get_category_color( $term_id );
+		$cat = get_term( $term_id, 'events_categories' );
+		if( ! is_null( $color ) && ! empty( $color ) )
+			return '<div class="ai1ec-category-color" style="background:' . $color . '" title="' . esc_attr( $cat->name ) . '"></div>';
 
-	  return '';
+		return '';
 	}
 
 	/**
@@ -1192,15 +1192,48 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 **/
 	function get_event_category_color_style( $term_id, $allday = false ) {
-	  $color = $this->get_category_color( $term_id );
-	  if( ! is_null( $color ) && ! empty( $color ) ) {
-	    if( $allday )
-	      return ' style="background:' . $color . '"';
-	    else
-	      return ' style="color:' . $color . ' !important"';
-	  }
+		$color = $this->get_category_color( $term_id );
+		if( ! is_null( $color ) && ! empty( $color ) ) {
+			if( $allday )
+				return 'background: ' . $color . ';';
+			else
+				return 'color: ' . $color . ' !important;';
+		}
 
-	  return '';
+		return '';
+	}
+
+	/**
+	 * get_event_category_faded_color function
+	 *
+	 * Returns a faded version of the event's category color in hex format.
+	 *
+	 * @param int $term_id The Event Category's term ID
+	 * @return string
+	 **/
+	function get_event_category_faded_color( $term_id ) {
+		$color = $this->get_category_color( $term_id );
+		if( ! is_null( $color ) && ! empty( $color ) ) {
+
+			$color1 = substr( $color, 1 );
+			$color2 = 'ffffff';
+
+			$c1_p1 = hexdec( substr( $color1, 0, 2 ) );
+			$c1_p2 = hexdec( substr( $color1, 2, 2 ) );
+			$c1_p3 = hexdec( substr( $color1, 4, 2 ) );
+
+			$c2_p1 = hexdec( substr( $color2, 0, 2 ) );
+			$c2_p2 = hexdec( substr( $color2, 2, 2 ) );
+			$c2_p3 = hexdec( substr( $color2, 4, 2 ) );
+
+			$m_p1 = dechex( round( $c1_p1 * 0.3 + $c2_p1 * 0.7 ) );
+			$m_p2 = dechex( round( $c1_p2 * 0.3 + $c2_p2 * 0.7 ) );
+			$m_p3 = dechex( round( $c1_p3 * 0.3 + $c2_p3 * 0.7 ) );
+
+			return '#' . $m_p1 . $m_p2 . $m_p3;
+		}
+
+		return '';
 	}
 
 	/**
@@ -1212,15 +1245,15 @@ class Ai1ec_Events_Helper {
 	 * @return string
 	 **/
 	function get_event_category_colors( $cats ) {
-    $sqrs = '';
+		$sqrs = '';
 
-	  foreach( $cats as $cat ) {
-	    $tmp = $this->get_category_color_square( $cat->term_id );
-	    if( ! empty( $tmp ) )
-	      $sqrs .= $tmp;
-	  }
+		foreach( $cats as $cat ) {
+			$tmp = $this->get_category_color_square( $cat->term_id );
+			if( ! empty( $tmp ) )
+				$sqrs .= $tmp;
+		}
 
-	  return $sqrs;
+		return $sqrs;
 	}
 
 	/**
@@ -1232,12 +1265,12 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function create_end_dropdown( $selected = null ) {
-    ob_start();
+		ob_start();
 
 		$options = array(
-		  0 => __( 'Never', AI1EC_PLUGIN_NAME ),
-		  1 => __( 'After', AI1EC_PLUGIN_NAME ),
-		  2 => __( 'On date', AI1EC_PLUGIN_NAME )
+			0 => __( 'Never', AI1EC_PLUGIN_NAME ),
+			1 => __( 'After', AI1EC_PLUGIN_NAME ),
+			2 => __( 'On date', AI1EC_PLUGIN_NAME )
 		);
 
 		?>
@@ -1255,7 +1288,7 @@ class Ai1ec_Events_Helper {
 
 		return $output;
 	}
-	
+
 	/**
 	 * rrule_to_text function
 	 *
@@ -1264,34 +1297,34 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function rrule_to_text( $rrule = '') {
-	  $txt = '';
-	  $rc = new SG_iCal_Recurrence( new SG_iCal_Line( 'RRULE:' . $rrule ) );
-    switch( $rc->getFreq() ) {
-      case 'DAILY':
-        $this->_get_interval( $txt, 'daily', $rc->getInterval() );
-        $this->_ending_sentence( $txt, $rc );
-        break;
-      case 'WEEKLY':
-        $this->_get_interval( $txt, 'weekly', $rc->getInterval() );
-        $this->_get_sentence_by( $txt, 'weekly', $rc );
-        $this->_ending_sentence( $txt, $rc );
-        break;
-      case 'MONTHLY':
-        $this->_get_interval( $txt, 'monthly', $rc->getInterval() );
-        $this->_get_sentence_by( $txt, 'monthly', $rc );
-        $this->_ending_sentence( $txt, $rc );
-        break;
-      case 'YEARLY':
-        $this->_get_interval( $txt, 'yearly', $rc->getInterval() );
-        $this->_get_sentence_by( $txt, 'yearly', $rc );
-        $this->_ending_sentence( $txt, $rc );
-        break;
-      default:
-        $txt = $rrule;
-    }
-	  return $txt;
+		$txt = '';
+		$rc = new SG_iCal_Recurrence( new SG_iCal_Line( 'RRULE:' . $rrule ) );
+		switch( $rc->getFreq() ) {
+			case 'DAILY':
+				$this->_get_interval( $txt, 'daily', $rc->getInterval() );
+				$this->_ending_sentence( $txt, $rc );
+				break;
+			case 'WEEKLY':
+				$this->_get_interval( $txt, 'weekly', $rc->getInterval() );
+				$this->_get_sentence_by( $txt, 'weekly', $rc );
+				$this->_ending_sentence( $txt, $rc );
+				break;
+			case 'MONTHLY':
+				$this->_get_interval( $txt, 'monthly', $rc->getInterval() );
+				$this->_get_sentence_by( $txt, 'monthly', $rc );
+				$this->_ending_sentence( $txt, $rc );
+				break;
+			case 'YEARLY':
+				$this->_get_interval( $txt, 'yearly', $rc->getInterval() );
+				$this->_get_sentence_by( $txt, 'yearly', $rc );
+				$this->_ending_sentence( $txt, $rc );
+				break;
+			default:
+				$txt = $rrule;
+		}
+		return $txt;
 	}
-	
+
 	/**
 	 * _get_sentence_by function
 	 *
@@ -1300,101 +1333,101 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function _get_sentence_by( &$txt, $freq, $rc ) {
-	  global $wp_locale;
+		global $wp_locale;
 
-	  switch( $freq ) {
-	    case 'weekly':
-	      if( $rc->getByDay() ) {
-	        if( count( $rc->getByDay() ) > 1 ) {
-	          // if there are more than 3 days
-	          // use days's abbr
-	          if( count( $rc->getByDay() ) > 2 ) {
-	            $_days = '';
-  	          foreach( $rc->getByDay() as $d ) {
-  	            $day = $this->get_weekday_by_id( $d, true );
-  	            $_days .= ' ' . $wp_locale->weekday_abbrev[$wp_locale->weekday[$day]] . ',';
-  	          }
-  	          // remove the last ' and'
-  	          $_days = substr( $_days, 0, -1 );
-  	          $txt .= ' ' . _x( 'on', 'Recurrence editor - weekly tab', AI1EC_PLUGIN_NAME ) . $_days;
-	          } else {
-	            $_days = '';
-  	          foreach( $rc->getByDay() as $d ) {
-  	            $day = $this->get_weekday_by_id( $d, true );
-  	            $_days .= ' ' . $wp_locale->weekday[$day] . ' ' . __( 'and', AI1EC_PLUGIN_NAME );
-  	          }
-  	          // remove the last ' and'
-  	          $_days = substr( $_days, 0, -4 );
-  	          $txt .= ' ' . _x( 'on', 'Recurrence editor - weekly tab', AI1EC_PLUGIN_NAME ) . $_days;
-	          }
-	        } else {
-	          $_days = '';
-	          foreach( $rc->getByDay() as $d ) {
-	            $day = $this->get_weekday_by_id( $d, true );
-	            $_days .= ' ' . $wp_locale->weekday[$day];
-	          }
-	          $txt .= ' ' . _x( 'on', 'Recurrence editor - weekly tab', AI1EC_PLUGIN_NAME ) . $_days;
-	        }
-	      }
-	      break;
-	    case 'monthly':
-	      if( $rc->getByMonthDay() ) {
-	        // if there are more than 2 days
-	        if( count( $rc->getByMonthDay() ) > 2 ) {
-	          $_days = '';
-	          foreach( $rc->getByMonthDay() as $m_day ) {
-	            $_days .= ' ' . $this->_ordinal( $m_day ) . ',';
-	          }
-	          $_days = substr( $_days, 0, -1 );
-	          $txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
-	        } else if( count( $rc->getByMonthDay() ) > 1 ) {
-	          $_days = '';
-	          foreach( $rc->getByMonthDay() as $m_day ) {
-	            $_days .= ' ' . $this->_ordinal( $m_day ) . ' ' . __( 'and', AI1EC_PLUGIN_NAME );
-	          }
-	          $_days = substr( $_days, 0, -4 );
-	          $txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
-	        } else {
-	          $_days = '';
-	          foreach( $rc->getByMonthDay() as $m_day ) {
-	            $_days .= ' ' . $this->_ordinal( $m_day );
-	          }
-	          $txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
-	        }
-	      }
-	      break;
-	    case 'yearly':
-	      if( $rc->getByMonth() ) {
-	        // if there are more than 2 months
-	        if( count( $rc->getByMonth() ) > 2  ) {
-	          $_months = '';
-	          foreach( $rc->getByMonth() as $_m ) {
-	            $_m = $_m < 10 ? 0 . $_m : $_m;
-	            $_months .= ' ' . $wp_locale->month_abbrev[$wp_locale->month[$_m]] . ',';
-	          }
-	          $_months = substr( $_months, 0, -1 );
-	          $txt .= ' ' . _x( 'on', 'Recurrence editor - yearly tab', AI1EC_PLUGIN_NAME ) . $_months; 
-	        } else if( count( $rc->getByMonth() ) > 1 ) {
-	          $_months = '';
-	          foreach( $rc->getByMonth() as $_m ) {
-	            $_m = $_m < 10 ? 0 . $_m : $_m;
-	            $_months .= ' ' . $wp_locale->month[$_m] . ' ' . __( 'and', AI1EC_PLUGIN_NAME );
-	          }
-	          $_months = substr( $_months, 0, -4 );
-	          $txt .= ' ' . _x( 'on', 'Recurrence editor - yearly tab', AI1EC_PLUGIN_NAME ) . $_months; 
-	        } else {
-	          $_months = '';
-	          foreach( $rc->getByMonth() as $_m ) {
-	            $_m = $_m < 10 ? 0 . $_m : $_m;
-	            $_months .= ' ' . $wp_locale->month[$_m];
-	          }
-	          $txt .= ' ' . _x( 'on', 'Recurrence editor - yearly tab', AI1EC_PLUGIN_NAME ) . $_months; 
-	        }
-	      }
-	      break;
-	  }
+		switch( $freq ) {
+			case 'weekly':
+				if( $rc->getByDay() ) {
+					if( count( $rc->getByDay() ) > 1 ) {
+						// if there are more than 3 days
+						// use days's abbr
+						if( count( $rc->getByDay() ) > 2 ) {
+							$_days = '';
+							foreach( $rc->getByDay() as $d ) {
+								$day = $this->get_weekday_by_id( $d, true );
+								$_days .= ' ' . $wp_locale->weekday_abbrev[$wp_locale->weekday[$day]] . ',';
+							}
+							// remove the last ' and'
+							$_days = substr( $_days, 0, -1 );
+							$txt .= ' ' . _x( 'on', 'Recurrence editor - weekly tab', AI1EC_PLUGIN_NAME ) . $_days;
+						} else {
+							$_days = '';
+							foreach( $rc->getByDay() as $d ) {
+								$day = $this->get_weekday_by_id( $d, true );
+								$_days .= ' ' . $wp_locale->weekday[$day] . ' ' . __( 'and', AI1EC_PLUGIN_NAME );
+							}
+							// remove the last ' and'
+							$_days = substr( $_days, 0, -4 );
+							$txt .= ' ' . _x( 'on', 'Recurrence editor - weekly tab', AI1EC_PLUGIN_NAME ) . $_days;
+						}
+					} else {
+						$_days = '';
+						foreach( $rc->getByDay() as $d ) {
+							$day = $this->get_weekday_by_id( $d, true );
+							$_days .= ' ' . $wp_locale->weekday[$day];
+						}
+						$txt .= ' ' . _x( 'on', 'Recurrence editor - weekly tab', AI1EC_PLUGIN_NAME ) . $_days;
+					}
+				}
+				break;
+			case 'monthly':
+				if( $rc->getByMonthDay() ) {
+					// if there are more than 2 days
+					if( count( $rc->getByMonthDay() ) > 2 ) {
+						$_days = '';
+						foreach( $rc->getByMonthDay() as $m_day ) {
+							$_days .= ' ' . $this->_ordinal( $m_day ) . ',';
+						}
+						$_days = substr( $_days, 0, -1 );
+						$txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
+					} else if( count( $rc->getByMonthDay() ) > 1 ) {
+						$_days = '';
+						foreach( $rc->getByMonthDay() as $m_day ) {
+							$_days .= ' ' . $this->_ordinal( $m_day ) . ' ' . __( 'and', AI1EC_PLUGIN_NAME );
+						}
+						$_days = substr( $_days, 0, -4 );
+						$txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
+					} else {
+						$_days = '';
+						foreach( $rc->getByMonthDay() as $m_day ) {
+							$_days .= ' ' . $this->_ordinal( $m_day );
+						}
+						$txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
+					}
+				}
+				break;
+			case 'yearly':
+				if( $rc->getByMonth() ) {
+					// if there are more than 2 months
+					if( count( $rc->getByMonth() ) > 2  ) {
+						$_months = '';
+						foreach( $rc->getByMonth() as $_m ) {
+							$_m = $_m < 10 ? 0 . $_m : $_m;
+							$_months .= ' ' . $wp_locale->month_abbrev[$wp_locale->month[$_m]] . ',';
+						}
+						$_months = substr( $_months, 0, -1 );
+						$txt .= ' ' . _x( 'on', 'Recurrence editor - yearly tab', AI1EC_PLUGIN_NAME ) . $_months;
+					} else if( count( $rc->getByMonth() ) > 1 ) {
+						$_months = '';
+						foreach( $rc->getByMonth() as $_m ) {
+							$_m = $_m < 10 ? 0 . $_m : $_m;
+							$_months .= ' ' . $wp_locale->month[$_m] . ' ' . __( 'and', AI1EC_PLUGIN_NAME );
+						}
+						$_months = substr( $_months, 0, -4 );
+						$txt .= ' ' . _x( 'on', 'Recurrence editor - yearly tab', AI1EC_PLUGIN_NAME ) . $_months;
+					} else {
+						$_months = '';
+						foreach( $rc->getByMonth() as $_m ) {
+							$_m = $_m < 10 ? 0 . $_m : $_m;
+							$_months .= ' ' . $wp_locale->month[$_m];
+						}
+						$txt .= ' ' . _x( 'on', 'Recurrence editor - yearly tab', AI1EC_PLUGIN_NAME ) . $_months;
+					}
+				}
+				break;
+		}
 	}
-	
+
 	/**
 	 * _ordinal function
 	 *
@@ -1404,17 +1437,17 @@ class Ai1ec_Events_Helper {
 	 **/
 	function _ordinal( $cdnl ) {
 		$locale = explode( '_', get_locale() );
-		
+
 		if( isset( $locale[0] ) && $locale[0] != 'en' )
 			return $cdnl;
-		
-    $test_c = abs($cdnl) % 10; 
-    $ext = ( ( abs( $cdnl ) % 100 < 21 && abs( $cdnl ) % 100 > 4 ) ? 'th' 
-              : ( ( $test_c < 4 ) ? ( $test_c < 3 ) ? ( $test_c < 2 ) ? ( $test_c < 1 ) 
-              ? 'th' : 'st' : 'nd' : 'rd' : 'th' ) ); 
-    return $cdnl.$ext; 
-  }
-	
+
+		$test_c = abs($cdnl) % 10;
+		$ext = ( ( abs( $cdnl ) % 100 < 21 && abs( $cdnl ) % 100 > 4 ) ? 'th'
+							: ( ( $test_c < 4 ) ? ( $test_c < 3 ) ? ( $test_c < 2 ) ? ( $test_c < 1 )
+							? 'th' : 'st' : 'nd' : 'rd' : 'th' ) );
+		return $cdnl.$ext;
+	}
+
 	/**
 	 * _get_interval function
 	 *
@@ -1423,58 +1456,58 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function _get_interval( &$txt, $freq, $interval ) {
-	  switch( $freq ) {
-	    case 'daily':
-	      // check if interval is set
-        if( ! $interval || $interval == 1 ) {
-          $txt = __( 'Daily', AI1EC_PLUGIN_NAME );
-        } else {
-          if( $interval == 2 ) {
-            $txt = __( 'Every other day', AI1EC_PLUGIN_NAME );
-          } else {
-            $txt = sprintf( __( 'Every %d days', AI1EC_PLUGIN_NAME ), $interval );
-          }
-        }
-	      break;
-	    case 'weekly':
-	      // check if interval is set
-        if( ! $interval || $interval == 1 ) {
-          $txt = __( 'Weekly', AI1EC_PLUGIN_NAME );
-        } else {
-          if( $interval == 2 ) {
-            $txt = __( 'Every other week', AI1EC_PLUGIN_NAME );
-          } else {
-            $txt = sprintf( __( 'Every %d weeks', AI1EC_PLUGIN_NAME ), $interval );
-          }
-        }
-	      break;
-	    case 'monthly':
-	      // check if interval is set
-        if( ! $interval || $interval == 1 ) {
-          $txt = __( 'Monthly', AI1EC_PLUGIN_NAME );
-        } else {
-          if( $interval == 2 ) {
-            $txt = __( 'Every other month', AI1EC_PLUGIN_NAME );
-          } else {
-            $txt = sprintf( __( 'Every %d months', AI1EC_PLUGIN_NAME ), $interval );
-          }
-        }
-	      break;
-	    case 'yearly':
-	      // check if interval is set
-        if( ! $interval || $interval == 1 ) {
-          $txt = __( 'Yearly', AI1EC_PLUGIN_NAME );
-        } else {
-          if( $interval == 2 ) {
-            $txt = __( 'Every other year', AI1EC_PLUGIN_NAME );
-          } else {
-            $txt = sprintf( __( 'Every %d years', AI1EC_PLUGIN_NAME ), $interval );
-          }
-        }
-	      break;
-	  }
+		switch( $freq ) {
+			case 'daily':
+				// check if interval is set
+				if( ! $interval || $interval == 1 ) {
+					$txt = __( 'Daily', AI1EC_PLUGIN_NAME );
+				} else {
+					if( $interval == 2 ) {
+						$txt = __( 'Every other day', AI1EC_PLUGIN_NAME );
+					} else {
+						$txt = sprintf( __( 'Every %d days', AI1EC_PLUGIN_NAME ), $interval );
+					}
+				}
+				break;
+			case 'weekly':
+				// check if interval is set
+				if( ! $interval || $interval == 1 ) {
+					$txt = __( 'Weekly', AI1EC_PLUGIN_NAME );
+				} else {
+					if( $interval == 2 ) {
+						$txt = __( 'Every other week', AI1EC_PLUGIN_NAME );
+					} else {
+						$txt = sprintf( __( 'Every %d weeks', AI1EC_PLUGIN_NAME ), $interval );
+					}
+				}
+				break;
+			case 'monthly':
+				// check if interval is set
+				if( ! $interval || $interval == 1 ) {
+					$txt = __( 'Monthly', AI1EC_PLUGIN_NAME );
+				} else {
+					if( $interval == 2 ) {
+						$txt = __( 'Every other month', AI1EC_PLUGIN_NAME );
+					} else {
+						$txt = sprintf( __( 'Every %d months', AI1EC_PLUGIN_NAME ), $interval );
+					}
+				}
+				break;
+			case 'yearly':
+				// check if interval is set
+				if( ! $interval || $interval == 1 ) {
+					$txt = __( 'Yearly', AI1EC_PLUGIN_NAME );
+				} else {
+					if( $interval == 2 ) {
+						$txt = __( 'Every other year', AI1EC_PLUGIN_NAME );
+					} else {
+						$txt = sprintf( __( 'Every %d years', AI1EC_PLUGIN_NAME ), $interval );
+					}
+				}
+				break;
+		}
 	}
-	
+
 	/**
 	 * _ending_sentence function
 	 *
@@ -1495,7 +1528,7 @@ class Ai1ec_Events_Helper {
 		else
 			$txt .= ' - ' . __( 'forever', AI1EC_PLUGIN_NAME );
 	}
-	
+
 	/**
 	 * undocumented function
 	 *
@@ -1504,25 +1537,25 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function convert_rrule_to_text() {
-    $error = false;
-    // check to see if RRULE is set
-    if( isset( $_REQUEST["rrule"] ) ) {
-      
-      // check to see if rrule is empty
-      if( empty( $_REQUEST["rrule"] ) ) {
-        $error = true;
-        $message = 'Recurrence rule cannot be empty!';
-      } else {
-        // convert rrule to text
-        $message = $this->rrule_to_text( $_REQUEST["rrule"] );
-      }
-      
-    } else {
-      $error = true;
-      $message = 'Recurrence rule is not provided!';
-    }
+		$error = false;
+		// check to see if RRULE is set
+		if( isset( $_REQUEST["rrule"] ) ) {
 
-    $output = array(
+			// check to see if rrule is empty
+			if( empty( $_REQUEST["rrule"] ) ) {
+				$error = true;
+				$message = 'Recurrence rule cannot be empty!';
+			} else {
+				// convert rrule to text
+				$message = $this->rrule_to_text( $_REQUEST["rrule"] );
+			}
+
+		} else {
+			$error = true;
+			$message = 'Recurrence rule is not provided!';
+		}
+
+		$output = array(
 			"error" 	=> $error,
 			"message"	=> stripslashes( $message )
 		);
@@ -1530,7 +1563,7 @@ class Ai1ec_Events_Helper {
 		echo json_encode( $output );
 		exit();
 	}
-	
+
 	/**
 	 * post_type_link function
 	 *
@@ -1540,13 +1573,29 @@ class Ai1ec_Events_Helper {
 	 **/
 	function post_type_link( $permalink, $post, $leavename ) {
 		global $ai1ec_app_helper;
-		
+
 		if( $post->post_type == AI1EC_POST_TYPE ) {
 			$delimiter = $ai1ec_app_helper->get_param_delimiter_char( $permalink );
 			return $permalink . $delimiter . 'instance_id=';
 		}
-		
+
 		return $permalink;
+	}
+
+	/**
+	 * get_week_start_day_offset function
+	 *
+	 * Returns the day offset of the first day of the week given a weekday in
+	 * question.
+	 *
+	 * @param int $wday      The weekday to get information about
+	 * @return int           A value between -6 and 0 indicating the week start
+	 *                       day relative to the given weekday.
+	 */
+	function get_week_start_day_offset( $wday ) {
+		global $ai1ec_settings;
+
+		return - ( 7 - ( $ai1ec_settings->week_start_day - $wday ) ) % 7;
 	}
 }
 // END class

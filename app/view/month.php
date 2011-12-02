@@ -1,6 +1,6 @@
 <h2 class="ai1ec-calendar-title"><?php echo esc_html( $title ) ?></h2>
 <span class="ai1ec-title-buttons">
-	<a id="ai1ec-today" class="ai1ec-load-view ai1ec-button" href="#action=ai1ec_month">
+	<a id="ai1ec-today" class="ai1ec-load-view ai1ec-button" href="#action=ai1ec_month&amp;ai1ec_post_ids=<?php echo $post_ids ?>">
 		<?php _e( 'Today', AI1EC_PLUGIN_NAME ) ?>
 	</a>
 </span>
@@ -9,7 +9,7 @@
 		<li>
 			<a id="<?php echo $link['id'] ?>"
 				class="ai1ec-load-view ai1ec-button"
-				href="<?php echo esc_attr( $link['href'] ) ?>">
+				href="<?php echo esc_attr( $link['href'] ) ?>&amp;ai1ec_post_ids=<?php echo $post_ids ?>">
 				<?php echo esc_html( $link['text'] ) ?>
 			</a>
 		</li>
@@ -70,7 +70,7 @@
 											</div>
 										</div><!-- .event-popup -->
 
-										<div class="ai1ec-event <?php if( $event->post_id == $active_event ) echo 'ai1ec-active-event' ?>" <?php echo $event->color_style; ?>>
+										<div class="ai1ec-event <?php if( $event->post_id == $active_event ) echo 'ai1ec-active-event' ?>" style="<?php echo $event->color_style ?>">
 											<?php if( ! $event->allday ): ?>
 												<span class="ai1ec-event-time"><?php echo esc_html( $event->short_start_time ) ?></span>
 											<?php endif ?>

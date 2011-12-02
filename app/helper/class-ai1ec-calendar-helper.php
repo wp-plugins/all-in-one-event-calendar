@@ -47,17 +47,19 @@ class Ai1ec_Calendar_Helper {
 	/**
 	 * get_events_for_month function
 	 *
-	 * Return an array of all dates for the current month as an associative
+	 * Return an array of all dates for the given month as an associative
 	 * array, with each element's value being another array of event objects
 	 * representing the events occuring on that date.
 	 *
 	 * @param int $time         the UNIX timestamp of a date within the desired month
-	 * @param array $categories the categories to filter events by
-	 * @param array $tags       the tags to filter events by
+	 * @param array $filter     Array of filters for the events returned:
+	 *                          ['cat_ids']   => non-associatative array of category IDs
+	 *                          ['tag_ids']   => non-associatative array of tag IDs
+	 *                          ['post_ids']  => non-associatative array of post IDs
 	 *
 	 * @return array            array of arrays as per function description
 	 **/
-	function get_events_for_month( $time, $categories = array(), $tags = array() )
+	function get_events_for_month( $time, $filter = array() )
 	{
 		global $ai1ec_events_helper;
 
@@ -66,29 +68,30 @@ class Ai1ec_Calendar_Helper {
 		$bits = $ai1ec_events_helper->gmgetdate( $time );
 		$last_day = gmdate( 't', $time );
 
-    $start_time = gmmktime( 0, 0, 0, $bits['mon'], 1, $bits['year'] );
-    $end_time   = gmmktime( 0, 0, 0, $bits['mon'], $last_day + 1, $bits['year'] );
-    
-    $events_between = $this->get_events_between( $start_time, $end_time, 'publish', $categories, $tags );
+		$start_time = gmmktime( 0, 0, 0, $bits['mon'], 1, $bits['year'] );
+		$end_time   = gmmktime( 0, 0, 0, $bits['mon'], $last_day + 1, $bits['year'] );
+
+		$month_events = $this->get_events_between( $start_time, $end_time, $filter );
 
 		// ==========================================
 		// = Iterate through each date of the month =
 		// ==========================================
 		for( $day = 1; $day <= $last_day; $day++ )
-	 	{
-	 	  $_events = array();
+		{
+			$_events = array();
 			$start_time = gmmktime( 0, 0, 0, $bits['mon'], $day, $bits['year'] );
 			$end_time = gmmktime( 0, 0, 0, $bits['mon'], $day + 1, $bits['year'] );
-			
-      foreach( $events_between as $event ) {
-        if( $ai1ec_events_helper->gmt_to_local( $event->start ) >= $start_time && $ai1ec_events_helper->gmt_to_local( $event->start ) < $end_time ) {
-          $_events[] = $event;
-        }
-      }
-      $days_events[$day] = $_events;
+
+			// Itemize events that fall under the current day
+			foreach( $month_events as $event ) {
+				$event_start = $ai1ec_events_helper->gmt_to_local( $event->start );
+				if( $event_start >= $start_time && $event_start < $end_time )
+					$_events[] = $event;
+			}
+			$days_events[$day] = $_events;
 		}
 
-		return apply_filters( 'ai1ec_get_events_for_month', $days_events, $time, $categories, $tags );
+		return apply_filters( 'ai1ec_get_events_for_month', $days_events, $time, $filter );
 	}
 
 	/**
@@ -96,7 +99,8 @@ class Ai1ec_Calendar_Helper {
 	 *
 	 * Return an array of weeks, each containing an array of days, each
 	 * containing the date for the day ['date'] (if inside the month) and
-	 * the events ['events'] (if any) for the day.
+	 * the events ['events'] (if any) for the day, and a boolean ['today']
+	 * indicating whether that day is today.
 	 *
 	 * @param int $timestamp	    UNIX timestamp of the 1st day of the desired
 	 *                            month to display
@@ -142,9 +146,9 @@ class Ai1ec_Calendar_Helper {
 				'today' =>
 					$bits['year'] == $today['year'] &&
 					$bits['mon']  == $today['mon'] &&
-				 	$i            == $today['mday'],
+					$i            == $today['mday'],
 				'events' => $days_events[$i]
-		 	);
+			);
 			// If reached the end of the week, increment week
 			if( count( $weeks[$week] ) == 7 )
 				$week++;
@@ -159,68 +163,171 @@ class Ai1ec_Calendar_Helper {
 	}
 
 	/**
+	 * get_week_cell_array function
+	 *
+	 * Return an associative array of weekdays, indexed by the day's date,
+	 * starting the day given by $timestamp, each element an associative array
+	 * containing three elements:
+	 *   ['today']     => whether the day is today
+	 *   ['allday']    => non-associative ordered array of events that are all-day
+	 *   ['notallday'] => non-associative ordered array of non-all-day events to
+	 *                    display for that day, each element another associative
+	 *                    array like so:
+	 *     ['top']       => how many minutes offset from the start of the day
+	 *     ['height']    => how many minutes this event spans
+	 *     ['indent']    => how much to indent this event to accommodate multiple
+	 *                      events occurring at the same time (0, 1, 2, etc., to
+	 *                      be multiplied by whatever desired px/em amount)
+	 *     ['event']     => event data object
+	 *
+	 * @param int $timestamp    the UNIX timestamp of the first day of the week
+	 * @param array $filter     Array of filters for the events returned:
+	 *                          ['cat_ids']   => non-associatative array of category IDs
+	 *                          ['tag_ids']   => non-associatative array of tag IDs
+	 *                          ['post_ids']  => non-associatative array of post IDs
+	 *
+	 * @return array            array of arrays as per function description
+	 **/
+	function get_week_cell_array( $timestamp, $filter = array() )
+	{
+		global $ai1ec_events_helper, $ai1ec_settings;
+
+		// Decompose given date and current time into components, used below
+		$bits = $ai1ec_events_helper->gmgetdate( $timestamp );
+		$now = $ai1ec_events_helper->gmgetdate( $ai1ec_events_helper->gmt_to_local( time() ) );
+
+		// Do one SQL query to find all events for the week, including spanning
+		$week_events = $this->get_events_between(
+			$timestamp,
+			gmmktime( 0, 0, 0, $bits['mon'], $bits['mday'] + 7, $bits['year'] ),
+			$filter,
+			true );
+
+		// Split up events on a per-day basis
+		$all_events = array();
+		foreach( $week_events as $evt ) {
+			$evt_start = $ai1ec_events_helper->gmt_to_local( $evt->start );
+			$evt_end = $ai1ec_events_helper->gmt_to_local( $evt->end );
+
+			// Iterate through each day of the week and generate new event object
+			// based on this one for each day that it spans
+			for( $day = $bits['mday']; $day < $bits['mday'] + 7; $day++ ) {
+				$day_start = gmmktime( 0, 0, 0, $bits['mon'], $day, $bits['year'] );
+				$day_end = gmmktime( 0, 0, 0, $bits['mon'], $day + 1, $bits['year'] );
+
+				// If event falls on this day, make a copy.
+				if( $evt_end > $day_start && $evt_start < $day_end ) {
+					$_evt = clone $evt;
+					if( $evt_start < $day_start ) {
+						// If event starts before this day, adjust copy's start time
+						$_evt->start = $ai1ec_events_helper->local_to_gmt( $day_start );
+						$_evt->start_truncated = true;
+					}
+					if( $evt_end > $day_end ) {
+						// If event ends after this day, adjust copy's end time
+						$_evt->end = $ai1ec_events_helper->local_to_gmt( $day_end );
+						$_evt->end_truncated = true;
+					}
+
+					// Place copy of event in appropriate category
+					if( $_evt->allday )
+						$all_events[$day_start]['allday'][] = $_evt;
+					else
+						$all_events[$day_start]['notallday'][] = $_evt;
+				}
+			}
+		}
+
+		// This will store the returned array
+		$days = array();
+		// =========================================
+		// = Iterate through each date of the week =
+		// =========================================
+		for( $day = $bits['mday']; $day < $bits['mday'] + 7; $day++ )
+		{
+			$day_date = gmmktime( 0, 0, 0, $bits['mon'], $day, $bits['year'] );
+			// Re-fetch date bits, since $bits['mday'] + 7 might be in the next month
+			$day_bits = $ai1ec_events_helper->gmgetdate( $day_date );
+
+			// Initialize empty arrays for this day if no events to minimize warnings
+			if( ! isset( $all_events[$day_date]['allday'] ) ) $all_events[$day_date]['allday'] = array();
+			if( ! isset( $all_events[$day_date]['notallday'] ) ) $all_events[$day_date]['notallday'] = array();
+
+			$notallday = array();
+			$evt_stack = array( 0 ); // Stack to keep track of indentation
+			foreach( $all_events[$day_date]['notallday'] as $evt )
+			{
+				$start_bits = $ai1ec_events_helper->gmgetdate( $ai1ec_events_helper->gmt_to_local( $evt->start ) );
+
+				// Calculate top and bottom edges of current event
+				$top = $start_bits['hours'] * 60 + $start_bits['minutes'];
+				$bottom = min( $top + $evt->getDuration() / 60, 1440 );
+
+				// While there's more than one event in the stack and this event's top
+				// position is beyond the last event's bottom, pop the stack
+				while( count( $evt_stack ) > 1 && $top >= end( $evt_stack ) )
+					array_pop( $evt_stack );
+				// Indentation is number of stacked events minus 1
+				$indent = count( $evt_stack ) - 1;
+				// Push this event onto the top of the stack
+				array_push( $evt_stack, $bottom );
+
+				$notallday[] = array(
+					'top'    => $top,
+					'height' => $bottom - $top,
+					'indent' => $indent,
+					'event'  => $evt,
+				);
+			}
+
+			$days[$day_date] = array(
+				'today'     =>
+					$day_bits['year'] == $now['year'] &&
+					$day_bits['mon']  == $now['mon'] &&
+					$day_bits['mday'] == $now['mday'],
+				'allday'    => $all_events[$day_date]['allday'],
+				'notallday' => $notallday,
+			);
+		}
+
+		return apply_filters( 'ai1ec_get_week_cell_array', $days, $timestamp, $filter );
+	}
+
+	/**
 	 * get_events_between function
 	 *
 	 * Return all events starting after the given start time and before the
-	 * given end time. If there are any all-day events spanning this period,
-	 * then return those as well. All-day events are returned first.
+	 * given end time that the currently logged in user has permission to view.
+	 * If $spanning is true, then also include events that span this
+	 * period. All-day events are returned first.
 	 *
-	 * @param int $start_time     limit to events starting after this (local) UNIX time
-	 * @param int $end_time       limit to events starting before this (local) UNIX time
-	 * @param string $post_status limit to events matching this post_status
-	 *                            (null for no restriction)
+	 * @param int $start_time   limit to events starting after this (local) UNIX time
+	 * @param int $end_time     limit to events starting before this (local) UNIX time
+	 * @param array $filter     Array of filters for the events returned:
+	 *                          ['cat_ids']   => non-associatative array of category IDs
+	 *                          ['tag_ids']   => non-associatative array of tag IDs
+	 *                          ['post_ids']  => non-associatative array of post IDs
+	 * @param bool $spanning    also include events that span this period
 	 *
-	 * @return array              list of matching event objects
+	 * @return array            list of matching event objects
 	 **/
-	function get_events_between( $start_time, $end_time, $post_status = 'publish' ) {
-		global $wpdb, $ai1ec_events_helper, $current_user;
+	function get_events_between( $start_time, $end_time, $filter, $spanning = false ) {
+
+		global $wpdb, $ai1ec_events_helper;
 
 		// Convert timestamps to MySQL format in GMT time
 		$start_time = $ai1ec_events_helper->local_to_gmt( $start_time );
 		$end_time = $ai1ec_events_helper->local_to_gmt( $end_time );
 
 		// Query arguments
-		$args = array(
-			$start_time,
-			$end_time,
-	 	);
-	 	
-	 	if( current_user_can( 'administrator' ) || current_user_can( 'editor' ) ) {
-      $post_status = "AND ( post_status = %s OR post_status = %s ) ";
-      $args[] = 'publish';
-      $args[] = 'private';
-    }
-    else if( is_user_logged_in() ) {
-      // get user info
-      get_currentuserinfo();
-      
-      /**
-       * include post_status = published
-       * or
-       * post_status = private and author = logged in user
-       */
-      $post_status = "AND " .
-                        "( " .
-                          "post_status = %s " .
-                          
-                          "OR " .
-                          
-                          "( " .
-                            "post_status = %s " .
-                            
-                            "AND " .
-                            
-                            "post_author = %d " .
-                          ") " .
-                        ") ";
+		$args = array( $start_time, $end_time );
 
-      $args[] = 'publish';
-      $args[] = 'private';
-      $args[] = $current_user->ID;
-    } else {
-      $post_status = "AND post_status = %s ";
-      $args[] = 'publish';
-    }
+		// Get post status Where snippet and associated SQL arguments
+		$this->_get_post_status_sql( $post_status_where = '', $args );
+
+		// Get the Join (filter_join) and Where (filter_where) statements based on
+		// $filter elements specified
+		$this->_get_filter_sql( $filter );
 
 		$query = $wpdb->prepare(
 			"SELECT p.*, e.post_id, i.id AS instance_id, " .
@@ -235,10 +342,13 @@ class Ai1ec_Calendar_Helper {
 			"FROM {$wpdb->prefix}ai1ec_events e " .
 				"INNER JOIN $wpdb->posts p ON p.ID = e.post_id " .
 				"INNER JOIN {$wpdb->prefix}ai1ec_event_instances i ON e.post_id = i.post_id " .
+				$filter['filter_join'] .
 			"WHERE post_type = '" . AI1EC_POST_TYPE . "' " .
-			"AND i.start >= FROM_UNIXTIME( %d ) " .
-			"AND i.start < FROM_UNIXTIME( %d ) " .
-			$post_status .
+			"AND " .
+				( $spanning ? "i.end > FROM_UNIXTIME( %d ) AND i.start < FROM_UNIXTIME( %d ) "
+										: "i.start >= FROM_UNIXTIME( %d ) AND i.start < FROM_UNIXTIME( %d ) " ) .
+			$filter['filter_where'] .
+			$post_status_where .
 			"ORDER BY allday DESC, i.start ASC, post_title ASC",
 			$args );
 
@@ -261,9 +371,10 @@ class Ai1ec_Calendar_Helper {
 	 * @param int $time	          limit to events starting after this (local) UNIX time
 	 * @param int $limit          return a maximum of this number of items
 	 * @param int $page_offset    offset the result set by $limit times this number
-	 * @param array $filter       Array of filters for the events returned. 
-	 *		                      ['cat_ids']   => non-associatative array of category IDs
-	 *		                      ['tag_ids']   => non-associatative array of tag IDs
+	 * @param array $filter       Array of filters for the events returned.
+	 *		                        ['cat_ids']   => non-associatative array of category IDs
+	 *		                        ['tag_ids']   => non-associatative array of tag IDs
+	 *                            ['post_ids']  => non-associatative array of post IDs
 	 *
 	 * @return array              three-element array:
 	 *                              ['events'] an array of matching event objects
@@ -271,7 +382,8 @@ class Ai1ec_Calendar_Helper {
 	 *															['next'] true if more next events
 	 **/
 	function get_events_relative_to( $time, $limit = 0, $page_offset = 0, $filter = array() ) {
-		global $wpdb, $ai1ec_events_helper, $current_user;
+
+		global $wpdb, $ai1ec_events_helper;
 
 		// Figure out what the beginning of the day is to properly query all-day
 		// events; then convert to GMT time
@@ -287,47 +399,14 @@ class Ai1ec_Calendar_Helper {
 			$first_record = $page_offset * $limit;
 		else
 			$first_record = ( -$page_offset - 1 ) * $limit;
-		
-		// administrators and editors can see private posts
-		if( current_user_can( 'administrator' ) || current_user_can( 'editor' ) ) {
-			$post_status = "AND ( post_status = %s OR post_status = %s ) ";
-			$args[] = 'publish';
-			$args[] = 'private';
-		}
-		else if( is_user_logged_in() ) {
-			// get user info
-			get_currentuserinfo();
 
-			/**
-			* include post_status = published
-			* or
-			* post_status = private and author = logged in user
-			*/
-			$post_status = "AND " .
-							"( " .
-								"post_status = %s " .
+		// Get post status Where snippet and associated SQL arguments
+		$this->_get_post_status_sql( $post_status_where = '', $args );
 
-								"OR " .
+		// Get the Join (filter_join) and Where (filter_where) statements based on
+		// $filter elements specified
+		$this->_get_filter_sql( $filter );
 
-								"( " .
-									"post_status = %s " .
-
-									"AND " .
-
-									"post_author = %d " .
-								") " .
-							") ";
-
-			$args[] = 'publish';
-			$args[] = 'private';
-			$args[] = $current_user->ID;
-		} else {
-			$post_status = "AND post_status = %s ";
-			$args[] = 'publish';
-		}
-
-		// Get the Join (filter_join) and Where (filter_where) statements based on $filter elements specified 
-		$filter = $this->_get_filter_sql( $filter );
 		$query = $wpdb->prepare(
 			"SELECT SQL_CALC_FOUND_ROWS p.*, e.post_id, i.id AS instance_id, " .
 			"UNIX_TIMESTAMP( i.start ) AS start, " .
@@ -348,7 +427,7 @@ class Ai1ec_Calendar_Helper {
 					: "i.start < FROM_UNIXTIME( %d ) "
 				) .
 			$filter['filter_where'] .
-			$post_status .
+			$post_status_where .
 			// Reverse order when viewing negative pages, to get correct set of
 			// records. Then reverse results later to order them properly.
 			"ORDER BY i.start " . ( $page_offset >= 0 ? 'ASC' : 'DESC' ) .
@@ -358,7 +437,7 @@ class Ai1ec_Calendar_Helper {
 
 		$events = $wpdb->get_results( $query, ARRAY_A );
 
-		// Re-order records if in negative page offset
+		// Reorder records if in negative page offset
 		if( $page_offset < 0 ) $events = array_reverse( $events );
 
 		foreach( $events as &$event ) {
@@ -383,11 +462,13 @@ class Ai1ec_Calendar_Helper {
 			$query = $wpdb->prepare(
 				"SELECT COUNT(*) " .
 				"FROM {$wpdb->prefix}ai1ec_events e " .
-				"INNER JOIN {$wpdb->prefix}ai1ec_event_instances i ON e.post_id = i.post_id " .
-				"INNER JOIN $wpdb->posts p ON e.post_id = p.ID " .
+					"INNER JOIN {$wpdb->prefix}ai1ec_event_instances i ON e.post_id = i.post_id " .
+					"INNER JOIN $wpdb->posts p ON e.post_id = p.ID " .
+					$filter['filter_join'] .
 				"WHERE post_type = '" . AI1EC_POST_TYPE . "' " .
 				"AND i.start < FROM_UNIXTIME( %d ) " .
-				( $post_status == null ? '' : "AND post_status = %s " ),
+				$filter['filter_where'] .
+				$post_status_where,
 				$args );
 			$prev = $wpdb->get_var( $query );
 			$next = $more;
@@ -445,16 +526,17 @@ class Ai1ec_Calendar_Helper {
 	 *
 	 * Returns the URL of the configured calendar page in the default view,
 	 * optionally preloaded at the month containing the given event (rather than
-	 * today's date), and optionally prefiltered by the given category IDs and/or
-	 * tag IDs.
+	 * today's date), and optionally prefiltered by the given filters.
 	 *
-	 * @param object|null $event The event to focus the calendar on
-	 * @param array $cat_ids The category IDs to filter the calendar by
-	 * @param array $tag_ids The tag IDs to filter the calendar by
+	 * @param object|null $event  The event to focus the calendar on
+	 * @param array       $filter Array of filters for the events returned.
+	 *		['cat_ids']   => non-associatative array of category IDs
+	 *		['tag_ids']   => non-associatative array of tag IDs
+	 *		['post_ids']  => non-associatative array of post IDs
 	 *
 	 * @return string The URL for this calendar
 	 **/
-	function get_calendar_url( $event = null, $cat_ids = array(), $tag_ids = array() ) {
+	function get_calendar_url( $event = null, $filter = array() ) {
 		global $ai1ec_settings, $ai1ec_events_helper, $ai1ec_app_helper, $wpdb;
 
 		$url = get_permalink( $ai1ec_settings->calendar_page_id );
@@ -470,10 +552,23 @@ class Ai1ec_Calendar_Helper {
 					$today = $ai1ec_events_helper->gmgetdate( $ai1ec_events_helper->gmt_to_local( time() ) );
 					$desired = $ai1ec_events_helper->gmgetdate( $ai1ec_events_helper->gmt_to_local( $event->start ) );
 					$month_offset =
-					 	( $desired['year'] - $today['year'] ) * 12 +
+						( $desired['year'] - $today['year'] ) * 12 +
 						$desired['mon'] - $today['mon'];
 
 					$url .= "ai1ec_month_offset=$month_offset";
+					break;
+
+				case 'week':
+					// Get components of localized timstamps and calculate week offset
+					/* TODO - code this; first need to find out first day of week based on week start day,
+						 then calculate how many weeks off we are from that one
+					$today = $ai1ec_events_helper->gmgetdate( $ai1ec_events_helper->gmt_to_local( time() ) );
+					$desired = $ai1ec_events_helper->gmgetdate( $ai1ec_events_helper->gmt_to_local( $event->start ) );
+					$week_offset =
+						( $desired['year'] - $today['year'] ) * 12 +
+						$desired['mon'] - $today['mon'];
+
+					$url .= "ai1ec_week_offset=$week_offset";*/
 					break;
 
 				case 'agenda':
@@ -505,12 +600,13 @@ class Ai1ec_Calendar_Helper {
 			$url .= "&ai1ec_active_event=$event->post_id";
 		}
 
-		if( $cat_ids )
-			$url .= $ai1ec_app_helper->get_param_delimiter_char( $url ) .
-				'ai1ec_cat_ids=' . join( ',', $cat_ids );
-		if( $tag_ids )
-			$url .= $ai1ec_app_helper->get_param_delimiter_char( $url ) .
-				'ai1ec_tag_ids=' . join( ',', $tag_ids );
+		// Add filter parameters
+		foreach( $filter as $key => $val ) {
+			if( $val ) {
+				$url .= $ai1ec_app_helper->get_param_delimiter_char( $url ) .
+					"ai1ec_$key=" . join( ',', $val );
+			}
+		}
 
 		return $url;
 	}
@@ -528,7 +624,7 @@ class Ai1ec_Calendar_Helper {
 		static $weekdays;
 
 		if( ! isset( $weekdays ) )
-	 	{
+		{
 			$time = strtotime( 'next Sunday' );
 			$time = strtotime( "+{$ai1ec_settings->week_start_day} days", $time );
 
@@ -544,7 +640,7 @@ class Ai1ec_Calendar_Helper {
 	/**
 	 * get_month_pagination_links function
 	 *
-	 * Returns an associative array of four links for the month view of the
+	 * Returns a non-associative array of four links for the month view of the
 	 * calendar:
 	 * previous year, previous month, next month, and next year, in that order.
 	 * Each element's key is an associative array containing the link's ID
@@ -590,6 +686,53 @@ class Ai1ec_Calendar_Helper {
 	}
 
 	/**
+	 * get_week_pagination_links function
+	 *
+	 * Returns a non-associative array of two links for the week view of the
+	 * calendar:
+	 * previous week, next week, in that order.
+	 * Each element's key is an associative array containing the link's ID
+	 * ['id'], text ['text'] and value to assign to link's href ['href'].
+	 *
+	 * @param int $cur_offset week offset of current week, needed for hrefs
+	 *
+	 * @return array          array of link information as described above
+	 **/
+	function get_week_pagination_links( $cur_offset ) {
+		global $ai1ec_events_helper;
+
+		$links = array();
+
+		// Base timestamp on offset week
+		$bits = $ai1ec_events_helper->gmgetdate( $ai1ec_events_helper->gmt_to_local( time() ) );
+		$bits['mday'] += $ai1ec_events_helper->get_week_start_day_offset( $bits['wday'] );
+		$bits['mday'] += $cur_offset * 7;
+
+		$links[] = array(
+			'id' => 'ai1ec-prev-week',
+			'text' =>
+				'‹ ' .
+				sprintf(
+					__( 'Week of %s', AI1EC_PLUGIN_NAME ),
+					date_i18n( __( 'M j' ), gmmktime( 0, 0, 0, $bits['mon'], $bits['mday'] - 7, $bits['year'] ), true )
+				),
+			'href' => '#action=ai1ec_week&ai1ec_week_offset=' . ( $cur_offset - 1 ),
+		);
+		$links[] = array(
+			'id' => 'ai1ec-next-week',
+			'text' =>
+				sprintf(
+					__( 'Week of %s', AI1EC_PLUGIN_NAME ),
+					date_i18n( __( 'M j' ), gmmktime( 0, 0, 0, $bits['mon'], $bits['mday'] + 7, $bits['year'] ), true )
+				)
+				. ' ›',
+			'href' => '#action=ai1ec_week&ai1ec_week_offset=' . ( $cur_offset + 1 ),
+		);
+
+		return $links;
+	}
+
+	/**
 	 * get_agenda_pagination_links function
 	 *
 	 * Returns an associative array of two links for the agenda view of the
@@ -628,28 +771,82 @@ class Ai1ec_Calendar_Helper {
 	}
 
 	/**
+	 * _get_post_status_sql function
+	 *
+	 * Returns SQL snippet for properly matching event posts, as well as array
+	 * of arguments to pass to $wpdb->prepare, in function argument references.
+	 * Nothing is returned by the function.
+	 *
+	 * @param string &$sql  The variable to store the SQL snippet into
+	 * @param array  &$args The variable to store the SQL arguments into
+	 *
+	 * @return void
+	 */
+	function _get_post_status_sql( &$sql, &$args )
+	{
+		global $current_user;
+
+		// Query the correct post status
+		if( current_user_can( 'administrator' ) || current_user_can( 'editor' ) )
+		{
+			// User has privilege of seeing all published and private posts
+
+			$post_status = "AND ( post_status = %s OR post_status = %s ) ";
+			$args[] = 'publish';
+			$args[] = 'private';
+		}
+		elseif( is_user_logged_in() )
+		{
+			// User has privilege of seeing all published and only their own private
+			// posts.
+
+			// get user info
+			get_currentuserinfo();
+
+			// include post_status = published
+			//   OR
+			// post_status = private AND author = logged-in user
+			$post_status =
+				"AND ( " .
+					"post_status = %s " .
+					"OR ( post_status = %s AND post_author = %d ) " .
+				") ";
+
+			$args[] = 'publish';
+			$args[] = 'private';
+			$args[] = $current_user->ID;
+		} else {
+			// User can only see published posts.
+			$post_status = "AND post_status = %s ";
+			$args[] = 'publish';
+		}
+	}
+
+	/**
 	 * _get_filter_sql function
 	 *
 	 * Takes an array of filtering options and turns it into JOIN and WHERE statements
 	 * for running an SQL query limited to the specified options
 	 *
-	 * @param array $filter       Array of filters for the events returned. 
+	 * @param array &$filter      Array of filters for the events returned.
 	 *		                        ['cat_ids']   => non-associatative array of category IDs
 	 *		                        ['tag_ids']   => non-associatative array of tag IDs
 	 *		                        ['post_ids']  => non-associatative array of event post IDs
-	 *
-	 * @return array              Returns the same $filter array modified to have:
+	 *														This array is modified to have:
 	 *                              ['filter_join']  the Join statements for the SQL
 	 *                              ['filter_where'] the Where statements for the SQL
-	 **/
-	function _get_filter_sql( $filter ) {
+	 *
+	 * @return void
+	 */
+	function _get_filter_sql( &$filter ) {
 		global $wpdb;
 
 		// Set up the filter join and where strings
 		$filter['filter_join']  = '';
 		$filter['filter_where'] = '';
 
-		// By default open the Where with an AND ( .. ) to group all statements. Later, set it to OR to join statements together.
+		// By default open the Where with an AND ( .. ) to group all statements.
+		// Later, set it to OR to join statements together.
 		// TODO - make this cleaner by supporting the choice of AND/OR logic
 		$where_logic = ' AND (';
 
@@ -681,11 +878,9 @@ class Ai1ec_Calendar_Helper {
 		}
 
 		// Close the Where statement bracket if any Where statements were set
-		if( $filter['filter_where'] != '') {
+		if( $filter['filter_where'] != '' ) {
 			$filter['filter_where'] .= ' ) ';
 		}
-
-		return $filter;
-	}	
+	}
 }
 // END class

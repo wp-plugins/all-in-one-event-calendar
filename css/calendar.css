@@ -6,9 +6,14 @@
 .ai1ec-container small {
 	margin: 0 !important;
 }
+/* Some themes pollute table row backgrounds - this line undoes this: */
+.ai1ec-container tr {
+	background: none !important;
+}
 
 /* Active buttons */
 .ai1ec-action-month #ai1ec-view-month,
+.ai1ec-action-week #ai1ec-view-week,
 .ai1ec-action-agenda #ai1ec-view-agenda {
 	color: #000;
 	background: #ddd;
@@ -163,7 +168,10 @@ a.ai1ec-pagination {
 .ai1ec-action-month .ai1ec-pagination a {
 	width: 7em;
 }
-.ai1ec-action-agenda a.ai1ec-pagination {
+.ai1ec-action-week .ai1ec-pagination a {
+	width: 8em;
+}
+.ai1ec-action-agenda .ai1ec-pagination a {
 	float: right;
 	width: 9em;
 }
@@ -171,8 +179,9 @@ a.ai1ec-pagination {
 	width: 4em;
 }
 
-/* Month table */
-table.ai1ec-month-view {
+/* Month, week tables */
+table.ai1ec-month-view,
+.ai1ec-week-view table {
 	border-collapse: collapse;
 	border: 1px solid #ddd !important;
 	margin: 0 !important;
@@ -181,7 +190,28 @@ table.ai1ec-month-view {
 	clear: both;
 	width: 100% !important;
 }
-.ai1ec-month-view td {
+.ai1ec-week-view .tablescroll_wrapper {
+	position: relative;
+	border-bottom: 1px solid #ddd;
+}
+table.ai1ec-week-view-original {
+	visibility: hidden;
+	height: 400px;
+}
+table.ai1ec-week-view-original.tablescroll_body {
+	visibility: visible;
+	height: auto;
+}
+.ai1ec-week-view table.tablescroll_head,
+.ai1ec-week-view table.tablescroll_head th {
+	border-bottom: none !important;
+}
+table.ai1ec-week-view-original.tablescroll_body,
+table.ai1ec-week-view-original.tablescroll_body tr:first-child td {
+	border-top: none !important;
+}
+.ai1ec-month-view td,
+.ai1ec-week-view td {
 	border: 1px solid #ddd !important;
 	vertical-align: top;
 	background: none !important;
@@ -189,13 +219,17 @@ table.ai1ec-month-view {
 .ai1ec-month-view td.ai1ec-empty {
 	background: #f8f8f8 !important;
 }
-.ai1ec-month-view th {
-	padding: 0.2em !important;
-	border-bottom: 1px solid #ddd;
-	font: bold 9pt Tahoma, Geneva, sans-serif !important;
-	text-align: center !important;
-	background: #f2f2f2 !important;
+.ai1ec-month-view th,
+.ai1ec-week-view th {
 	border: none !important;
+	background: #f2f2f2 !important;
+	padding: 0.2em !important;
+}
+.ai1ec-month-view th,
+.ai1ec-week-view th,
+.ai1ec-week-view .ai1ec-hour-marker div,
+.ai1ec-week-view .ai1ec-allday-label {
+	font: bold 9pt Tahoma, Geneva, sans-serif !important;
 	color: #999 !important;
 	text-shadow: 0 1px 0 #fff;
 	-o-text-shadow: 0 1px 0 #fff;
@@ -203,15 +237,38 @@ table.ai1ec-month-view {
 	-moz-text-shadow: 0 1px 0 #fff;
 	-webkit-text-shadow: 0 1px 0 #fff;
 }
-.ai1ec-month-view td {
+.ai1ec-month-view th {
+	text-align: center !important;
+}
+.ai1ec-week-view th {
+	text-align: left !important;
+}
+.ai1ec-week-view th .ai1ec-weekday-date {
+	font-size: 10.5pt !important;
+	font-weight: normal !important;
+}
+.ai1ec-week-view th .ai1ec-weekday-day {
+	font-size: 9pt !important;
+	font-weight: normal !important;
+}
+.ai1ec-month-view td,
+.ai1ec-week-view td {
 	padding: 0 !important;
 	text-align: left;
 }
-.ai1ec-month-view .ai1ec-day {
+.ai1ec-month-view .ai1ec-day,
+.ai1ec-week-view .ai1ec-day,
+.ai1ec-week-view .ai1ec-allday-events {
 	position: relative;
+}
+.ai1ec-month-view .ai1ec-day {
 	min-height: 5em;
 }
-.ai1ec-month-view .ai1ec-today {
+.ai1ec-week-view .ai1ec-day {
+	height: 1440px;
+}
+.ai1ec-month-view .ai1ec-today,
+.ai1ec-week-view .ai1ec-today {
 	background: #ffd !important;
 	background: rgba(255,255,128,0.3) !important;
 }
@@ -230,36 +287,119 @@ table.ai1ec-month-view {
 	-webkit-text-shadow: 0 1px 0 #fff;
 }
 
-/* Event summaries in month view, including popups */
-.ai1ec-month-view a.ai1ec-event-container {
+/* Week view now marker */
+.ai1ec-week-view .ai1ec-grid-container {
+	position: absolute;
+	top: auto;
+	left: 0;
+	right: 0;
+}
+.ai1ec-week-view .ai1ec-now-marker,
+.ai1ec-week-view .ai1ec-hour-marker,
+.ai1ec-week-view .ai1ec-quarter-marker {
+	position: absolute;
+	left: 0;
+	right: 0;
+	padding-right: 8px;
+}
+.ai1ec-week-view .ai1ec-hour-marker {
+	border-top: 1px solid #e8e8e8;
+	border-top: 1px solid rgba(0,0,0,0.08);
+	height: 60px;
+	background: #f2f2f2 !important;
+	background: rgba(0,0,0,0.054) !important;
+}
+.ai1ec-week-view .ai1ec-hour-marker div,
+.ai1ec-week-view .ai1ec-allday-label {
 	position: relative;
+	z-index: 2;
+	margin-left: 1px;
+	padding: 0 0.2em;
+	font-size: 8pt !important;
+	font-weight: normal !important;
+	background: #f2f2f2;
+	float: left;
+	border-radius: 0.3em;
+	-moz-border-radius: 0.3em;
+	-webkit-border-radius: 0.3em;
+}
+.ai1ec-week-view .ai1ec-allday-label {
+	margin-top: 1px;
+}
+.ai1ec-week-view .ai1ec-hour-marker.ai1ec-business-hour {
+	background: #fff !important;
+	background: transparent !important;
+}
+.ai1ec-week-view .ai1ec-quarter-marker {
+	border-top: 1px solid #f4f4f4;
+	border-top: 1px solid rgba(0,0,0,0.05);
+}
+.ai1ec-week-view .ai1ec-now-marker {
+	border-top: 1px solid #f2c539;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+	z-index: 2;
+}
+/* Event summaries in month/week view, including popups */
+.ai1ec-month-view a.ai1ec-event-container,
+.ai1ec-week-view a.ai1ec-event-container {
 	font: 9pt Tahoma, Geneva, sans-serif !important;
 	text-decoration: none !important;
 	display: block;
 	border: none !important;
+	color: #568 !important;
 }
-.ai1ec-month-view .ai1ec-event {
+.ai1ec-month-view a.ai1ec-event-container,
+.ai1ec-week-view .ai1ec-allday-events a.ai1ec-event-container {
+	position: relative;
+}
+.ai1ec-week-view .ai1ec-week a.ai1ec-event-container {
+	position: absolute;
+	box-sizing: border-box;
+	-o-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	right: 0;
+	border-radius: 0.3em;
+	-moz-border-radius: 0.3em;
+	-webkit-border-radius: 0.3em;
+	box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+	-webkit-box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+	border: 2px solid #ced3dd !important;
+	background: #fff !important;
+	background: linear-gradient( top, #fff, #ced3dd ) !important;
+	background: -o-linear-gradient( top, #fff, #ced3dd ) !important;
+	background: -moz-linear-gradient( top, #fff, #ced3dd ) !important;
+	background: -webkit-gradient( linear, left top, left bottom, color-stop( 0, #fff ), color-stop( 1, #ced3dd ) ) !important;
+	background: -webkit-linear-gradient( top, #fff, #ced3dd ) !important;
+}
+.ai1ec-month-view .ai1ec-event,
+.ai1ec-week-view .ai1ec-event {
 	border-radius: 0.3em;
 	-o-border-radius: 0.3em;
 	-moz-border-radius: 0.3em;
 	-webkit-border-radius: 0.3em;
-	margin: 1px 1px 0 1px;
-	padding: 0 0 1px 2px;
+	margin: 1px 0 0;
+	padding: 0 3px 1px;
 	white-space: nowrap;
 	overflow: hidden;
-	color: #568 !important;
+	max-height: 100%;
 }
-.ai1ec-month-view .ai1ec-allday .ai1ec-event {
+.ai1ec-month-view .ai1ec-allday .ai1ec-event,
+.ai1ec-week-view .ai1ec-allday .ai1ec-event {
 	background: #568;
 	color: #fff !important;
 }
-.ai1ec-month-view .ai1ec-category-colors {
+.ai1ec-month-view .ai1ec-category-colors,
+.ai1ec-week-view .ai1ec-category-colors {
 	float: right;
 	font-size: 1.2em;
 	margin-top: 1px;
 }
 .ai1ec-month-view .ai1ec-event-popup,
-.ai1ec-month-view .ai1ec-event-summary {
+.ai1ec-month-view .ai1ec-event-summary,
+.ai1ec-week-view .ai1ec-event-popup,
+.ai1ec-week-view .ai1ec-event-summary {
 	border: 2px solid #d4c4b0;
 	box-shadow: 1px 5px 8px rgba(0,0,0,0.08);
 	-o-box-shadow: 1px 5px 8px rgba(0,0,0,0.08);
@@ -268,7 +408,8 @@ table.ai1ec-month-view {
 	-webkit-box-shadow: 1px 5px 8px rgba(0,0,0,0.08);
 	background: #fff;
 }
-.ai1ec-month-view .ai1ec-event-popup {
+.ai1ec-month-view .ai1ec-event-popup,
+.ai1ec-week-view .ai1ec-event-popup {
 	position: absolute;
 	z-index: 5;
 	display: none;
@@ -282,32 +423,41 @@ table.ai1ec-month-view {
 	-moz-border-radius: 0 0.3em 0.3em 0;
 	-webkit-border-radius: 0 0.3em 0.3em 0;
 }
-.ai1ec-month-view .ai1ec-event-popup.ai1ec-shifted-right {
+.ai1ec-week-view .ai1ec-week .ai1ec-event-popup {
+	top: -3px;
+}
+.ai1ec-month-view .ai1ec-event-popup.ai1ec-shifted-right,
+.ai1ec-week-view .ai1ec-event-popup.ai1ec-shifted-right {
 	border-radius: 0.3em 0 0 0.3em;
 	-o-border-radius: 0.3em 0 0 0.3em;
-	-ms-border-radius: 0.3em 0 0 0.3em;
 	-moz-border-radius: 0.3em 0 0 0.3em;
 	-webkit-border-radius: 0.3em 0 0 0.3em;
 }
-.ai1ec-month-view .ai1ec-event-popup-bg {
+.ai1ec-month-view .ai1ec-event-popup-bg,
+.ai1ec-week-view .ai1ec-event-popup-bg {
 	position: relative;
 	left: -2px;
 	margin-right: -1px;
 	padding: 2px 2px 2px 5px;
 	background: #fff;
 }
-.ai1ec-month-view .ai1ec-shifted-right .ai1ec-event-popup-bg {
+.ai1ec-month-view .ai1ec-shifted-right .ai1ec-event-popup-bg,
+.ai1ec-week-view .ai1ec-shifted-right .ai1ec-event-popup-bg {
 	left: 1px;
 	padding: 2px 5px 2px 2px;
 }
 .ai1ec-month-view .ai1ec-event-summary,
-.ai1ec-month-view .ai1ec-event-summary p {
+.ai1ec-month-view .ai1ec-event-summary p,
+.ai1ec-week-view .ai1ec-event-summary,
+.ai1ec-week-view .ai1ec-event-summary p {
 	font-size: 0.95em !important;
 }
-.ai1ec-month-view .ai1ec-event-summary p {
+.ai1ec-month-view .ai1ec-event-summary p,
+.ai1ec-week-view .ai1ec-event-summary p {
 	line-height: 1.4em !important;
 }
-.ai1ec-month-view .ai1ec-event-summary {
+.ai1ec-month-view .ai1ec-event-summary,
+.ai1ec-week-view .ai1ec-event-summary {
 	position: absolute;
 	overflow: hidden;
 	top: -2px;
@@ -328,22 +478,31 @@ table.ai1ec-month-view {
 	background: -webkit-linear-gradient( #fff 1.5em, #fdfadc );
 	color: #6d5e4a;
 }
-.ai1ec-month-view .ai1ec-shifted-right .ai1ec-event-summary {
+.ai1ec-month-view .ai1ec-shifted-right .ai1ec-event-summary,
+.ai1ec-week-view .ai1ec-shifted-right .ai1ec-event-summary {
 	left: 100%;
 	border-radius: 0 0.3em 0.3em 0.3em;
 	-o-border-radius: 0 0.3em 0.3em 0.3em;
 	-moz-border-radius: 0 0.3em 0.3em 0.3em;
 	-webkit-border-radius: 0 0.3em 0.3em 0.3em;
 }
-.ai1ec-month-view .ai1ec-event-summary p {
+.ai1ec-month-view .ai1ec-event-summary p,
+.ai1ec-week-view .ai1ec-event-summary p {
 	margin: 0 0 0.3em !important;
 	padding: 0 !important;
 }
-.ai1ec-month-view .ai1ec-event-time {
+.ai1ec-month-view .ai1ec-event-time,
+.ai1ec-week-view .ai1ec-event-time {
 	font-size: 8pt;
 	font-weight: bold;
 }
-.ai1ec-month-view .ai1ec-read-more {
+.ai1ec-week-view .ai1ec-week .ai1ec-event-title {
+	display: block;
+	white-space: normal;
+	font-size: 8pt !important;
+}
+.ai1ec-month-view .ai1ec-read-more,
+.ai1ec-week-view .ai1ec-read-more {
 	text-align: center;
 	font-size: 8pt;
 	color: #aaa;
@@ -392,6 +551,41 @@ table.ai1ec-month-view {
 	border: none;
 	padding: 1px; /* To compensate for height lost by invisible border */
 	cursor: default;
+}
+
+/* Truncated events */
+.ai1ec-week-view .ai1ec-start-truncated .ai1ec-event-time {
+	display: none;
+}
+.ai1ec-week-view .ai1ec-week a.ai1ec-event-container.ai1ec-start-truncated {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	-moz-border-radius-topleft: 0;
+	-moz-border-radius-topright: 0;
+	-webkit-border-top-left-radius: 0;
+	-webkit-border-top-right-radius: 0;
+}
+.ai1ec-week-view .ai1ec-week .ai1ec-start-truncator {
+	position: absolute;
+	top: -2px;
+	left: -2px;
+	line-height: 1em;
+	font-size: 6pt;
+}
+.ai1ec-week-view .ai1ec-week a.ai1ec-event-container.ai1ec-end-truncated {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	-moz-border-radius-bottomleft: 0;
+	-moz-border-radius-bottomright: 0;
+	-webkit-border-bottom-left-radius: 0;
+	-webkit-border-bottom-right-radius: 0;
+}
+.ai1ec-week-view .ai1ec-week .ai1ec-end-truncator {
+	position: absolute;
+	bottom: -2px;
+	right: -2px;
+	line-height: 1em;
+	font-size: 6pt;
 }
 
 /* Agenda view */

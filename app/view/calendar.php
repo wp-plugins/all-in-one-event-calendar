@@ -1,3 +1,4 @@
+<!-- START All-in-One Event Calendar Plugin - Version 1.2 -->
 <table class="ai1ec-calendar-toolbar">
 	<tbody>
 		<tr>
@@ -6,14 +7,21 @@
 				<ul class="ai1ec-view-tabs">
 					<li>
 						<a id="ai1ec-view-month" class="ai1ec-load-view ai1ec-button"
-							href="#action=ai1ec_month">
+							href="#action=ai1ec_month&amp;ai1ec_post_ids=<?php echo $selected_post_ids ?>">
 							<img src="<?php echo AI1EC_IMAGE_URL ?>/month-view.png" alt="<?php _e( 'Month', AI1EC_PLUGIN_NAME ) ?>" />
 							<?php _e( 'Month', AI1EC_PLUGIN_NAME ) ?>
 						</a>
 					</li>
 					<li>
+						<a id="ai1ec-view-week" class="ai1ec-load-view ai1ec-button"
+							href="#action=ai1ec_week&amp;ai1ec_post_ids=<?php echo $selected_post_ids ?>">
+							<img src="<?php echo AI1EC_IMAGE_URL ?>/week-view.png" alt="<?php _e( 'Week', AI1EC_PLUGIN_NAME ) ?>" />
+							<?php _e( 'Week', AI1EC_PLUGIN_NAME ) ?>
+						</a>
+					</li>
+					<li>
 						<a id="ai1ec-view-agenda" class="ai1ec-load-view ai1ec-button"
-							href="#action=ai1ec_agenda">
+							href="#action=ai1ec_agenda&amp;ai1ec_post_ids=<?php echo $selected_post_ids ?>">
 							<img src="<?php echo AI1EC_IMAGE_URL ?>/agenda-view.png" alt="<?php _e( 'Month', AI1EC_PLUGIN_NAME ) ?>" />
 							<?php _e( 'Agenda', AI1EC_PLUGIN_NAME ) ?>
 						</a>
@@ -84,6 +92,7 @@
 					</div>
 				</td>
 			<?php endif // $categories || $tags ?>
+
 		</tr>
 	</tbody>
 </table>
@@ -109,3 +118,4 @@
 		<?php _e( 'Subscribe in Google Calendar', AI1EC_PLUGIN_NAME ) ?>
 	</a>
 <?php endif ?>
+<!-- END All-in-One Event Calendar Plugin -->

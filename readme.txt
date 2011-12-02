@@ -4,31 +4,31 @@ Donate link: http://theseednetwork.com/software/all-in-one-event-calendar-wordpr
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
 Tested up to: 3.2.1
-Stable tag: 1.1.3
+Stable tag: 1.2
 
-An event calendar system with month and agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
+An event calendar system with month, week & agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
 == Description ==
 
-Welcome to the [All-in-One Event Calendar Plugin](http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/), from [The Seed Studio](http://theseednetwork.com), a [web development](http://theseednetwork.com) company. The All-in-One Event Calendar is a new way to list your events in WordPress and easily share them with the rest of the world.
+Welcome to the [All-in-One Event Calendar Plugin](http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/), from [The Seed Network](http://theseednetwork.com/), a web development company. The All-in-One Event Calendar is a new way to list your events in WordPress and easily share them with the rest of the world.
 
-Our new calendar system combines a clean visual design, solid architectural patterns and rigorous testing with a powerful set of features to create the most advanced calendar system available for WordPress and one of the most powerful website calendar systems in the world. Best of all: it’s completely free.
+Our new calendar system combines a clean visual design, solid architectural patterns and a powerful set of features to create the most advanced calendar system available for WordPress. Best of all: it’s completely free.
+
+**New in version 1.2:** A beautifully rendered, scrolling **Week view**!
 
 = Calendar Features For Users =
 
 This plugin has many features we hope will prove useful to users, including:
 
-* Recurring* events
-* Filtering by event category or tag
-* Easy sharing with Google Calendar, Apple iCal, MS Outlook and any other system that accepts iCalendar (.ics) feeds
-* Embedded Google Maps
-* Color-coded events based on category
-* Event-registration ready
-* Month and agenda views
-* Upcoming Events widget
-* Links to filtered calendar views
-
-(* Limited recurrence patterns available in first release. Full support to come in the next release.)
+* **Recurring** events
+* **Filtering** by event category or tag
+* Easy **sharing** with Google Calendar, Apple iCal, MS Outlook and any other system that accepts iCalendar (.ics) feeds
+* Embedded **Google Maps**
+* **Color-coded** events based on category
+* **Event-registration** ready
+* **Month**, **week** and **agenda** views
+* **Upcoming Events** widget
+* Direct links to **filtered calendar views**
 
 = Features for Website and Blog Owners =
 
@@ -48,63 +48,67 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 * Each event links to the original calendar
 * Your calendar can be embedded into a WordPress page without needing to create template files or modify the theme
 
-[Check out the DEMO »](http://demo.theseedstudio.com/)
+**[Check out the DEMO »](http://demo.theseednetwork.com/)**
 
-[Track the development process »](http://trac.the-seed.ca/roadmap)
+**[Track the development process »](http://trac.theseednetwork.com/roadmap)**
 
-[Bug reports (only for registered users) »](http://trac.the-seed.ca/newticket)
+**[Bug reports »](http://trac.theseednetwork.com/newticket)** ([registration](http://trac.theseednetwork.com/register) required)
 
-[Get Premium Support »](http://theseednetwork.com/get-supported) from [The Seed Studio »](http://theseednetwork.com/)
+**[Get Premium Support »](http://theseednetwork.com/get-supported)** from [The Seed Studio](http://theseednetwork.com/)
 
 == Changelog ==
+= Version 1.2 =
+* Added scrollable Week view [#117](http://trac.the-seed.ca/ticket/117)
+* Fixed some notice-level errors
+
 = Version 1.1.3 =
-* Fixed: last date issue for recurring events "until" end date [#147](http://trac.the-seed.ca/ticket/147)
+* Fixed: last date issue for recurring events "until" end date [#147](http://trac.theseednetwork.com/ticket/147)
 * Fixed an issue with settings page not saving changes.
 * Fixed issues when subscribing to calendars.
-* Export only published events [#95](http://trac.the-seed.ca/ticket/95)
-* Added translation patch. Thank you josjo! [#150](http://trac.the-seed.ca/ticket/150)
-* Add language and region awareness in functions for Google Map. Thank you josjo! [#102](http://trac.the-seed.ca/ticket/102)
-* Small translation error in class-ai1ec-app-helper.php. Thank you josjo! [#94](http://trac.the-seed.ca/ticket/94)
-* Added Dutch, Spanish, and Swedish translations. For up to date language files, visit: [http://trac.the-seed.ca/ticket/78](http://trac.the-seed.ca/ticket/78)
+* Export only published events [#95](http://trac.theseednetwork.com/ticket/95)
+* Added translation patch. Thank you josjo! [#150](http://trac.theseednetwork.com/ticket/150)
+* Add language and region awareness in functions for Google Map. Thank you josjo! [#102](http://trac.theseednetwork.com/ticket/102)
+* Small translation error in class-ai1ec-app-helper.php. Thank you josjo! [#94](http://trac.theseednetwork.com/ticket/94)
+* Added Dutch, Spanish, and Swedish translations. For up to date language files, visit [ticket #78](http://trac.theseednetwork.com/ticket/78).
 
 = Version 1.1.2 =
-* Fixed: Problem in repeat UI when selecting months before October [#136](http://trac.the-seed.ca/ticket/136)
-* Fixed: Append instance_id only to events permalink [#140](http://trac.the-seed.ca/ticket/140)
-* Fixed: Events ending on date problem [#141](http://trac.the-seed.ca/ticket/141)
+* Fixed: Problem in repeat UI when selecting months before October [#136](http://trac.theseednetwork.com/ticket/136)
+* Fixed: Append instance_id only to events permalink [#140](http://trac.theseednetwork.com/ticket/140)
+* Fixed: Events ending on date problem [#141](http://trac.theseednetwork.com/ticket/141)
 * Feature: Added French translations
 
 = Version 1.1.1 =
 * Fixes a problem when plugin is enabled for first time
 
 = Version 1.1 =
-* Feature: New recurrence UI when adding events [#40](http://trac.the-seed.ca/ticket/40)
-* Feature: Translate recurrence rule to Human readable format that allows localization [#40](http://trac.the-seed.ca/ticket/40)
-* Feature: Add Filter by Categories, Tags to Widget [#44](http://trac.the-seed.ca/ticket/44)
-* Feature: Add option to keep all events expanded in the agenda view [#33](http://trac.the-seed.ca/ticket/33)
-* Feature: Make it possible to globalize the date picker. Thank you josjo! [#52](http://trac.the-seed.ca/ticket/52)
-* Fixed: On recurring events show the date time of the current event and NOT the original event [#39](http://trac.the-seed.ca/ticket/39)
-* Fixed: Events posted in Standard time from Daylight Savings Time are wrong [#42](http://trac.the-seed.ca/ticket/42)
-* Fixed: Multi-day Events listing twice [#56](http://trac.the-seed.ca/ticket/56)
-* Fixed: %e is not supported in gmstrftime on Windows [#53](http://trac.the-seed.ca/ticket/53)
-* Improved: IE9 Support [#11](http://trac.the-seed.ca/ticket/11)
-* Improved: Corrected as many as possible HTML validation errors [#9](http://trac.the-seed.ca/ticket/9)
+* Feature: New recurrence UI when adding events [#40](http://trac.theseednetwork.com/ticket/40)
+* Feature: Translate recurrence rule to Human readable format that allows localization [#40](http://trac.theseednetwork.com/ticket/40)
+* Feature: Add Filter by Categories, Tags to Widget [#44](http://trac.theseednetwork.com/ticket/44)
+* Feature: Add option to keep all events expanded in the agenda view [#33](http://trac.theseednetwork.com/ticket/33)
+* Feature: Make it possible to globalize the date picker. Thank you josjo! [#52](http://trac.theseednetwork.com/ticket/52)
+* Fixed: On recurring events show the date time of the current event and NOT the original event [#39](http://trac.theseednetwork.com/ticket/39)
+* Fixed: Events posted in Standard time from Daylight Savings Time are wrong [#42](http://trac.theseednetwork.com/ticket/42)
+* Fixed: Multi-day Events listing twice [#56](http://trac.theseednetwork.com/ticket/56)
+* Fixed: %e is not supported in gmstrftime on Windows [#53](http://trac.theseednetwork.com/ticket/53)
+* Improved: IE9 Support [#11](http://trac.theseednetwork.com/ticket/11)
+* Improved: Corrected as many as possible HTML validation errors [#9](http://trac.theseednetwork.com/ticket/9)
 * Improved: Optimization changes for better performance.
 
 = Version 1.0.9 =
 * Fixed a problem with timezone dropdown list
 
 = Version 1.0.8 =
-* Added better if not full localization support [#25](http://trac.the-seed.ca/ticket/25) [#23](http://trac.the-seed.ca/ticket/23) [#10](http://trac.the-seed.ca/ticket/10) - thank you josjo
-* Added qTranslate support and output to post data using WordPress filters [#1](http://trac.the-seed.ca/ticket/1)
-* Added uninstall support [#7](http://trac.the-seed.ca/ticket/7)
-* Added 24h time in time pickers [#26](http://trac.the-seed.ca/ticket/26) - thank you josjo
-* Fixed an issue when event duration time is decremented in single (detailed) view [#2](http://trac.the-seed.ca/ticket/2)
-* Fixed an issue with times for ics imported events [#6](http://trac.the-seed.ca/ticket/6)
-* Better timezone control [#27](http://trac.the-seed.ca/ticket/27)
-* Fixed the category filter in agenda view [#12](http://trac.the-seed.ca/ticket/12)
-* Fixed event date being set to null when using quick edit [#16](http://trac.the-seed.ca/ticket/16)
-* Fixed a bug in time pickers [#17](http://trac.the-seed.ca/ticket/17) - thank you josjo
-* Deprecated function split() is removed [#8](http://trac.the-seed.ca/ticket/8)
+* Added better if not full localization support [#25](http://trac.theseednetwork.com/ticket/25) [#23](http://trac.theseednetwork.com/ticket/23) [#10](http://trac.theseednetwork.com/ticket/10) - thank you josjo
+* Added qTranslate support and output to post data using WordPress filters [#1](http://trac.theseednetwork.com/ticket/1)
+* Added uninstall support [#7](http://trac.theseednetwork.com/ticket/7)
+* Added 24h time in time pickers [#26](http://trac.theseednetwork.com/ticket/26) - thank you josjo
+* Fixed an issue when event duration time is decremented in single (detailed) view [#2](http://trac.theseednetwork.com/ticket/2)
+* Fixed an issue with times for ics imported events [#6](http://trac.theseednetwork.com/ticket/6)
+* Better timezone control [#27](http://trac.theseednetwork.com/ticket/27)
+* Fixed the category filter in agenda view [#12](http://trac.theseednetwork.com/ticket/12)
+* Fixed event date being set to null when using quick edit [#16](http://trac.theseednetwork.com/ticket/16)
+* Fixed a bug in time pickers [#17](http://trac.theseednetwork.com/ticket/17) - thank you josjo
+* Deprecated function split() is removed [#8](http://trac.theseednetwork.com/ticket/8)
 
 = Version 1.0.7 =
 * Fixed issue with some MySQL version
@@ -176,10 +180,11 @@ To place the calendar in a DOM/HTML element besides the default page content con
 6. Front-end: Month view of calendar with mouse cursor hovering over event
 7. Front-end: Month view of calendar with active category filter
 8. Front-end: Month view of calendar with active tag filter
-9. Front-end: Agenda view of calendar
-10. Settings page
-11. Upcoming Events widget
-12. Upcoming Events widget - configuration options
+9. Front-end: Week view of calendar
+10. Front-end: Agenda view of calendar
+11. Settings page
+12. Upcoming Events widget
+13. Upcoming Events widget - configuration options
 
 == Upgrade Notice ==
 

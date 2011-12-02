@@ -147,6 +147,9 @@ class Ai1ec_Settings_Helper {
 			<option value="month" <?php echo $view == 'month' ? 'selected' : '' ?>>
 				<?php _e( 'Month', AI1EC_PLUGIN_NAME ) ?>
 			</option>
+			<option value="week" <?php echo $view == 'week' ? 'selected' : '' ?>>
+				<?php _e( 'Week', AI1EC_PLUGIN_NAME ) ?>
+			</option>
 			<option value="agenda" <?php echo $view == 'agenda' ? 'selected' : '' ?>>
 				<?php _e( 'Agenda', AI1EC_PLUGIN_NAME ) ?>
 			</option>
@@ -154,7 +157,7 @@ class Ai1ec_Settings_Helper {
 		<?php
 		return ob_get_clean();
 	}
-	
+
 	/**
 	 * get_timezone_dropdown function
 	 *
@@ -186,7 +189,7 @@ class Ai1ec_Settings_Helper {
     <?php
     return ob_get_clean();
   }
-  
+
   /**
    * get_date_format_dropdown function
    *
@@ -213,7 +216,7 @@ class Ai1ec_Settings_Helper {
     <?php
     return ob_get_clean();
   }
-  
+
 	/**
 	 * get_cron_freq_dropdown function
 	 *

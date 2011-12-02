@@ -52,6 +52,26 @@ class Ai1ec_Event {
 	var $end;
 
 	/**
+	 * start_truncated class variable
+	 *
+	 * Whether this copy of the event was broken up for rendering and the start
+	 * time is not its "real" start time.
+	 *
+	 * @var bool
+	 **/
+	var $start_truncated;
+
+	/**
+	 * end_truncated class variable
+	 *
+	 * Whether this copy of the event was broken up for rendering and the end
+	 * time is not its "real" end time.
+	 *
+	 * @var bool
+	 **/
+	var $end_truncated;
+
+	/**
 	 * allday class variable
 	 *
 	 * @var int
@@ -237,6 +257,13 @@ class Ai1ec_Event {
 	private $color_style;
 
 	/**
+	 * faded_color class variable
+	 *
+	 * @var string
+	 **/
+	private $faded_color;
+
+	/**
 	 * tags_html class variable
 	 *
 	 * A cache variable, used by __get().
@@ -283,7 +310,7 @@ class Ai1ec_Event {
 
 			if( ! $post || $post->post_status == 'auto-draft' )
 				throw new Ai1ec_Event_Not_Found( "Post with ID '$data' could not be retrieved from the database." );
-      
+
       $left_join      = "";
       $select_sql     = "e.post_id, e.recurrence_rules, e.exception_rules, e.allday, " .
 				                "e.recurrence_dates, e.exception_dates, e.venue, e.country, e.address, e.city, e.province, e.postal_code, " .
@@ -291,10 +318,10 @@ class Ai1ec_Event {
 				                "e.ical_organizer, e.ical_contact, e.ical_uid, " .
 				                "GROUP_CONCAT( ttc.term_id ) AS categories, " .
 				                "GROUP_CONCAT( ttt.term_id ) AS tags ";
-      
+
       if( $instance ) {
         $select_sql .= ", UNIX_TIMESTAMP( aei.start ) as start, UNIX_TIMESTAMP( aei.end ) as end ";
-        
+
         $instance = (int) $instance;
         $left_join = 	"LEFT JOIN {$wpdb->prefix}ai1ec_event_instances aei ON aei.id = $instance ";
       } else {
@@ -559,6 +586,17 @@ class Ai1ec_Event {
 			      $this->color_style = $ai1ec_events_helper->get_event_category_color_style( $categories[0]->term_id, $this->allday );
 		    }
 			  return $this->color_style;
+
+			// =========================================
+			// = Faded version of event category color =
+			// =========================================
+			case 'faded_color':
+			  if( $this->faded_color === null ) {
+			    $categories = wp_get_post_terms( $this->post_id, 'events_categories' );
+			    if( $categories && ! empty( $categories ) )
+			      $this->faded_color = $ai1ec_events_helper->get_event_category_faded_color( $categories[0]->term_id );
+		    }
+			  return $this->faded_color;
 
 			// ===============================================
 			// = HTML of category color boxes for this event =

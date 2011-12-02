@@ -8,15 +8,16 @@
 			<?php _e( '− Collapse All', AI1EC_PLUGIN_NAME ) ?>
 		</a
 	><?php endif ?><a
-		id="ai1ec-today" class="ai1ec-load-view ai1ec-button" href="#action=ai1ec_agenda">
+		id="ai1ec-today" class="ai1ec-load-view ai1ec-button" href="#action=ai1ec_agenda&amp;ai1ec_post_ids=<?php echo $post_ids ?>">
 		<?php _e( 'Today', AI1EC_PLUGIN_NAME ) ?>
 	</a>
 </span>
 <ul class="ai1ec-pagination">
 	<?php foreach( $pagination_links as $link ): ?>
 		<li>
-			<a id="<?php echo $link['id'] ?>" class="ai1ec-load-view ai1ec-button ai1ec-pagination"
-				href="<?php echo esc_attr( $link['href'] ) ?>">
+			<a id="<?php echo $link['id'] ?>"
+				class="ai1ec-load-view ai1ec-button"
+				href="<?php echo esc_attr( $link['href'] ) ?>&amp;ai1ec_post_ids=<?php echo $post_ids ?>">
 				<?php echo esc_html( $link['text'] ) ?>
 			</a>
 		</li>
