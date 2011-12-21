@@ -727,9 +727,9 @@ class Ai1ec_Events_Helper {
 	 * @param int | bool          $start      Events start before this (GMT) time
 	 * @param int | bool          $end        Events end before this (GMT) time
 	 * @param array $filter       Array of filters for the events returned.
-	 *		                      ['cat_ids']   => non-associatative array of category IDs
-	 *		                      ['tag_ids']   => non-associatative array of tag IDs
-	 *                          ['post_ids']  => non-associatative array of post IDs
+	 *                            ['cat_ids']   => non-associatative array of category IDs
+	 *                            ['tag_ids']   => non-associatative array of tag IDs
+	 *                            ['post_ids']  => non-associatative array of post IDs
 	 *
 	 * @return array Matching events
 	 **/
@@ -768,7 +768,7 @@ class Ai1ec_Events_Helper {
 		}
 
 		// Get the Join (filter_join) and Where (filter_where) statements based on $filter elements specified
-		$filter = $ai1ec_calendar_helper->_get_filter_sql( $filter );
+		$ai1ec_calendar_helper->_get_filter_sql( $filter );
 
 		$query = $wpdb->prepare(
 			"SELECT *, e.post_id, UNIX_TIMESTAMP( e.start ) as start, UNIX_TIMESTAMP( e.end ) as end, e.allday, e.recurrence_rules, e.exception_rules,

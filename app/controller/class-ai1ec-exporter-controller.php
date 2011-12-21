@@ -67,8 +67,8 @@ class Ai1ec_Exporter_Controller {
 			$filter['post_ids'] = split( ',', $ai1ec_post_ids );
 			
 		// when exporting events by post_id, do not look up the event's start/end date/time
-		$start				 	= $ai1ec_post_ids !== false ? false : gmmktime() - 24 * 60 * 60; // Include any events ending today
-		$end 					 	= false;
+		$start  = $ai1ec_post_ids !== false ? false : gmmktime() - 24 * 60 * 60; // Include any events ending today
+		$end    = false;
 		$events = $ai1ec_events_helper->get_matching_events( $start, $end, $filter );
 		$c = new vcalendar();
 		$c->setProperty( 'calscale', 'GREGORIAN' );
@@ -78,13 +78,13 @@ class Ai1ec_Exporter_Controller {
 		// Timezone setup
 		$tz = get_option( 'timezone_string' );
 		if( $tz ) {
-		  $c->setProperty( 'X-WR-TIMEZONE', $tz );
-  		$tz_xprops = array( 'X-LIC-LOCATION' => $tz );
-  		iCalUtilityFunctions::createTimezone( $c, $tz, $tz_xprops );
+			$c->setProperty( 'X-WR-TIMEZONE', $tz );
+			$tz_xprops = array( 'X-LIC-LOCATION' => $tz );
+			iCalUtilityFunctions::createTimezone( $c, $tz, $tz_xprops );
 		}
 
 		foreach( $events as $event ) {
-			$ai1ec_exporter_helper->insert_event_in_calendar( $event, $c );
+			$ai1ec_exporter_helper->insert_event_in_calendar( $event, $c, $export = true );
 		}
 		$str = $c->createCalendar();
 

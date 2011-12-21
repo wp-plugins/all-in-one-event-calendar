@@ -643,7 +643,7 @@ class Ai1ec_App_Helper {
     	// Display messages for blog admin
     	if( current_user_can( 'manage_options' ) ) {
 	    	// If not on the settings page already, direct user there with a message
-	    	if( $plugin_page == 'all-in-one-event-calendar-settings' ) {
+	    	if( $plugin_page == AI1EC_PLUGIN_NAME . "-settings" ) {
 	    	  if( ! $ai1ec_settings->calendar_page_id && ! get_option( 'timezone_string' ) )
 					  $args['msg'] = sprintf( __( '%sTo set up the plugin: %s 1. Select an option in the <strong>Calendar page</strong> dropdown list. %s 2. Select an option in the <strong>Timezone</strong> dropdown list. %s 3. Click <strong>Update Settings</strong>. %s', AI1EC_PLUGIN_NAME ), '<br /><br />', '<ul><ol>', '</ol><ol>', '</ol><ol>', '</ol><ul>' );
 					else if( ! $ai1ec_settings->calendar_page_id )
@@ -654,7 +654,7 @@ class Ai1ec_App_Helper {
 				} else {
 		      $args['msg'] = sprintf(
 			        __( 'The plugin is installed, but has not been configured. <a href="%s">Click here to set it up now »</a>', AI1EC_PLUGIN_NAME ),
-							admin_url( 'edit.php?post_type=ai1ec_event&page=all-in-one-event-calendar-settings' )
+							admin_url( 'edit.php?post_type=' . AI1EC_POST_TYPE . '&page=' . AI1EC_PLUGIN_NAME . '-settings' )
 						);
 				}
 			// Else display messages for other blog users

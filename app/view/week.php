@@ -90,7 +90,7 @@
 						<div class="ai1ec-grid-container">
 							<?php for( $hour = 0; $hour < 24; $hour++ ) : ?>
 								<div class="ai1ec-hour-marker <?php if( $hour >= 8 && $hour < 18 ) echo 'ai1ec-business-hour' ?>" style="top: <?php echo $hour * 60 ?>px;">
-									<div><?php echo esc_html( date_i18n( 'g a', gmmktime( $hour ) ) ) ?></div>
+									<div><?php echo esc_html( date_i18n( $time_format, gmmktime( $hour, 0 ) ) ) ?></div>
 								</div>
 								<?php for( $quarter = 1; $quarter < 4; $quarter++ ) : ?>
 									<div class="ai1ec-quarter-marker" style="top: <?php echo $hour * 60 + $quarter * 15 ?>px;"></div>

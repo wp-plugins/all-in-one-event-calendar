@@ -322,11 +322,14 @@
 #ai1ec_repeat_box {
 	display: none;
 	margin-top: 10px;
-	width: 295px;
+	width: 450px;
 }
 ul.ai1ec_repeat_tabs {
 	margin:0px; padding:0px;
 	margin-bottom: 6px;
+	margin-left: 15px;
+	width: 95%;
+	text-align: left;
 }
 
 ul.ai1ec_repeat_tabs li {
@@ -358,19 +361,17 @@ ul.ai1ec_repeat_tabs li a.ai1ec_active {
 	background-color:#ffffff;
 	color:#282e32;
 	border:1px solid #464c54;
-  border-bottom: 1px solid #ffffff;
+	border-bottom: 1px solid #ffffff;
+	padding-bottom: 9px;
 }
 .ai1ec_tab_content {
 	background-color:#ffffff;
 	padding:10px;
 	border:1px solid #464c54;
 	margin-top: -1px;
-	-webkit-border-bottom-right-radius: 5px;
-	-webkit-border-bottom-left-radius: 5px;
-	-moz-border-radius-bottomright: 5px;
-	-moz-border-radius-bottomleft: 5px;
-	border-bottom-right-radius: 5px;
-	border-bottom-left-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 	cursor: normal !important;
 }
 #ai1ec_weekly_content, #ai1ec_monthly_content, #ai1ec_yearly_content { display:none; }
