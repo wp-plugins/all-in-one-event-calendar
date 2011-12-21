@@ -133,16 +133,16 @@ class Ai1ec_Events_Controller {
 			wp_localize_script( 'ai1ec-add_new_event', 'ai1ec_add_new_event', array(
 				// Current time, used for date/time pickers
 				'now'                    => $ai1ec_events_helper->gmt_to_local( time() ),
-        // Date format for date pickers
-        'date_format'            => $ai1ec_settings->input_date_format,
-        // Names for months in date picker header (escaping is done in wp_localize_script)
-        'month_names'            => implode( ',', $wp_locale->month ),
-        // Names for days in date picker header (escaping is done in wp_localize_script)
-        'day_names'              => implode( ',', $wp_locale->weekday_initial ),
-        // Start the week on this day in the date picker
-        'week_start_day'         => $ai1ec_settings->week_start_day,
-        // 24h time format for time pickers
-        'twentyfour_hour'        => $ai1ec_settings->input_24h_time,
+				// Date format for date pickers
+				'date_format'            => $ai1ec_settings->input_date_format,
+				// Names for months in date picker header (escaping is done in wp_localize_script)
+				'month_names'            => implode( ',', $wp_locale->month ),
+				// Names for days in date picker header (escaping is done in wp_localize_script)
+				'day_names'              => implode( ',', $wp_locale->weekday_initial ),
+				// Start the week on this day in the date picker
+				'week_start_day'         => $ai1ec_settings->week_start_day,
+				// 24h time format for time pickers
+				'twentyfour_hour'        => $ai1ec_settings->input_24h_time,
 				// Set region biasing for geo_autocomplete plugin
 				'region'                 => ( $ai1ec_settings->geo_region_biasing ) ? $ai1ec_events_helper->get_region() : '',
 				// ICS feed error messages
@@ -195,31 +195,31 @@ class Ai1ec_Events_Controller {
 					 $wpdb,
 					 $ai1ec_settings;
 
-    // ==================
-    // = Default values =
-    // ==================
-    $all_day_event    = '';
-    $start_timestamp  = '';
-    $end_timestamp    = '';
-    $show_map         = false;
-    $google_map       = '';
-    $venue            = '';
-    $country          = '';
-    $address          = '';
-    $city             = '';
-    $province         = '';
-    $postal_code      = '';
-    $contact_name     = '';
-    $contact_phone    = '';
-    $contact_email    = '';
-    $cost             = '';
-    $rrule            = '';
-    $rrule_text       = '';
-    $repeating_event  = false;
-    $end              = null;
-    $until            = null;
-    $count            = 100;
-    
+		// ==================
+		// = Default values =
+		// ==================
+		$all_day_event    = '';
+		$start_timestamp  = '';
+		$end_timestamp    = '';
+		$show_map         = false;
+		$google_map       = '';
+		$venue            = '';
+		$country          = '';
+		$address          = '';
+		$city             = '';
+		$province         = '';
+		$postal_code      = '';
+		$contact_name     = '';
+		$contact_phone    = '';
+		$contact_email    = '';
+		$cost             = '';
+		$rrule            = '';
+		$rrule_text       = '';
+		$repeating_event  = false;
+		$end              = null;
+		$until            = null;
+		$count            = 100;
+
 		try
 	 	{
 			$event = new Ai1ec_Event( $post->ID );
@@ -248,12 +248,14 @@ class Ai1ec_Events_Controller {
 			$rrule            = empty( $event->recurrence_rules ) ? '' : $event->recurrence_rules;
 			$repeating_event  = empty( $rrule ) ? false : true;
 			if( $repeating_event ) {
-			  $rc = new SG_iCal_Recurrence( new SG_iCal_Line( 'RRULE:' . $rrule ) );
-        if( $until = $rc->getUntil() )
+				$rc = new SG_iCal_Recurrence( new SG_iCal_Line( 'RRULE:' . $rrule ) );
+				
+				if( $until = $rc->getUntil() )
 					$until = ( is_numeric( $until ) ) ? $until : strtotime( $until );
-        else if( $count = $rc->getCount() )
+				else if( $count = $rc->getCount() )
 					$count = ( is_numeric( $count ) ) ? $count : 100;
-        $rrule_text = $ai1ec_events_helper->rrule_to_text( $rrule );
+				
+				$rrule_text = $ai1ec_events_helper->rrule_to_text( $rrule );
 			}
 			
 		}
@@ -261,7 +263,7 @@ class Ai1ec_Events_Controller {
 			// Event does not exist.
 			// Leave form fields undefined (= zero-length strings)
 			$event = null;
-	 	}
+		}
 
 		// Time zone
 		$timezone = get_option( 'gmt_offset' );
@@ -355,20 +357,20 @@ class Ai1ec_Events_Controller {
 		global $wpdb, $ai1ec_events_helper;
 
 		// verify this came from the our screen and with proper authorization,
-	  // because save_post can be triggered at other times
-	  if( isset( $_POST[AI1EC_POST_TYPE] ) && ! wp_verify_nonce( $_POST[AI1EC_POST_TYPE], 'ai1ec' ) ) {
-		  return;
-	  } else if( ! isset( $_POST[AI1EC_POST_TYPE] ) ) {
-	    return;
-	  }
-	  
-	  if( isset( $post->post_status ) && $post->post_status == 'auto-draft' )
-	    return;
-	  
-	  // verify if this is not inline-editing
-	  if( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'inline-save' ) {
-	    return;
-	  }
+		// because save_post can be triggered at other times
+		if( isset( $_POST[AI1EC_POST_TYPE] ) && ! wp_verify_nonce( $_POST[AI1EC_POST_TYPE], 'ai1ec' ) ) {
+			return;
+		} else if( ! isset( $_POST[AI1EC_POST_TYPE] ) ) {
+			return;
+		}
+
+		if( isset( $post->post_status ) && $post->post_status == 'auto-draft' )
+		return;
+
+		// verify if this is not inline-editing
+		if( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'inline-save' ) {
+			return;
+		}
 
 		// verify that the post_type is that of an event
 		if( isset( $_POST['post_type'] ) && $_POST['post_type'] != AI1EC_POST_TYPE ) {
@@ -392,11 +394,11 @@ class Ai1ec_Events_Controller {
 
 		$rrule = null;
 
-    // =================================
+		// =================================
 		// = Repeating event, assing rrule =
 		// =================================
 		if( isset( $_POST['ai1ec_repeat'] ) )
-		  $rrule = $_POST['ai1ec_rrule'];
+			$rrule = $_POST['ai1ec_rrule'];
 
 		$is_new = false;
 		$event 	= null;
@@ -410,21 +412,21 @@ class Ai1ec_Events_Controller {
 			$event->post_id = $post_id;
 		}
 
-		$event->start 						= $ai1ec_events_helper->local_to_gmt( $start_time );
-		$event->end 							= $ai1ec_events_helper->local_to_gmt( $end_time );
-		$event->allday 						= $all_day;
-		$event->venue 						= $venue;
-		$event->address 					= $address;
-		$event->city 							= $city;
-		$event->province 					= $province;
-		$event->postal_code 			= $postal_code;
-		$event->country 					= $country;
-		$event->show_map 					= $google_map;
-		$event->cost				 			= $cost;
-		$event->contact_name			= $contact_name;
-		$event->contact_phone			= $contact_phone;
-		$event->contact_email			= $contact_email;
-		$event->recurrence_rules 	= $rrule;
+		$event->start               = $ai1ec_events_helper->local_to_gmt( $start_time );
+		$event->end                 = $ai1ec_events_helper->local_to_gmt( $end_time );
+		$event->allday              = $all_day;
+		$event->venue               = $venue;
+		$event->address             = $address;
+		$event->city                = $city;
+		$event->province            = $province;
+		$event->postal_code         = $postal_code;
+		$event->country             = $country;
+		$event->show_map            = $google_map;
+		$event->cost                = $cost;
+		$event->contact_name        = $contact_name;
+		$event->contact_phone       = $contact_phone;
+		$event->contact_email       = $contact_email;
+		$event->recurrence_rules    = $rrule;
 		$event->save( ! $is_new );
 
 		$ai1ec_events_helper->delete_event_cache( $post_id );
@@ -545,7 +547,7 @@ class Ai1ec_Events_Controller {
 	 * @return string             The event data markup to prepend to the post content
 	 **/
 	function get_view( &$event, &$content )
- 	{
+	{
 		global $ai1ec_view_helper;
 
 		ob_start();
@@ -704,10 +706,10 @@ class Ai1ec_Events_Controller {
 	 * @return void
 	 **/
 	 function events_categories_add_form_fields() {
-	   global $ai1ec_view_helper;
+		global $ai1ec_view_helper;
 
-	   $args = array( 'edit' => false );
-	   $ai1ec_view_helper->display( 'event_categories-color_picker.php', $args );
+		$args = array( 'edit' => false );
+		$ai1ec_view_helper->display( 'event_categories-color_picker.php', $args );
 	 }
 
 	 /**
@@ -718,25 +720,25 @@ class Ai1ec_Events_Controller {
  	 * @return void
  	 **/
  	 function events_categories_edit_form_fields( $term ) {
- 	   global $ai1ec_view_helper, $wpdb;
+		global $ai1ec_view_helper, $wpdb;
 
- 	   $table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
- 	   $color = $wpdb->get_var( "SELECT term_color FROM {$table_name} WHERE term_id = {$term->term_id}" );
+		$table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
+		$color      = $wpdb->get_var( "SELECT term_color FROM {$table_name} WHERE term_id = {$term->term_id}" );
 
- 	   $style = '';
- 	   $clr = '';
+		$style = '';
+		$clr   = '';
 
- 	   if( ! is_null( $color ) && ! empty( $color ) ) {
- 	     $style = 'style="background-color: ' . $color . '"';
- 	     $clr = $color;
- 	   }
- 	   $args = array(
- 	    'style' => $style,
- 	    'color' => $clr,
- 	    'edit'  => true,
- 	   );
- 	   $ai1ec_view_helper->display( 'event_categories-color_picker.php', $args );
- 	 }
+		if( ! is_null( $color ) && ! empty( $color ) ) {
+			$style = 'style="background-color: ' . $color . '"';
+			$clr = $color;
+		}
+		$args = array(
+			'style' => $style,
+			'color' => $clr,
+			'edit'  => true,
+		);
+		$ai1ec_view_helper->display( 'event_categories-color_picker.php', $args );
+	}
 
 	 /**
 	  * edited_events_categories function

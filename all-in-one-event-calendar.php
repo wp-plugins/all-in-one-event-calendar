@@ -1,20 +1,20 @@
 <?php
 /**
- * Plugin Name: All-in-One Event Calendar Plugin
+ * Plugin Name: All-in-One Event Calendar
  * Plugin URI: http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/
- * Description: An event calendar system with month, week & agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
+ * Description: An event calendar system with month, week, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
  * Author: The Seed Studio
  * Author URI: http://theseednetwork.com/
- * Version: 1.2
+ * Version: 1.2.2
  */ // NOTE: When updating version number also update first line of app/view/calendar.php
 @set_time_limit( 0 );
-@ini_set( "memory_limit", 				"256M" );
-@ini_set( "max_input_time", 			"-1" );
+@ini_set( "memory_limit",         "256M" );
+@ini_set( "max_input_time",       "-1" );
 
 // ===============
 // = Plugin Name =
 // ===============
-define( 'AI1EC_PLUGIN_NAME', 			basename( dirname( __FILE__ ) ) );
+define( 'AI1EC_PLUGIN_NAME',      'all-in-one-event-calendar' );
 
 // ===================
 // = Plugin Basename =
@@ -24,102 +24,102 @@ define( 'AI1EC_PLUGIN_BASENAME',  plugin_basename( __FILE__ ) );
 // ====================
 // = Database Version =
 // ====================
-define( 'AI1EC_DB_VERSION', 			107 );
+define( 'AI1EC_DB_VERSION',       107 );
 
 // ================
 // = Cron Version =
 // ================
-define( 'AI1EC_CRON_VERSION', 		102 );
+define( 'AI1EC_CRON_VERSION',     102 );
 
 // ===============
 // = Plugin Path =
 // ===============
-define( 'AI1EC_PATH', 						dirname( __FILE__ ) );
+define( 'AI1EC_PATH',             dirname( __FILE__ ) );
 
 // ===============
 // = Images Path =
 // ===============
-define( 'AI1EC_IMAGE_PATH', 			AI1EC_PATH . '/img' );
+define( 'AI1EC_IMAGE_PATH',       AI1EC_PATH . '/img' );
 
 // ============
 // = CSS Path =
 // ============
-define( 'AI1EC_CSS_PATH', 				AI1EC_PATH . '/css' );
+define( 'AI1EC_CSS_PATH',         AI1EC_PATH . '/css' );
 
 // ===========
 // = JS Path =
 // ===========
-define( 'AI1EC_JS_PATH', 					AI1EC_PATH . '/js' );
+define( 'AI1EC_JS_PATH',          AI1EC_PATH . '/js' );
 
 // ============
 // = Lib Path =
 // ============
-define( 'AI1EC_LIB_PATH', 				AI1EC_PATH . '/lib' );
+define( 'AI1EC_LIB_PATH',         AI1EC_PATH . '/lib' );
 
 // =================
 // = Language Path =
 // =================
-define( 'AI1EC_LANGUAGE_PATH', 	  AI1EC_PLUGIN_NAME . '/language' );
+define( 'AI1EC_LANGUAGE_PATH',    AI1EC_PLUGIN_NAME . '/language' );
 
 // ============
 // = App Path =
 // ============
-define( 'AI1EC_APP_PATH', 				AI1EC_PATH . '/app' );
+define( 'AI1EC_APP_PATH',         AI1EC_PATH . '/app' );
 
 // ===================
 // = Controller Path =
 // ===================
-define( 'AI1EC_CONTROLLER_PATH', 	AI1EC_APP_PATH . '/controller' );
+define( 'AI1EC_CONTROLLER_PATH',  AI1EC_APP_PATH . '/controller' );
 
 // ==============
 // = Model Path =
 // ==============
-define( 'AI1EC_MODEL_PATH', 			AI1EC_APP_PATH . '/model' );
+define( 'AI1EC_MODEL_PATH',       AI1EC_APP_PATH . '/model' );
 
 // =============
 // = View Path =
 // =============
-define( 'AI1EC_VIEW_PATH', 				AI1EC_APP_PATH . '/view' );
+define( 'AI1EC_VIEW_PATH',        AI1EC_APP_PATH . '/view' );
 
 // ===============
 // = Helper Path =
 // ===============
-define( 'AI1EC_HELPER_PATH', 			AI1EC_APP_PATH . '/helper' );
+define( 'AI1EC_HELPER_PATH',      AI1EC_APP_PATH . '/helper' );
 
 // ==================
 // = Exception Path =
 // ==================
-define( 'AI1EC_EXCEPTION_PATH', 	AI1EC_APP_PATH . '/exception' );
+define( 'AI1EC_EXCEPTION_PATH',   AI1EC_APP_PATH . '/exception' );
 
 // ==============
 // = Plugin Url =
 // ==============
-define( 'AI1EC_URL', 							plugins_url( '', __FILE__ ) );
+define( 'AI1EC_URL',              plugins_url( '', __FILE__ ) );
 
 // ==============
 // = Images URL =
 // ==============
-define( 'AI1EC_IMAGE_URL', 				AI1EC_URL . '/img' );
+define( 'AI1EC_IMAGE_URL',        AI1EC_URL . '/img' );
 
 // ===========
 // = CSS URL =
 // ===========
-define( 'AI1EC_CSS_URL', 					AI1EC_URL . '/css' );
+define( 'AI1EC_CSS_URL',          AI1EC_URL . '/css' );
 
 // ==========
 // = JS URL =
 // ==========
-define( 'AI1EC_JS_URL', 					AI1EC_URL . '/js' );
+define( 'AI1EC_JS_URL',           AI1EC_URL . '/js' );
 
 // =============
 // = POST TYPE =
 // =============
-define( 'AI1EC_POST_TYPE', 				'ai1ec_event' );
+define( 'AI1EC_POST_TYPE',        'ai1ec_event' );
 
 // ================
 // = RSS FEED URL =
 // ================
-define( 'AI1EC_RSS_FEED', 'http://feeds.feedburner.com/ai1ec' );
+define( 'AI1EC_RSS_FEED',         'http://feeds.feedburner.com/ai1ec' );
 
 // ======================================
 // = FAKE CATEGORY ID FOR CALENDAR PAGE =
@@ -130,7 +130,7 @@ define( 'AI1EC_FAKE_CATEGORY_ID', -4113473042 ); // Numeric-only 1337-speak of A
 // = SCRIPT URL =
 // ==============
 $ai1ec_script_url = get_option( 'home' ) . '/?plugin=' . AI1EC_PLUGIN_NAME;
-define( 'AI1EC_SCRIPT_URL', 			$ai1ec_script_url );
+define( 'AI1EC_SCRIPT_URL',       $ai1ec_script_url );
 
 // ====================================================
 // = Convert http:// to webcal:// in AI1EC_SCRIPT_URL =
@@ -141,7 +141,7 @@ $tmp = str_replace( 'http://', 'webcal://', AI1EC_SCRIPT_URL );
 // ==============
 // = EXPORT URL =
 // ==============
-define( 'AI1EC_EXPORT_URL', "$tmp&controller=ai1ec_exporter_controller&action=export_events" );
+define( 'AI1EC_EXPORT_URL', "$tmp&controller=ai1ec_exporter_controller&action=export_events&cb=".rand() );
 
 // ====================================
 // = Include iCal parsers and helpers =
@@ -203,8 +203,8 @@ global $ai1ec_view_helper,
 $ai1ec_view_helper     = Ai1ec_View_Helper::get_instance();
 $ai1ec_settings_helper = Ai1ec_Settings_Helper::get_instance();
 $ai1ec_calendar_helper = Ai1ec_Calendar_Helper::get_instance();
-$ai1ec_app_helper			 = Ai1ec_App_Helper::get_instance();
-$ai1ec_events_helper	 = Ai1ec_Events_Helper::get_instance();
+$ai1ec_app_helper      = Ai1ec_App_Helper::get_instance();
+$ai1ec_events_helper   = Ai1ec_Events_Helper::get_instance();
 $ai1ec_importer_helper = Ai1ec_Importer_Helper::get_instance();
 $ai1ec_exporter_helper = Ai1ec_Exporter_Helper::get_instance();
 

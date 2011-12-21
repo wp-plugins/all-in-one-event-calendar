@@ -311,22 +311,22 @@ class Ai1ec_Event {
 			if( ! $post || $post->post_status == 'auto-draft' )
 				throw new Ai1ec_Event_Not_Found( "Post with ID '$data' could not be retrieved from the database." );
 
-      $left_join      = "";
-      $select_sql     = "e.post_id, e.recurrence_rules, e.exception_rules, e.allday, " .
-				                "e.recurrence_dates, e.exception_dates, e.venue, e.country, e.address, e.city, e.province, e.postal_code, " .
-				                "e.show_map, e.contact_name, e.contact_phone, e.contact_email, e.cost, e.ical_feed_url, e.ical_source_url, " .
-				                "e.ical_organizer, e.ical_contact, e.ical_uid, " .
-				                "GROUP_CONCAT( ttc.term_id ) AS categories, " .
-				                "GROUP_CONCAT( ttt.term_id ) AS tags ";
+			$left_join      = "";
+			$select_sql     = "e.post_id, e.recurrence_rules, e.exception_rules, e.allday, " .
+			                  "e.recurrence_dates, e.exception_dates, e.venue, e.country, e.address, e.city, e.province, e.postal_code, " .
+			                  "e.show_map, e.contact_name, e.contact_phone, e.contact_email, e.cost, e.ical_feed_url, e.ical_source_url, " .
+			                  "e.ical_organizer, e.ical_contact, e.ical_uid, " .
+			                  "GROUP_CONCAT( ttc.term_id ) AS categories, " .
+			                  "GROUP_CONCAT( ttt.term_id ) AS tags ";
 
-      if( $instance ) {
-        $select_sql .= ", UNIX_TIMESTAMP( aei.start ) as start, UNIX_TIMESTAMP( aei.end ) as end ";
+			if( $instance ) {
+				$select_sql .= ", UNIX_TIMESTAMP( aei.start ) as start, UNIX_TIMESTAMP( aei.end ) as end ";
 
-        $instance = (int) $instance;
-        $left_join = 	"LEFT JOIN {$wpdb->prefix}ai1ec_event_instances aei ON aei.id = $instance ";
-      } else {
-        $select_sql .= ", UNIX_TIMESTAMP( e.start ) as start, UNIX_TIMESTAMP( e.end ) as end, e.allday ";
-      }
+				$instance = (int) $instance;
+				$left_join = 	"LEFT JOIN {$wpdb->prefix}ai1ec_event_instances aei ON aei.id = $instance ";
+			} else {
+				$select_sql .= ", UNIX_TIMESTAMP( e.start ) as start, UNIX_TIMESTAMP( e.end ) as end, e.allday ";
+			}
 			// =============================
 			// = Fetch event from database =
 			// =============================

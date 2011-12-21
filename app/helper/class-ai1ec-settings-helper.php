@@ -75,7 +75,7 @@ class Ai1ec_Settings_Helper {
 		if( $results ) {
 			$pages = $results;
 		}
-    $selected_title = '';
+		$selected_title = '';
 		?>
 		<select class="inputwidth" name="<?php echo $field_name; ?>"
 		        id="<?php echo $field_name; ?>"
@@ -102,7 +102,8 @@ class Ai1ec_Settings_Helper {
 		if( is_numeric( $selected_page_id ) && $selected_page_id > 0 ) {
 			$permalink = get_permalink( $selected_page_id );
 			?>
-      <br /><a href="<?php echo $permalink ?>" target="_blank">
+			<br />
+			<a href="<?php echo $permalink ?>" target="_blank">
 				<?php printf( __( 'View "%s" »', AI1EC_PLUGIN_NAME ), $selected_title ) ?>
 			</a>
 			<?php
@@ -165,57 +166,57 @@ class Ai1ec_Settings_Helper {
 	 *
 	 * @return void
 	 **/
-  function get_timezone_dropdown( $timezone = null ) {
-    $timezone_identifiers = DateTimeZone::listIdentifiers();
-    ob_start();
-    ?>
-    <select id="timezone" name="timezone">
-      <?php foreach( $timezone_identifiers as $value ) : ?>
-        <?php if( preg_match( '/^(Africa|America|Antartica|Arctic|Asia|Atlantic|Australia|Europe|Indian|Pacific)\//', $value ) ) : ?>
-          <?php $ex = explode( "/", $value );  //obtain continent,city ?>
-          <?php if( isset( $continent ) && $continent != $ex[0] ) : ?>
-            <?php if( ! empty( $continent ) ) : ?>
-              </optgroup>
-            <?php endif ?>
-            <optgroup label="<?php echo $ex[0] ?>">
-          <?php endif ?>
+	function get_timezone_dropdown( $timezone = null ) {
+		$timezone_identifiers = DateTimeZone::listIdentifiers();
+		ob_start();
+		?>
+		<select id="timezone" name="timezone">
+			<?php foreach( $timezone_identifiers as $value ) : ?>
+				<?php if( preg_match( '/^(Africa|America|Antartica|Arctic|Asia|Atlantic|Australia|Europe|Indian|Pacific)\//', $value ) ) : ?>
+					<?php $ex = explode( "/", $value );  //obtain continent,city ?>
+					<?php if( isset( $continent ) && $continent != $ex[0] ) : ?>
+						<?php if( ! empty( $continent ) ) : ?>
+							</optgroup>
+						<?php endif ?>
+						<optgroup label="<?php echo $ex[0] ?>">
+					<?php endif ?>
 
-          <?php $city = isset( $ex[2] ) ? $ex[2] : $ex[1]; $continent = $ex[0]; ?>
-          <option value="<?php echo $value ?>" <?php echo $value == $timezone ? 'selected' : '' ?>><?php echo $city ?></option>
-        <?php endif ?>
-    <?php endforeach ?>
-      </optgroup>
-    </select>
-    <?php
-    return ob_get_clean();
-  }
+					<?php $city = isset( $ex[2] ) ? $ex[2] : $ex[1]; $continent = $ex[0]; ?>
+					<option value="<?php echo $value ?>" <?php echo $value == $timezone ? 'selected' : '' ?>><?php echo $city ?></option>
+				<?php endif ?>
+			<?php endforeach ?>
+			</optgroup>
+		</select>
+		<?php
+		return ob_get_clean();
+	}
 
-  /**
-   * get_date_format_dropdown function
-   *
-   * @return string
-   **/
-  function get_date_format_dropdown( $view = null ) {
-    ob_start();
-    ?>
-    <select name="input_date_format">
-      <option value="def" <?php echo $view == 'def' ? 'selected' : '' ?>>
-        <?php _e( 'Default (d/m/y)', AI1EC_PLUGIN_NAME ) ?>
-      </option>
-      <option value="us" <?php echo $view == 'us' ? 'selected' : '' ?>>
-        <?php _e( 'US (m/d/y)', AI1EC_PLUGIN_NAME ) ?>
-      </option>
-      <option value="iso" <?php echo $view == 'iso' ? 'selected' : '' ?>>
-        <?php _e( 'ISO 8601 (y-m-d)', AI1EC_PLUGIN_NAME ) ?>
-      </option>
-      <option value="dot" <?php echo $view == 'dot' ? 'selected' : '' ?>>
-        <?php _e( 'Dotted (m.d.y)', AI1EC_PLUGIN_NAME ) ?>
-      </option>
+	/**
+	* get_date_format_dropdown function
+	*
+	* @return string
+	**/
+	function get_date_format_dropdown( $view = null ) {
+		ob_start();
+		?>
+		<select name="input_date_format">
+			<option value="def" <?php echo $view == 'def' ? 'selected' : '' ?>>
+				<?php _e( 'Default (d/m/y)', AI1EC_PLUGIN_NAME ) ?>
+			</option>
+			<option value="us" <?php echo $view == 'us' ? 'selected' : '' ?>>
+				<?php _e( 'US (m/d/y)', AI1EC_PLUGIN_NAME ) ?>
+			</option>
+			<option value="iso" <?php echo $view == 'iso' ? 'selected' : '' ?>>
+				<?php _e( 'ISO 8601 (y-m-d)', AI1EC_PLUGIN_NAME ) ?>
+			</option>
+			<option value="dot" <?php echo $view == 'dot' ? 'selected' : '' ?>>
+				<?php _e( 'Dotted (m.d.y)', AI1EC_PLUGIN_NAME ) ?>
+			</option>
 
-    </select>
-    <?php
-    return ob_get_clean();
-  }
+		</select>
+		<?php
+		return ob_get_clean();
+	}
 
 	/**
 	 * get_cron_freq_dropdown function
@@ -336,25 +337,25 @@ class Ai1ec_Settings_Helper {
 		$inject_categories              = $ai1ec_settings->inject_categories ? 'checked=checked' : '';
 		$geo_region_biasing             = $ai1ec_settings->geo_region_biasing ? 'checked=checked' : '';
 		$input_date_format              = $ai1ec_settings_helper->get_date_format_dropdown( $ai1ec_settings->input_date_format );
-    $input_24h_time                 = $ai1ec_settings->input_24h_time ? 'checked=checked' : '';
-	  $default_calendar_view          = $ai1ec_settings_helper->get_view_dropdown( $ai1ec_settings->default_calendar_view );
-	  $timezone_control               = $ai1ec_settings_helper->get_timezone_dropdown( $ai1ec_settings->timezone );
+		$input_24h_time                 = $ai1ec_settings->input_24h_time ? 'checked=checked' : '';
+		$default_calendar_view          = $ai1ec_settings_helper->get_view_dropdown( $ai1ec_settings->default_calendar_view );
+		$timezone_control               = $ai1ec_settings_helper->get_timezone_dropdown( $ai1ec_settings->timezone );
 
-	  $args = array(
-	    'calendar_page'                 => $calendar_page,
-	    'default_calendar_view'         => $default_calendar_view,
+		$args = array(
+			'calendar_page'                 => $calendar_page,
+			'default_calendar_view'         => $default_calendar_view,
 			'calendar_css_selector'         => $calendar_css_selector,
 			'week_start_day'                => $week_start_day,
 			'agenda_events_per_page'        => $agenda_events_per_page,
 			'exclude_from_search'           => $exclude_from_search,
-			'show_publish_button'		        => $show_publish_button,
+			'show_publish_button'           => $show_publish_button,
 			'hide_maps_until_clicked'       => $hide_maps_until_clicked,
 			'agenda_events_expanded'        => $agenda_events_expanded,
 			'turn_off_subscription_buttons' => $turn_off_subscription_buttons,
 			'show_create_event_button'      => $show_create_event_button,
 			'inject_categories'             => $inject_categories,
 			'input_date_format'             => $input_date_format,
-      'input_24h_time'                => $input_24h_time,
+			'input_24h_time'                => $input_24h_time,
 			'show_timezone'                 => ! get_option( 'timezone_string' ),
 			'timezone_control'              => $timezone_control,
 			'geo_region_biasing'            => $geo_region_biasing
@@ -371,16 +372,16 @@ class Ai1ec_Settings_Helper {
 	 **/
 	function ics_import_settings_meta_box( $object, $box )
 	{
-	  global $ai1ec_view_helper,
-					 $ai1ec_settings_helper,
-					 $ai1ec_settings;
+		global $ai1ec_view_helper,
+		       $ai1ec_settings_helper,
+		       $ai1ec_settings;
 
-	  $args = array(
-	    'cron_freq' 						   => $ai1ec_settings_helper->get_cron_freq_dropdown( $ai1ec_settings->cron_freq ),
-	    'event_categories'			   => $ai1ec_settings_helper->get_event_categories_select(),
-			'feed_rows'							   => $ai1ec_settings_helper->get_feed_rows()
-	  );
-	  $ai1ec_view_helper->display( 'box_ics_import_settings.php', $args );
+		$args = array(
+			'cron_freq'          => $ai1ec_settings_helper->get_cron_freq_dropdown( $ai1ec_settings->cron_freq ),
+			'event_categories'   => $ai1ec_settings_helper->get_event_categories_select(),
+			'feed_rows'          => $ai1ec_settings_helper->get_feed_rows()
+		);
+		$ai1ec_view_helper->display( 'box_ics_import_settings.php', $args );
 	}
 
 	/**
@@ -391,11 +392,13 @@ class Ai1ec_Settings_Helper {
 	 * @return void
 	 **/
 	function the_seed_studio_meta_box( $object, $box ) {
-	  global $ai1ec_view_helper;
+		global $ai1ec_view_helper;
 		include_once( ABSPATH . WPINC . '/feed.php' );
 		// Initialize new feed
-		$feed = fetch_feed( AI1EC_RSS_FEED );
-	  $ai1ec_view_helper->display( 'box_the_seed_studio.php', array( 'news' => $feed->get_items() ) );
+		$newsItems = array();
+		$feed      = fetch_feed( AI1EC_RSS_FEED );
+		$newsItems = is_wp_error( $feed ) ? array() : $feed->get_items();
+		$ai1ec_view_helper->display( 'box_the_seed_studio.php', array( 'news' => $newsItems ) );
 	}
 
 	/**
@@ -406,8 +409,8 @@ class Ai1ec_Settings_Helper {
 	 * @return void
 	 **/
 	function add_meta_boxes(){
-	  global $ai1ec_settings;
-    do_action( 'add_meta_boxes', $ai1ec_settings->settings_page );
+		global $ai1ec_settings;
+		do_action( 'add_meta_boxes', $ai1ec_settings->settings_page );
 	}
 }
 // END class

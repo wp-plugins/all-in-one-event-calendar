@@ -37,7 +37,6 @@ table.ai1ec-calendar-toolbar {
 }
 .ai1ec-calendar-toolbar td {
 	text-align: center;
-	width: 1em;
 	vertical-align: middle;
 	border: 0 !important;
 	padding: 0 !important;
@@ -205,6 +204,7 @@ table.ai1ec-week-view-original.tablescroll_body {
 .ai1ec-week-view table.tablescroll_head,
 .ai1ec-week-view table.tablescroll_head th {
 	border-bottom: none !important;
+	padding: 2.48px !important;
 }
 table.ai1ec-week-view-original.tablescroll_body,
 table.ai1ec-week-view-original.tablescroll_body tr:first-child td {

@@ -3,10 +3,10 @@ Contributors: theseed, hubrik, vtowel, yani.iliev
 Donate link: http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
-Tested up to: 3.2.1
-Stable tag: 1.2
+Tested up to: 3.3
+Stable tag: 1.2.2
 
-An event calendar system with month, week & agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
+An event calendar system with month, week, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
 == Description ==
 
@@ -48,15 +48,30 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 * Each event links to the original calendar
 * Your calendar can be embedded into a WordPress page without needing to create template files or modify the theme
 
-**[Check out the DEMO »](http://demo.theseednetwork.com/)**
+= Helpful Links =
 
-**[Track the development process »](http://trac.theseednetwork.com/roadmap)**
-
-**[Bug reports »](http://trac.theseednetwork.com/newticket)** ([registration](http://trac.theseednetwork.com/register) required)
-
-**[Get Premium Support »](http://theseednetwork.com/get-supported)** from [The Seed Studio](http://theseednetwork.com/)
+* [**Check out the DEMO »**](http://demo.theseednetwork.com/)
+* [**Get help from the Support Forum »**](http://wordpress.org/tags/all-in-one-event-calendar?forum_id=10)
+* [**Track the development process »**](http://trac.theseednetwork.com/roadmap)
+* [**BUG reports only »**](http://trac.theseednetwork.com/newticket) ([registration](http://trac.theseednetwork.com/register) required)
+* [**Get Premium Support »**](http://theseednetwork.com/get-supported) from [The Seed Studio](http://theseednetwork.com/)
 
 == Changelog ==
+
+= Version 1.2.2 =
+* Fixed: Issue with Week view having an improper width [#208](http://trac.the-seed.ca/ticket/208)
+
+= Version 1.2.1 =
+* Fixed: Exporting single event was exporting the whole calendar [#183](http://trac.the-seed.ca/ticket/183)
+* Fixed: Widget date was off by one in certain cases [#151](http://trac.the-seed.ca/ticket/151)
+* Fixed: Trashed events were still being displayed [#169](http://trac.the-seed.ca/ticket/169)
+* Fixed: All day events were exporting with timezone specific time ranges [#30](http://trac.the-seed.ca/ticket/30)
+* Fixed: End date was able to be before the start date [#172](http://trac.the-seed.ca/ticket/172)
+* Fixed: 404 or bad ICS URLs now provide a warning message rather than fail silently [#204](http://trac.the-seed.ca/ticket/204)
+* Fixed: Added cachebuster to google export URL to avoid Google Calendar errors [#160](http://trac.the-seed.ca/ticket/160)
+* Fixed: Week view was always using AM and PM [#190](http://trac.the-seed.ca/ticket/190)
+* Fixed: Repeat_box was too small for some translations [#165](http://trac.the-seed.ca/ticket/165)
+
 = Version 1.2 =
 * Added scrollable Week view [#117](http://trac.the-seed.ca/ticket/117)
 * Fixed some notice-level errors

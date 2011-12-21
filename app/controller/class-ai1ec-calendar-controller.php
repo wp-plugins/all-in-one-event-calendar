@@ -296,14 +296,14 @@ class Ai1ec_Calendar_Controller {
 		       $ai1ec_events_helper,
 		       $ai1ec_calendar_helper;
 
-    $defaults = array(
-      'week_offset'   => 0,
-      'active_event'  => null,
-      'categories'    => array(),
-      'tags'          => array(),
-      'post_ids'      => array(),
-    );
-    $args = wp_parse_args( $args, $defaults );
+		$defaults = array(
+			'week_offset'   => 0,
+			'active_event'  => null,
+			'categories'    => array(),
+			'tags'          => array(),
+			'post_ids'      => array(),
+		);
+		$args = wp_parse_args( $args, $defaults );
 
 		extract( $args );
 
@@ -321,13 +321,15 @@ class Ai1ec_Calendar_Controller {
 			array( 'cat_ids' => $categories, 'cat_ids' => $tags, 'post_ids' => $post_ids ) );
 		$pagination_links = $ai1ec_calendar_helper->get_week_pagination_links( $week_offset );
 
+		/* translators: "%s" represents the week's starting date */
 		$view_args = array(
-			'title'             => sprintf( __( 'Week of %s', AI1EC_PLUGIN_NAME ), date_i18n( __( 'F j' ), $timestamp, true ) ),
+			'title'             => sprintf( __( 'Week of %s', AI1EC_PLUGIN_NAME ), date_i18n( __( 'F j', AI1EC_PLUGIN_NAME ), $timestamp, true ) ),
 			'cell_array'        => $cell_array,
 			'now_top'           => $bits['hours'] * 60 + $bits['minutes'],
 			'pagination_links'  => $pagination_links,
 			'active_event'      => $active_event,
 			'post_ids'          => join( ',', $post_ids ),
+			'time_format'       => get_option( 'time_format', 'g a' ),
 			'done_allday_label' => false,
 			'done_grid'         => false
 		);

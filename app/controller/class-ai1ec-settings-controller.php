@@ -178,12 +178,12 @@ class Ai1ec_Settings_Controller {
 		{
 			$output = array(
 				'error' 	=> true,
-				'message'	=> 'Invalid feed'
+				'message'	=> __( 'Invalid ICS feed ID', AI1EC_PLUGIN_NAME )
 			);
 		}
 
-    if( $ajax )
-      $ai1ec_view_helper->json_response( $output );
+		if( $ajax )
+			$ai1ec_view_helper->json_response( $output );
 	}
 
 	/**
@@ -205,23 +205,30 @@ class Ai1ec_Settings_Controller {
 
 		if( $feed )
 		{
-      // flush the feed
-      $this->flush_ics_feed( false, $feed->feed_url );
-      // reimport the feed
-			$count = $ai1ec_importer_helper->parse_ics_feed( $feed );
-
-			$output = array(
-				'error'       => false,
-				'message'     => sprintf( __( 'Imported %d events', AI1EC_PLUGIN_NAME ), $count ),
-				'flush_label' => sprintf( _n( 'Flush 1 event', 'Flush %s events', $count, AI1EC_PLUGIN_NAME ), $count ),
-				'count'       => $count,
-			);
+			// flush the feed
+			$this->flush_ics_feed( false, $feed->feed_url );
+			// reimport the feed
+			$count = @$ai1ec_importer_helper->parse_ics_feed( $feed );
+			if ( $count == 0 ) {
+				// If results are 0, it could be result of a bad URL or other error, send a specific message
+				$output = array(
+					'error' 	=> true,
+					'message'	=> __( 'No events were found', AI1EC_PLUGIN_NAME )
+				);
+			} else {
+				$output = array(
+					'error'       => false,
+					'message'     => sprintf( __( 'Imported %d events', AI1EC_PLUGIN_NAME ), $count ),
+					'flush_label' => sprintf( _n( 'Flush 1 event', 'Flush %s events', $count, AI1EC_PLUGIN_NAME ), $count ),
+					'count'       => $count,
+				);
+			}
 		}
 		else
 		{
 			$output = array(
 				'error' 	=> true,
-				'message'	=> 'Invalid feed'
+				'message'	=> __( 'Invalid ICS feed ID', AI1EC_PLUGIN_NAME )
 			);
 		}
 
@@ -330,7 +337,7 @@ class Ai1ec_Settings_Controller {
 	 * @return array
 	 **/
 	function plugin_action_links( $links ) {
-    $settings = sprintf( __( '<a href="%s">Settings</a>', AI1EC_PLUGIN_NAME ), admin_url( 'edit.php?post_type=ai1ec_event&page=all-in-one-event-calendar-settings' ) );
+    $settings = sprintf( __( '<a href="%s">Settings</a>', AI1EC_PLUGIN_NAME ), admin_url( 'edit.php?post_type=' . AI1EC_POST_TYPE . '&page=' . AI1EC_PLUGIN_NAME . '-settings' ) );
     array_unshift( $links, $settings );
     return $links;
 	}

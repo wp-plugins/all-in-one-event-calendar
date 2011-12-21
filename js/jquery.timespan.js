@@ -187,29 +187,56 @@
 					}
 				});
 
+			// Gets the time difference between start and end dates
+			function get_startend_time_difference() {
+				var start_date_val = parseDate( start_date_input.val(), o.date_format ).getTime() / 1000;
+				var start_time_val = parseTime( start_time_input.val() );
+				start_date_val += start_time_val.hour * 3600 + start_time_val.minute * 60;
+				var end_date_val = parseDate( end_date_input.val(), o.date_format ).getTime() / 1000;
+				var end_time_val = parseTime( end_time_input.val() );
+				end_date_val += end_time_val.hour * 3600 + end_time_val.minute * 60;
+
+				return end_date_val - start_date_val;
+			}
+
+			function shift_jqts_enddate() {
+				var start_date_val = parseDate( start_date_input.data( 'timespan.stored' ), o.date_format );
+				var start_time_val = parseTime( start_time_input.data( 'timespan.stored' ) );
+				var end_time_val = start_date_val.getTime() / 1000
+					+ start_time_val.hour * 3600 + start_time_val.minute * 60
+					+ start_date_input.data( 'time_diff' );
+				end_time_val = new Date( end_time_val * 1000 );
+				end_date_input.val( formatDate( end_time_val, o.date_format ) );
+				end_time_input.val( formatTime( end_time_val.getUTCHours(), end_time_val.getUTCMinutes(), o.twentyfour_hour ) );
+
+				return true;
+			}
+
 			// When start date/time are modified, update end date/time by shifting the
 			// appropriate amount.
 			start_date_input.add( o.start_time_input )
 				.bind( 'focus.timespan', function() {
 					// Calculate the time difference between start & end and save it.
-					var start_date_val = parseDate( start_date_input.val(), o.date_format ).getTime() / 1000;
-					var start_time_val = parseTime( start_time_input.val() );
-					start_date_val += start_time_val.hour * 3600 + start_time_val.minute * 60;
-					var end_date_val = parseDate( end_date_input.val(), o.date_format ).getTime() / 1000;
-					var end_time_val = parseTime( end_time_input.val() );
-					end_date_val += end_time_val.hour * 3600 + end_time_val.minute * 60;
-					start_date_input.data( 'time_diff', end_date_val - start_date_val );
+					start_date_input.data( 'time_diff', get_startend_time_difference() );
 				} )
 				.bind( 'blur.timespan', function() {
-					var start_date_val = parseDate( start_date_input.data( 'timespan.stored' ), o.date_format );
-					var start_time_val = parseTime( start_time_input.data( 'timespan.stored' ) );
+					// If End date is earlier than StartDate, reset it to 15 mins after startDate
+					if ( start_date_input.data( 'time_diff' ) < 0 ) {
+						start_date_input.data( 'time_diff', 15 * 60 );
+					}
 					// Shift end date/time as appropriate.
-					var end_time_val = start_date_val.getTime() / 1000
-						+ start_time_val.hour * 3600 + start_time_val.minute * 60
-						+ start_date_input.data( 'time_diff' );
-					end_time_val = new Date( end_time_val * 1000 );
-					end_date_input.val( formatDate( end_time_val, o.date_format ) );
-					end_time_input.val( formatTime( end_time_val.getUTCHours(), end_time_val.getUTCMinutes(), o.twentyfour_hour ) );
+					var shift_jqts = shift_jqts_enddate();
+				} );
+			
+			// When end date/time is modified, check if it is earlier than start date/time and shift it if needed
+			end_date_input.add( o.start_time_input )
+				.bind( 'blur.timespan', function() {
+					// If End date is earlier than StartDate, reset it to 15 mins after startDate
+					if ( get_startend_time_difference() < 0 ) {
+						start_date_input.data( 'time_diff', 15 * 60 );
+						// Shift end date/time as appropriate.
+						var shift_jqts = shift_jqts_enddate();
+					}
 				} );
 
 			// Validation upon form submission
