@@ -51,10 +51,11 @@ class Ai1ec_Exporter_Helper {
 	 *
 	 * @param object $event Event object
 	 * @param object $c Calendar object
+	 * @param bool $export States whether events are created for export
 	 *
 	 * @return void
 	 **/
-	function insert_event_in_calendar( $event, &$c )
+	function insert_event_in_calendar( $event, &$c, $export = false )
 	{
 		global $ai1ec_events_helper;
 
@@ -69,18 +70,24 @@ class Ai1ec_Exporter_Helper {
 		$content = str_replace(']]>', ']]&gt;', $content);
 		$e->setProperty( 'description', $content );
 		if( $event->allday ) {
-		  $dtstart = $dtend = array();
-		  $dtstart["VALUE"] = $dtend["VALUE"] = 'DATE';
-		  if( $tz )
-		    $dtstart["TZID"] = $dtend["TZID"] = $tz;
+			$dtstart = $dtend = array();
+			$dtstart["VALUE"] = $dtend["VALUE"] = 'DATE';
+			// For exporting all day events, don't set a timezone
+			if( $tz && !$export )
+				$dtstart["TZID"] = $dtend["TZID"] = $tz;
 
-			$e->setProperty( 'dtstart', gmdate( "Ymd\T", $ai1ec_events_helper->gmt_to_local( $event->start ) ), $dtstart );
-
-			$e->setProperty( 'dtend', gmdate( "Ymd\T", $ai1ec_events_helper->gmt_to_local( $event->end ) ), $dtend );
+			// For exporting all day events, only set the date not the time
+			if( $export ) {
+				$e->setProperty( 'dtstart', gmdate( "Ymd", $ai1ec_events_helper->gmt_to_local( $event->start ) ), $dtstart );
+				$e->setProperty( 'dtend', gmdate( "Ymd", $ai1ec_events_helper->gmt_to_local( $event->end ) ), $dtend );
+			} else {
+				$e->setProperty( 'dtstart', gmdate( "Ymd\T", $ai1ec_events_helper->gmt_to_local( $event->start ) ), $dtstart );
+				$e->setProperty( 'dtend', gmdate( "Ymd\T", $ai1ec_events_helper->gmt_to_local( $event->end ) ), $dtend );
+			}
 		} else {
-		  $dtstart = $dtend = array();
-		  if( $tz )
-		    $dtstart["TZID"] = $dtend["TZID"] = $tz;
+			$dtstart = $dtend = array();
+			if( $tz )
+				$dtstart["TZID"] = $dtend["TZID"] = $tz;
 
 			$e->setProperty( 'dtstart', gmdate( "Ymd\THis\Z", $ai1ec_events_helper->gmt_to_local( $event->start ) ), $dtstart );
 

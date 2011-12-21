@@ -323,7 +323,7 @@ class Ai1ec_Calendar_Helper {
 		$args = array( $start_time, $end_time );
 
 		// Get post status Where snippet and associated SQL arguments
-		$this->_get_post_status_sql( $post_status_where = '', $args );
+		$this->_get_post_status_sql( $post_status_where, $args );
 
 		// Get the Join (filter_join) and Where (filter_where) statements based on
 		// $filter elements specified
@@ -401,7 +401,7 @@ class Ai1ec_Calendar_Helper {
 			$first_record = ( -$page_offset - 1 ) * $limit;
 
 		// Get post status Where snippet and associated SQL arguments
-		$this->_get_post_status_sql( $post_status_where = '', $args );
+		$this->_get_post_status_sql( $post_status_where, $args );
 
 		// Get the Join (filter_join) and Where (filter_where) statements based on
 		// $filter elements specified
@@ -708,13 +708,14 @@ class Ai1ec_Calendar_Helper {
 		$bits['mday'] += $ai1ec_events_helper->get_week_start_day_offset( $bits['wday'] );
 		$bits['mday'] += $cur_offset * 7;
 
+		/* translators: "%s" represents the week's starting date */
 		$links[] = array(
 			'id' => 'ai1ec-prev-week',
 			'text' =>
 				'‹ ' .
 				sprintf(
 					__( 'Week of %s', AI1EC_PLUGIN_NAME ),
-					date_i18n( __( 'M j' ), gmmktime( 0, 0, 0, $bits['mon'], $bits['mday'] - 7, $bits['year'] ), true )
+					date_i18n( __( 'M j', AI1EC_PLUGIN_NAME ), gmmktime( 0, 0, 0, $bits['mon'], $bits['mday'] - 7, $bits['year'] ), true )
 				),
 			'href' => '#action=ai1ec_week&ai1ec_week_offset=' . ( $cur_offset - 1 ),
 		);
@@ -723,7 +724,7 @@ class Ai1ec_Calendar_Helper {
 			'text' =>
 				sprintf(
 					__( 'Week of %s', AI1EC_PLUGIN_NAME ),
-					date_i18n( __( 'M j' ), gmmktime( 0, 0, 0, $bits['mon'], $bits['mday'] + 7, $bits['year'] ), true )
+					date_i18n( __( 'M j', AI1EC_PLUGIN_NAME ), gmmktime( 0, 0, 0, $bits['mon'], $bits['mday'] + 7, $bits['year'] ), true )
 				)
 				. ' ›',
 			'href' => '#action=ai1ec_week&ai1ec_week_offset=' . ( $cur_offset + 1 ),
@@ -782,7 +783,7 @@ class Ai1ec_Calendar_Helper {
 	 *
 	 * @return void
 	 */
-	function _get_post_status_sql( &$sql, &$args )
+	function _get_post_status_sql( &$post_status_where = '', &$args )
 	{
 		global $current_user;
 
@@ -791,9 +792,9 @@ class Ai1ec_Calendar_Helper {
 		{
 			// User has privilege of seeing all published and private posts
 
-			$post_status = "AND ( post_status = %s OR post_status = %s ) ";
-			$args[] = 'publish';
-			$args[] = 'private';
+			$post_status_where = "AND ( post_status = %s OR post_status = %s ) ";
+			$args[]            = 'publish';
+			$args[]            = 'private';
 		}
 		elseif( is_user_logged_in() )
 		{
@@ -806,7 +807,7 @@ class Ai1ec_Calendar_Helper {
 			// include post_status = published
 			//   OR
 			// post_status = private AND author = logged-in user
-			$post_status =
+			$post_status_where =
 				"AND ( " .
 					"post_status = %s " .
 					"OR ( post_status = %s AND post_author = %d ) " .
@@ -817,8 +818,8 @@ class Ai1ec_Calendar_Helper {
 			$args[] = $current_user->ID;
 		} else {
 			// User can only see published posts.
-			$post_status = "AND post_status = %s ";
-			$args[] = 'publish';
+			$post_status_where = "AND post_status = %s ";
+			$args[]            = 'publish';
 		}
 	}
 
