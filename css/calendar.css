@@ -187,8 +187,6 @@ table.ai1ec-month-view,
 	background: #fff;
 	table-layout: fixed !important;
 	clear: both;
-}
-table.ai1ec-month-view {
 	width: 100% !important;
 }
 .ai1ec-week-view .tablescroll_wrapper {

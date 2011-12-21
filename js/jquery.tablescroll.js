@@ -101,7 +101,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 			var diff = wrapper_width-width;
 
 			// assume table will scroll
-			wrapper.css({width:((width-diff))+'px'});
+			wrapper.css({width:((width-diff-2))+'px'});
 			tb.css('width',(width-diff-settings.scrollbarWidth)+'px');
 
 			if (tb.outerHeight() <= settings.height)
@@ -127,6 +127,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 			$('th, td',thead_tr_first).each(function(i)
 			{
 				w  = $(this).width();
+				$('th:eq('+i+'), td:eq('+i+')',thead_tr_first).css('width',w+'px');
+				$('th:eq('+i+'), td:eq('+i+')',tbody_tr_first).css('width',w+'px');
 				if (has_tfoot) $('th:eq('+i+'), td:eq('+i+')',tfoot_tr_first).css('width',w+'px');
 			});
 
