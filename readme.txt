@@ -1,10 +1,10 @@
 === All-in-One Event Calendar ===
 Contributors: theseed, hubrik, vtowel, yani.iliev
-Donate link: http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9JJMUW48W2ED8
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
 Tested up to: 3.3
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 
 An event calendar system with month, week, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
@@ -57,6 +57,16 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 * [**Get Premium Support »**](http://theseednetwork.com/get-supported) from [The Seed Studio](http://theseednetwork.com/)
 
 == Changelog ==
+= Version 1.2.3 =
+* Improvement: Days of the week in month recurrence [#170](http://trac.the-seed.ca/ticket/170)
+* Improvement: Make Month view, Week view compatible with touchscreen devices [#210](http://trac.the-seed.ca/ticket/210)
+* Improvement: Improve error handling in get_timezone_offset function[#219](http://trac.the-seed.ca/ticket/219)
+* Improvement: Update iCalcreator class [#256](http://trac.the-seed.ca/ticket/256)
+* Fixed: Widget Limit options (category, tag, etc) multiselect fails to display properly [#192](http://trac.the-seed.ca/ticket/192)
+* Fixed: Private Events Show in Calendar and Upcoming Events. [#201](http://trac.the-seed.ca/ticket/201)
+* Fixed: Dates getting mixed up between Ai1EC calendars [#229](http://trac.the-seed.ca/ticket/229)
+* Fixed: Error displayed when event is a draft [#239](http://trac.the-seed.ca/ticket/239)
+* Fixed: PHP Notice errors from widget [#255](http://trac.the-seed.ca/ticket/255)
 
 = Version 1.2.2 =
 * Fixed: Issue with Week view having an improper width [#208](http://trac.the-seed.ca/ticket/208)
