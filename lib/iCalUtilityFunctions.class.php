@@ -1,8 +1,8 @@
 <?php
 /**
- * iCalcreator class v2.10
+ * iCalcreator v2.10.23
  * copyright (c) 2007-2011 Kjell-Inge Gustafsson kigkonsult
- * www.kigkonsult.se/iCalcreator/index.php
+ * kigkonsult.se/iCalcreator/index.php
  * ical@kigkonsult.se
  *
  * This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
  * moving all utility (static) functions to a utility class
  *
  * @author Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @since 2.6.22 - 2010-09-25
+ * @since 2.10.1 - 2011-07-16
  *
  */
 class iCalUtilityFunctions {
@@ -119,7 +119,7 @@ class iCalUtilityFunctions {
  * END:VTIMEZONE
  *
  * @author Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @since 2.9.2 - 2011-05-30
+ * @since 2.10.3 - 2011-08-01
  * @param object $calendar, reference to an iCalcreator calendar instance
  * @param string $timezone, a PHP5 (DateTimeZone) valid timezone
  * @param array $xProp, *[x-propName => x-propValue], optional
@@ -132,47 +132,56 @@ class iCalUtilityFunctions {
       return FALSE;
     try {
       $dtz = new DateTimeZone( $timezone );
-      $transitions = $dtz->getTransitions();
-      $stdDTSTART = $stdTZOFFSETTO = $stdTZOFFSETFROM = $stdTZNAME = $dlghtDTSTART = $dlghtTZOFFSETTO = $dlghtTZOFFSETFROM = $dlghtTZNAME = FALSE;
-      foreach( $transitions as $trans ) {
-        if( substr( $trans['time'], 0, 4 ) > ( date( 'Y' ) - 1 ))
-          break;
-        if( $trans['isdst'] !== TRUE ) {
-          $stdDTSTART    = $trans['time'];
-          $stdTZOFFSETTO = $dlghtTZOFFSETFROM = iCalUtilityFunctions::offsetSec2His( $trans['offset'] );
-          $stdTZNAME     = $trans['abbr'];
-        }
-        else {
-          $dlghtDTSTART    = $trans['time'];
-          $dlghtTZOFFSETTO = $stdTZOFFSETFROM = iCalUtilityFunctions::offsetSec2His( $trans['offset'] );
-          $dlghtTZNAME     = $trans['abbr'];
-        }
-      }
-      if( $stdDTSTART && $stdTZOFFSETTO && $stdTZOFFSETFROM && $stdTZNAME && $dlghtDTSTART && $dlghtTZOFFSETTO && $dlghtTZOFFSETFROM && $dlghtTZNAME ) {
-        $tz  = & $calendar->newComponent( 'vtimezone' );
-        $tz->setproperty( 'tzid', $timezone );
-        if( !empty( $xProp )) {
-          foreach( $xProp as $xPropName => $xPropValue )
-            if( 'x-' == strtolower( substr( $xPropName, 0, 2 )))
-              $tz->setproperty( $xPropName, $xPropValue );
-        }
-        $std = & $tz->newComponent( 'standard' );
-        $std->setProperty( 'dtstart',        $stdDTSTART );
-        $std->setProperty( 'tzname',         $stdTZNAME );
-        $std->setProperty( 'tzoffsetto',     $stdTZOFFSETTO );
-        $std->setProperty( 'tzoffsetfrom',   $stdTZOFFSETFROM );
-        $std->setProperty( 'RRULE', array( 'FREQ' => 'YEARLY', 'BYDAY' => array( '-1', 'DAY' => 'SU' ), 'BYMONTH' => 10 ));
-        $dlght = & $tz->newComponent( 'daylight' );
-        $dlght->setProperty( 'dtstart',      $dlghtDTSTART );
-        $dlght->setProperty( 'tzname',       $dlghtTZNAME );
-        $dlght->setProperty( 'tzoffsetto',   $dlghtTZOFFSETTO );
-        $dlght->setProperty( 'tzoffsetfrom', $dlghtTZOFFSETFROM );
-        $dlght->setProperty( 'RRULE', array( 'FREQ' => 'YEARLY', 'BYDAY' => array( '-1', 'DAY' => 'SU' ), 'BYMONTH' => 3 ));
-      }
     }
     catch( Exception $e ) {
       return FALSE;
     }
+    $stdDTSTART  = $stdTZOFFSETTO = $stdTZOFFSETFROM = $stdTZNAME = $dlghtDTSTART = $dlghtTZOFFSETTO = $dlghtTZOFFSETFROM = $dlghtTZNAME = FALSE;
+    $dateNow     = new DateTime();
+    $transitions = $dtz->getTransitions();
+    foreach( $transitions as $trans ) {
+      if( FALSE === ( $date = DateTime::createFromFormat( 'Y-m-d', substr( $trans['time'], 0, 10 ))))
+        continue;
+      if( $date > $dateNow )
+        break;
+      if( TRUE !== $trans['isdst'] ) {
+        $stdDTSTART    = $trans['time'];
+        $stdTZOFFSETTO = $dlghtTZOFFSETFROM = iCalUtilityFunctions::offsetSec2His( $trans['offset'] );
+        $stdTZNAME     = $trans['abbr'];
+      }
+      else {
+        $dlghtDTSTART    = $trans['time'];
+        $dlghtTZOFFSETTO = $stdTZOFFSETFROM = iCalUtilityFunctions::offsetSec2His( $trans['offset'] );
+        $dlghtTZNAME     = $trans['abbr'];
+      }
+    }
+    if( !$stdDTSTART || !$stdTZOFFSETTO || !$stdTZOFFSETFROM )
+      return FALSE;
+    $tz  = & $calendar->newComponent( 'vtimezone' );
+    $tz->setproperty( 'tzid', $timezone );
+    if( !empty( $xProp )) {
+      foreach( $xProp as $xPropName => $xPropValue )
+        if( 'x-' == strtolower( substr( $xPropName, 0, 2 )))
+          $tz->setproperty( $xPropName, $xPropValue );
+    }
+    $std = & $tz->newComponent( 'standard' );
+    $std->setProperty( 'dtstart',        $stdDTSTART );
+    if( $stdTZNAME )
+      $std->setProperty( 'tzname',       $stdTZNAME );
+    $std->setProperty( 'tzoffsetto',     $stdTZOFFSETTO );
+    $std->setProperty( 'tzoffsetfrom',   $stdTZOFFSETFROM );
+    if(( $stdTZOFFSETTO != $stdTZOFFSETFROM  ) && ( FALSE === iCalUtilityFunctions::_setTZrrule( $std )))
+      $std->setProperty( 'RRULE', array( 'FREQ' => 'YEARLY', 'BYDAY' => array( '-1', 'DAY' => 'SU' ), 'BYMONTH' => 10 ));
+    if(( !$dlghtDTSTART || !$dlghtTZOFFSETTO || !$dlghtTZOFFSETFROM ) || ( $dlghtTZOFFSETTO == $dlghtTZOFFSETFROM ))
+      return TRUE;
+    $dlght = & $tz->newComponent( 'daylight' );
+    $dlght->setProperty( 'dtstart',      $dlghtDTSTART );
+    if( $dlghtTZNAME )
+      $dlght->setProperty( 'tzname',     $dlghtTZNAME );
+    $dlght->setProperty( 'tzoffsetto',   $dlghtTZOFFSETTO );
+    $dlght->setProperty( 'tzoffsetfrom', $dlghtTZOFFSETFROM );
+    if( FALSE === iCalUtilityFunctions::_setTZrrule( $dlght ))
+      $dlght->setProperty( 'RRULE', array( 'FREQ' => 'YEARLY', 'BYDAY' => array( '-1', 'DAY' => 'SU' ), 'BYMONTH' => 3 ));
     return TRUE;
   }
 /**
@@ -343,7 +352,7 @@ class iCalUtilityFunctions {
  * @param array $duration
  * @return array duration
  */
-  function _date2duration( $startdate, $enddate ) {
+  public static function _date2duration( $startdate, $enddate ) {
     $startWdate  = mktime( 0, 0, 0, $startdate['month'], $startdate['day'], $startdate['year'] );
     $endWdate    = mktime( 0, 0, 0, $enddate['month'],   $enddate['day'],   $enddate['year'] );
     $wduration   = $endWdate - $startWdate;
@@ -471,7 +480,7 @@ class iCalUtilityFunctions {
  * @param array $duration
  * @return array, date format
  */
-  function _duration2date( $startdate=null, $duration=null ) {
+  public static function _duration2date( $startdate=null, $duration=null ) {
     if( empty( $startdate )) return FALSE;
     if( empty( $duration ))  return FALSE;
     $dateOnly          = ( isset( $startdate['hour'] ) || isset( $startdate['min'] ) || isset( $startdate['sec'] )) ? FALSE : TRUE;
@@ -723,14 +732,14 @@ class iCalUtilityFunctions {
  * if missing, UNTIL is set 1 year from startdate (emergency break)
  *
  * @author Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @since 2.9.10 - 2011-07-07
+ * @since 2.10.19 - 2011-10-31
  * @param array $result, array to update, array([timestamp] => timestamp)
  * @param array $recur, pattern for recurrency (only value part, params ignored)
  * @param array $wdate, component start date
  * @param array $startdate, start date
  * @param array $enddate, optional
  * @return array of recurrence (start-)dates as index
- * @todo BYHOUR, BYMINUTE, BYSECOND, ev. BYSETPOS due to ambiguity, WEEKLY at year end/start
+ * @todo BYHOUR, BYMINUTE, BYSECOND, WEEKLY at year end/start
  */
   public static function _recur2date( & $result, $recur, $wdate, $startdate, $enddate=FALSE ) {
     foreach( $wdate as $k => $v ) if( ctype_digit( $v )) $wdate[$k] = (int) $v;
@@ -755,7 +764,7 @@ class iCalUtilityFunctions {
         $recur['UNTIL'] = iCalUtilityFunctions::_timestamp2date( $endDatets, 6 );
     }
     if( $wdatets > $endDatets ) {
-// echo "recur out of date ".implode('-',iCalUtilityFunctions::_date_time_string(date('Y-m-d H:i:s',$wdatets),6))."<br />\n";//test
+// echo "recur out of date ".date('Y-m-d H:i:s',$wdatets)."<br />\n";//test
       return array(); // nothing to do.. .
     }
     if( !isset( $recur['FREQ'] )) // "MUST be specified.. ."
@@ -829,11 +838,13 @@ class iCalUtilityFunctions {
         $daycnts    = array();
         $yeardays   = $weekno = 0;
         $yeardaycnt = array();
+        foreach( $daynames as $dn )
+          $yeardaycnt[$dn] = 0;
         for( $m = 1; $m <= 12; $m++ ) { // count up and update up-counters
           $daycnts[$m] = array();
           $weekdaycnt = array();
           foreach( $daynames as $dn )
-            $yeardaycnt[$dn] = $weekdaycnt[$dn] = 0;
+            $weekdaycnt[$dn] = 0;
           $mcnt     = date( 't', mktime( 0, 0, 0, $m, 1, $wdate['year'] ));
           for( $d   = 1; $d <= $mcnt; $d++ ) {
             $daycnts[$m][$d] = array();
@@ -954,8 +965,9 @@ class iCalUtilityFunctions {
           if((  $daynoexists &&  $daynosw && $daynamesw ) ||
              ( !$daynoexists && !$daynosw && $daynamesw )) {
             $updateOK = TRUE;
+// echo "m=$m d=$d day=".$daycnts[$m][$d]['DAY']." yeardayno_up=".$daycnts[$m][$d]['yeardayno_up']." daynoexists:$daynoexists daynosw:$daynosw daynamesw:$daynamesw updateOK:$updateOK<br />\n"; // test ###
           }
-// echo "daynoexists:$daynoexists daynosw:$daynosw daynamesw:$daynamesw<br />\n"; // test ###
+//echo "m=$m d=$d day=".$daycnts[$m][$d]['DAY']." yeardayno_up=".$daycnts[$m][$d]['yeardayno_up']." daynoexists:$daynoexists daynosw:$daynosw daynamesw:$daynamesw updateOK:$updateOK<br />\n"; // test ###
         }
         else {
           foreach( $recur['BYDAY'] as $bydayvalue ) {
@@ -1005,11 +1017,11 @@ class iCalUtilityFunctions {
                                            (( $bysetposYold == $wdate['year'] )  &&
                                             ( $bysetposMold == $wdate['month'])  &&
                                             ( $bysetposDold == $wdate['day'] )))) {
-// echo "bysetposymd1[]=".implode('-',iCalUtilityFunctions::_date_time_string(date('Y-m-d H:i:s',$wdatets),6))."<br />\n";//test
+// echo "bysetposymd1[]=".date('Y-m-d H:i:s',$wdatets)."<br />\n";//test
               $bysetposymd1[] = $wdatets;
             }
             else {
-// echo "bysetposymd2[]=".implode('-',iCalUtilityFunctions::_date_time_string(date('Y-m-d H:i:s',$wdatets),6))."<br />\n";//test
+// echo "bysetposymd2[]=".date('Y-m-d H:i:s',$wdatets)."<br />\n";//test
               $bysetposymd2[] = $wdatets;
             }
           }
@@ -1019,9 +1031,9 @@ class iCalUtilityFunctions {
           $countcnt++;
           if( $startdatets <= $wdatets ) { // only output within period
             $result[$wdatets] = TRUE;
-// echo "recur ".implode('-',iCalUtilityFunctions::_date_time_string(date('Y-m-d H:i:s',$wdatets),6))."<br />\n";//test
+// echo "recur ".date('Y-m-d H:i:s',$wdatets)."<br />\n";//test
           }
-// echo "recur undate ".implode('-',iCalUtilityFunctions::_date_time_string(date('Y-m-d H:i:s',$wdatets),6))." okdatstart ".implode('-',iCalUtilityFunctions::_date_time_string(date('Y-m-d H:i:s',$startdatets),6))."<br />\n";//test
+// echo "recur undate ".date('Y-m-d H:i:s',$wdatets)." okdatstart ".date('Y-m-d H:i:s',$startdatets)."<br />\n";//test
           $updateOK = FALSE;
         }
       }
@@ -1077,7 +1089,7 @@ class iCalUtilityFunctions {
 //                $testweekno = (int) date( 'W', mktime( 0, 0, $wkst, $testdate['month'], $testdate['day'], $testdate['year'] )); // test ###
 // echo " testYMD (weekno)=".$testdate['year'].':'.$testdate['month'].':'.$testdate['day']." ($testweekno)";   // test ###
                 $result[$bysetposarr1[$ix]] = TRUE;
-// echo " recur ".implode('-',iCalUtilityFunctions::_date_time_string(date('Y-m-d H:i:s',$bysetposarr1[$ix]),6)); // test ###
+// echo " recur ".date('Y-m-d H:i:s',$bysetposarr1[$ix]); // test ###
               }
               $countcnt++;
             }
@@ -1202,7 +1214,7 @@ class iCalUtilityFunctions {
  * convert format for input date to internal date with parameters
  *
  * @author Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @since 2.9.6 - 2011-05-14
+ * @since 2.10.4 - 2011-08-03
  * @param mixed $year
  * @param mixed $month optional
  * @param int $day optional
@@ -1248,6 +1260,15 @@ class iCalUtilityFunctions {
       $input['params'] = iCalUtilityFunctions::_setParams( $month, array( 'VALUE' => 'DATE-TIME' ));
       if( isset( $input['params']['TZID'] )) {
         $input['params']['VALUE'] = 'DATE-TIME';
+        $parno = 6;
+      }
+      elseif( $tzid && iCalUtilityFunctions::_isOffset( substr( $year, -7 ))) {
+        if(( in_array( substr( $year, -5, 1 ), array( '+', '-' ))) &&
+           (   '0000'  < substr( $year, -4 )) && (   '9999' >= substr( $year, -4 )))
+          $year = substr( $year, 0, ( strlen( $year ) - 5 ));
+        elseif(( in_array( substr( $input, -7, 1 ), array( '+', '-' ))) &&
+               ( '000000'  < substr( $input, -6 )) && ( '999999' >= substr( $input, -6 )))
+          $year = substr( $year, 0, ( strlen( $year ) - 7 ));
         $parno = 6;
       }
       $parno           = iCalUtilityFunctions::_existRem( $input['params'], 'VALUE', 'DATE-TIME', 7, $parno );
@@ -1412,6 +1433,32 @@ class iCalUtilityFunctions {
     return (0 < count( $input )) ? $input : null;
   }
 /**
+ * set RRULE in vtimezone standard/daylight components based on component dtstart
+ *
+ * @author Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @since 2.10.3 - 2011-08-01
+ * @param object $obj, reference to an iCalcreator vtimezone standard/daylight instance
+ * @return bool
+ */
+  public static function _setTZrrule( & $obj ) {
+    if( FALSE === ( $date = $obj->getProperty( 'dtstart' )))
+      return FALSE;
+    $ts      = mktime( (int) $date['hour'], (int) $date['min'], (int) $date['sec'], (int) $date['month'], (int) $date['day'], (int) $date['year'] );
+    $daysNm  = array( 'SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU' );
+    $day     = $daysNm[date( 'N', $ts )];
+    $daycnt  = date( 't', $ts ) - $date['day'];
+    if( 8 > $daycnt )
+      $ordwk = -1;
+    elseif( 15 > $daycnt)
+      $ordwk = -2;
+    elseif( 8 > $date['day'] )
+      $ordwk = 1;
+    else
+      $ordwk = 2;
+    $obj->setProperty( 'RRULE', array( 'FREQ' => 'YEARLY', 'BYDAY' => array( (string) $ordwk, 'DAY' => $day ), 'BYMONTH' => (int) $date['month'] ));
+    return TRUE;
+  }
+/**
  * step date, return updated date, array and timpstamp
  *
  * @author Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
@@ -1466,7 +1513,7 @@ class iCalUtilityFunctions {
  * @param int $timestamp
  * @return array, duration format
  */
-  function _timestamp2duration( $timestamp ) {
+  public static function _timestamp2duration( $timestamp ) {
     $dur         = array();
     $dur['week'] = (int) floor( $timestamp / ( 7 * 24 * 60 * 60 ));
     $timestamp   =              $timestamp % ( 7 * 24 * 60 * 60 );
@@ -1477,6 +1524,32 @@ class iCalUtilityFunctions {
     $dur['min']  = (int) floor( $timestamp / ( 60 ));
     $dur['sec']  = (int)        $timestamp % ( 60 );
     return $dur;
+  }
+/**
+ * transforms a dateTime from a timezone to another using PHP DateTime and DateTimeZone class (PHP >= PHP 5.2.0)
+ *
+ * @author Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @since 2.10.5 - 2011-08-03
+ * @param string $date    (date to alter)
+ * @param string $tzFrom, PHP valid old timezone
+ * @param string $tzTo,   PHP valid new timezone, default 'UTC'
+ * @param string $format, (opt) date output format, default 'Ymd\THis'
+ * @return bool
+ */
+  public static function transformDateTime( & $date, $tzFrom, $tzTo='UTC', $format = 'Ymd\THis' ) {
+    if( !class_exists( 'DateTime' ) || !class_exists( 'DateTimeZone' ))
+      return FALSE;
+    if( FALSE === ( $timestamp = strtotime( $date )))
+      return FALSE;
+    try {
+      $d = new DateTime( date( 'Y-m-d H:i:s', $timestamp ), new DateTimeZone( $tzFrom ));
+      $d->setTimezone( new DateTimeZone( $tzTo ));
+    }
+    catch (Exception $e) {
+      return FALSE;
+    }
+    $date = $d->format( $format );
+    return TRUE;
   }
 /**
  * convert (numeric) local time offset to seconds correcting localtime to GMT

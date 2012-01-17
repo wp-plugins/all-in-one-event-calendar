@@ -790,7 +790,7 @@ class Ai1ec_Calendar_Helper {
 		// Query the correct post status
 		if( current_user_can( 'administrator' ) || current_user_can( 'editor' ) )
 		{
-			// User has privilege of seeing all published and private posts
+			// User has privilege of seeing all published and private
 
 			$post_status_where = "AND ( post_status = %s OR post_status = %s ) ";
 			$args[]            = 'publish';
@@ -806,7 +806,7 @@ class Ai1ec_Calendar_Helper {
 
 			// include post_status = published
 			//   OR
-			// post_status = private AND author = logged-in user
+			// post_status = private AND post_author = userID
 			$post_status_where =
 				"AND ( " .
 					"post_status = %s " .

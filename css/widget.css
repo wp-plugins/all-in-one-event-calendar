@@ -49,3 +49,7 @@
 .ai1ec-category-selected-item-remove img {
 	vertical-align: bottom;
 }
+
+.ai1ec-widget-cat-ids, .ai1ec-widget-tag-ids, .ai1ec-widget-event-ids {
+	width: 99%;
+}

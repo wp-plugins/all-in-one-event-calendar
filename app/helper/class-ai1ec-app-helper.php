@@ -441,8 +441,13 @@ class Ai1ec_App_Helper {
 		global $ai1ec_events_helper;
 		switch( $column ) {
 			case 'ai1ec_event_date':
-				$e = new Ai1ec_Event( $post_id );
-				echo $e->short_start_date . ' ' . $e->short_start_time . " - " . $e->short_end_date . ' ' .$e->short_end_time;
+				try {
+					$e = new Ai1ec_Event( $post_id );
+					echo $e->short_start_date . ' ' . $e->short_start_time . " - " . $e->short_end_date . ' ' .$e->short_end_time;
+				} catch( Exception $e ) {
+					// event wasn't found, output empty string
+					echo "";
+				}
 				break;
 		}
 	}

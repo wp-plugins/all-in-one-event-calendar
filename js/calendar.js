@@ -185,11 +185,27 @@ jQuery( document ).ready( function( $ ) {
 
 		// Display popup
 		$popup
-			.fadeIn( 100, function() {
-				// Special case - check if the mouse cursor is still in the pop-up.
-				if( ! $(this).data( 'ai1ec_mouseinside' ) )
-					$(this).each( hide_popup );
-			} );
+			.fadeIn( 100,
+				// Don't handle special case in touch environment (unneeded, interferes)
+				Modernizr.touch
+				?	null
+				:	function() {
+					// Special case - check if the mouse cursor is still in the pop-up.
+					if( ! $(this).data( 'ai1ec_mouseinside' ) ) {
+						$(this).each( hide_popup );
+					}
+				}
+			);
+
+		// If in touch environment, hide any previously popped up events (required
+		// since we don't use mouseleave event for this in touch environments) and
+		// then return false from "click" handler to prevent following of link.
+		if( Modernizr.touch ) {
+			$('.ai1ec-month-view .ai1ec-event-popup, .ai1ec-week-view .ai1ec-event-popup')
+				.not( $popup )
+				.fadeOut( 100, function() { $(this).parent().css( { zIndex: 'auto' } ); } );
+			return false;
+		}
 	}
 	function hide_popup() {
 		$(this)
@@ -197,15 +213,20 @@ jQuery( document ).ready( function( $ ) {
 			.data( 'ai1ec_mouseinside', false );
 	}
 
-	// Register popup hover handlers for month/week views
+	// Register popup click (for touch devices) or hover (for non-touch devices)
+	// handlers for month/week views
 	$('.ai1ec-month-view .ai1ec-event, .ai1ec-week-view .ai1ec-event')
-		.live( 'mouseenter', show_popup );
-	$('.ai1ec-month-view .ai1ec-event-popup, .ai1ec-week-view .ai1ec-event-popup')
-		.live( 'mouseleave', hide_popup )
-		.live( 'mousemove', function() {
-			// Track whether popup contains mouse cursor
-			$(this).data( 'ai1ec_mouseinside', true );
-		} );
+		.live( Modernizr.touch ? 'click' : 'mouseenter', show_popup );
+	// Only hide popups on mouseleave for mouse-based devices (doesn't work
+	// properly in touch-based devices for some reason).
+	if( ! Modernizr.touch ) {
+		$('.ai1ec-month-view .ai1ec-event-popup, .ai1ec-week-view .ai1ec-event-popup')
+			.live( 'mouseleave', hide_popup )
+			.live( 'mousemove', function() {
+				// Track whether popup contains mouse cursor
+				$(this).data( 'ai1ec_mouseinside', true );
+			} );
+	}
 	// Hide any popups that were visible when the window lost focus
 	if( $('.ai1ec-month-view, .ai1ec-week-view').length ) {
 		$(window).blur( function() {
