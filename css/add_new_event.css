@@ -392,6 +392,18 @@ ul.ai1ec_repeat_tabs li a.ai1ec_active {
 	width: 61px;
 	text-align: left;
 }
+#ai1c_repeat_monthly_byday {
+	display: none;
+	float: left;
+}
+.ai1ec_repeat_monthly_type {
+	float: left;
+	clear: both;
+	margin: 0.4em 0;
+}
+.ai1ec_repeat_monthly_type label {
+	float: none;
+}
 #ai1ec_ending_box, #ai1ec_end_holder, #ai1ec_repeat_text {
 	float: left;
 }

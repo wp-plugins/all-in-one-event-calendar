@@ -53,8 +53,8 @@ class Ai1ec_Agenda_Widget extends WP_Widget
 		// Get available cats, tags, events to allow user to limit widget to certain categories
 		$events_categories = get_terms( 'events_categories', array( 'orderby' => 'name', "hide_empty" => false ) );
 		$events_tags       = get_terms( 'events_tags', array( 'orderby' => 'name', "hide_empty" => false ) );
-	    $get_events        = new WP_Query( array ( 'post_type' => AI1EC_POST_TYPE, 'posts_per_page' => -1 ) );
-	    $events_options    = $get_events->posts;
+	  $get_events        = new WP_Query( array ( 'post_type' => AI1EC_POST_TYPE, 'posts_per_page' => -1 ) );
+	  $events_options    = $get_events->posts;
 
 		// Generate unique IDs and NAMEs of all needed form fields
 		$fields = array(
@@ -111,13 +111,43 @@ class Ai1ec_Agenda_Widget extends WP_Widget
 		$instance['show_subscribe_buttons'] = $new_instance['show_subscribe_buttons'] ? true : false;
 		$instance['show_calendar_button']   = $new_instance['show_calendar_button'] ? true : false;
 		$instance['hide_on_calendar_page']  = $new_instance['hide_on_calendar_page'] ? true : false;
+		
 		// For limits, set the limit to False if no IDs were selected, or set the respective IDs to empty if "limit by" was unchecked
-		$instance['limit_by_cat']           = ( ! $new_instance['event_cat_ids'] || ! $new_instance['limit_by_cat'] ) ? false : true;
-		$instance['event_cat_ids']          = ! $new_instance['limit_by_cat'] ? array() : $new_instance['event_cat_ids'] ;
-		$instance['limit_by_tag']           = ( ! $new_instance['event_tag_ids'] || ! $new_instance['limit_by_tag'] ) ? false : true;
-		$instance['event_tag_ids']          = ! $new_instance['limit_by_tag'] ? array() : $new_instance['event_tag_ids'] ;
-		$instance['limit_by_post']         = ( ! $new_instance['event_post_ids'] || ! $new_instance['limit_by_post'] ) ? false : true;
-		$instance['event_post_ids']         = ! $new_instance['limit_by_post'] ? array() : $new_instance['event_post_ids'] ;
+		$instance['limit_by_cat'] = false;
+		$instance['event_cat_ids'] = array();
+		if( isset( $new_instance['event_cat_ids'] ) && $new_instance['event_cat_ids'] != false ) {
+			$instance['limit_by_cat'] = true;
+		}
+		if( isset( $new_instance['limit_by_cat'] ) && $new_instance['limit_by_cat'] != false ) {
+			$instance['limit_by_cat'] = true;
+		}
+		if( isset( $new_instance['event_cat_ids'] ) && $instance['limit_by_cat'] === true ) {
+			$instance['event_cat_ids'] = $new_instance['event_cat_ids'];
+		}
+
+		$instance['limit_by_tag'] = false;
+		$instance['event_tag_ids'] = array();
+		if( isset( $new_instance['event_tag_ids'] ) && $new_instance['event_tag_ids'] != false ) {
+			$instance['limit_by_tag'] = true;
+		}
+		if( isset( $new_instance['limit_by_tag'] ) && $new_instance['limit_by_tag'] != false ) {
+			$instance['limit_by_tag'] = true;
+		}
+		if( isset( $new_instance['event_tag_ids'] ) && $instance['limit_by_tag'] === true ) {
+			$instance['event_tag_ids'] = $new_instance['event_tag_ids'];
+		}
+
+		$instance['limit_by_post'] = false;
+		$instance['event_post_ids'] = array();
+		if( isset( $new_instance['event_post_ids'] ) && $new_instance['event_post_ids'] != false ) {
+			$instance['limit_by_post'] = true;
+		}
+		if( isset( $new_instance['limit_by_post'] ) && $new_instance['limit_by_post'] != false ) {
+			$instance['limit_by_post'] = true;
+		}
+		if( isset( $new_instance['event_post_ids'] ) && $instance['limit_by_post'] === true ) {
+			$instance['event_post_ids'] = $new_instance['event_post_ids'];
+		}
 
 		return $instance;
 	}

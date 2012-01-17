@@ -573,13 +573,15 @@ class Ai1ec_Calendar_Controller {
  	{
  		global $ai1ec_settings;
 
-		// Include dependent jQuery plugins
+		// Include dependent scripts (jQuery plugins, modernizr)
 		wp_enqueue_script( 'jquery.scrollTo', AI1EC_JS_URL . '/jquery.scrollTo-min.js', array( 'jquery' ), 1 );
 		wp_enqueue_script( 'jquery.tableScroll', AI1EC_JS_URL . '/jquery.tablescroll.js', array( 'jquery' ), 1 );
+		wp_enqueue_script( 'modernizr.custom.78720', AI1EC_JS_URL . '/modernizr.custom.78720.js', array(), 1 );
 		// Include element selector function
 		wp_enqueue_script( 'ai1ec-element-selector', AI1EC_JS_URL . '/element-selector.js', array( 'jquery', 'jquery.scrollTo' ), 1 );
 		// Include custom script
-		wp_enqueue_script( 'ai1ec-calendar', AI1EC_JS_URL . '/calendar.js', array( 'jquery', 'jquery.scrollTo', 'jquery.tableScroll' ), 1 );
+		wp_enqueue_script( 'ai1ec-calendar', AI1EC_JS_URL . '/calendar.js',
+			array( 'jquery', 'jquery.scrollTo', 'jquery.tableScroll', 'modernizr.custom.78720' ), 1 );
 
 		$data = array(
 			// Point script to AJAX URL

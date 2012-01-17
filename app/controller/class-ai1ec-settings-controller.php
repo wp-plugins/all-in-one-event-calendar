@@ -306,11 +306,9 @@ class Ai1ec_Settings_Controller {
 
 		if( $hook_suffix == 'widgets.php' ) {
 			// Scripts
-			wp_enqueue_script( 'jquery-bsmselect', AI1EC_JS_URL  . '/jquery.bsmselect.js', array( 'jquery' ) );
-			wp_enqueue_script( 'ai1ec-widget',     AI1EC_JS_URL  . '/widget.js',           array( 'jquery', 'jquery-bsmselect' ) );
+			wp_enqueue_script( 'ai1ec-widget',     AI1EC_JS_URL  . '/widget.js',           array( 'jquery' ) );
 			// Styles
 			wp_enqueue_style(  'ai1ec-widget', AI1EC_CSS_URL . '/widget.css' );
-			wp_enqueue_style(  'bsmselect',    AI1EC_CSS_URL . '/jquery.bsmselect.css' );
 		}
 
 		if( isset( $ai1ec_settings->settings_page ) && $hook_suffix == $ai1ec_settings->settings_page ) {

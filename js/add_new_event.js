@@ -315,12 +315,18 @@ jQuery( function( $ ){
 					break;
 				case 'monthly':
 					rule += 'FREQ=MONTHLY;';
-					var interval = $( '#ai1ec_monthly_count' ).val();
+					var interval  = $( '#ai1ec_monthly_count' ).val();
+					var monthtype = $( 'input[name="ai1ec_monthly_type"]:checked' ).val();
 					if( interval > 1 )
 						rule += 'INTERVAL=' + interval + ';';
 					var month_days = $( 'input[name="ai1ec_montly_date_select"]:first' ).val();
-					if( month_days.length > 0 )
+					if( month_days.length > 0 && monthtype == 'bymonthday' ) {
 						rule += 'BYMONTHDAY=' + month_days + ';';
+					} else if ( monthtype == 'byday' ) {
+						byday_num     = $( '#ai1ec_monthly_byday_num' ).val();
+						byday_weekday = $( '#ai1ec_monthly_byday_weekday' ).val();	
+						rule += 'BYDAY=' + byday_num + byday_weekday + ';';
+					}
 					break;
 				case 'yearly':
 					rule += 'FREQ=YEARLY;';
@@ -431,6 +437,11 @@ jQuery( function( $ ){
 			$.unblockUI();
 			return false;
 		});
+
+		$( '#ai1ec_monthly_type_bymonthday, #ai1ec_monthly_type_byday' ).change( function() {
+			$( '#ai1c_repeat_monthly_bymonthday' ).toggle();
+			$( '#ai1c_repeat_monthly_byday' ).toggle();
+		})
 		
 		var ai1ec_show_repeat_tabs = function() {
 			$.blockUI( { 

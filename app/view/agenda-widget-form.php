@@ -19,6 +19,9 @@
 		<?php foreach( $event_cat_ids['options'] as $event_cat ): ?>
 			<option value="<?php echo $event_cat->term_id; ?>"<?php if( in_array( $event_cat->term_id, $event_cat_ids['value'] ) ) { ?> selected="selected"<?php } ?>><?php echo $event_cat->name; ?></option>
 		<?php endforeach ?>
+		<?php if( count( $event_cat_ids['options'] ) == 0 ) : ?>
+			<option disabled="disabled"><?php _e( 'No categories found.', AI1EC_PLUGIN_NAME ) ?></option>
+		<?php endif ?>
 	</select>
 </div>
 <p class="ai1ec-limit-by-container">
@@ -32,6 +35,9 @@
 		<?php foreach( $event_tag_ids['options'] as $event_tag ): ?>
 			<option value="<?php echo $event_tag->term_id; ?>"<?php if( in_array( $event_tag->term_id, $event_tag_ids['value'] ) ) { ?> selected="selected"<?php } ?>><?php echo $event_tag->name; ?></option>
 		<?php endforeach ?>
+		<?php if( count( $event_tag_ids['options'] ) == 0 ) : ?>
+			<option disabled="disabled"><?php _e( 'No tags found.', AI1EC_PLUGIN_NAME ) ?></option>
+		<?php endif ?>
 	</select>
 </div>
 <p class="ai1ec-limit-by-container">
@@ -45,6 +51,9 @@
 		<?php foreach( $event_post_ids['options'] as $event_post ): ?>
 			<option value="<?php echo $event_post->ID; ?>"<?php if( in_array( $event_post->ID, $event_post_ids['value'] ) ) { ?> selected="selected"<?php } ?>><?php echo $event_post->post_title; ?></option>
 		<?php endforeach ?>
+		<?php if( count( $event_post_ids['options'] ) == 0 ) : ?>
+			<option disabled="disabled"><?php _e( 'No events found.', AI1EC_PLUGIN_NAME ) ?></option>
+		<?php endif ?>
 	</select>
 </div>
 <br />
@@ -57,43 +66,4 @@
 	<br />
 	<input id="<?php echo $hide_on_calendar_page['id'] ?>" name="<?php echo $hide_on_calendar_page['name'] ?>" type="checkbox" value="1" <?php if( $hide_on_calendar_page['value'] ) echo 'checked="checked"' ?> />
 	<label for="<?php echo $hide_on_calendar_page['id'] ?>"><?php _e( 'Hide this widget on calendar page', AI1EC_PLUGIN_NAME ) ?></label>
-</p>	
-<script type="text/javascript">
-	/* <![CDATA[ */
-	// To be run every time the widget form is rendered, sets up the Multi-select boxes with bsmSelect
-	jQuery( function( $ ) {
-		$( 'select.ai1ec-widget-cat-ids' ).bsmSelect( {
-			title: '<?php _e( "Categories", AI1EC_PLUGIN_NAME ) ?>:',
-			highlight: 'highlight',
-			removeLabel: '<img src="<?php echo AI1EC_IMAGE_URL ?>/icon-close.png" alt="x" />',
-			selectClass: 'ai1ec-widget-option-ids',
-			listClass: 'ai1ec-category-selected-items',
-			listItemClass: 'ai1ec-category-selected-item',
-			listItemLabelClass: 'ai1ec-category-selected-item-label',
-			removeClass: 'ai1ec-category-selected-item-remove',
-		} );
-
-		$( 'select.ai1ec-widget-tag-ids' ).bsmSelect( {
-			title: '<?php _e( "Tags", AI1EC_PLUGIN_NAME ) ?>:',
-			highlight: 'highlight',
-			removeLabel: '<img src="<?php echo AI1EC_IMAGE_URL ?>/icon-close.png" alt="x" />',
-			selectClass: 'ai1ec-widget-option-ids',
-			listClass: 'ai1ec-category-selected-items',
-			listItemClass: 'ai1ec-category-selected-item',
-			listItemLabelClass: 'ai1ec-category-selected-item-label',
-			removeClass: 'ai1ec-category-selected-item-remove',
-		} );
-
-		$( 'select.ai1ec-widget-event-ids' ).bsmSelect( {
-			title: '<?php _e( "Events", AI1EC_PLUGIN_NAME ) ?>:',
-			highlight: 'highlight',
-			removeLabel: '<img src="<?php echo AI1EC_IMAGE_URL ?>/icon-close.png" alt="x" />',
-			selectClass: 'ai1ec-widget-option-ids',
-			listClass: 'ai1ec-category-selected-items',
-			listItemClass: 'ai1ec-category-selected-item',
-			listItemLabelClass: 'ai1ec-category-selected-item-label',
-			removeClass: 'ai1ec-category-selected-item-remove',
-		} );
-	} );
-	/* ]]> */
-</script>
+</p>

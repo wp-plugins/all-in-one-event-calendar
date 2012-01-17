@@ -672,7 +672,25 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function row_monthly( $visible = false, $count = 1, $ai1ec_monthly_each = 0, $ai1ec_monthly_on_the = 0, $month = array(), $first = false, $second = false ) {
-		global $ai1ec_view_helper;
+		global $ai1ec_view_helper, $wp_locale;
+		$start_of_week = get_option( 'start_of_week', 1 );
+
+		$options_wd = array();
+		// get days from start_of_week until the last day
+		for( $i = $start_of_week; $i <= 6; ++$i )
+			$options_wd[$this->get_weekday_by_id( $i )] = $wp_locale->weekday[$i];
+		
+		// get days from 0 until start_of_week
+		if( $start_of_week > 0 ) {
+			for( $i = 0; $i < $start_of_week; $i++ )
+				$options_wd[$this->get_weekday_by_id( $i )] = $wp_locale->weekday[$i];
+		}
+
+		// get options like 1st/2nd/3rd for "day number"
+		$options_dn = array( 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5 );
+		foreach( $options_dn as $_dn ) {
+			$options_dn[ $_dn ] = date_i18n( "jS", strtotime( $_dn . "-01-1998 12:00:00" ) );
+		}
 
 		$args = array(
 		 'visible'              => $visible,
@@ -680,7 +698,9 @@ class Ai1ec_Events_Helper {
 		 'ai1ec_monthly_each'   => $ai1ec_monthly_each,
 		 'ai1ec_monthly_on_the' => $ai1ec_monthly_on_the,
 		 'month'                => $this->create_montly_date_select( $month ),
-		 'on_the_select'        => $this->create_on_the_select( $first, $second )
+		 'on_the_select'        => $this->create_on_the_select( $first, $second ),
+		 'day_nums'             => $this->create_select_element( 'ai1ec_monthly_byday_num', $options_dn ),
+		 'week_days'            => $this->create_select_element( 'ai1ec_monthly_byday_weekday', $options_wd )
 		);
 		return $ai1ec_view_helper->get_view( 'row_monthly.php', $args );
 	}
@@ -983,9 +1003,18 @@ class Ai1ec_Events_Helper {
 			$origin_dtz = new DateTimeZone( $origin_tz );
 			$remote_dtz = new DateTimeZone( $remote_tz );
 
+			// if DateTimeZone fails, throw exception
+			if( $origin_dtz === false || $remote_dtz === false )
+				throw new Exception( 'DateTimeZone class failed' );
+
 			$origin_dt  = new DateTime( gmdate( 'Y-m-d H:i:s', $timestamp ), $origin_dtz );
 			$remote_dt  = new DateTime( gmdate( 'Y-m-d H:i:s', $timestamp ), $remote_dtz );
-			$offset     = $origin_dtz->getOffset( $origin_dt ) - $remote_dtz->getOffset( $remote_dt );
+
+			// if DateTime fails, throw exception
+			if( $origin_dt === false || $remote_dt === false )
+				throw new Exception( 'DateTime class failed' );
+
+			$offset = $origin_dtz->getOffset( $origin_dt ) - $remote_dtz->getOffset( $remote_dt );
 		} catch( Exception $e ) {
 			return false;
 		}
@@ -1394,6 +1423,16 @@ class Ai1ec_Events_Helper {
 						}
 						$txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
 					}
+				} elseif( $rc->getByDay() ) {
+					$_days = '';
+					foreach( $rc->getByDay() as $d ) {
+						$_dnum  = substr( $d, 0, 1);
+						$_day   = substr( $d, 1, 3 );
+						$dnum   = ' ' . date_i18n( "jS", strtotime( $_dnum . '-01-1998 12:00:00' ) );
+						$day    = $this->get_weekday_by_id( $_day, true );
+						$_days .= ' ' . $wp_locale->weekday[$day];
+					}
+					$txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $dnum . $_days;
 				}
 				break;
 			case 'yearly':
