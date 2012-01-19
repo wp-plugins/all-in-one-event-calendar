@@ -5,7 +5,7 @@
  * Description: An event calendar system with month, week, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
  * Author: The Seed Studio
  * Author URI: http://theseednetwork.com/
- * Version: 1.2.3
+ * Version: 1.2.4
  */ // NOTE: When updating version number also update first line of app/view/calendar.php
 @set_time_limit( 0 );
 @ini_set( "memory_limit",         "256M" );
@@ -146,8 +146,15 @@ define( 'AI1EC_EXPORT_URL', "$tmp&controller=ai1ec_exporter_controller&action=ex
 // ====================================
 // = Include iCal parsers and helpers =
 // ====================================
-require_once( AI1EC_LIB_PATH . '/iCalcreator.class.php' );
-require_once( AI1EC_LIB_PATH . '/iCalUtilityFunctions.class.php' );
+if( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
+	// Parser that requires PHP v5.3.0 or up
+	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10.23/iCalcreator.class.php' );
+	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10.23//iCalUtilityFunctions.class.php' );
+} else {
+	// Parser that works on PHP versions below 5.3.0
+	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10/iCalcreator.class.php' );
+	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10/iCalUtilityFunctions.class.php' );
+}
 require_once( AI1EC_LIB_PATH . '/SG_iCal.php' );
 require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Line.php' );
 require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Duration.php' );
