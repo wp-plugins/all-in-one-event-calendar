@@ -319,11 +319,12 @@ class Ai1ec_Event {
 			                  "GROUP_CONCAT( ttc.term_id ) AS categories, " .
 			                  "GROUP_CONCAT( ttt.term_id ) AS tags ";
 
-			if( $instance ) {
-				$select_sql .= ", UNIX_TIMESTAMP( aei.start ) as start, UNIX_TIMESTAMP( aei.end ) as end ";
+			if( $instance != false && is_numeric( $instance ) ) {
+				$select_sql .= ", IF( aei.start IS NOT NULL, UNIX_TIMESTAMP( aei.start ), UNIX_TIMESTAMP( e.start ) ) as start," .
+				               "  IF( aei.start IS NOT NULL, UNIX_TIMESTAMP( aei.end ),   UNIX_TIMESTAMP( e.end ) )   as end ";
 
 				$instance = (int) $instance;
-				$left_join = 	"LEFT JOIN {$wpdb->prefix}ai1ec_event_instances aei ON aei.id = $instance ";
+				$left_join = 	"LEFT JOIN {$wpdb->prefix}ai1ec_event_instances aei ON aei.id = $instance AND e.post_id = aei.post_id ";
 			} else {
 				$select_sql .= ", UNIX_TIMESTAMP( e.start ) as start, UNIX_TIMESTAMP( e.end ) as end, e.allday ";
 			}

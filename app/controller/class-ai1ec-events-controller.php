@@ -723,7 +723,7 @@ class Ai1ec_Events_Controller {
 		global $ai1ec_view_helper, $wpdb;
 
 		$table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
-		$color      = $wpdb->get_var( "SELECT term_color FROM {$table_name} WHERE term_id = {$term->term_id}" );
+		$color      = $wpdb->get_var( $wpdb->prepare( "SELECT term_color FROM {$table_name} WHERE term_id = %d ", $term->term_id ) );
 
 		$style = '';
 		$clr   = '';
@@ -766,7 +766,7 @@ class Ai1ec_Events_Controller {
 	  }
 
 	  $table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
-	  $term = $wpdb->get_var( "SELECT term_id FROM {$table_name} WHERE term_id = {$term_id}" );
+	  $term = $wpdb->get_var( $wpdb->prepare( "SELECT term_id FROM {$table_name} WHERE term_id = %d", $term_id ) );
 
 	  if( is_null( $term ) ) {
 	    // term doesn't exist, create it

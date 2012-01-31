@@ -163,7 +163,7 @@ class Ai1ec_App_Helper {
 		// ================================
 		// = support for custom post type =
 		// ================================
-		$supports = array( 'title', 'editor', 'comments' );
+		$supports = array( 'title', 'editor', 'comments', 'custom-fields' );
 
 		// =============================
 		// = args for custom post type =

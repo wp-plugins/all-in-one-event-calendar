@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
 Tested up to: 3.3
-Stable tag: 1.2.4
+Stable tag: 1.2.5
 
 An event calendar system with month, week, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
@@ -57,6 +57,12 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 * [**Get Premium Support »**](http://theseednetwork.com/get-supported) from [The Seed Studio](http://theseednetwork.com/)
 
 == Changelog ==
+= Version 1.2.5 =
+* Reviewed plugin's security. The plugin is as safe to use as is WordPress itself.
+* Fixed: instance_id not corresponding with correct data [#275](http://trac.the-seed.ca/ticket/275)
+* Fixed: Call-time pass-by-reference warning [#268](http://trac.the-seed.ca/ticket/268)
+* Improvement: Added support for custom fields
+
 = Version 1.2.4 =
 * Improvement: Added a lower version of iCalcreator for environments with PHP versions below 5.3.0
 
