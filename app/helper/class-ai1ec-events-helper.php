@@ -848,7 +848,7 @@ class Ai1ec_Events_Helper {
 	 **/
 	function fuzzy_string_compare( $a, $b ) {
 		$percent = 0;
-		similar_text( $a, $b, &$percent );
+		similar_text( $a, $b, $percent );
 		return ( $percent > 50 );
 	}
 
@@ -1189,7 +1189,7 @@ class Ai1ec_Events_Helper {
 
 		$term_id = (int) $term_id;
 		$table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
-		$color = $wpdb->get_var( "SELECT term_color FROM {$table_name} WHERE term_id = {$term_id}" );
+		$color = $wpdb->get_var( $wpdb->prepare( "SELECT term_color FROM {$table_name} WHERE term_id = %d", $term_id ) );
 		return $color;
 	}
 

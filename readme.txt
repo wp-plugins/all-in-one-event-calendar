@@ -57,6 +57,12 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 * [**Get Premium Support »**](http://theseednetwork.com/get-supported) from [The Seed Studio](http://theseednetwork.com/)
 
 == Changelog ==
+= Version 1.2.5 =
+* Reviewed plugin's security. The plugin is as safe to use as is WordPress itself.
+* Fixed: instance_id not corresponding with correct data [#275](http://trac.the-seed.ca/ticket/275)
+* Fixed: Call-time pass-by-reference warning [#268](http://trac.the-seed.ca/ticket/268)
+* Improvement: Added support for custom fields
+
 = Version 1.2.4 =
 * Improvement: Added a lower version of iCalcreator for environments with PHP versions below 5.3.0
 
