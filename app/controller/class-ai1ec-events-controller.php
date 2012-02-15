@@ -216,9 +216,12 @@ class Ai1ec_Events_Controller {
 		$rrule            = '';
 		$rrule_text       = '';
 		$repeating_event  = false;
-		$end              = null;
-		$until            = null;
-		$count            = 100;
+		$exrule           = '';
+		$exrule_text      = '';
+		$exclude_event    = false;
+		$exdate_event     = false;
+		$exdate           = '';
+		$exdate_text      = '';
 
 		try
 	 	{
@@ -246,18 +249,15 @@ class Ai1ec_Events_Controller {
 			$contact_email    = $event->contact_email;
 			$cost             = $event->cost;
 			$rrule            = empty( $event->recurrence_rules ) ? '' : $event->recurrence_rules;
-			$repeating_event  = empty( $rrule ) ? false : true;
-			if( $repeating_event ) {
-				$rc = new SG_iCal_Recurrence( new SG_iCal_Line( 'RRULE:' . $rrule ) );
-				
-				if( $until = $rc->getUntil() )
-					$until = ( is_numeric( $until ) ) ? $until : strtotime( $until );
-				else if( $count = $rc->getCount() )
-					$count = ( is_numeric( $count ) ) ? $count : 100;
-				
+			$exrule           = empty( $event->exception_rules )  ? '' : $event->exception_rules;
+			$repeating_event  = empty( $rrule )  ? false : true;
+			$exclude_event    = empty( $exrule ) ? false : true;
+
+			if( $repeating_event )
 				$rrule_text = $ai1ec_events_helper->rrule_to_text( $rrule );
-			}
-			
+
+			if( $exclude_event )
+				$exrule_text = $ai1ec_events_helper->rrule_to_text( $exrule );
 		}
 		catch( Ai1ec_Event_Not_Found $e ) {
 			// Event does not exist.
@@ -272,24 +272,20 @@ class Ai1ec_Events_Controller {
 		// ===============================
 		// = Display event time and date =
 		// ===============================
-		if( is_null( $until ) ) $until = gmmktime();
-
 		$args = array(
 			'all_day_event'   => $all_day_event,
 			'start_timestamp' => $start_timestamp,
 			'end_timestamp'   => $end_timestamp,
-			'row_daily'       => $ai1ec_events_helper->row_daily(),
-			'row_weekly'      => $ai1ec_events_helper->row_weekly(),
-			'row_monthly'     => $ai1ec_events_helper->row_monthly(),
-			'row_yearly'      => $ai1ec_events_helper->row_yearly(),
-			'count'           => $ai1ec_events_helper->create_count_input( 'ai1ec_count', $count ) . __( 'times', AI1EC_PLUGIN_NAME ),
-			'end'             => $ai1ec_events_helper->create_end_dropdown( $end ),
-			'until'           => $until,
 			'repeating_event' => $repeating_event,
 			'rrule'           => $rrule,
 			'rrule_text'      => $rrule_text,
+			'exclude_event'   => $exclude_event,
+			'exrule'          => $exrule,
+			'exrule_text'     => $exrule_text,
 			'timezone'        => $timezone,
-			'ending'          => $end
+			'exdate_event'    => $exdate_event,
+			'exdate'          => $exdate,
+			'exdate_text'     => $exdate_text
 		);
 		$ai1ec_view_helper->display( 'box_time_and_date.php', $args );
 
@@ -392,13 +388,17 @@ class Ai1ec_Events_Controller {
 		$contact_phone    = isset( $_POST['ai1ec_contact_phone'] )    ? stripslashes( $_POST['ai1ec_contact_phone'] ) : '';
 		$contact_email    = isset( $_POST['ai1ec_contact_email'] )    ? stripslashes( $_POST['ai1ec_contact_email'] ) : '';
 
-		$rrule = null;
+		$rrule  = null;
+		$exrule = null;
 
 		// =================================
 		// = Repeating event, assing rrule =
 		// =================================
 		if( isset( $_POST['ai1ec_repeat'] ) )
 			$rrule = $_POST['ai1ec_rrule'];
+		
+		if( isset( $_POST['ai1ec_exclude'] ) )
+			$exrule = $_POST['ai1ec_exrule'];
 
 		$is_new = false;
 		$event 	= null;
@@ -427,6 +427,7 @@ class Ai1ec_Events_Controller {
 		$event->contact_phone       = $contact_phone;
 		$event->contact_email       = $contact_email;
 		$event->recurrence_rules    = $rrule;
+		$event->exception_rules     = $exrule;
 		$event->save( ! $is_new );
 
 		$ai1ec_events_helper->delete_event_cache( $post_id );

@@ -404,10 +404,10 @@ ul.ai1ec_repeat_tabs li a.ai1ec_active {
 .ai1ec_repeat_monthly_type label {
 	float: none;
 }
-#ai1ec_ending_box, #ai1ec_end_holder, #ai1ec_repeat_text {
+#ai1ec_ending_box, #ai1ec_end_holder, #ai1ec_repeat_text, #ai1ec_exclude_text {
 	float: left;
 }
-#ai1ec_repeat_text a {
+#ai1ec_repeat_text a, #ai1ec_exclude_text a {
 	text-decoration: none;
 	border-bottom: 1px dashed red;
 }
@@ -437,4 +437,11 @@ a.ai1ec_repeat_cancel:hover {
 }
 div.growlUI h1, div.growlUI h2 {
 	color: white; padding: 5px 5px 5px 75px; text-align: left
+}
+/* General AJAX */
+.ai1ec-repeat-box-loading {
+	padding-left: 163px;
+	width: 31px;
+	height: 31px;
+	background: url( ../img/ajax-loader.gif ) no-repeat center right;
 }
