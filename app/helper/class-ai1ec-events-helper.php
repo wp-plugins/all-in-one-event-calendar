@@ -153,6 +153,9 @@ class Ai1ec_Events_Helper {
 		// Always cache initial instance
 		$evs[] = $e;
 
+		$_start = $event->start;
+		$_end   = $event->end;
+		
 		if( $event->recurrence_rules )
 		{
 			$count 	= 0;
@@ -167,8 +170,28 @@ class Ai1ec_Events_Helper {
 				$start      = $next;
 				$e['start'] = $start;
 				$e['end'] 	= $start + $duration;
-
-				$evs[] = $e;
+				$excluded   = false;
+				
+				if( $event->exception_rules ) {
+					$_count = 0;
+					$_s     = $_start;
+					$_f     = new SG_iCal_Freq( $event->exception_rules, $_start );
+					$_f->firstOccurrence();
+					while( ( $_next = $_f->nextOccurrence( $_s ) ) > 0 && $_count < 1000 ) {
+						$_count++;
+						$_s = $_next;
+						// only add the event if the start time of the 
+						// reccuring event is different than the start time 
+						// of the excluding event
+						if( $start == $_s ) {
+							$excluded = true;
+							break;
+						}
+					}
+				}
+				
+				if( $excluded == false )
+					$evs[] = $e;
 			}
 		}
 
@@ -1620,6 +1643,92 @@ class Ai1ec_Events_Helper {
 
 		return $permalink;
 	}
+	
+	/**
+	 * get_repeat_box function
+	 *
+	 * @return string
+	 **/
+	function get_repeat_box() {
+		global $ai1ec_view_helper;
+		
+		$repeat  = (int) $_REQUEST["repeat"];
+		$repeat  = $repeat == 1 ? 1 : 0;
+		$post_id = (int) $_REQUEST["post_id"];
+		$count   = 100;
+		$end     = null;
+		$until   = gmmktime();
+		
+		// try getting the event
+		try {
+			$event = new Ai1ec_Event( $post_id );
+			$rule = '';
+			
+			if( $repeat ) {
+				$rule = empty( $event->recurrence_rules ) ? '' : $event->recurrence_rules;
+			} else {
+				$rule = empty( $event->exception_rules )  ? '' : $event->exception_rules;
+			}
+
+			$rc = new SG_iCal_Recurrence( new SG_iCal_Line( 'RRULE:' . $rule ) );
+			
+			if( $until = $rc->getUntil() ) {
+				$until = ( is_numeric( $until ) ) ? $until : strtotime( $until );
+			}
+			else if( $count = $rc->getCount() ) {
+				$count = ( is_numeric( $count ) ) ? $count : 100;
+			}
+		} catch( Ai1ec_Event_Not_Found $e ) { /* event wasn't found, keep defaults */ }
+		
+		$args = array(
+			'row_daily'       => $this->row_daily(),
+			'row_weekly'      => $this->row_weekly(),
+			'row_monthly'     => $this->row_monthly(),
+			'row_yearly'      => $this->row_yearly(),
+			'count'           => $this->create_count_input( 'ai1ec_count', $count ) . __( 'times', AI1EC_PLUGIN_NAME ),
+			'end'             => $this->create_end_dropdown( $end ),
+			'until'           => $until,
+			'repeat'          => $repeat
+		);
+		$output = array(
+			"error" 	=> false,
+			"message"	=> $ai1ec_view_helper->get_view( 'box_repeat.php', $args ),
+			"repeat"  => $repeat
+		);
+
+		echo json_encode( $output );
+		exit();
+	}
+	
+	/**
+	 * get_date_picker_box function
+	 *
+	 * @return string
+	 **/
+	function get_date_picker_box() {
+		global $ai1ec_view_helper;
+		
+		$dates = '';
+		
+		$args = array(
+			'dates' => $dates
+		);
+		
+		$output = array(
+			"error" 	=> false,
+			"message"	=> $ai1ec_view_helper->get_view( 'box_date_picker.php', $args ),
+		);
+
+		echo json_encode( $output );
+		exit();
+	}
+	
+	/**
+	 * shortcode function
+	 *
+	 * @return void
+	 **/
+	function shortcode( $atts, $content = "" ) { }
 
 	/**
 	 * get_week_start_day_offset function

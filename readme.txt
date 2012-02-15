@@ -56,7 +56,36 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 * [**BUG reports only »**](http://trac.theseednetwork.com/newticket) ([registration](http://trac.theseednetwork.com/register) required)
 * [**Get Premium Support »**](http://theseednetwork.com/get-supported) from [The Seed Studio](http://theseednetwork.com/)
 
+== Frequently Asked Questions ==
+
+= Shortcodes =
+
+* Monthly view: **[ai1ec view="monthly"]**
+* Weekly view: **[ai1ec view="weekly"]**
+* Agenda view: **[ai1ec view="agenda"]**
+* Default view as per settings: **[ai1ec]**
+
+* Filter by event category name: **[ai1ec cat_name="halloween"]**
+* Filter by event category names (separate names by comma): **[ai1ec cat_name="Halloween, Thanksgiving Day"]**
+* Filter by event category id: **[ai1ec cat_id="1"]**
+* Filter by event category ids (separate ids by comma): **[ai1ec cat_id="1, 2"]**
+
+* Filter by event tag name: **[ai1ec tag_name="halloween"]**
+* Filter by event tag names (separate names by comma): **[ai1ec tag_name="Halloween, Thanksgiving Day"]**
+* Filter by event tag id: **[ai1ec tag_id="1"]**
+* Filter by event tag ids (separate ids by comma): **[ai1ec tag_id="1, 2"]**
+
+* Filter by post id: **[ai1ec post_id="1"]**
+* Filter by post ids (separate ids by comma): **[ai1ec post_id="1, 2"]**
+
 == Changelog ==
+= Version 1.3 =
+* Added shortcodes support.[#36](http://trac.the-seed.ca/ticket/36) (Howto is under Frequently Asked Questions tab)
+* Added support to exclude events using [EXRULE](http://www.kanzaki.com/docs/ical/exrule.html)
+* Added Czech translation
+* Added Danish translation
+* Updated Swedish translation
+
 = Version 1.2.5 =
 * Reviewed plugin's security. The plugin is as safe to use as is WordPress itself.
 * Fixed: instance_id not corresponding with correct data [#275](http://trac.the-seed.ca/ticket/275)
