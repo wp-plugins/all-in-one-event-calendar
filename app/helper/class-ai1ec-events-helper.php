@@ -149,47 +149,44 @@ class Ai1ec_Events_Helper {
 			'end'   	=> $event->end,
 		);
 		$duration = $event->getDuration();
-
+		
+		// Timestamp of today's date + 10 years
+		$tif = gmmktime() + 315569260; //315 569 260 = 10 years in seconds
 		// Always cache initial instance
 		$evs[] = $e;
 
 		$_start = $event->start;
 		$_end   = $event->end;
-		
+
 		if( $event->recurrence_rules )
 		{
 			$count 	= 0;
 			$start  = $event->start;
-			$freq 	= $event->getFrequency();
+			$exrule = array();
+			if( $event->exception_rules ) {
+				$exrule = $this->generate_dates_array_from_ics_rule( $start, $event->exception_rules );
+			}
+			$freq 	= $event->getFrequency( $exrule );
 
 			$freq->firstOccurrence();
-			while( ( $next = $freq->nextOccurrence( $start ) ) > 0 &&
-						 $count < 1000 )
+			while( ( $next = $freq->nextOccurrence( $start ) ) > 0 && $count < 1000 )
 			{
 				$count++;
 				$start      = $next;
 				$e['start'] = $start;
 				$e['end'] 	= $start + $duration;
 				$excluded   = false;
-				
-				if( $event->exception_rules ) {
-					$_count = 0;
-					$_s     = $_start;
-					$_f     = new SG_iCal_Freq( $event->exception_rules, $_start );
-					$_f->firstOccurrence();
-					while( ( $_next = $_f->nextOccurrence( $_s ) ) > 0 && $_count < 1000 ) {
-						$_count++;
-						$_s = $_next;
-						// only add the event if the start time of the 
-						// reccuring event is different than the start time 
-						// of the excluding event
-						if( $start == $_s ) {
-							$excluded = true;
-							break;
-						}
-					}
+
+				// if event's start date is 10 years in the future, stop the cache at this point
+				if( $start > $tif ) break;
+
+				// Check if exception dates match this occurence
+				if( $event->exception_dates ) {
+					if( $this->date_match_exdates( $start, $event->exception_dates ) )
+						$excluded = true;
 				}
-				
+
+				// Add event only if it is not excluded
 				if( $excluded == false )
 					$evs[] = $e;
 			}
@@ -239,6 +236,39 @@ class Ai1ec_Events_Helper {
 				$this->insert_event_in_cache_table( $e );
 			}
 		}
+	}
+	
+	/**
+	 * date_match_exdates function
+	 *
+	 * @return bool
+	 **/
+	function date_match_exdates( $date, $ics_rule ) {
+		foreach( explode( ",", $ics_rule ) as $_date ) {
+			// convert to timestamp
+			$_date_start = strtotime( $_date );
+			// convert from UTC to local time
+			$_date_start = $this->gmt_to_local( $_date_start ) - date( 'Z', $_date_start );
+			if( $_date_start != false ) {
+				// add 23h 59m 59s so the whole day is excluded
+				$_date_end = $_date_start + (24 * 60 * 60) - 1;
+				if( $date >= $_date_start && $date <= $_date_end ) {
+					// event is within the time-frame
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * generate_dates_array_from_ics_rule function
+	 *
+	 * @return array
+	 **/
+	function generate_dates_array_from_ics_rule( $start, $ics_rule ) {
+		$freq = new SG_iCal_Freq( $ics_rule, $start, array(), array(), true );
+		return $freq->getAllOccurrences();
 	}
 
 	/**
@@ -1017,24 +1047,31 @@ class Ai1ec_Events_Helper {
 	 *
 	 * @return int
 	 **/
-	function get_timezone_offset( $remote_tz, $origin_tz = null, $timestamp = "now" ) {
-		if( $origin_tz === null )
-			if( ! is_string( $origin_tz = date_default_timezone_get() ) )
+	function get_timezone_offset( $remote_tz, $origin_tz = null, $timestamp = false ) {
+		// set timestamp to time now
+		if( $timestamp == false ) {
+			$timestamp = gmmktime();
+		}
+		
+		if( $origin_tz === null ) {
+			if( ! is_string( $origin_tz = date_default_timezone_get() ) ) {
 				return false; // A UTC timestamp was returned -- bail out!
+			}
+		}
 
 		try {
 			$origin_dtz = new DateTimeZone( $origin_tz );
 			$remote_dtz = new DateTimeZone( $remote_tz );
 
 			// if DateTimeZone fails, throw exception
-			if( $origin_dtz === false || $remote_dtz === false )
+			if( $origin_dtz == false || $remote_dtz == false )
 				throw new Exception( 'DateTimeZone class failed' );
 
 			$origin_dt  = new DateTime( gmdate( 'Y-m-d H:i:s', $timestamp ), $origin_dtz );
 			$remote_dt  = new DateTime( gmdate( 'Y-m-d H:i:s', $timestamp ), $remote_dtz );
 
 			// if DateTime fails, throw exception
-			if( $origin_dt === false || $remote_dt === false )
+			if( $origin_dt == false || $remote_dt == false )
 				throw new Exception( 'DateTime class failed' );
 
 			$offset = $origin_dtz->getOffset( $origin_dt ) - $remote_dtz->getOffset( $remote_dt );
@@ -1346,7 +1383,7 @@ class Ai1ec_Events_Helper {
 	 *
 	 *
 	 *
-	 * @return void
+	 * @return string
 	 **/
 	function rrule_to_text( $rrule = '') {
 		$txt = '';
@@ -1375,6 +1412,120 @@ class Ai1ec_Events_Helper {
 				$txt = $rrule;
 		}
 		return $txt;
+	}
+
+	/**
+	 * exdate_to_text function
+	 *
+	 * @return string
+	 **/
+	function exdate_to_text( $exception_dates ) {
+		$dates_to_add = array();
+		foreach( explode( ",", $exception_dates ) as $_exdate ) {
+			// convert to timestamp
+			$_exdate = strtotime( $_exdate );
+			$dates_to_add[] = $this->get_long_date( $_exdate, true );
+		}
+		// append dates to the string and return it;
+		return implode( ", ", $dates_to_add );
+	}
+
+	/**
+	 * ics_rule_to_local function
+	 *
+	 * @return void
+	 **/
+	function ics_rule_to_local( $rule ) {
+		return $this->ics_rule_to( $rule, false );
+	}
+
+	/**
+	 * ics_rule_to_gmt function
+	 *
+	 * @return void
+	 **/
+	function ics_rule_to_gmt( $rule ) {
+		return $this->ics_rule_to( $rule, true );
+	}
+
+	/**
+	 * ics_rule_to function
+	 *
+	 * @return void
+	 **/
+	private function ics_rule_to( $rule, $to_gmt = false ) {
+		$rc = new SG_iCal_Recurrence( new SG_iCal_Line( 'RRULE:' . $rule ) );
+		if( $until = $rc->getUntil() ) {
+			if( ! is_int( $until ) ) {
+				$until = strtotime( $until );
+			}
+			if( $to_gmt ) {
+				$until = $this->local_to_gmt( $until );
+			} else {
+				$until = $this->gmt_to_local( $until );
+			}
+			
+			$until = gmdate( "Ymd\THis\Z", $until );
+			$rule_props = explode( ';', $rule );
+			$_rule = array();
+			foreach( $rule_props as $property ) {
+				// don't apply any logic to empty properties
+				if( empty( $property ) ) {
+					$_rule[] = $property;
+					continue;
+				}
+				$name_and_value = explode( '=', $property );
+				if( isset( $name_and_value[0] ) && strtolower( $name_and_value[0] ) == 'until' ) {
+					if( isset( $name_and_value[1] ) ) {
+						$_rule[] = "UNTIL=" . $until;
+					}
+				} else {
+					$_rule[] = $property;
+				}
+			}
+			$rule = implode( ';', $_rule );
+		}
+		return $rule;
+	}
+
+	/**
+	 * exception_dates_to_local function
+	 *
+	 * @return string
+	 **/
+	function exception_dates_to_local( $exception_dates ) {
+		return $this->exception_dates_to( $exception_dates, false );
+	}
+
+	/**
+	 * exception_dates_to_gmt function
+	 *
+	 * @return string
+	 **/
+	function exception_dates_to_gmt( $exception_dates ) {
+		return $this->exception_dates_to( $exception_dates, true );
+	}
+	
+	/**
+	 * exception_dates_to function
+	 *
+	 * @return string
+	 **/
+	private function exception_dates_to( $exception_dates, $to_gmt = false ) {
+		$dates_to_add = array();
+		foreach( explode( ",", $exception_dates ) as $_exdate ) {
+			// convert to timestamp
+			$_exdate = strtotime( $_exdate );
+			if( $to_gmt ) {
+				$_exdate = $this->gmt_to_local( $_exdate );
+			} else {
+				$_exdate = $this->gmt_to_local( $_exdate );
+			}
+			
+			$dates_to_add[] = gmdate( "Ymd\THis\Z", $_exdate );
+		}
+		// append dates to the string and return it;
+		return implode( ",", $dates_to_add );
 	}
 
 	/**
@@ -1583,7 +1734,7 @@ class Ai1ec_Events_Helper {
 		if( $until = $rc->getUntil() ) {
 			if( ! is_int( $until ) )
 				$until = strtotime( $until );
-			$txt .= ' ' . sprintf( __( 'until %s', AI1EC_PLUGIN_NAME ), date_i18n( get_option( 'date_format' ), $until ) );
+			$txt .= ' ' . sprintf( __( 'until %s', AI1EC_PLUGIN_NAME ), date_i18n( get_option( 'date_format' ), $until, true ) );
 		}
 		else if( $count = $rc->getCount() )
 			$txt .= ' ' . sprintf( __( 'for %d occurrences', AI1EC_PLUGIN_NAME ), $count );

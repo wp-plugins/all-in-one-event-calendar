@@ -118,15 +118,19 @@ class Ai1ec_Events_Controller {
 			// Include element selector function
 			wp_enqueue_script( 'ai1ec-element-selector', 	AI1EC_JS_URL . '/element-selector.js', array( 'jquery' ) );
 			// Include jQuery Tools form elements
-			wp_enqueue_script( 'jquery.tools-form',       'http://cdn.jquerytools.org/1.2.5/form/jquery.tools.min.js', array( 'jquery' ), '1.2.5' );
+			wp_enqueue_script( 'jquery.tools-form',       AI1EC_JS_URL . '/jquery-tools-1.2.5.min.js', array( 'jquery' ) );
 			// Include add new event script
 			wp_enqueue_script( 'ai1ec-blockui', 		      AI1EC_JS_URL . '/jquery.blockUI.js', array( 'jquery' ) );
+			// Include date picker plugin
+			wp_enqueue_script( 'ai1ec-datepicker', 		    AI1EC_JS_URL . '/datepicker.js', array( 'jquery' ) );
+			
 			wp_enqueue_script( 'ai1ec-add_new_event', 		AI1EC_JS_URL . '/add_new_event.js', array( 'jquery', 
 			                                                                                         'jquery.timespan', 
 			                                                                                         'ai1ec-element-selector', 
 			                                                                                         'jquery.tools-form', 
-			                                                                                         'ai1ec-blockui' ) );
-			                                                                                         
+			                                                                                         'ai1ec-blockui',
+			                                                                                         'ai1ec-datepicker' ) );
+
 			wp_enqueue_script( 'ai1ec-color-picker', 	    AI1EC_JS_URL . '/colorpicker.js', array( 'jquery' ) );
 
 			// Supply custom value to JavaScript from PHP
@@ -159,6 +163,8 @@ class Ai1ec_Events_Controller {
 			wp_enqueue_style( 'colorpicker',          AI1EC_CSS_URL . '/colorpicker.css' );
 			// include add new event style
 			wp_enqueue_style( 'ai1ec_add_new_event',  AI1EC_CSS_URL . '/add_new_event.css' );
+			// include datepicker style
+			wp_enqueue_style( 'ai1ec_datepicker',  AI1EC_CSS_URL . '/datepicker.css' );
 		}
 		// Initialize front-end view
 		else
@@ -219,9 +225,7 @@ class Ai1ec_Events_Controller {
 		$exrule           = '';
 		$exrule_text      = '';
 		$exclude_event    = false;
-		$exdate_event     = false;
 		$exdate           = '';
-		$exdate_text      = '';
 
 		try
 	 	{
@@ -248,8 +252,9 @@ class Ai1ec_Events_Controller {
 			$contact_phone    = $event->contact_phone;
 			$contact_email    = $event->contact_email;
 			$cost             = $event->cost;
-			$rrule            = empty( $event->recurrence_rules ) ? '' : $event->recurrence_rules;
-			$exrule           = empty( $event->exception_rules )  ? '' : $event->exception_rules;
+			$rrule            = empty( $event->recurrence_rules ) ? '' : $ai1ec_events_helper->ics_rule_to_local( $event->recurrence_rules );
+			$exrule           = empty( $event->exception_rules )  ? '' : $ai1ec_events_helper->ics_rule_to_local( $event->exception_rules );
+			$exdate           = empty( $event->exception_dates )  ? '' : $ai1ec_events_helper->exception_dates_to_local( $event->exception_dates );
 			$repeating_event  = empty( $rrule )  ? false : true;
 			$exclude_event    = empty( $exrule ) ? false : true;
 
@@ -283,9 +288,7 @@ class Ai1ec_Events_Controller {
 			'exrule'          => $exrule,
 			'exrule_text'     => $exrule_text,
 			'timezone'        => $timezone,
-			'exdate_event'    => $exdate_event,
-			'exdate'          => $exdate,
-			'exdate_text'     => $exdate_text
+			'exdate'          => $exdate
 		);
 		$ai1ec_view_helper->display( 'box_time_and_date.php', $args );
 
@@ -390,15 +393,19 @@ class Ai1ec_Events_Controller {
 
 		$rrule  = null;
 		$exrule = null;
+		$exdate = null;
 
-		// =================================
-		// = Repeating event, assing rrule =
-		// =================================
-		if( isset( $_POST['ai1ec_repeat'] ) )
-			$rrule = $_POST['ai1ec_rrule'];
-		
-		if( isset( $_POST['ai1ec_exclude'] ) )
-			$exrule = $_POST['ai1ec_exrule'];
+		// if rrule is set, convert it from local to UTC time
+		if( isset( $_POST['ai1ec_repeat'] ) && ! empty( $_POST['ai1ec_repeat'] ) )
+			$rrule = $ai1ec_events_helper->ics_rule_to_gmt( $_POST['ai1ec_rrule'] );
+
+		// if exrule is set, convert it from local to UTC time
+		if( isset( $_POST['ai1ec_exclude'] ) && ! empty( $_POST['ai1ec_exclude'] ) )
+			$exrule = $ai1ec_events_helper->ics_rule_to_gmt( $_POST['ai1ec_exrule'] );
+
+		// if exdate is set, convert it from local to UTC time
+		if( isset( $_POST['ai1ec_exdate'] ) && ! empty( $_POST['ai1ec_exdate'] ) )
+			$exdate = $ai1ec_events_helper->exception_dates_to_gmt( $_POST['ai1ec_exdate'] );
 
 		$is_new = false;
 		$event 	= null;
@@ -428,6 +435,7 @@ class Ai1ec_Events_Controller {
 		$event->contact_email       = $contact_email;
 		$event->recurrence_rules    = $rrule;
 		$event->exception_rules     = $exrule;
+		$event->exception_dates     = $exdate;
 		$event->save( ! $is_new );
 
 		$ai1ec_events_helper->delete_event_cache( $post_id );
@@ -592,6 +600,7 @@ class Ai1ec_Events_Controller {
 		$args = array(
 			'event'                   => &$event,
 			'recurrence'              => $event->recurrence_html,
+			'exclude'                 => $event->exclude_html,
 			'categories'              => $event->categories_html,
 			'tags'                    => $event->tags_html,
 			'location'                => nl2br( $event->location ),

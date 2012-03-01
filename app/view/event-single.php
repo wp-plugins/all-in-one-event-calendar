@@ -16,7 +16,12 @@
 				<td class="ai1ec-recurrence" colspan="2"><?php echo $recurrence ?></td>
 			</tr>
 		<?php endif ?>
-		<tr>
+		<?php if( $exclude ): ?>
+			<tr>
+				<th scope="row" class="ai1ec-exclude"><?php _e( 'Excluding:', AI1EC_PLUGIN_NAME ) ?></th>
+				<td class="ai1ec-exclude" colspan="2"><?php echo $exclude ?></td>
+			</tr>
+		<?php endif ?>
 			<th scope="row" class="ai1ec-location <?php if( ! $location ) echo 'ai1ec-empty' ?>"><?php if( $location ) _e( 'Where:', AI1EC_PLUGIN_NAME ) ?></th>
 			<td class="ai1ec-location <?php if( ! $location ) echo 'ai1ec-empty' ?>"><?php echo $location ?></td>
 			<td rowspan="5" class="ai1ec-map <?php if( $map ) echo 'ai1ec-has-map' ?>">

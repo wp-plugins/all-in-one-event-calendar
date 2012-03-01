@@ -163,6 +163,8 @@ require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Recurrence.php' );
 require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Parser.php' );
 require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Query.php' );
 require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Factory.php' );
+// include our global functions
+require_once( AI1EC_LIB_PATH . '/global-functions.php' );
 
 // ===============================
 // = The autoload function =

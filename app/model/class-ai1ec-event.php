@@ -241,6 +241,15 @@ class Ai1ec_Event {
 	 * @var string
 	 **/
 	var $categories;
+	
+	/**
+	 * feed class variable
+	 *
+	 * Associated event feed object
+	 *
+	 * @var string
+	 **/
+	var $feed;
 
 	/**
 	 * category_colors class variable
@@ -630,6 +639,11 @@ class Ai1ec_Event {
 					return null;
 
 				return '<strong>' . esc_html( $ai1ec_events_helper->rrule_to_text( $this->recurrence_rules  ) ) . '</strong>';
+			case 'exclude_html':
+				if( ! $this->exception_dates || empty( $this->exception_dates ) )
+					return null;
+
+				return '<strong>' . esc_html( $ai1ec_events_helper->exdate_to_text( $this->exception_dates  ) ) . '</strong>';
 		}
 	}
 
@@ -735,6 +749,29 @@ class Ai1ec_Event {
 			wp_set_post_terms( $this->post_id, $this->categories, 'events_categories' );
 			wp_set_post_terms( $this->post_id, $this->tags, 'events_tags' );
 
+			if( isset( $this->feed ) && isset( $this->feed->feed_id ) ) {
+				$url_components = parse_url( $this->feed->feed_url );
+				$feed_name = $url_components["host"];
+				$term = term_exists( $feed_name, 'events_feeds' );
+				if( ! $term ) {
+					// term doesn't exist, create it
+					$term = wp_insert_term(
+						$feed_name,     // term
+						'events_feeds', // taxonomy
+						array(
+							'description' => $this->feed->feed_url
+						)
+					);
+				}
+				// term_exists returns object, wp_insert_term returns array
+				$term = (object)$term;
+				if( isset( $term->term_id ) ) {
+					// associate the event with the feed only if we have term id set
+					$a = wp_set_object_terms( $this->post_id, (int)$term->term_id, 'events_feeds', false );
+				}
+				
+			}
+
 			// =========================
 			// = Insert new event data =
 			// =========================
@@ -803,8 +840,8 @@ class Ai1ec_Event {
 	 *
 	 * @return object
 	 **/
-	function getFrequency() {
-		return new SG_iCal_Freq( $this->recurrence_rules, $this->start );
+	function getFrequency( $excluded = array() ) {
+		return new SG_iCal_Freq( $this->recurrence_rules, $this->start, $excluded );
 	}
 
 	/**

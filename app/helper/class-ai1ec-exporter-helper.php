@@ -64,7 +64,7 @@ class Ai1ec_Exporter_Helper {
 		$e = & $c->newComponent( 'vevent' );
 		$uid = $event->ical_uid ? $event->ical_uid : $event->post->guid;
 		$e->setProperty( 'uid', $uid );
-		$e->setProperty( 'url', get_permalink( $event->post_id ) . '?instance_id=' . $event->instance_id );
+		$e->setProperty( 'url', get_permalink( $event->post_id ) );
 		$e->setProperty( 'summary', html_entity_decode( apply_filters( 'the_title', $event->post->post_title ), ENT_QUOTES ) );
 		$content = apply_filters( 'the_content', $event->post->post_content );
 		$content = str_replace(']]>', ']]&gt;', $content);
@@ -136,7 +136,50 @@ class Ai1ec_Exporter_Helper {
 				$rrule[ $k ] = $v;
 			}
 		}
+		
+		$exrule = array();
+		if( ! empty( $event->exception_rules ) ) {
+			$rules = array();
+			foreach( explode( ';', $event->exception_rules ) AS $v) {
+				if( strpos( $v, '=' ) === false ) continue;
+				
+				list($k, $v) = explode( '=', $v );
+				// If $v is a comma-separated list, turn it into array for iCalcreator
+				switch( $k ) {
+					case 'BYSECOND':
+          case 'BYMINUTE':
+          case 'BYHOUR':
+          case 'BYDAY':
+          case 'BYMONTHDAY':
+          case 'BYYEARDAY':
+          case 'BYWEEKNO':
+          case 'BYMONTH':
+          case 'BYSETPOS':
+						$exploded = explode( ',', $v );
+						break;
+					default:
+						$exploded = $v;
+						break;
+				}
+				// iCalcreator requires a more complex array structure for BYDAY...
+				if( $k == 'BYDAY' ) {
+					$v = array();
+					foreach( $exploded as $day ) {
+						$v[] = array( 'DAY' => $day );
+					}
+				} else {
+					$v = $exploded;
+				}
+				$exrule[ $k ] = $v;
+			}
+		}
 
-		if( ! empty( $rrule ) ) $e->setProperty( 'rrule', $rrule );
+		// add rrule to exported calendar
+		if( ! empty( $rrule ) )  $e->setProperty( 'rrule', $rrule );
+		// add exrule to exported calendar
+		if( ! empty( $exrule ) ) $e->setProperty( 'exrule', $exrule );
+		// add exdates to exported calendar
+		if( ! empty( $event->exception_dates ) )
+			$e->setProperty( 'exdate', explode( ',', $event->exception_dates ) );
 	}
 }

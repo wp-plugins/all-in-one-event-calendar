@@ -64,24 +64,27 @@
 			  <div id="ai1ec_exclude_text">
 			    <a href="#ai1ec_exclude_box"><?php echo $exrule_text ?></a>
 			  </div>
+				<span class="ai1ec-info-text">(<?php _e( 'Choose a rule for exclusion', AI1EC_PLUGIN_NAME ) ?>)</span>
 			</td>
 		</tr>
-		<!--
 		<tr>
 			<td>
-			  <input type="checkbox" name="ai1ec_exclude_date" id="ai1ec_exclude_date" value="1" <?php echo $exdate_event ? 'checked="checked"' : '' ?>/>
-			  <input type="hidden" name="ai1ec_exdate" id="ai1ec_exdate" value="<?php echo $exdate ?>" />
-				<label for="ai1ec_exclude_date" id="ai1ec_exclude_date_label">
-					<?php _e( 'Exclude dates', AI1EC_PLUGIN_NAME ); echo $exdate_event ? ':' : '...' ?>
+				<label for="ai1ec_exdate_calendar_icon" id="ai1ec_exclude_date_label">
+					<?php _e( 'Exclude dates', AI1EC_PLUGIN_NAME ) ?>:
 				</label>
 			</td>
 			<td>
-			  <div id="ai1ec_exclude_date_text">
-			    <a href="#ai1ec_exclude_date_box"><?php echo $exdate_text ?></a>
-			  </div>
+				<div id="datepicker-widget">
+					<div id="widgetField">
+						<span></span>
+						<a href="#"><?php _e( 'Select date range', AI1EC_PLUGIN_NAME ) ?></a>
+					</div>
+					<div id="widgetCalendar"></div>
+				</div>
+				<input type="hidden" name="ai1ec_exdate" id="ai1ec_exdate" value="<?php echo $exdate ?>" />
+				<span class="ai1ec-info-text">(<?php _e( 'Choose specific dates to exclude', AI1EC_PLUGIN_NAME ) ?>)</span>
 			</td>
 		</tr>
-		-->
 		<div id="ai1ec_repeat_box"></div>
 	</tbody>
 </table>
