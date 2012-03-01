@@ -5,7 +5,7 @@
  * Description: An event calendar system with month, week, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
  * Author: The Seed Studio
  * Author URI: http://theseednetwork.com/
- * Version: 1.3
+ * Version: 1.4
  */ // NOTE: When updating version number also update first line of app/view/calendar.php
 @set_time_limit( 0 );
 @ini_set( "memory_limit",         "256M" );
