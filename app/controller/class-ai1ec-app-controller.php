@@ -391,7 +391,9 @@ class Ai1ec_App_Controller {
 		// regex pattern to match our shortcode [ai1ec]
 		// \[(\[?)(ai1ec)\b([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*+(?:\[(?!\/\2\])[^\[]*+)*+)\[\/\2\])?)(\]?)
 		$out = array();
-		preg_match( "/\[(\[?)(ai1ec)\b([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*+(?:\[(?!\/\2\])[^\[]*+)*+)\[\/\2\])?)(\]?)/s", $post->post_content, $out );
+		if( isset( $post->post_content ) ) {
+			preg_match( "/\[(\[?)(ai1ec)\b([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*+(?:\[(?!\/\2\])[^\[]*+)*+)\[\/\2\])?)(\]?)/s", $post->post_content, $out );
+		}
 
 		// Find out if the calendar page ID is defined, and we're on it
 		if( $ai1ec_settings->calendar_page_id &&
@@ -411,7 +413,7 @@ class Ai1ec_App_Controller {
   			// page content filters (some themes are overly ambitious here)
   			add_filter( 'the_content', array( &$this, 'append_content' ), PHP_INT_MAX - 1 );
 		  }
-		} else if( $out[2] == 'ai1ec' ) {
+		} else if( isset( $out[2] ) && $out[2] == 'ai1ec' ) {
 			// if content has [ai1ec] shortcode, display the calendar page
 			$attr = shortcode_parse_atts( $out[3] );
 			// Proceed only if the page password is correctly entered OR

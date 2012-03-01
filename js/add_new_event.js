@@ -208,23 +208,6 @@ var ai1ec_apply_js_on_repeat_block = function() {
 	jQuery.inputdate( data );
 };
 
-// called after the date picker block is inserted in the DOM
-var ai1ec_apply_js_on_date_picker_box = function() {
-	// Initialize inputdate plugin on our "until" date input.
-	data = {
-		start_date_input: 	'#ai1ec-date-picker-input',
-		start_time:       	'#ai1ec-date-picker-time',
-		date_format:				ai1ec_add_new_event.date_format,
-		month_names:				ai1ec_add_new_event.month_names,
-		day_names:					ai1ec_add_new_event.day_names,
-		week_start_day:			ai1ec_add_new_event.week_start_day,
-		twentyfour_hour:  	ai1ec_add_new_event.twentyfour_hour,
-		now:              	new Date( ai1ec_add_new_event.now * 1000 )
-	}
-	jQuery.inputdate( data );
-	jQuery( '#ai1ec-date-picker-input' ).trigger( 'click' );
-};
-
 var ai1ec_show_repeat_tabs = function( data, post_ajax_func ) {
 	jQuery.blockUI( { 
 		message: '<div class="ai1ec-repeat-box-loading"></div>',
@@ -313,6 +296,65 @@ jQuery( function( $ ){
 			now:              	now
 		}
 		$.timespan( data );
+		
+		var exdate  = $( "#ai1ec_exdate" ).val();
+		var dp_date = null;
+		var _clear_dp = false;
+		if( exdate.length >= 8 ) {
+			dp_date = new Array();
+			var _span_html = '';
+			$.each( exdate.split( ',' ), function( i, v ) {
+				_date = v.slice( 0, 8 );
+				_year = _date.substr( 0, 4 );
+				_month = _date.substr( 4, 2 );
+				_day = _date.substr( 6, 2 );
+				_span_html += _year + '-' + _month + '-' + _day + ',';
+				_month = _month.charAt(0) == '0' ? ( '0' + ( parseInt( _month.charAt( 1 ) ) - 1 ) )
+				                                 : ( parseInt( _month ) - 1 )
+				
+				dp_date.push( new Date( _year, _month, _day ) );
+			});
+			_span_html = _span_html.slice( 0, _span_html.length - 1 );
+			$( '#widgetField span:first' ).html( _span_html );
+		} else {
+			dp_date = new Date( ai1ec_add_new_event.now * 1000 )
+			_clear_dp = true;
+		}
+
+		$( '#widgetCalendar' ).DatePicker({
+			flat: true,
+			calendars: 3,
+			mode: 'multiple',
+			start: 1,
+			date: dp_date,
+			onChange: function( formated ) {
+				$( '#widgetField span' ).get( 0 ).innerHTML = formated;
+				formated = formated.toString();
+				if( formated.length >= 8 ) {
+					// save the date in your hidden field
+					var exdate = '';
+					$.each( formated.split( ',' ), function( i, v ) {
+						exdate += v.replace( /-/g, '' ) + 'T000000Z,';
+					});
+					exdate = exdate.slice( 0, exdate.length - 1 );
+					$( "#ai1ec_exdate" ).val( exdate );
+				} else {
+					$( "#ai1ec_exdate" ).val( '' );
+				}
+			}
+		});
+		
+		if( _clear_dp ) {
+			$( '#widgetCalendar' ).DatePickerClear();
+		}
+		
+		var state = false;
+		$( '#widgetField > a, #widgetField > span, #ai1ec_exclude_date_label' ).bind( 'click', function() {
+			$('#widgetCalendar').stop().animate( { height: state ? 0 : $( '#widgetCalendar div.datepicker' ).get( 0 ).offsetHeight }, 500 );
+			state = !state;
+			return false;
+		});
+		$( '#widgetCalendar div.datepicker' ).css( 'position', 'absolute' )
 
 		/**
 		 * Google map setup
@@ -564,18 +606,6 @@ jQuery( function( $ ){
 			}, 
 			'ai1ec_apply_js_on_repeat_block'
 		);
-		
-		// handles click on exdate text
-		ai1ec_click_on_ics_rule_text( 
-			'#ai1ec_exclude_date_text > a', 
-			'#ai1ec_exclude_date', 
-			'#ai1ec_exclude_date_label', 
-			{ 
-				action: 'ai1ec_get_date_picker_box',
-				post_id: $( '#post_ID' ).val() 
-			}, 
-			'ai1ec_apply_js_on_date_picker_box'
-		);
 
 		// handles click on repeat checkbox
 		ai1ec_click_on_checkbox( 
@@ -601,18 +631,6 @@ jQuery( function( $ ){
 				post_id: $( '#post_ID' ).val() 
 			},
 			'ai1ec_apply_js_on_repeat_block'
-		);
-		
-		// handles click on exclude date checkbox
-		ai1ec_click_on_checkbox( 
-			'#ai1ec_exclude_date', 
-			'#ai1ec_exclude_date_text > a', 
-			'#ai1ec_exclude_date_label', 
-			{ 
-				action: 'ai1ec_get_date_picker_box', 
-				post_id: $( '#post_ID' ).val() 
-			},
-			'ai1ec_apply_js_on_date_picker_box'
 		);
 
 		$( 'a.ai1ec_repeat_cancel' ).live( 'click', function() {

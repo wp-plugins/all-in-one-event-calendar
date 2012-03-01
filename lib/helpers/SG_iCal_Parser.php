@@ -174,7 +174,7 @@ class SG_iCal_Parser {
 	 * @param string $data
 	 * @return bool
 	 */
-	private static function _ValidUtf8( $data ) {
+	public static function _ValidUtf8( $data ) {
 		$rx  = '[\xC0-\xDF]([^\x80-\xBF]|$)';
 		$rx .= '|[\xE0-\xEF].{0,1}([^\x80-\xBF]|$)';
 		$rx .= '|[\xF0-\xF7].{0,2}([^\x80-\xBF]|$)';

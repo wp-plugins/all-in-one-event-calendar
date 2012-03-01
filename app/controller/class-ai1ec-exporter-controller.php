@@ -88,7 +88,7 @@ class Ai1ec_Exporter_Controller {
 		}
 		$str = $c->createCalendar();
 
-		header( 'Content-type: text/calendar' );
+		header( 'Content-type: text/calendar; charset=utf-8' );
 		echo $str;
 		exit;
 	}

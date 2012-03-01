@@ -1562,7 +1562,7 @@ class vcalendar {
       if( FALSE === ( $filename = $this->getConfig( 'url' )))
         $filename = $this->getConfig( 'dirfile' );
             /* READ FILE */
-      if( FALSE === ( $rows = file_get_contents( $filename )))
+      if( FALSE === ( $rows = url_get_contents( $filename )))
         return FALSE;                 /* err 1 */
     }
     elseif( is_array( $unparsedtext ))

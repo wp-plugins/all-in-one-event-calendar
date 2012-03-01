@@ -44,7 +44,7 @@ class SG_iCal_Freq {
 	 * @param $excluded array of int (timestamps), see EXDATE documentation
 	 * @param $added array of int (timestamps), see RDATE documentation
 	 */
-	public function __construct( $rule, $start, $excluded=array(), $added=array()) {
+	public function __construct( $rule, $start, $excluded=array(), $added=array(), $exrule = false) {
 		$this->start = $start;
 		$this->excluded = array();
 
@@ -78,6 +78,8 @@ class SG_iCal_Freq {
 
 		//set until, and cache
 		if( isset($this->rules['count']) ) {
+			if( $exrule )
+				$this->rules['count']++;
 
 			$cache[$ts] = $ts = $this->start;
 			for($n=1; $n < $this->rules['count']; $n++) {

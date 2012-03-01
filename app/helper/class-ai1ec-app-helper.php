@@ -213,6 +213,14 @@ class Ai1ec_App_Helper {
 			'name'					=> _x( 'Event Tags', 'Event tags taxonomy', AI1EC_PLUGIN_NAME ),
 			'singular_name'	=> _x( 'Event Tag', 'Event tags taxonomy (singular)', AI1EC_PLUGIN_NAME )
 		);
+		
+		// ==================================
+		// = labels for event feeds taxonomy =
+		// ==================================
+		$events_feeds_labels = array(
+			'name'					=> _x( 'Event Feeds', 'Event feeds taxonomy', AI1EC_PLUGIN_NAME ),
+			'singular_name'	=> _x( 'Event Feed', 'Event feed taxonomy (singular)', AI1EC_PLUGIN_NAME )
+		);
 
 		// ======================================
 		// = args for event categories taxonomy =
@@ -243,6 +251,22 @@ class Ai1ec_App_Helper {
     		'assign_terms' => 'edit_ai1ec_events'
 			)
 		);
+		
+		// ================================
+		// = args for event feeds taxonomy =
+		// ================================
+		$events_feeds_args = array(
+			'labels'				=> $events_feeds_labels,
+			'hierarchical'	=> false,
+			'rewrite'				=> array( 'slug' => 'events_feeds' ),
+			'capabilities'	=> array(
+				'manage_terms' => 'manage_categories',
+    		'edit_terms'   => 'manage_categories',
+    		'delete_terms' => 'manage_categories',
+    		'assign_terms' => 'edit_ai1ec_events'
+			),
+			'public'        => false // don't show taxonomy in admin UI
+		);
 
 		// ======================================
 		// = register event categories taxonomy =
@@ -253,6 +277,11 @@ class Ai1ec_App_Helper {
 		// = register event tags taxonomy =
 		// ================================
 		register_taxonomy( 'events_tags', array( AI1EC_POST_TYPE ), $events_tags_args );
+		
+		// ================================
+		// = register event tags taxonomy =
+		// ================================
+		register_taxonomy( 'events_feeds', array( AI1EC_POST_TYPE ), $events_feeds_args );
 
 		// ========================================
 		// = register custom post type for events =
@@ -340,7 +369,9 @@ class Ai1ec_App_Helper {
 					else
 					  $term = get_term_by( 'slug', $var, $tax_slug );
 
-					$var = $term->slug;
+					if( isset( $term->slug ) ) {
+						$var = $term->slug;
+					}
 				}
 			}
 		}

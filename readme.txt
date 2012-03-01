@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
 Tested up to: 3.3
-Stable tag: 1.3
+Stable tag: 1.4
 
 An event calendar system with month, week, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
@@ -83,6 +83,19 @@ http://www.youtube.com/watch?v=zZHpzfyukyU
 * Filter by post ids (separate ids by comma): **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+= Version 1.4 =
+* Export ICS feeds with utf8 header
+* Import/Download ICS feeds with CURL if available, otherwise keep the current method
+* Better UTF8 support for imported events
+* Use local version jquery tools instead of the CDN copy
+* Improved system for catching errors and trying best to find a possible route to proceed without having to quit/fail
+* Fixed various Notice level errors
+* Fixed bug with recurrence/exception rules not properly being converted to GMT
+* Added EXDATE support and EXDATE UI to allow selection of specific dates.
+* Added filter by feed source on All events page
+* Improved caching of stored events
+* Fixed getOffset problem - notify me if it still happens for you
+
 = Version 1.3 =
 * Added shortcodes support.[#36](http://trac.the-seed.ca/ticket/36) (Howto is under Frequently Asked Questions tab)
 * Added support to exclude events using [EXRULE](http://www.kanzaki.com/docs/ical/exrule.html)

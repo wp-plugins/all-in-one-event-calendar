@@ -184,6 +184,7 @@ class Ai1ec_Importer_Helper {
 					'ical_uid'          => $e->getProperty( 'uid' ),
 					'categories'				=> $feed->feed_category,
 					'tags'							=> $feed->feed_tags,
+					'feed'              => $feed,
 					'post'							=> array(
 						'post_status'		=> 'publish',
 						'post_type'			=> AI1EC_POST_TYPE,
