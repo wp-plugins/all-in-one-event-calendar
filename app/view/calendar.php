@@ -1,4 +1,4 @@
-<!-- START All-in-One Event Calendar Plugin - Version 1.4 -->
+<!-- START All-in-One Event Calendar Plugin - Version 1.5 -->
 <table class="ai1ec-calendar-toolbar">
 	<tbody>
 		<tr>
