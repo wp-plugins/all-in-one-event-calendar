@@ -13,6 +13,13 @@
 						</a>
 					</li>
 					<li>
+						<a id="ai1ec-view-oneday" class="ai1ec-load-view ai1ec-button"
+							href="#action=ai1ec_oneday&amp;ai1ec_post_ids=<?php echo $selected_post_ids ?>">
+							<img src="<?php echo AI1EC_IMAGE_URL ?>/oneday-view.png" alt="<?php _e( 'Day', AI1EC_PLUGIN_NAME ) ?>" />
+							<?php _e( 'Day', AI1EC_PLUGIN_NAME ) ?>
+						</a>
+					</li>
+					<li>
 						<a id="ai1ec-view-week" class="ai1ec-load-view ai1ec-button"
 							href="#action=ai1ec_week&amp;ai1ec_post_ids=<?php echo $selected_post_ids ?>">
 							<img src="<?php echo AI1EC_IMAGE_URL ?>/week-view.png" alt="<?php _e( 'Week', AI1EC_PLUGIN_NAME ) ?>" />
