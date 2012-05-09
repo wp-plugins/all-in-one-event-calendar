@@ -1,20 +1,20 @@
-=== All-in-One Event Calendar ===
+=== All-in-One Calendar ===
 Contributors: theseed, hubrik, vtowel, yani.iliev
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9JJMUW48W2ED8
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
-Tested up to: 3.3
+Tested up to: 3.3.2
 Stable tag: 1.5
 
 An event calendar system with month, week, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
 == Description ==
 
-Welcome to the [All-in-One Event Calendar Plugin](http://theseednetwork.com/software/all-in-one-event-calendar-wordpress/), from [The Seed Network](http://theseednetwork.com/), a web development company. The All-in-One Event Calendar is a new way to list your events in WordPress and easily share them with the rest of the world.
+Welcome to the [All-in-One Calendar Plugin](http://then.ly/), from [Then.ly](http://then.ly/). The All-in-One Calendar is a new way to list your events in WordPress and easily share them with the rest of the world.
 
 Our new calendar system combines a clean visual design, solid architectural patterns and a powerful set of features to create the most advanced calendar system available for WordPress. Best of all: it’s completely free.
 
-**New in version 1.2:** A beautifully rendered, scrolling **Week view**!
+**New in version 1.6:** Download the free Premium version at [then.ly](http://then./y) and choose from 3 custom designed themes for your Calendar, or develop your own!
 
 = Calendar Features For Users =
 
@@ -26,7 +26,7 @@ This plugin has many features we hope will prove useful to users, including:
 * Embedded **Google Maps**
 * **Color-coded** events based on category
 * **Event-registration** ready
-* **Month**, **week** and **agenda** views
+* **Month**, **week**, **day** and **agenda** views
 * **Upcoming Events** widget
 * Direct links to **filtered calendar views**
 
@@ -35,32 +35,31 @@ This plugin has many features we hope will prove useful to users, including:
 * Import other calendars automatically to display in your calendar
 * Categorize and tag imported calendar feeds automatically
 * Events from [The Events Calendar](http://wordpress.org/extend/plugins/the-events-calendar/) plugin can also be easily imported
+* Create a Calendar administration role to allow for a dedicated calendar application
 
-Importing and exporting iCalendar (.ics) feeds is one of the strongest features of the All-in-One Event Calendar system. Enter an event on one site and you can have it appear automatically in another website's calendar. You can even send events from a specific category or tag (or combination of categories and tags).
+Importing and exporting iCalendar (.ics) feeds is one of the strongest features of the All-in-One Calendar system. Enter an event on one site and you can have it appear automatically in another website's calendar. You can even send events from a specific category or tag (or combination of categories and tags).
 
-Why is this cool? It allows event creators to create one event and have it displayed on a few or thousands of calendars with no extra work. And it also allows calendar owners to populate their calendar from other calendar feeds without having to go through the hassle of creating new events. For example, a soccer league can send its game schedule to a community sports calendar, which, in turn, can send only featured games (from all the sports leagues it aggragates) to a community calendar, which features sports as just one category.
+Why is this cool? It allows event creators to create one event and have it displayed on a few or thousands of calendars with no extra work. And it also allows calendar owners to populate their calendar from other calendar feeds without having to go through the hassle of creating new events. For example, a soccer league can send its game schedule to a community sports calendar, which, in turn, can send only featured games (from all the sports leagues it aggregates) to a community calendar, which features sports as just one category.
 
 = Additional Features =
 
-The All-in-One Event Calendar Plugin also has a few features that will prove useful for website and blog owners:
+The All-in-One Calendar Plugin also has a few features that will prove useful for website and blog owners:
 
 * Each event is SEO-optimized
 * Each event links to the original calendar
 * Your calendar can be embedded into a WordPress page without needing to create template files or modify the theme
 
-= Video Tutorials =
-http://www.youtube.com/watch?v=nKlIy-BUeRE
-http://www.youtube.com/watch?v=zZHpzfyukyU
+= Video =
+https://vimeo.com/41738066
 
 = Helpful Links =
 
 * [**Check out the DEMO »**](http://demo.theseednetwork.com/)
-* [**Get help from the Support Forum »**](http://wordpress.org/tags/all-in-one-event-calendar?forum_id=10)
-* [**Track the development process »**](http://trac.theseednetwork.com/roadmap)
-* [**BUG reports only »**](http://trac.theseednetwork.com/newticket) ([registration](http://trac.theseednetwork.com/register) required)
-* [**Get Premium Support »**](http://theseednetwork.com/get-supported) from [The Seed Studio](http://theseednetwork.com/)
+* [**Get help from our Help Desk »**](http://help.then.ly)
 
 == Frequently Asked Questions ==
+
+[**Get help from our Help Desk »**](http://help.then.ly)
 
 = Shortcodes =
 
@@ -83,6 +82,26 @@ http://www.youtube.com/watch?v=zZHpzfyukyU
 * Filter by post ids (separate ids by comma): **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 1.6 Premium = 
+* Choose new Calendar Themes
+* Duplicate Events
+* Create Print View
+* Add location details that allow latitude and longitude for areas poorly covered by Google Maps
+* Turn on/off autocomplete for addresses
+* See more intuitive views of multi-day events on weekly and monthly calendars
+* Calendar administration role to allow for dedicated calendar application
+* Security updates
+* Bug fixes
+
+= Version 1.6 = 
+* Create Print View
+* Turn on/off autocomplete for addresses
+* See more intuitive views of multi-day events on weekly and monthly calendars
+* Security updates
+* Bug Fixes
+
+
 = Version 1.5 =
 * Added daily view
 * Various bug fixes
@@ -255,14 +274,14 @@ http://www.youtube.com/watch?v=zZHpzfyukyU
 
 To place the calendar in a DOM/HTML element besides the default page content container without modifying the theme:
 
-1. Navigate to **Events** > **Settings** in the WordPress Dashboard.
+1. Navigate to **Settings** > **Calendar** in the WordPress Dashboard.
 2. Enter a CSS or jQuery-style selector of the target element in the **Contain calendar in this DOM element** field.
-3. Click **Update Settings**.
+3. Click **Update**.
 
 == Screenshots ==
 
 1. Add new event - part 1
-2. Add new event - part 2
+2. Add new event - with recurrence
 3. Event categories
 4. Event categories with color picker
 5. Front-end: Month view of calendar
@@ -276,6 +295,9 @@ To place the calendar in a DOM/HTML element besides the default page content con
 13. Upcoming Events widget - configuration options
 
 == Upgrade Notice ==
+
+= 1.6 Premium = 
+The All-in-One Calendar can only be upgrade to Premium from version 1.6 and above, or by downloading directly from 
 
 = 1.0.3 =
 When upgrading to from below `1.0.3` you must reactivate the plugin.

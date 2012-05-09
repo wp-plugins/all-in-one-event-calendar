@@ -45,7 +45,163 @@ class Ai1ec_View_Helper {
 	}
 
 	/**
-	 * display function
+	 * Enqueue a script from the admin resources directory (app/view/admin/js).
+	 *
+   * @param string $name Unique identifer for the script
+   * @param string $file Filename of the script
+   * @param array $deps Dependencies of the script
+   * @param bool $in_footer Whether to add the script to the footer of the page
+   *
+	 * @return void
+	 */
+	function admin_enqueue_script( $name, $file, $deps = array(), $in_footer = FALSE ) {
+		if( ! $file || empty( $file ) ) {
+			throw new Ai1ec_File_Not_Provided( "You need to specify a script file." );
+		}
+
+		$_file = AI1EC_ADMIN_THEME_JS_PATH . '/' . $file;
+
+		if( ! file_exists( $_file ) ) {
+			throw new Ai1ec_File_Not_Found( "The specified file " . $_file . " doesn't exist." );
+		} else {
+			$file = AI1EC_ADMIN_THEME_JS_URL . '/' . $file;
+			wp_enqueue_script( $name, $file, $deps, AI1EC_VERSION, $in_footer );
+		}
+	}
+
+	/**
+   * Enqueue a script from the theme resources directory.
+   *
+   * @param string $name Unique identifer for the script
+   * @param string $file Filename of the script
+   * @param array $deps Dependencies of the script
+   * @param bool $in_footer Whether to add the script to the footer of the page
+   *
+	 * @return void
+	 */
+	function theme_enqueue_script( $name, $file, $deps = array(), $in_footer = FALSE  ) {
+    global $ai1ec_themes_controller;
+
+		if( ! $file || empty( $file ) ) {
+			throw new Ai1ec_File_Not_Provided( "You need to specify a script file." );
+		}
+
+    // template path
+    $active_template_path = $ai1ec_themes_controller->active_template_path();
+    // template url
+    $active_template_url = $ai1ec_themes_controller->active_template_url();
+
+		// look for the file in the active theme
+		$themes_root = array(
+			(object) array(
+				'path' => $active_template_path . '/' . AI1EC_JS_FOLDER,
+				'url'  => $active_template_url . '/' . AI1EC_JS_FOLDER
+			),
+			(object) array(
+				'path' => AI1EC_DEFAULT_THEME_PATH . '/' . AI1EC_JS_FOLDER,
+				'url'  => AI1EC_DEFAULT_THEME_URL . '/' . AI1EC_JS_FOLDER
+			),
+		);
+
+		$file_found = false;
+
+		// look for the file in each theme
+		foreach( $themes_root as $theme_root ) {
+			// $_file is a local var to hold the value of
+			// the file we are looking for
+			$_file = $theme_root->path . '/' . $file;
+			if( file_exists( $_file ) ) {
+				// file is found
+				$file_found = true;
+				// assign the found file
+				$file       = $theme_root->url . '/' . $file;
+				// exit the loop;
+				break;
+			}
+		}
+
+		if( $file_found === false ) {
+			throw new Ai1ec_File_Not_Found( "The specified file '" . $file . "' doesn't exist." );
+		} else {
+			wp_enqueue_script( $name, $file, $deps, AI1EC_VERSION, $in_footer );
+		}
+	}
+
+	/**
+	 * admin_enqueue_style function
+	 *
+	 * @return void
+	 **/
+	function admin_enqueue_style( $name, $file, $deps = array() ) {
+		if( ! $file || empty( $file ) ) {
+			throw new Ai1ec_File_Not_Provided( "You need to specify a style file." );
+		}
+
+		$_file = AI1EC_ADMIN_THEME_CSS_PATH . '/' . $file;
+
+		if( ! file_exists( $_file ) ) {
+			throw new Ai1ec_File_Not_Found( "The specified file " . $file . " doesn't exist." );
+		} else {
+			$file = AI1EC_ADMIN_THEME_CSS_URL . '/' . $file;
+			wp_enqueue_style( $name, $file, $deps, AI1EC_VERSION );
+		}
+	}
+
+	/**
+	 * theme_enqueue_style function
+	 *
+	 * @return void
+	 **/
+	function theme_enqueue_style( $name, $file, $deps = array() ) {
+    global $ai1ec_themes_controller;
+
+		if( ! $file || empty( $file ) ) {
+			throw new Ai1ec_File_Not_Provided( "You need to specify a style file." );
+		}
+
+		// template path
+		$active_template_path = $ai1ec_themes_controller->active_template_path();
+		// template url
+		$active_template_url = $ai1ec_themes_controller->active_template_url();
+
+		// look for the file in the active theme
+		$themes_root = array(
+			(object) array(
+				'path' => $active_template_path . '/' . AI1EC_CSS_FOLDER,
+				'url'  => $active_template_url . '/' . AI1EC_CSS_FOLDER
+			),
+			(object) array(
+				'path' => AI1EC_DEFAULT_THEME_PATH . '/' . AI1EC_CSS_FOLDER,
+				'url'  => AI1EC_DEFAULT_THEME_URL . '/' . AI1EC_CSS_FOLDER
+			),
+		);
+
+		$file_found = false;
+
+		// look for the file in each theme
+		foreach( $themes_root as $theme_root ) {
+			// $_file is a local var to hold the value of
+			// the file we are looking for
+			$_file = $theme_root->path . '/' . $file;
+			if( file_exists( $_file ) ) {
+				// file is found
+				$file_found = true;
+				// assign the found file
+				$file       = $theme_root->url . '/' . $file;
+				// exit the loop;
+				break;
+			}
+		}
+
+		if( $file_found === false ) {
+			throw new Ai1ec_File_Not_Found( "The specified file '" . $file . "' doesn't exist." );
+		} else {
+			wp_enqueue_style( $name, $file, $deps, AI1EC_VERSION );
+		}
+	}
+
+	/**
+	 * display_admin function
 	 *
 	 * Display the view specified by file $file and passed arguments $args.
 	 *
@@ -54,12 +210,12 @@ class Ai1ec_View_Helper {
 	 *
 	 * @return void
 	 **/
-	function display( $file = false, $args = array() ) {
+	function display_admin( $file = false, $args = array() ) {
 		if( ! $file || empty( $file ) ) {
 			throw new Ai1ec_File_Not_Provided( "You need to specify a view file." );
 		}
 
-		$file = AI1EC_VIEW_PATH . "/" . $file;
+		$file = AI1EC_ADMIN_THEME_PATH . '/' . $file;
 
 		if( ! file_exists( $file ) ) {
 			throw new Ai1ec_File_Not_Found( "The specified view file doesn't exist." );
@@ -70,7 +226,58 @@ class Ai1ec_View_Helper {
 	}
 
 	/**
-	 * display_css function
+	 * display_theme function
+	 *
+	 * Display the view specified by file $file and passed arguments $args.
+	 *
+	 * @param string $file
+	 * @param array $args
+	 *
+	 * @return void
+	 **/
+	function display_theme( $file = false, $args = array() ) {
+    global $ai1ec_themes_controller;
+
+		if( ! $file || empty( $file ) ) {
+			throw new Ai1ec_File_Not_Provided( "You need to specify a view file." );
+		}
+
+		// look for the file in the selected theme
+		$themes_root = array(
+			$ai1ec_themes_controller->active_template_path(),
+			AI1EC_DEFAULT_THEME_PATH
+		);
+
+		// remove duplicates
+		$themes_root = array_unique( $themes_root );
+
+		$file_found = false;
+
+		// look for the file in each theme
+		foreach( $themes_root as $theme_root ) {
+			// $_file is a local var to hold the value of
+			// the file we are looking for
+			$_file = $theme_root . '/' . $file;
+			if( file_exists( $_file ) ) {
+				// file is found
+				$file_found = true;
+				// assign the found file
+				$file       = $_file;
+				// exit the loop;
+				break;
+			}
+		}
+
+		if( $file_found === false ) {
+			throw new Ai1ec_File_Not_Found( "The specified view file '" . $file . "' doesn't exist." );
+		} else {
+			extract( $args );
+			require( $file );
+		}
+	}
+
+	/**
+	 * display_admin_css function
 	 *
 	 * Renders the given stylesheet inline. If stylesheet has already been
 	 * displayed once before with the same set of $args, does not display
@@ -81,15 +288,14 @@ class Ai1ec_View_Helper {
 	 *
 	 * @return void
 	 **/
-	function display_css( $file = false, $args = array() ) {
+	function display_admin_css( $file = false, $args = array() ) {
 		static $displayed = array();
-		static $num = 0;
 
 		if( ! $file || empty( $file ) ) {
 			throw new Ai1ec_File_Not_Provided( 'You need to specify a css file.' );
 		}
 
-		$file = AI1EC_CSS_PATH . "/" . $file;
+		$file = AI1EC_ADMIN_THEME_CSS_PATH . '/' . $file;
 
 		if( isset( $displayed[$file] ) && $displayed[$file] === $args )	// Skip if already displayed
 			return;
@@ -107,7 +313,68 @@ class Ai1ec_View_Helper {
 	}
 
 	/**
-	 * display_js function
+	 * display_theme_css function
+	 *
+	 * Renders the given stylesheet inline. If stylesheet has already been
+	 * displayed once before with the same set of $args, does not display
+	 * it again.
+	 *
+	 * @param string $file
+	 * @param array $args
+	 *
+	 * @return void
+	 **/
+	function display_theme_css( $file = false, $args = array() ) {
+    global $ai1ec_themes_controller;
+		static $displayed = array();
+
+		if( ! $file || empty( $file ) ) {
+			throw new Ai1ec_File_Not_Provided( 'You need to specify a CSS file.' );
+		}
+
+		// look for the file in the selected theme
+		$themes_root = array(
+			$ai1ec_themes_controller->active_template_path() . '/' . AI1EC_THEME_CSS_FOLDER,
+			AI1EC_DEFAULT_THEME_PATH . '/' . AI1EC_THEME_CSS_FOLDER
+		);
+
+		// remove duplicates
+		$themes_root = array_unique( $themes_root );
+
+		$file_found = false;
+
+		// look for the file in each theme
+		foreach( $themes_root as $theme_root ) {
+			// $_file is a local var to hold the value of
+			// the file we are looking for
+			$_file = $theme_root . '/' . $file;
+			if( file_exists( $_file ) ) {
+				// file is found
+				$file_found = true;
+				// assign the found file
+				$file       = $_file;
+				// exit the loop;
+				break;
+			}
+		}
+
+		if( isset( $displayed[$file] ) && $displayed[$file] === $args )	// Skip if already displayed
+			return;
+
+		if( ! file_exists( $file ) ) {
+			throw new Ai1ec_File_Not_Found( "The specified CSS file doesn't exist." );
+		} else {
+			$displayed[$file] = $args;	// Flag that we've displayed this file with these args
+
+			extract( $args );
+			echo '<style type="text/css">';
+			require( $file );
+			echo '</style>';
+		}
+	}
+
+	/**
+	 * display_admin_js function
 	 *
 	 * Renders the given script inline. If script has already been displayed
 	 * once before with the same set of $args, does not display it again.
@@ -117,14 +384,14 @@ class Ai1ec_View_Helper {
 	 *
 	 * @return void
 	 **/
-	function display_js( $file = false, $args = array() ) {
+	function display_admin_js( $file = false, $args = array() ) {
 		static $displayed = array();
 
 		if( ! $file || empty( $file ) ) {
 			throw new Ai1ec_File_Not_Provided( "You need to specify a js file." );
 		}
 
-		$file = AI1EC_JS_PATH . "/" . $file;
+		$file = AI1EC_ADMIN_THEME_JS_PATH . '/' . $file;
 
 		if( $displayed[$file] === $args)	// Skip if already displayed
 			return;
@@ -142,9 +409,70 @@ class Ai1ec_View_Helper {
 			echo '</script>';
 		}
 	}
+	/**
+	 * display_theme_js function
+	 *
+	 * Renders the given script inline. If script has already been displayed
+	 * once before with the same set of $args, does not display it again.
+	 *
+	 * @param string $file
+	 * @param array $args
+	 *
+	 * @return void
+	 **/
+	function display_theme_js( $file = false, $args = array() ) {
+    global $ai1ec_themes_controller;
+		static $displayed = array();
+
+		if( ! $file || empty( $file ) ) {
+			throw new Ai1ec_File_Not_Provided( "You need to specify a JS file." );
+		}
+
+    // look for the file in the selected theme
+    $themes_root = array(
+      $ai1ec_themes_controller->active_template_path() . '/' . AI1EC_THEME_JS_FOLDER,
+      AI1EC_DEFAULT_THEME_PATH . '/' . AI1EC_THEME_JS_FOLDER
+    );
+
+    // remove duplicates
+    $themes_root = array_unique( $themes_root );
+
+    $file_found = false;
+
+    // look for the file in each theme
+    foreach( $themes_root as $theme_root ) {
+      // $_file is a local var to hold the value of
+      // the file we are looking for
+      $_file = $theme_root . '/' . $file;
+      if( file_exists( $_file ) ) {
+        // file is found
+        $file_found = true;
+        // assign the found file
+        $file       = $_file;
+        // exit the loop;
+        break;
+      }
+    }
+
+		if( $displayed[$file] === $args)	// Skip if already displayed
+			return;
+
+		if( ! file_exists( $file ) ) {
+			throw new Ai1ec_File_Not_Found( "The specified JS file doesn't exist." );
+		} else {
+			$displayed[$file] = $args;	// Flag that we've displayed this file with these args
+
+			extract( $args );
+			echo '<script type="text/javascript" charset="utf-8">';
+			echo '/* <![CDATA[ */';
+			require( $file );
+			echo '/* ]]> */';
+			echo '</script>';
+		}
+	}
 
 	/**
-	 * get_view function
+	 * get_admin_view function
 	 *
 	 * Return the output of a view as a string rather than output to response.
 	 *
@@ -153,10 +481,99 @@ class Ai1ec_View_Helper {
 	 *
 	 * @return void
 	 **/
-	function get_view( $file = false, $args = array() ) {
+	function get_admin_view( $file = false, $args = array() ) {
 		ob_start();
-		$this->display( $file, $args );
+		$this->display_admin( $file, $args );
 		return ob_get_clean();
+	}
+
+	/**
+	 * get_theme_view function
+	 *
+	 * Return the output of a view in the theme as a string rather than output to response.
+	 *
+	 * @param string $file
+	 * @param array $args
+	 *
+	 * @return void
+	 **/
+	function get_theme_view( $file = false, $args = array() ) {
+		ob_start();
+		$this->display_theme( $file, $args );
+		return ob_get_clean();
+	}
+
+	/**
+	 * get_admin_img_url function
+	 *
+	 * @return string
+	 **/
+	public function get_admin_img_url( $file ) {
+		if( ! $file || empty( $file ) ) {
+			throw new Ai1ec_File_Not_Provided( "You need to specify an image file." );
+		}
+
+		$_file = AI1EC_ADMIN_THEME_IMG_PATH . '/' . $file;
+
+		if( ! file_exists( $_file ) ) {
+			throw new Ai1ec_File_Not_Found( "The specified file " . $_file . " doesn't exist." );
+		} else {
+			$file = AI1EC_ADMIN_THEME_IMG_URL . '/' . $file;
+			return $file;
+		}
+	}
+
+	/**
+	 * get_theme_img_url function
+	 *
+	 * @return string
+	 **/
+	public function get_theme_img_url( $file ) {
+    global $ai1ec_themes_controller;
+
+		if( ! $file || empty( $file ) ) {
+			throw new Ai1ec_File_Not_Provided( "You need to specify a style file." );
+		}
+
+    // template path
+    $active_template_path = $ai1ec_themes_controller->active_template_path();
+    // template url
+    $active_template_url = $ai1ec_themes_controller->active_template_url();
+
+    // look for the file in the active theme
+    $themes_root = array(
+      (object) array(
+        'path' => $active_template_path . '/' . AI1EC_IMG_FOLDER,
+        'url'  => $active_template_url . '/' . AI1EC_IMG_FOLDER
+      ),
+      (object) array(
+        'path' => AI1EC_DEFAULT_THEME_PATH . '/' . AI1EC_IMG_FOLDER,
+        'url'  => AI1EC_DEFAULT_THEME_URL . '/' . AI1EC_IMG_FOLDER
+      ),
+    );
+
+		$file_found = false;
+
+		// look for the file in each theme
+		foreach( $themes_root as $theme_root ) {
+			// $_file is a local var to hold the value of
+			// the file we are looking for
+			$_file = $theme_root->path . '/' . $file;
+			if( file_exists( $_file ) ) {
+				// file is found
+				$file_found = true;
+				// assign the found file
+				$file       = $theme_root->url . '/' . $file;
+				// exit the loop;
+				break;
+			}
+		}
+
+		if( $file_found === false ) {
+			throw new Ai1ec_File_Not_Found( "The specified file '" . $file . "' doesn't exist." );
+		} else {
+			return $file;
+		}
 	}
 
 	/**

@@ -100,46 +100,55 @@ class Ai1ec_App_Helper {
 	 * @return void
 	 **/
 	function create_post_type() {
-	  global $ai1ec_settings;
+		global $ai1ec_settings;
 
-    // if the event contributor role is not created, create it
-		if( !get_role( 'ai1ec_event_assistant' ) ) {
-
-		  // creating event contributor role with the same capabilities
-		  // as subscriber role, later in this file, event contributor role will be extended
-		  // to include more capabilities
+		// Create event contributor role with the same capabilities
+		// as subscriber role, plus event managing capabilities - if we haven't done
+		// so yet.
+		if( ! get_role( 'ai1ec_event_assistant' ) ) {
 			$caps = get_role( 'subscriber' )->capabilities;
-			add_role( 'ai1ec_event_assistant', 'Event Contributor', $caps );
-
-			// add event managing capability to administrator, editor, author
-			foreach( array( 'administrator', 'editor', 'author' ) as $user ) {
-			  $role = get_role( $user );
-			  // read events
-			  $role->add_cap( 'read_ai1ec_event' );
-			  // edit events
-			  $role->add_cap( 'edit_ai1ec_event' );
-			  $role->add_cap( 'edit_ai1ec_events' );
-			  $role->add_cap( 'edit_others_ai1ec_events' );
-			  $role->add_cap( 'edit_private_ai1ec_events' );
-			  $role->add_cap( 'edit_published_ai1ec_events' );
-			  // delete events
-			  $role->add_cap( 'delete_ai1ec_event' );
-			  $role->add_cap( 'delete_ai1ec_events' );
-			  $role->add_cap( 'delete_others_ai1ec_events' );
-			  $role->add_cap( 'delete_published_ai1ec_events' );
-			  $role->add_cap( 'delete_private_ai1ec_events' );
-			  // publish events
-			  $role->add_cap( 'publish_ai1ec_events' );
-			  // read private events
-			  $role->add_cap( 'read_private_ai1ec_events' );
-			}
-
-			// add event managing capability to contributors
-			$role = get_role( 'ai1ec_event_assistant' );
+			$role = add_role( 'ai1ec_event_assistant', 'Event Contributor', $caps );
 			$role->add_cap( 'edit_ai1ec_events' );
 			$role->add_cap( 'delete_ai1ec_event' );
 			$role->add_cap( 'read' );
 		}
+
+		// Add event managing capabilities to administrator, editor, author. (The
+		// last created capability is "manage_ai1ec_feeds", so check for that one.)
+		if( ! get_role( 'administrator' )->has_cap( 'manage_ai1ec_feeds' ) ) {
+			foreach( array( 'administrator', 'editor', 'author' ) as $role_name ) {
+				$role = get_role( $role_name );
+				// Read events.
+				$role->add_cap( 'read_ai1ec_event' );
+				// Edit events.
+				$role->add_cap( 'edit_ai1ec_event' );
+				$role->add_cap( 'edit_ai1ec_events' );
+				$role->add_cap( 'edit_others_ai1ec_events' );
+				$role->add_cap( 'edit_private_ai1ec_events' );
+				$role->add_cap( 'edit_published_ai1ec_events' );
+				// Delete events.
+				$role->add_cap( 'delete_ai1ec_event' );
+				$role->add_cap( 'delete_ai1ec_events' );
+				$role->add_cap( 'delete_others_ai1ec_events' );
+				$role->add_cap( 'delete_published_ai1ec_events' );
+				$role->add_cap( 'delete_private_ai1ec_events' );
+				// Publish events.
+				$role->add_cap( 'publish_ai1ec_events' );
+				// Read private events.
+				$role->add_cap( 'read_private_ai1ec_events' );
+				// Manage categories & tags.
+				$role->add_cap( 'manage_events_categories' );
+				// Manage calendar feeds.
+				$role->add_cap( 'manage_ai1ec_feeds' );
+
+				if( $role_name == 'administrator' ) {
+					// Change calendar themes & manage calendar options.
+					$role->add_cap( 'switch_ai1ec_themes' );
+					$role->add_cap( 'manage_ai1ec_options' );
+				}
+			}
+		}
+
 		// ===============================
 		// = labels for custom post type =
 		// ===============================
@@ -171,31 +180,31 @@ class Ai1ec_App_Helper {
 		$args = array(
 			'labels'							=> $labels,
 			'public' 							=> true,
-	    'publicly_queryable' 	=> true,
-	    'show_ui' 						=> true,
-	    'show_in_menu' 				=> true,
-	    'query_var' 					=> true,
-	    'rewrite' 						=> true,
-	    'capability_type'			=> array( 'ai1ec_event', 'ai1ec_events' ),
-	    'capabilities'        => array(
-	      'read_post'               => 'read_ai1ec_event',
-	      'edit_post'               => 'edit_ai1ec_event',
-        'edit_posts'              => 'edit_ai1ec_events',
-        'edit_others_posts'       => 'edit_others_ai1ec_events',
-        'edit_private_posts'      => 'edit_private_ai1ec_events',
-        'edit_published_posts'    => 'edit_published_ai1ec_events',
-        'delete_post'             => 'delete_ai1ec_event',
-        'delete_posts'            => 'delete_ai1ec_events',
-        'delete_others_posts'     => 'delete_others_ai1ec_events',
-        'delete_published_posts'  => 'delete_published_ai1ec_events',
-        'delete_private_posts'    => 'delete_private_ai1ec_events',
-        'publish_posts'           => 'publish_ai1ec_events',
-        'read_private_posts'      => 'read_private_ai1ec_events' ),
-	    'has_archive' 				=> true,
-	    'hierarchical' 				=> false,
-	    'menu_position' 			=> 5,
-	    'supports'						=> $supports,
-	    'exclude_from_search' => $ai1ec_settings->exclude_from_search
+			'publicly_queryable' 	=> true,
+			'show_ui' 						=> true,
+			'show_in_menu' 				=> true,
+			'query_var' 					=> true,
+			'rewrite' 						=> true,
+			'capability_type'			=> array( 'ai1ec_event', 'ai1ec_events' ),
+			'capabilities'        => array(
+				'read_post'               => 'read_ai1ec_event',
+				'edit_post'               => 'edit_ai1ec_event',
+				'edit_posts'              => 'edit_ai1ec_events',
+				'edit_others_posts'       => 'edit_others_ai1ec_events',
+				'edit_private_posts'      => 'edit_private_ai1ec_events',
+				'edit_published_posts'    => 'edit_published_ai1ec_events',
+				'delete_post'             => 'delete_ai1ec_event',
+				'delete_posts'            => 'delete_ai1ec_events',
+				'delete_others_posts'     => 'delete_others_ai1ec_events',
+				'delete_published_posts'  => 'delete_published_ai1ec_events',
+				'delete_private_posts'    => 'delete_private_ai1ec_events',
+				'publish_posts'           => 'publish_ai1ec_events',
+				'read_private_posts'      => 'read_private_ai1ec_events' ),
+			'has_archive' 				=> true,
+			'hierarchical' 				=> false,
+			'menu_position' 			=> 5,
+			'supports'						=> $supports,
+			'exclude_from_search' => $ai1ec_settings->exclude_from_search,
 		);
 
 		// ========================================
@@ -213,7 +222,7 @@ class Ai1ec_App_Helper {
 			'name'					=> _x( 'Event Tags', 'Event tags taxonomy', AI1EC_PLUGIN_NAME ),
 			'singular_name'	=> _x( 'Event Tag', 'Event tags taxonomy (singular)', AI1EC_PLUGIN_NAME )
 		);
-		
+
 		// ==================================
 		// = labels for event feeds taxonomy =
 		// ==================================
@@ -230,10 +239,10 @@ class Ai1ec_App_Helper {
 			'hierarchical'	=> true,
 			'rewrite'				=> array( 'slug' => 'events_categories' ),
 			'capabilities'	=> array(
-				'manage_terms' => 'manage_categories',
-    		'edit_terms'   => 'manage_categories',
-    		'delete_terms' => 'manage_categories',
-    		'assign_terms' => 'edit_ai1ec_events'
+				'manage_terms' => 'manage_events_categories',
+				'edit_terms'   => 'manage_events_categories',
+				'delete_terms' => 'manage_events_categories',
+				'assign_terms' => 'edit_ai1ec_events'
 			)
 		);
 
@@ -245,13 +254,13 @@ class Ai1ec_App_Helper {
 			'hierarchical'	=> false,
 			'rewrite'				=> array( 'slug' => 'events_tags' ),
 			'capabilities'	=> array(
-				'manage_terms' => 'manage_categories',
-    		'edit_terms'   => 'manage_categories',
-    		'delete_terms' => 'manage_categories',
-    		'assign_terms' => 'edit_ai1ec_events'
+				'manage_terms' => 'manage_events_categories',
+				'edit_terms'   => 'manage_events_categories',
+				'delete_terms' => 'manage_events_categories',
+				'assign_terms' => 'edit_ai1ec_events'
 			)
 		);
-		
+
 		// ================================
 		// = args for event feeds taxonomy =
 		// ================================
@@ -260,10 +269,10 @@ class Ai1ec_App_Helper {
 			'hierarchical'	=> false,
 			'rewrite'				=> array( 'slug' => 'events_feeds' ),
 			'capabilities'	=> array(
-				'manage_terms' => 'manage_categories',
-    		'edit_terms'   => 'manage_categories',
-    		'delete_terms' => 'manage_categories',
-    		'assign_terms' => 'edit_ai1ec_events'
+				'manage_terms' => 'manage_events_categories',
+				'edit_terms'   => 'manage_events_categories',
+				'delete_terms' => 'manage_events_categories',
+				'assign_terms' => 'edit_ai1ec_events'
 			),
 			'public'        => false // don't show taxonomy in admin UI
 		);
@@ -277,7 +286,7 @@ class Ai1ec_App_Helper {
 		// = register event tags taxonomy =
 		// ================================
 		register_taxonomy( 'events_tags', array( AI1EC_POST_TYPE ), $events_tags_args );
-		
+
 		// ================================
 		// = register event tags taxonomy =
 		// ================================
@@ -309,12 +318,12 @@ class Ai1ec_App_Helper {
 				wp_dropdown_categories( array(
 					'show_option_all'	=> __( 'Show All ', AI1EC_PLUGIN_NAME ) . $tax_obj->label,
 					'taxonomy'				=> $tax_slug,
-          'name'						=> $tax_obj->name,
-          'orderby'					=> 'name',
-          'selected'				=> isset( $_GET[$tax_slug] ) ? $_GET[$tax_slug] : '',
-          'hierarchical'		=> $tax_obj->hierarchical,
-          'show_count'			=> true,
-          'hide_if_empty'   => true
+					'name'						=> $tax_obj->name,
+					'orderby'					=> 'name',
+					'selected'				=> isset( $_GET[$tax_slug] ) ? $_GET[$tax_slug] : '',
+					'hierarchical'		=> $tax_obj->hierarchical,
+					'show_count'			=> true,
+					'hide_if_empty'   => true
 				));
 			}
 		}
@@ -331,21 +340,22 @@ class Ai1ec_App_Helper {
 	 **/
 	function get_all_items_name() {
 
-	  // if current user can publish events
-	  if( current_user_can( 'publish_ai1ec_events' ) ) {
-	    // get all pending events
-	    $query = new WP_Query(  array ( 'post_type' => 'ai1ec_event', 'post_status' => 'pending', 'posts_per_page' => -1,  ) );
+		// if current user can publish events
+		if( current_user_can( 'publish_ai1ec_events' ) ) {
+			// get all pending events
+			$query = new WP_Query(  array ( 'post_type' => 'ai1ec_event', 'post_status' => 'pending', 'posts_per_page' => -1,  ) );
 
-	    // at least 1 pending event?
-      if( $query->post_count > 0 ) {
-        // append the pending events number to the menu
-        return sprintf( __( 'All Events <span class="update-plugins count-%d" title="%d Pending Events"><span class="update-count">%d</span></span>', AI1EC_PLUGIN_NAME ),
-  	                    $query->post_count, $query->post_count, $query->post_count );
-      }
-    }
+			// at least 1 pending event?
+			if( $query->post_count > 0 ) {
+				// append the pending events number to the menu
+				return sprintf(
+					__( 'All Events <span class="update-plugins count-%d" title="%d Pending Events"><span class="update-count">%d</span></span>', AI1EC_PLUGIN_NAME ),
+					$query->post_count, $query->post_count, $query->post_count );
+			}
+		}
 
-	  // no pending events, or the user doesn't have sufficient capabilities
-	  return __( 'All Events', AI1EC_PLUGIN_NAME );
+		// no pending events, or the user doesn't have sufficient capabilities
+		return __( 'All Events', AI1EC_PLUGIN_NAME );
 	}
 
 	/**
@@ -362,12 +372,12 @@ class Ai1ec_App_Helper {
 			foreach( $filters as $tax_slug ) {
 				$var = &$query->query_vars[$tax_slug];
 				if( isset( $var ) ) {
-				  $term = null;
+					$term = null;
 
-				  if( is_numeric( $var ) )
-					  $term = get_term_by( 'id', $var, $tax_slug );
+					if( is_numeric( $var ) )
+						$term = get_term_by( 'id', $var, $tax_slug );
 					else
-					  $term = get_term_by( 'slug', $var, $tax_slug );
+						$term = get_term_by( 'slug', $var, $tax_slug );
 
 					if( isset( $term->slug ) ) {
 						$var = $term->slug;
@@ -384,7 +394,6 @@ class Ai1ec_App_Helper {
 				$query->query_vars["order"] 	= 'desc';
 			}
 		}
-
 	}
 
 	/**
@@ -415,20 +424,23 @@ class Ai1ec_App_Helper {
 	/**
 	 * add_meta_boxes function
 	 *
-	 * Display event meta_box when creating or editing an event
+	 * Display event meta box when creating or editing an event.
 	 *
 	 * @return void
 	 **/
 	function add_meta_boxes() {
 		global $ai1ec_events_controller;
+
 		add_meta_box(
-		        AI1EC_POST_TYPE,
-		        __( 'Event Details', AI1EC_PLUGIN_NAME ),
-		        array( &$ai1ec_events_controller, 'meta_box_view' ),
-		        AI1EC_POST_TYPE
-		    );
+			AI1EC_POST_TYPE,
+			__( 'Event Details', AI1EC_PLUGIN_NAME ),
+			array( &$ai1ec_events_controller, 'meta_box_view' ),
+			AI1EC_POST_TYPE,
+			'normal',
+			'high'
+		);
 	}
-	
+
 	/**
 	 * screen_layout_columns function
 	 *
@@ -438,7 +450,7 @@ class Ai1ec_App_Helper {
 	 **/
 	function screen_layout_columns( $columns, $screen ) {
 		global $ai1ec_settings;
-    
+
 		if( isset( $ai1ec_settings->settings_page ) && $screen == $ai1ec_settings->settings_page )
 			$columns[$ai1ec_settings->settings_page] = 2;
 
@@ -507,12 +519,12 @@ class Ai1ec_App_Helper {
 	 * @return mixed
 	 **/
 	function get_param( $param, $default='' ) {
-	  if( isset( $_POST[$param] ) )
-	    return $_POST[$param];
-	  if( isset( $_GET[$param] ) )
-	    return $_GET[$param];
-	  return $default;
-  }
+		if( isset( $_POST[$param] ) )
+			return $_POST[$param];
+		if( isset( $_GET[$param] ) )
+			return $_GET[$param];
+		return $default;
+	}
 
 	/**
 	 * get_param_delimiter_char function
@@ -523,11 +535,11 @@ class Ai1ec_App_Helper {
 	 *
 	 * @return string
 	 **/
-  function get_param_delimiter_char( $link ) {
-    return strpos( $link, '?' ) === false ? '?' : '&';
+	function get_param_delimiter_char( $link ) {
+		return strpos( $link, '?' ) === false ? '?' : '&';
 	}
 
-  /**
+	/**
 	 * inject_categories function
 	 *
 	 * Displays event categories whenever post categories are requested
@@ -544,119 +556,119 @@ class Ai1ec_App_Helper {
 	{
 		global $ai1ec_settings;
 
-    if( in_array( 'category', $taxonomies ) )
-    {
-    	// Create fake calendar page category
-    	$count_args = $args;
-    	$count_args['fields'] = 'count';
-    	$count = get_terms( 'events_categories', $count_args );
-    	$post = get_post( $ai1ec_settings->calendar_page_id );
-    	switch( $args['fields'] )
-    	{
-    		case 'all':
-		    	$calendar = (object) array(
-			    	'term_id'     => AI1EC_FAKE_CATEGORY_ID,
-			    	'name'		    => $post->post_title,
-			    	'slug'		    => $post->post_name,
-			    	'taxonomy'    => 'events_categories',
-			    	'description' => '',
-			    	'parent'      => 0,
-			    	'count'       => $count,
-		    	);
-		    	break;
-	    	case 'ids':
-	    		$calendar = 'ai1ec_calendar';
-	    		break;
-    		case 'names':
-	    		$calendar = $post->post_title;
-	    		break;
-    	}
-    	$terms[] = $calendar;
+		if( in_array( 'category', $taxonomies ) )
+		{
+			// Create fake calendar page category
+			$count_args = $args;
+			$count_args['fields'] = 'count';
+			$count = get_terms( 'events_categories', $count_args );
+			$post = get_post( $ai1ec_settings->calendar_page_id );
+			switch( $args['fields'] )
+			{
+				case 'all':
+					$calendar = (object) array(
+						'term_id'     => AI1EC_FAKE_CATEGORY_ID,
+						'name'		    => $post->post_title,
+						'slug'		    => $post->post_name,
+						'taxonomy'    => 'events_categories',
+						'description' => '',
+						'parent'      => 0,
+						'count'       => $count,
+					);
+					break;
+				case 'ids':
+					$calendar = 'ai1ec_calendar';
+					break;
+				case 'names':
+					$calendar = $post->post_title;
+					break;
+			}
+			$terms[] = $calendar;
 
-    	if( $args['hierarchical'] ) {
-    		$children = get_terms( 'events_categories', $args );
-	    	foreach( $children as &$child ) {
-	    		if( is_object( $child ) && $child->parent == 0 )
-	    			$child->parent = AI1EC_FAKE_CATEGORY_ID;
-	 				$terms[] = $child;
-	    	}
-	    }
-    }
+			if( $args['hierarchical'] ) {
+				$children = get_terms( 'events_categories', $args );
+				foreach( $children as &$child ) {
+					if( is_object( $child ) && $child->parent == 0 )
+						$child->parent = AI1EC_FAKE_CATEGORY_ID;
+					$terms[] = $child;
+				}
+			}
+		}
 
-    return $terms;
-  }
+		return $terms;
+	}
 
-  /**
-   * function calendar_term_link
-   *
-   * Corrects the URL for the calendar page when injected into the post
-   * categories.
-   *
-   * @param string $link The normally generated link
-   * @param object $term The term that we're getting the link for
-   * @param string $taxonomy The name of the taxonomy of interest
-   *
-   * @return string The correct link to the calendar page
-   */
-  function calendar_term_link( $link, $term, $taxonomy )
-  {
-  	global $ai1ec_calendar_helper;
+	/**
+	 * function calendar_term_link
+	 *
+	 * Corrects the URL for the calendar page when injected into the post
+	 * categories.
+	 *
+	 * @param string $link The normally generated link
+	 * @param object $term The term that we're getting the link for
+	 * @param string $taxonomy The name of the taxonomy of interest
+	 *
+	 * @return string The correct link to the calendar page
+	 */
+	function calendar_term_link( $link, $term, $taxonomy )
+	{
+		global $ai1ec_calendar_helper;
 
-  	if( $taxonomy == 'events_categories' ) {
-	  	if( $term->term_id == AI1EC_FAKE_CATEGORY_ID )
-	  		$link = $ai1ec_calendar_helper->get_calendar_url( null );
-	  	else
-	  		$link = $ai1ec_calendar_helper->get_calendar_url( null,
-		  		array( 'cat_ids' => array( $term->term_id ) )
-		  	);
-	  }
+		if( $taxonomy == 'events_categories' ) {
+			if( $term->term_id == AI1EC_FAKE_CATEGORY_ID )
+				$link = $ai1ec_calendar_helper->get_calendar_url( null );
+			else
+				$link = $ai1ec_calendar_helper->get_calendar_url( null,
+					array( 'cat_ids' => array( $term->term_id ) )
+				);
+		}
 
-  	return $link;
-  }
+		return $link;
+	}
 
-  /**
-   * function selected_category_link
-   *
-   * Corrects the output of wp_list_categories so that the currently viewed
-   * event category (in calendar view) has the "active" CSS class applied to it.
-   *
-   * @param string $output The normally generated output of wp_list_categories()
-   * @param object $args The args passed to wp_list_categories()
-   *
-   * @return string The corrected output
-   */
-  function selected_category_link( $output, $args )
-  {
-  	global $ai1ec_calendar_controller, $ai1ec_settings;
+	/**
+	 * function selected_category_link
+	 *
+	 * Corrects the output of wp_list_categories so that the currently viewed
+	 * event category (in calendar view) has the "active" CSS class applied to it.
+	 *
+	 * @param string $output The normally generated output of wp_list_categories()
+	 * @param object $args The args passed to wp_list_categories()
+	 *
+	 * @return string The corrected output
+	 */
+	function selected_category_link( $output, $args )
+	{
+		global $ai1ec_calendar_controller, $ai1ec_settings;
 
-  	// First check if current page is calendar
-  	if( is_page( $ai1ec_settings->calendar_page_id ) )
-  	{
-	  	$cat_ids = array_filter( explode( ',', $ai1ec_calendar_controller->get_requested_categories() ), 'is_numeric' );
-	  	if( $cat_ids ) {
-	  		// Mark each filtered event category link as selected
-		  	foreach( $cat_ids as $cat_id ) {
-		  		$output = str_replace(
-			  		'class="cat-item cat-item-' . $cat_id . '"',
-			  		'class="cat-item cat-item-' . $cat_id . ' current-cat current_page_item"',
-			  		$output );
-		  	}
-		  	// Mark calendar page link as selected parent
-		  	$output = str_replace(
-			  	'class="cat-item cat-item-' . AI1EC_FAKE_CATEGORY_ID . '"',
-			  	'class="cat-item cat-item-' . AI1EC_FAKE_CATEGORY_ID . ' current-cat-parent"',
-			  	$output );
-		  } else {
-		  	// No categories filtered, so mark calendar page link as selected
-		  	$output = str_replace(
-			  	'class="cat-item cat-item-' . AI1EC_FAKE_CATEGORY_ID . '"',
-			  	'class="cat-item cat-item-' . AI1EC_FAKE_CATEGORY_ID . ' current-cat current_page_item"',
-			  	$output );
-	  	}
-	  }
+		// First check if current page is calendar
+		if( is_page( $ai1ec_settings->calendar_page_id ) )
+		{
+			$cat_ids = array_filter( explode( ',', $ai1ec_calendar_controller->get_requested_categories() ), 'is_numeric' );
+			if( $cat_ids ) {
+				// Mark each filtered event category link as selected
+				foreach( $cat_ids as $cat_id ) {
+					$output = str_replace(
+						'class="cat-item cat-item-' . $cat_id . '"',
+						'class="cat-item cat-item-' . $cat_id . ' current-cat current_page_item"',
+						$output );
+				}
+				// Mark calendar page link as selected parent
+				$output = str_replace(
+					'class="cat-item cat-item-' . AI1EC_FAKE_CATEGORY_ID . '"',
+					'class="cat-item cat-item-' . AI1EC_FAKE_CATEGORY_ID . ' current-cat-parent"',
+					$output );
+			} else {
+				// No categories filtered, so mark calendar page link as selected
+				$output = str_replace(
+					'class="cat-item cat-item-' . AI1EC_FAKE_CATEGORY_ID . '"',
+					'class="cat-item cat-item-' . AI1EC_FAKE_CATEGORY_ID . ' current-cat current_page_item"',
+					$output );
+			}
+		}
 
-  	return $output;
-  }
+		return $output;
+	}
 
   /**
    * admin_notices function
@@ -667,53 +679,178 @@ class Ai1ec_App_Helper {
    **/
   function admin_notices() {
     global $ai1ec_view_helper,
-           $ai1ec_settings,
-           $plugin_page;
+		       $ai1ec_settings,
+		       $plugin_page,
+		       $ai1ec_themes_controller;
+
+		if( ! $ai1ec_themes_controller->are_themes_available() ) {
+			$args = array(
+				'label'  => 'All-in-One Calendar Notice',
+				'msg'    => sprintf(
+					__( '<p><strong>Calendar Themes are not installed.</strong></p>' .
+					'<p>Our automated install couldn\'t install your themes automatically. ' .
+					'You will need to install calendar themes manually by following these steps:</p>' .
+					'<ol><li>Go to <strong>%s</strong>.</li>' .
+					'<li>Copy the <strong>%s</strong> folder to the clipboard.</li>' .
+					'<li>Go to <strong>%s</strong>.</li>' .
+					'<li>Paste the <strong>%s</strong> folder that you copied to the clipboard in step 2.</li>' .
+					'<li>Refresh this page and if this notice is gone, themes are installed.</li></ol>', AI1EC_PLUGIN_NAME ),
+					AI1EC_PATH,
+					AI1EC_THEMES_FOLDER,
+					WP_CONTENT_DIR,
+					AI1EC_THEMES_FOLDER )
+			);
+			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
+		}
 
 		if( $ai1ec_settings->show_data_notification ) {
 			$args = array(
-				'label'  => 'All-in-One Event Calendar Notice<br />',
-				'msg'    => sprintf( 'We collect some basic information about how your calendar works in order to deliver a better ' .
-				           'and faster calendar system and one that will help you promote your events even more.<br />' .
-                   'You can find more detailed information by <a href="%s" target="_blank">clicking here &raquo;</a><br />' .
-                   'You may opt-out from sending data to us by unchecking &quot;Allow The Seed to collect statistics&quot; checkbox located on plugin\'s <a href="%s">Settings page</a>',
-									 'http://theseednetwork.com/all-in-one-event-calendar-privacy-policy/',
-                   admin_url( 'edit.php?post_type=' . AI1EC_POST_TYPE . '&page=' . AI1EC_PLUGIN_NAME . '-settings' ) ),
-				'button' => (object) array( 'class' => 'ai1ec-dismiss-notification', 'value' => 'Dismiss' )
+				'label'  => 'All-in-One Calendar Notice',
+				'msg'    =>
+					sprintf(
+						__( '<p>We collect some basic information about how your calendar works in order to deliver a better ' .
+						'and faster calendar system and one that will help you promote your events even more.</p>' .
+						'<p>You can find more detailed information by <a href="%s" target="_blank">clicking here &raquo;</a></p>' .
+						'<p>You may opt out of sending data to us by unchecking &quot;Allow Then.ly to collect statistics&quot; checkbox located on plugin\'s <a href="%s">Settings page</a>.</p>', AI1EC_PLUGIN_NAME ),
+						'http://then.ly/all-in-one-event-calendar-privacy-policy/',
+						admin_url( AI1EC_SETTINGS_BASE_URL )
+					),
+				'button' => (object) array( 'class' => 'ai1ec-dismiss-notification', 'value' => 'Dismiss' ),
 			);
-			$ai1ec_view_helper->display( 'admin_notices.php', $args );
+			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
 		}
 
-    // If calendar page ID has not been set, and we're not updating the settings
-    // page, the calendar is not properly set up yet
-    if( ! $ai1ec_settings->calendar_page_id || ! get_option( 'timezone_string' ) && ! isset( $_REQUEST['ai1ec_save_settings'] ) )
-    {
-    	$args = array();
+		// If calendar page ID has not been set, and we're not updating the settings
+		// page, the calendar is not properly set up yet.
+		if( ! $ai1ec_settings->calendar_page_id || ! get_option( 'timezone_string' ) && ! isset( $_REQUEST['ai1ec_save_settings'] ) ) {
+			$args = array();
+			$messages = array();
 
-    	// Display messages for blog admin
-    	if( current_user_can( 'manage_options' ) ) {
-	    	// If not on the settings page already, direct user there with a message
-	    	if( $plugin_page == AI1EC_PLUGIN_NAME . "-settings" ) {
-	    	  if( ! $ai1ec_settings->calendar_page_id && ! get_option( 'timezone_string' ) )
-					  $args['msg'] = sprintf( __( '%sTo set up the plugin: %s 1. Select an option in the <strong>Calendar page</strong> dropdown list. %s 2. Select an option in the <strong>Timezone</strong> dropdown list. %s 3. Click <strong>Update Settings</strong>. %s', AI1EC_PLUGIN_NAME ), '<br /><br />', '<ul><ol>', '</ol><ol>', '</ol><ol>', '</ol><ul>' );
-					else if( ! $ai1ec_settings->calendar_page_id )
-					  $args['msg'] = __( 'To set up the plugin: Select an option in the <strong>Calendar page</strong> dropdown list, the click <strong>Update Settings</strong>.', AI1EC_PLUGIN_NAME );
-					else
-					  $args['msg'] = __( 'To set up the plugin: Select an option in the <strong>Timezone</strong> dropdown list, the click <strong>Update Settings</strong>.', AI1EC_PLUGIN_NAME );
-				// Else instruct user as to what to do on the settings page
-				} else {
-		      $args['msg'] = sprintf(
-			        __( 'The plugin is installed, but has not been configured. <a href="%s">Click here to set it up now &raquo;</a>', AI1EC_PLUGIN_NAME ),
-							admin_url( 'edit.php?post_type=' . AI1EC_POST_TYPE . '&page=' . AI1EC_PLUGIN_NAME . '-settings' )
-						);
+			// Display messages for blog admin.
+			if( current_user_can( 'manage_ai1ec_options' ) ) {
+				// If not on the settings page already, direct user there.
+				if( $plugin_page == AI1EC_PLUGIN_NAME . '-settings' ) {
+					if( ! $ai1ec_settings->calendar_page_id ) {
+						$messages[] = __( 'Select an option in the <strong>Calendar page</strong> dropdown list.', AI1EC_PLUGIN_NAME );
+					}
+					if( ! get_option( 'timezone_string' ) ) {
+						$messages[] = __( 'Select an option in the <strong>Timezone</strong> dropdown list.', AI1EC_PLUGIN_NAME );
+					}
+					$messages[] = __( 'Click <strong>Update Settings</strong>.', AI1EC_PLUGIN_NAME );
 				}
-			// Else display messages for other blog users
-			} else {
-				$args['msg'] = __( 'The plugin is installed, but has not been configured. Please log in as a WordPress Administrator to set it up.', AI1EC_PLUGIN_NAME );
+				// Else instruct user as to what to do on the settings page.
+				else {
+					$messages[] = sprintf(
+						__( 'The plugin is installed, but has not been configured. <a href="%s">Click here to set it up now &raquo;</a>', AI1EC_PLUGIN_NAME ),
+						admin_url( AI1EC_SETTINGS_BASE_URL )
+					);
+				}
 			}
-			$args['label'] = __( 'All-in-One Event Calendar Notice:', AI1EC_PLUGIN_NAME );
-      $ai1ec_view_helper->display( 'admin_notices.php', $args );
-    }
+			// Else display messages for other blog users
+			else {
+				$messages[] = __( 'The plugin is installed, but has not been configured. Please log in as an Administrator to set it up.', AI1EC_PLUGIN_NAME );
+			}
+
+			// Format notice message.
+			if (count($messages) > 1) {
+				$args['msg'] = __( '<p>To set up the plugin:</p>', AI1EC_PLUGIN_NAME );
+				$args['msg'] .= '<ol><li>';
+				$args['msg'] .= implode( '</li><li>', $messages );
+				$args['msg'] .= '</li></ol>';
+			}
+			else {
+				$args['msg'] = "<p>$messages[0]</p>";
+			}
+			$args['label'] = __( 'All-in-One Calendar Notice', AI1EC_PLUGIN_NAME );
+			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
+		}
+	}
+
+	/**
+	 * Add Events items to "Right Now" widget in Dashboard.
+	 *
+	 * @return  void
+	 */
+	function right_now_content_table_end() {
+		$num_events = wp_count_posts( AI1EC_POST_TYPE );
+		$num_cats  = wp_count_terms( 'events_categories' );
+		$num_tags = wp_count_terms( 'events_tags' );
+
+		// Events.
+		$num = number_format_i18n( $num_events->publish );
+		$text = _n( 'Event', 'Events', $num_events->publish );
+		if ( current_user_can( 'edit_ai1ec_events' ) ) {
+			$num = "<a href='edit.php?post_type=" . AI1EC_POST_TYPE . "'>$num</a>";
+			$text = "<a href='edit.php?post_type=" . AI1EC_POST_TYPE . "'>$text</a>";
+		}
+		echo '<td class="first b b-ai1ec-event">' . $num . '</td>';
+		echo '<td class="t ai1ec-event">' . $text . '</td>';
+
+		echo '</tr><tr>';
+
+		// Event categories.
+		$num = number_format_i18n( $num_cats );
+		$text = _n( 'Event Category', 'Event Categories', $num_cats );
+		if ( current_user_can( 'manage_events_categories' ) ) {
+			$num = "<a href='edit-tags.php?taxonomy=events_categories'>$num</a>";
+			$text = "<a href='edit-tags.php?taxonomy=events_categories'>$text</a>";
+		}
+		echo '<td class="first b b-events-categories">' . $num . '</td>';
+		echo '<td class="t events-categories">' . $text . '</td>';
+
+		echo '</tr><tr>';
+
+		// Event tags.
+		$num = number_format_i18n( $num_tags );
+		$text = _n( 'Event Tag', 'Event Tags', $num_tags );
+		if ( current_user_can( 'manage_events_categories' ) ) {
+			$num = "<a href='edit-tags.php?taxonomy=events_tags'>$num</a>";
+			$text = "<a href='edit-tags.php?taxonomy=events_tags'>$text</a>";
+		}
+		echo '<td class="first b b-events-tags">' . $num . '</td>';
+		echo '<td class="t events-tags">' . $text . '</td>';
+	}
+
+	/**
+	 * admin_enqueue_scripts function
+	 *
+	 * Enqueue any scripts and styles in the admin side, depending on context.
+	 *
+	 * @return void
+	 */
+	function admin_enqueue_scripts( $hook_suffix ) {
+		global $ai1ec_settings, $ai1ec_view_helper;
+
+		// Common styles.
+		$ai1ec_view_helper->admin_enqueue_style( 'ai1ec-admin', 'admin.css' );
+
+		switch( $hook_suffix ) {
+			// Event lists.
+			// Widgets screen.
+			case 'widgets.php':
+				// Scripts.
+				$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-widget', 'widget.js', array( 'jquery' ), AI1EC_VERSION );
+				// Styles.
+				$ai1ec_view_helper->admin_enqueue_style( 'ai1ec-widget', '/widget.css', array(), AI1EC_VERSION );
+				break;
+
+			// Calendar settings & feeds screens.
+			case $ai1ec_settings->settings_page:
+			case $ai1ec_settings->feeds_page:
+				// Scripts.
+				wp_enqueue_script( 'common' );
+				wp_enqueue_script( 'wp-lists' );
+				wp_enqueue_script( 'postbox' );
+
+				$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-settings', 'settings.js', array( 'jquery' ) );
+				wp_localize_script( 'ai1ec-settings', 'ai1ec_settings', array(
+						'page' => $ai1ec_settings->settings_page,
+					) );
+				// Styles.
+				$ai1ec_view_helper->admin_enqueue_style( 'ai1ec-settings', 'settings.css' );
+				$ai1ec_view_helper->admin_enqueue_style( 'thenly-bootstrap', 'bootstrap.min.css' );
+				break;
+		}
 	}
 }
 // END class

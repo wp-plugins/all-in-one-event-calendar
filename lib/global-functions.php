@@ -17,36 +17,18 @@ function url_get_contents( $url ) {
 	// holds the output
 	$output = "";
 
-	// If CURL is available, use it
-	if( function_exists( 'curl_init' ) ) { 
-		
-		// initialize and configure curl for a request
-		$c = curl_init();
-		curl_setopt( $c, CURLOPT_URL, $url );
-		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
-		// set user agent to PHP/PHP version number
-		curl_setopt( $c, CURLOPT_USERAGENT, 'PHP/' . PHP_VERSION );
-		curl_setopt ($c, CURLOPT_ENCODING, '' );
-
-		// Add support for HTTPS
-		if( strstr( $url, 'https' ) !== FALSE ) {
-			curl_setopt( $c, CURLOPT_SSLVERSION, 3 );
-			curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
-			curl_setopt( $c, CURLOPT_SSL_VERIFYHOST, 2 );
-		}
-		curl_setopt( $c, CURLOPT_COOKIESESSION, true );
-		curl_setopt( $c, CURLOPT_HEADER, false );
-		if( ! ini_get( 'safe_mode' ) ) {
-			curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
-		}
-		// get the contents of the url
-		$output = curl_exec( $c );
-
-		curl_close( $c );
-	} else {
-		// if CURL is unavailable, use file_get_contents
-		$output = file_get_contents( $url );
+	// To make a remote call in wordpress it's better to use the wrapper functions instead
+	// of class methods. http://codex.wordpress.org/HTTP_API
+	// SSL Verification was disabled in the cUrl call
+	$result = wp_remote_get( $url, array( 'sslverify' => false ) );
+	// The wrapper functions return an WP_error if anything goes wrong.
+	if( is_wp_error( $result ) ) {
+		// We explicitly return false to notify an error. This is exactly the same behaviour we had before
+		// because both curl_exec() and file_get_contents() returned false on error
+		return FALSE;
 	}
+
+	$output = $result['body'];
 
 	// check if data is utf-8
 	if( ! SG_iCal_Parser::_ValidUtf8( $output ) ) {

@@ -615,6 +615,13 @@ msgstr ""
 msgid "Number of events to show:"
 msgstr ""
 
+<<<<<<< HEAD
+=======
+#: app/view/agenda-widget-form.php:10
+msgid "Limit to"
+msgstr ""
+
+>>>>>>> ai1ec
 #: app/view/agenda-widget-form.php:14
 msgid "Events with these <strong>Categories</strong>"
 msgstr ""

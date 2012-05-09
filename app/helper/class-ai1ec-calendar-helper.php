@@ -78,17 +78,26 @@ class Ai1ec_Calendar_Helper {
 		// ==========================================
 		for( $day = 1; $day <= $last_day; $day++ )
 		{
-			$_events = array();
 			$start_time = gmmktime( 0, 0, 0, $bits['mon'], $day, $bits['year'] );
 			$end_time = gmmktime( 0, 0, 0, $bits['mon'], $day + 1, $bits['year'] );
 
 			// Itemize events that fall under the current day
+			$_events = array();
+			$_allday_events = array();
+			$_multiday_events = array();
 			foreach( $month_events as $event ) {
 				$event_start = $ai1ec_events_helper->gmt_to_local( $event->start );
-				if( $event_start >= $start_time && $event_start < $end_time )
-					$_events[] = $event;
+				if( $event_start >= $start_time && $event_start < $end_time ) {
+					if( $event->allday )
+						$_allday_events[] = $event;
+					elseif ($event->multiday)
+						$_multiday_events[] = $event;
+					else
+						$_events[] = $event;
+				}
 			}
-			$days_events[$day] = $_events;
+
+			$days_events[$day] = array_merge( $_multiday_events, $_allday_events, $_events );
 		}
 
 		return apply_filters( 'ai1ec_get_events_for_month', $days_events, $time, $filter );
@@ -230,7 +239,7 @@ class Ai1ec_Calendar_Helper {
 					}
 
 					// Place copy of event in appropriate category
-					if( $_evt->allday )
+					if( $_evt->allday || $_evt->multiday)
 						$all_events[$day_start]['allday'][] = $_evt;
 					else
 						$all_events[$day_start]['notallday'][] = $_evt;
@@ -320,7 +329,7 @@ class Ai1ec_Calendar_Helper {
 	 * @return array            array of arrays as per function description
 	 **/
 	function get_oneday_cell_array( $timestamp, $filter = array() )
-	{ 
+	{
 		global $ai1ec_events_helper, $ai1ec_settings;
 
 		// Decompose given date and current time into components, used below
@@ -355,7 +364,7 @@ class Ai1ec_Calendar_Helper {
 				}
 
 				// Place copy of event in appropriate category
-				if( $_evt->allday )
+				if( $_evt->allday || $_evt->multiday)
 					$all_events[$day_start]['allday'][] = $_evt;
 				else
 					$all_events[$day_start]['notallday'][] = $_evt;
@@ -365,7 +374,7 @@ class Ai1ec_Calendar_Helper {
 		// This will store the returned array
 		$days = array();
 		$day = $bits['mday'];
-		
+
 		$day_date = gmmktime( 0, 0, 0, $bits['mon'], $day, $bits['year'] );
 		// Re-fetch date bits, since $bits['mday'] + 1 might be in the next month
 		$day_bits = $ai1ec_events_helper->gmgetdate( $day_date );
@@ -409,7 +418,7 @@ class Ai1ec_Calendar_Helper {
 			'allday'    => $all_events[$day_date]['allday'],
 			'notallday' => $notallday,
 		);
-		
+
 		// =========================================
 		// = Set one oneday events =
 		// =========================================
@@ -631,7 +640,7 @@ class Ai1ec_Calendar_Helper {
 			$date = $ai1ec_events_helper->gmt_to_local( $event->start );
 			$date = $ai1ec_events_helper->gmgetdate( $date );
 			$timestamp = gmmktime( 0, 0, 0, $date['mon'], $date['mday'], $date['year'] );
-			$category = $event->allday ? 'allday' : 'notallday';
+			$category = $event->allday||$event->multiday ? 'allday' : 'notallday';
 			$dates[$timestamp]['events'][$category][] = $event;
 		}
 
@@ -794,7 +803,7 @@ class Ai1ec_Calendar_Helper {
 		);
 		$links[] = array(
 			'id' => 'ai1ec-prev-day',
-			'text' =>  
+			'text' =>
 					date_i18n( __( 'j F Y', AI1EC_PLUGIN_NAME ), gmmktime( 0, 0, 0, $bits['mon'], $bits['mday'] + 1, $bits['year'] ))
                     .' ›',
 			'href' => '#action=ai1ec_oneday&ai1ec_oneday_offset=' . ( $cur_offset + 1 ),

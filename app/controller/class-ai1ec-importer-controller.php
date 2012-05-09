@@ -88,8 +88,8 @@ class Ai1ec_Importer_Controller {
 
 		if( ! isset( $wp_importers['ai1ec_the_events_calendar'] ) ) {
 			$wp_importers['ai1ec_the_events_calendar'] = array(
-				__( 'The Events Calendar → All-in-One Event Calendar', AI1EC_PLUGIN_NAME ),
-				__( 'Imports events created using The Events Calendar plugin into the All-in-One Event Calendar', AI1EC_PLUGIN_NAME ),
+				__( 'The Events Calendar → All-in-One Calendar', AI1EC_PLUGIN_NAME ),
+				__( 'Imports events created using The Events Calendar plugin into the All-in-One Calendar', AI1EC_PLUGIN_NAME ),
 				array( &$this, 'import_the_events_calendar' )
 			);
 		}
@@ -199,7 +199,7 @@ class Ai1ec_Importer_Controller {
 			$imported_events++;
 		}
 
-		$ai1ec_view_helper->display( "import.php", array( 'imported_events' => $imported_events ) );
+		$ai1ec_view_helper->display_admin( "import.php", array( 'imported_events' => $imported_events ) );
 	}
 }
 // END class

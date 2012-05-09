@@ -149,7 +149,7 @@ class Ai1ec_Events_Helper {
 			'end'   	=> $event->end,
 		);
 		$duration = $event->getDuration();
-		
+
 		// Timestamp of today's date + 10 years
 		$tif = gmmktime() + 315569260; //315 569 260 = 10 years in seconds
 		// Always cache initial instance
@@ -237,7 +237,7 @@ class Ai1ec_Events_Helper {
 			}
 		}
 	}
-	
+
 	/**
 	 * date_match_exdates function
 	 *
@@ -260,7 +260,7 @@ class Ai1ec_Events_Helper {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * generate_dates_array_from_ics_rule function
 	 *
@@ -615,8 +615,6 @@ class Ai1ec_Events_Helper {
 	/**
 	 * row_frequency function
 	 *
-	 *
-	 *
 	 * @return void
 	 **/
 	function row_frequency( $visible = false, $selected = false ) {
@@ -633,7 +631,7 @@ class Ai1ec_Events_Helper {
 		 'visible'    => $visible,
 		 'frequency'  => $this->create_select_element( 'ai1ec_frequency', $frequency, $selected )
 		);
-		return $ai1ec_view_helper->get_view( 'row_frequency.php', $args );
+		return $ai1ec_view_helper->get_admin_view( 'row_frequency.php', $args );
 	}
 
 	/**
@@ -650,7 +648,7 @@ class Ai1ec_Events_Helper {
 		 'visible'  => $visible,
 		 'count'    => $this->create_count_input( 'ai1ec_daily_count', $selected, 365 ) . __( 'day(s)', AI1EC_PLUGIN_NAME )
 		);
-		return $ai1ec_view_helper->get_view( 'row_daily.php', $args );
+		return $ai1ec_view_helper->get_admin_view( 'row_daily.php', $args );
 	}
 
 	/**
@@ -680,7 +678,7 @@ class Ai1ec_Events_Helper {
 		 'count'      => $this->create_count_input( 'ai1ec_weekly_count', $count, 52 ) . __( 'week(s)', AI1EC_PLUGIN_NAME ),
 		 'week_days'  => $this->create_list_element( 'ai1ec_weekly_date_select', $options, $selected )
 		);
-		return $ai1ec_view_helper->get_view( 'row_weekly.php', $args );
+		return $ai1ec_view_helper->get_admin_view( 'row_weekly.php', $args );
 	}
 
 	/**
@@ -732,7 +730,7 @@ class Ai1ec_Events_Helper {
 		// get days from start_of_week until the last day
 		for( $i = $start_of_week; $i <= 6; ++$i )
 			$options_wd[$this->get_weekday_by_id( $i )] = $wp_locale->weekday[$i];
-		
+
 		// get days from 0 until start_of_week
 		if( $start_of_week > 0 ) {
 			for( $i = 0; $i < $start_of_week; $i++ )
@@ -755,7 +753,7 @@ class Ai1ec_Events_Helper {
 		 'day_nums'             => $this->create_select_element( 'ai1ec_monthly_byday_num', $options_dn ),
 		 'week_days'            => $this->create_select_element( 'ai1ec_monthly_byday_weekday', $options_wd )
 		);
-		return $ai1ec_view_helper->get_view( 'row_monthly.php', $args );
+		return $ai1ec_view_helper->get_admin_view( 'row_monthly.php', $args );
 	}
 
 	/**
@@ -774,7 +772,7 @@ class Ai1ec_Events_Helper {
 		 'year'                 => $this->create_yearly_date_select( $year ),
 		 'on_the_select'        => $this->create_on_the_select( $first, $second )
 		);
-		return $ai1ec_view_helper->get_view( 'row_yearly.php', $args );
+		return $ai1ec_view_helper->get_admin_view( 'row_yearly.php', $args );
 	}
 
 	/**
@@ -941,6 +939,23 @@ class Ai1ec_Events_Helper {
 	}
 
 	/**
+	 * get_multiday_end_date function
+	 *
+	 * Format a date for use in JS functions to extend multiday bars;
+	 * this is also converted to the local timezone.
+	 *
+	 * @param int $timestamp
+	 * @param bool $convert_from_gmt Whether to convert from GMT time to local
+	 *
+	 * @return string
+	 **/
+	function get_multiday_end_date( $timestamp, $convert_from_gmt = true ) {
+		if( $convert_from_gmt )
+			$timestamp = $this->gmt_to_local( $timestamp );
+		return date_i18n( 'F Y d', $timestamp, true );
+	}
+
+	/**
 	 * get_medium_time function
 	 *
 	 * Format a medium-length time for use in other views (e.g., Agenda);
@@ -1052,7 +1067,7 @@ class Ai1ec_Events_Helper {
 		if( $timestamp == false ) {
 			$timestamp = gmmktime();
 		}
-		
+
 		if( $origin_tz === null ) {
 			if( ! is_string( $origin_tz = date_default_timezone_get() ) ) {
 				return false; // A UTC timestamp was returned -- bail out!
@@ -1116,15 +1131,12 @@ class Ai1ec_Events_Helper {
 	 *
 	 * Returns the URL to the Google Map for the given event object.
 	 *
-	 * @param Ai1ec_Event $event  The event object to display a map for
+	 * @param Ai1ec_Event &$event  The event object to display a map for
 	 *
 	 * @return string
 	 **/
 	function get_gmap_url( &$event ) {
-		$location_arg = urlencode( $event->address );
-		$lang         = $this->get_lang();
-
-		return "http://www.google.com/maps?f=q&hl=" . $lang . "&source=embed&q=" . $location_arg;
+		return "http://www.google.com/maps?f=q&hl=" . $this->get_lang() . "&source=embed&q=" . urlencode( $event->address );
 	}
 
 	/**
@@ -1266,7 +1278,7 @@ class Ai1ec_Events_Helper {
 		$color = $this->get_category_color( $term_id );
 		$cat = get_term( $term_id, 'events_categories' );
 		if( ! is_null( $color ) && ! empty( $color ) )
-			return '<div class="ai1ec-category-color" style="background:' . $color . '" title="' . esc_attr( $cat->name ) . '"></div>';
+			return '<div class="ai1ec-category-color" style="background:' . $color . '" rel="tooltip" title="' . esc_attr( $cat->name ) . '"></div>';
 
 		return '';
 	}
@@ -1284,7 +1296,7 @@ class Ai1ec_Events_Helper {
 		$color = $this->get_category_color( $term_id );
 		if( ! is_null( $color ) && ! empty( $color ) ) {
 			if( $allday )
-				return 'background: ' . $color . ';';
+				return 'background-color: ' . $color . ';';
 			else
 				return 'color: ' . $color . ' !important;';
 		}
@@ -1293,13 +1305,12 @@ class Ai1ec_Events_Helper {
 	}
 
 	/**
-	 * get_event_category_faded_color function
-	 *
 	 * Returns a faded version of the event's category color in hex format.
 	 *
 	 * @param int $term_id The Event Category's term ID
+	 *
 	 * @return string
-	 **/
+	 */
 	function get_event_category_faded_color( $term_id ) {
 		$color = $this->get_category_color( $term_id );
 		if( ! is_null( $color ) && ! empty( $color ) ) {
@@ -1320,6 +1331,26 @@ class Ai1ec_Events_Helper {
 			$m_p3 = dechex( round( $c1_p3 * 0.3 + $c2_p3 * 0.7 ) );
 
 			return '#' . $m_p1 . $m_p2 . $m_p3;
+		}
+
+		return '';
+	}
+
+	/**
+	 * Returns an opacity-faded version of the event's category color in rgba
+	 * format.
+	 *
+	 * @param int $term_id The Event Category's term ID
+	 *
+	 * @return string
+	 */
+	function get_event_category_rgba_color( $term_id ) {
+		$color = $this->get_category_color( $term_id );
+		if( ! is_null( $color ) && ! empty( $color ) ) {
+			$p1 = hexdec( substr( $color, 1, 2 ) );
+			$p2 = hexdec( substr( $color, 3, 2 ) );
+			$p3 = hexdec( substr( $color, 5, 2 ) );
+			return "rgba($p1, $p2, $p3, 0.3)";
 		}
 
 		return '';
@@ -1464,7 +1495,7 @@ class Ai1ec_Events_Helper {
 			} else {
 				$until = $this->gmt_to_local( $until );
 			}
-			
+
 			$until = gmdate( "Ymd\THis\Z", $until );
 			$rule_props = explode( ';', $rule );
 			$_rule = array();
@@ -1505,7 +1536,7 @@ class Ai1ec_Events_Helper {
 	function exception_dates_to_gmt( $exception_dates ) {
 		return $this->exception_dates_to( $exception_dates, true );
 	}
-	
+
 	/**
 	 * exception_dates_to function
 	 *
@@ -1521,7 +1552,7 @@ class Ai1ec_Events_Helper {
 			} else {
 				$_exdate = $this->gmt_to_local( $_exdate );
 			}
-			
+
 			$dates_to_add[] = gmdate( "Ymd\THis\Z", $_exdate );
 		}
 		// append dates to the string and return it;
@@ -1794,7 +1825,7 @@ class Ai1ec_Events_Helper {
 
 		return $permalink;
 	}
-	
+
 	/**
 	 * get_repeat_box function
 	 *
@@ -1802,19 +1833,19 @@ class Ai1ec_Events_Helper {
 	 **/
 	function get_repeat_box() {
 		global $ai1ec_view_helper;
-		
+
 		$repeat  = (int) $_REQUEST["repeat"];
 		$repeat  = $repeat == 1 ? 1 : 0;
 		$post_id = (int) $_REQUEST["post_id"];
 		$count   = 100;
 		$end     = null;
 		$until   = gmmktime();
-		
+
 		// try getting the event
 		try {
 			$event = new Ai1ec_Event( $post_id );
 			$rule = '';
-			
+
 			if( $repeat ) {
 				$rule = empty( $event->recurrence_rules ) ? '' : $event->recurrence_rules;
 			} else {
@@ -1822,7 +1853,7 @@ class Ai1ec_Events_Helper {
 			}
 
 			$rc = new SG_iCal_Recurrence( new SG_iCal_Line( 'RRULE:' . $rule ) );
-			
+
 			if( $until = $rc->getUntil() ) {
 				$until = ( is_numeric( $until ) ) ? $until : strtotime( $until );
 			}
@@ -1830,7 +1861,7 @@ class Ai1ec_Events_Helper {
 				$count = ( is_numeric( $count ) ) ? $count : 100;
 			}
 		} catch( Ai1ec_Event_Not_Found $e ) { /* event wasn't found, keep defaults */ }
-		
+
 		$args = array(
 			'row_daily'       => $this->row_daily(),
 			'row_weekly'      => $this->row_weekly(),
@@ -1843,14 +1874,13 @@ class Ai1ec_Events_Helper {
 		);
 		$output = array(
 			"error" 	=> false,
-			"message"	=> $ai1ec_view_helper->get_view( 'box_repeat.php', $args ),
+			"message"	=> $ai1ec_view_helper->get_admin_view( 'box_repeat.php', $args ),
 			"repeat"  => $repeat
 		);
 
 		echo json_encode( $output );
 		exit();
 	}
-	
 	/**
 	 * get_date_picker_box function
 	 *
@@ -1858,22 +1888,22 @@ class Ai1ec_Events_Helper {
 	 **/
 	function get_date_picker_box() {
 		global $ai1ec_view_helper;
-		
+
 		$dates = '';
-		
+
 		$args = array(
 			'dates' => $dates
 		);
-		
+
 		$output = array(
 			"error" 	=> false,
-			"message"	=> $ai1ec_view_helper->get_view( 'box_date_picker.php', $args ),
+			"message"	=> $ai1ec_view_helper->get_admin_view( 'box_date_picker.php', $args ),
 		);
 
 		echo json_encode( $output );
 		exit();
 	}
-	
+
 	/**
 	 * shortcode function
 	 *
