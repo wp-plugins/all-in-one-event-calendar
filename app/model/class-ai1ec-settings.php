@@ -93,7 +93,7 @@ class Ai1ec_Settings {
 	 * @var string
 	 **/
 	var $cron_freq;
-	
+
 	/**
 	 * timezone class variable
 	 *
@@ -118,18 +118,18 @@ class Ai1ec_Settings {
 	 * @var bool
 	 **/
 	var $show_publish_button;
-	
+
 	/**
 	 * hide_maps_until_clicked class variable
 	 *
-	 * When this setting is on, instead of showing the Google Map, 
-	 * show a dotted-line box containing the text "Click to view map", 
+	 * When this setting is on, instead of showing the Google Map,
+	 * show a dotted-line box containing the text "Click to view map",
 	 * and when clicked, this box is replaced by the Google Map.
 	 *
 	 * @var bool
 	 **/
 	var $hide_maps_until_clicked;
-	
+
 	/**
 	 * agenda_events_expanded class variable
 	 *
@@ -179,50 +179,67 @@ class Ai1ec_Settings {
 	 * @var string
 	 **/
 	var $input_date_format;
-	
+
 	/**
 	 * input_24h_time class variable
 	 *
-	 * Use 24h time in time pickers. 
+	 * Use 24h time in time pickers.
 	 *
 	 * @var bool
 	 **/
 	var $input_24h_time;
 
+  /**
+   * settings_page class variable
+   *
+   * Stores a reference to the settings page added using the
+   * add_submenu_page function.
+   *
+   * @var object
+   */
+  var $settings_page;
+
 	/**
-	 * settings_page class variable
+	 * feeds_page class variable
 	 *
-	 * Stores a reference to the settings page added using
-	 * add_submenu_page function
+	 * Stores a reference to the calendar feeds page added using the
+	 * add_submenu_page function.
 	 *
 	 * @var object
-	 **/
-	var $settings_page;
-	
+	 */
+	var $feeds_page;
+
 	/**
 	 * geo_region_biasing class variable
 	 *
-	 * If set to true the ISO-3166 part of the configured
+	 * If set to TRUE the ISO-3166 part of the configured
 	 * locale in WordPress is going to be used to bias the
 	 * geo autocomplete plugin towards a specific region.
 	 *
 	 * @var bool
 	 **/
 	var $geo_region_biasing;
-	
+
 	/**
-	 * show_data_notification class variable
+	 * Whether to display data collection notice on the admin side.
 	 *
 	 * @var bool
-	 **/
+	 */
 	var $show_data_notification;
-	
+
+  /**
+   * allow_statistics class variable
+   *
+   * @var bool
+   **/
+  var $allow_statistics;
+
 	/**
-	 * allow_statistics class variable
+	 * disable_autocompletion class variable
 	 *
 	 * @var bool
 	 **/
-	var $allow_statistics;
+	var $disable_autocompletion;
 
 	/**
 	 * __construct function
@@ -288,24 +305,25 @@ class Ai1ec_Settings {
 			'calendar_css_selector'         => '',
 			'week_start_day'                => get_option( 'start_of_week' ),
 			'agenda_events_per_page'        => get_option( 'posts_per_page' ),
-			'agenda_events_expanded'        => false,
-			'include_events_in_rss'         => false,
-			'allow_publish_to_facebook'     => false,
-			'facebook_credentials'          => null,
-			'user_role_can_create_event'    => null,
-			'show_publish_button'           => false,
-			'hide_maps_until_clicked'       => false,
-			'exclude_from_search'           => false,
-			'show_create_event_button'      => false,
-			'turn_off_subscription_buttons' => false,
-			'inject_categories'             => false,
+			'agenda_events_expanded'        => FALSE,
+			'include_events_in_rss'         => FALSE,
+			'allow_publish_to_facebook'     => FALSE,
+			'facebook_credentials'          => NULL,
+			'user_role_can_create_event'    => NULL,
+			'show_publish_button'           => FALSE,
+			'hide_maps_until_clicked'       => FALSE,
+			'exclude_from_search'           => FALSE,
+			'show_create_event_button'      => FALSE,
+			'turn_off_subscription_buttons' => FALSE,
+			'inject_categories'             => FALSE,
 			'input_date_format'             => 'def',
-			'input_24h_time'                => false,
+			'input_24h_time'                => FALSE,
 			'cron_freq'                     => 'daily',
 			'timezone'                      => get_option( 'timezone_string' ),
-			'geo_region_biasing'            => false,
-			'show_data_notification'        => true,
-			'allow_statistics'              => true
+			'geo_region_biasing'            => FALSE,
+			'show_data_notification'        => TRUE,
+      'allow_statistics'              => TRUE,
+			'disable_autocompletion'        => FALSE,
 		);
 
 		foreach( $defaults as $key => $default ) {
@@ -315,44 +333,86 @@ class Ai1ec_Settings {
 	}
 
 	/**
-	 * update function
-	 *
 	 * Updates field values with corresponding values found in $params
 	 * associative array.
 	 *
-	 * @param array $params
+   * @param string $settings_page Which settings page is being updated.
+	 * @param array $params Assoc. array of new settings, e.g. from $_REQUEST.
 	 *
 	 * @return void
-	 **/
-	function update( $params ) {
-		$this->update_page( 'calendar_page_id', $params );
-		if( isset( $params['default_calendar_view']         ) ) $this->default_calendar_view          = $params['default_calendar_view'];
-		if( isset( $params['calendar_css_selector']         ) ) $this->calendar_css_selector          = $params['calendar_css_selector'];
-		if( isset( $params['week_start_day']                ) ) $this->week_start_day                 = $params['week_start_day'];
-		if( isset( $params['agenda_events_per_page']        ) ) $this->agenda_events_per_page         = intval( $params['agenda_events_per_page'] );
-		if( isset( $params['cron_freq']                     ) ) $this->cron_freq                      = $params['cron_freq'];
-		if( isset( $params['input_date_format']             ) ) $this->input_date_format              = $params['input_date_format'];
-		if( isset( $params['allow_events_posting_facebook'] ) ) $this->allow_events_posting_facebook  = $params['allow_events_posting_facebook'];
-		if( isset( $params['facebook_credentials']          ) ) $this->facebook_credentials           = $params['facebook_credentials'];
-		if( isset( $params['user_role_can_create_event']    ) ) $this->user_role_can_create_event     = $params['user_role_can_create_event'];
-		if( isset( $params['timezone']                      ) ) $this->timezone                       = $params['timezone'];
-		if( $this->agenda_events_per_page <= 0                ) $this->agenda_events_per_page         = 1;
-		
-		// checkboxes
-		$this->agenda_events_expanded        = ( isset( $params['agenda_events_expanded'] ) )        ? true : false;
-		$this->include_events_in_rss         = ( isset( $params['include_events_in_rss'] ) )         ? true : false;
-		$this->show_publish_button           = ( isset( $params['show_publish_button'] ) )           ? true : false;
-		$this->hide_maps_until_clicked       = ( isset( $params['hide_maps_until_clicked'] ) )       ? true : false;
-		$this->exclude_from_search           = ( isset( $params['exclude_from_search'] ) )           ? true : false;
-		$this->show_create_event_button      = ( isset( $params['show_create_event_button'] ) )      ? true : false;
-		$this->turn_off_subscription_buttons = ( isset( $params['turn_off_subscription_buttons'] ) ) ? true : false;
-		$this->inject_categories             = ( isset( $params['inject_categories'] ) )             ? true : false;
-		$this->input_24h_time                = ( isset( $params['input_24h_time'] ) )                ? true : false;
-		$this->geo_region_biasing            = ( isset( $params['geo_region_biasing'] ) )            ? true : false;
-		$this->allow_statistics              = ( isset( $params['allow_statistics'] ) )              ? true : false;
+	 */
+	function update( $settings_page, $params ) {
+    switch ($settings_page) {
+      // ==================
+      // = Settings page. =
+      // ==================
+      case 'settings':
+        $field_names = array(
+          'default_calendar_view',
+          'calendar_css_selector',
+          'week_start_day',
+          'agenda_events_per_page',
+          'input_date_format',
+          'allow_events_posting_facebook',
+          'facebook_credentials',
+          'user_role_can_create_event',
+          'timezone',
+        );
+        $checkboxes = array(
+          'agenda_events_expanded',
+          'include_events_in_rss',
+          'show_publish_button',
+          'hide_maps_until_clicked',
+          'exclude_from_search',
+          'show_create_event_button',
+          'turn_off_subscription_buttons',
+          'inject_categories',
+          'input_24h_time',
+          'geo_region_biasing',
+          'allow_statistics',
+          'disable_autocompletion'
+        );
+
+        // Assign parameters to settings.
+        foreach( $field_names as $field_name ) {
+          if( isset( $params[$field_name] ) ) {
+            $this->$field_name = $params[$field_name];
+          }
+        }
+        foreach( $checkboxes as $checkbox ) {
+          $this->$checkbox = isset( $params[$checkbox] ) ? TRUE : FALSE;
+        }
+
+        // Validate specific parameters.
+        $this->agenda_events_per_page = intval( $this->agenda_events_per_page );
+        if( $this->agenda_events_per_page <= 0 ) {
+          $this->agenda_events_per_page = 1;
+        }
+
+        // Update special parameters.
+    		$this->update_page( 'calendar_page_id', $params );
+        break;
+
+      // ===============
+      // = Feeds page. =
+      // ===============
+      case 'feeds':
+        // Assign parameters to settings.
+        if( isset( $params['cron_freq'] ) ) {
+          $this->cron_freq = $params['cron_freq'];
+        }
+        break;
+    }
 	}
-	
-	function update_notification( $value = false ) {
+
+  /**
+   * Update setting of show_data_notification - whether to display data
+   * collection notice on the admin side.
+   *
+   * @param  boolean $value The new setting for show_data_notification.
+   * @return void
+   */
+	function update_notification( $value = FALSE ) {
 		$this->show_data_notification = $value;
 		update_option( 'ai1ec_settings', $this );
 	}

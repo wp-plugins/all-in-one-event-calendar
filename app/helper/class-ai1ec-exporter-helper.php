@@ -65,7 +65,7 @@ class Ai1ec_Exporter_Helper {
 		$uid = $event->ical_uid ? $event->ical_uid : $event->post->guid;
 		$e->setProperty( 'uid', $uid );
 		$e->setProperty( 'url', get_permalink( $event->post_id ) );
-		$e->setProperty( 'summary', html_entity_decode( apply_filters( 'the_title', $event->post->post_title ), ENT_QUOTES ) );
+		$e->setProperty( 'summary', html_entity_decode( apply_filters( 'the_title', $event->post->post_title ), ENT_QUOTES, 'UTF-8' ) );
 		$content = apply_filters( 'the_content', $event->post->post_content );
 		$content = str_replace(']]>', ']]&gt;', $content);
 		$e->setProperty( 'description', $content );

@@ -94,9 +94,9 @@ class Ai1ec_Events_Controller {
 	 *
 	 * @return void
 	 **/
-	function init()
+	public function init()
 	{
-		global $ai1ec_events_helper, $ai1ec_settings, $wp_locale;
+		global $ai1ec_events_helper, $ai1ec_settings, $wp_locale, $ai1ec_view_helper;
 
 		// Initialize dashboard view
 		if( is_admin() ) {
@@ -104,67 +104,68 @@ class Ai1ec_Events_Controller {
 			// = JS =
 			// ======
 			// Include timespan helper functions
-			wp_enqueue_script( 'jquery.calendrical', 			AI1EC_JS_URL . '/jquery.calendrical.js', array( 'jquery' ), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_script( 'jquery.calendrical', 'jquery.calendrical.js', array( 'jquery' ) );
 			// Include timespan plugin
-			wp_enqueue_script( 'jquery.timespan', 				AI1EC_JS_URL . '/jquery.timespan.js', array( 'jquery', 'jquery.calendrical' ), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_script( 'jquery.timespan', 'jquery.timespan.js', array( 'jquery', 'jquery.calendrical' ) );
 			// Include timespan plugin
-			wp_enqueue_script( 'jquery.inputdate', 				AI1EC_JS_URL . '/jquery.inputdate.js', array( 'jquery', 'jquery.calendrical' ), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_script( 'jquery.inputdate', 'jquery.inputdate.js', array( 'jquery', 'jquery.calendrical' ) );
 			// Include Google Maps API
-			wp_enqueue_script( 'gmap_api', 								'http://maps.google.com/maps/api/js?sensor=false&language=' . $ai1ec_events_helper->get_lang() );
+			wp_enqueue_script( 'gmap_api', 'http://maps.google.com/maps/api/js?sensor=false&language=' . $ai1ec_events_helper->get_lang() );
 			// Include autocomplete_geomod plugin
-			wp_enqueue_script( 'autocomplete_geomod', 		AI1EC_JS_URL . '/jquery.autocomplete_geomod.js', array( 'jquery' ), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_script( 'autocomplete_geomod', 'jquery.autocomplete_geomod.js', array( 'jquery' ) );
 			// Include geo_autocomplete plugin
-			wp_enqueue_script( 'geo_autocomplete', 				AI1EC_JS_URL . '/geo_autocomplete.js', array( 'jquery', 'autocomplete_geomod' ), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_script( 'geo_autocomplete', 'geo_autocomplete.js', array( 'jquery', 'autocomplete_geomod' ) );
 			// Include element selector function
-			wp_enqueue_script( 'ai1ec-element-selector', 	AI1EC_JS_URL . '/element-selector.js', array( 'jquery' ), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-element-selector', 'element-selector.js', array( 'jquery' ) );
 			// Include jQuery Tools form elements
-			wp_enqueue_script( 'jquery.tools-form',       AI1EC_JS_URL . '/jquery-tools-1.2.5.min.js', array( 'jquery' ), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_script( 'jquery.tools-form', 'jquery-tools-1.2.5.min.js', array( 'jquery' ) );
 			// Include add new event script
-			wp_enqueue_script( 'ai1ec-blockui', 		      AI1EC_JS_URL . '/jquery.blockUI.js', array( 'jquery' ), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-blockui', 'jquery.blockUI.js', array( 'jquery' ) );
 			// Include date picker plugin
-			wp_enqueue_script( 'ai1ec-datepicker', 		    AI1EC_JS_URL . '/datepicker.js', array( 'jquery' ), AI1EC_VERSION );
-			
-			wp_enqueue_script( 'ai1ec-add_new_event', 		AI1EC_JS_URL . '/add_new_event.js', array( 'jquery', 
-			                                                                                         'jquery.timespan', 
-			                                                                                         'ai1ec-element-selector', 
-			                                                                                         'jquery.tools-form', 
-			                                                                                         'ai1ec-blockui',
-			                                                                                         'ai1ec-datepicker' ), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-datepicker', 'datepicker.js', array( 'jquery' ) );
 
-			wp_enqueue_script( 'ai1ec-color-picker', 	    AI1EC_JS_URL . '/colorpicker.js', array( 'jquery' ), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-add_new_event', 'add_new_event.js', array( 'jquery',
+			                                                                                         'jquery.timespan',
+			                                                                                         'ai1ec-element-selector',
+			                                                                                         'jquery.tools-form',
+			                                                                                         'ai1ec-blockui',
+			                                                                                         'ai1ec-datepicker' ) );
+
+			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-color-picker', 'colorpicker.js', array( 'jquery' ) );
 
 			// Supply custom value to JavaScript from PHP
 			wp_localize_script( 'ai1ec-add_new_event', 'ai1ec_add_new_event', array(
 				// Current time, used for date/time pickers
-				'now'                    => $ai1ec_events_helper->gmt_to_local( time() ),
+				'now'                          => $ai1ec_events_helper->gmt_to_local( time() ),
 				// Date format for date pickers
-				'date_format'            => $ai1ec_settings->input_date_format,
+				'date_format'                  => $ai1ec_settings->input_date_format,
 				// Names for months in date picker header (escaping is done in wp_localize_script)
-				'month_names'            => implode( ',', $wp_locale->month ),
+				'month_names'                  => implode( ',', $wp_locale->month ),
 				// Names for days in date picker header (escaping is done in wp_localize_script)
-				'day_names'              => implode( ',', $wp_locale->weekday_initial ),
+				'day_names'                    => implode( ',', $wp_locale->weekday_initial ),
 				// Start the week on this day in the date picker
-				'week_start_day'         => $ai1ec_settings->week_start_day,
+				'week_start_day'               => $ai1ec_settings->week_start_day,
 				// 24h time format for time pickers
-				'twentyfour_hour'        => $ai1ec_settings->input_24h_time,
+				'twentyfour_hour'              => $ai1ec_settings->input_24h_time,
 				// Set region biasing for geo_autocomplete plugin
-				'region'                 => ( $ai1ec_settings->geo_region_biasing ) ? $ai1ec_events_helper->get_region() : '',
+				'region'                       => ( $ai1ec_settings->geo_region_biasing ) ? $ai1ec_events_helper->get_region() : '',
 				// ICS feed error messages
-				'duplicate_feed_message' => esc_html__( 'This feed is already being imported.', AI1EC_PLUGIN_NAME ),
-				'invalid_url_message'    => esc_html__( 'Please enter a valid iCalendar URL.', AI1EC_PLUGIN_NAME ),
+				'duplicate_feed_message'       => esc_html__( 'This feed is already being imported.', AI1EC_PLUGIN_NAME ),
+				'invalid_url_message'          => esc_html__( 'Please enter a valid iCalendar URL.', AI1EC_PLUGIN_NAME ),
+				'disable_autocompletion'       => $ai1ec_settings->disable_autocompletion,
 			) );
 
 			// =======
 			// = CSS =
 			// =======
 			// include autocomplete style
-			wp_enqueue_style( 'autocomplete',         AI1EC_CSS_URL . '/jquery.autocomplete.css', array(), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_style( 'autocomplete', 'jquery.autocomplete.css' );
 			// include colorpicker style
-			wp_enqueue_style( 'colorpicker',          AI1EC_CSS_URL . '/colorpicker.css', array(), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_style( 'colorpicker', 'colorpicker.css' );
 			// include add new event style
-			wp_enqueue_style( 'ai1ec_add_new_event',  AI1EC_CSS_URL . '/add_new_event.css', array(), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_style( 'ai1ec_add_new_event', 'add_new_event.css' );
 			// include datepicker style
-			wp_enqueue_style( 'ai1ec_datepicker',  AI1EC_CSS_URL . '/datepicker.css', array(), AI1EC_VERSION );
+			$ai1ec_view_helper->admin_enqueue_style( 'ai1ec_datepicker', 'datepicker.css' );
 		}
 		// Initialize front-end view
 		else
@@ -172,7 +173,7 @@ class Ai1ec_Events_Controller {
 			// ======
 			// = JS =
 			// ======
-			wp_enqueue_script( 'ai1ec-event', AI1EC_JS_URL . '/event.js', array( 'jquery' ), AI1EC_VERSION );
+			$ai1ec_view_helper->theme_enqueue_script( 'ai1ec-event', 'event.min.js', array( 'jquery' ) );
 			// Supply custom value to JavaScript from PHP
 			wp_localize_script( 'ai1ec-event', 'ai1ec_event', array(
 				// Language for Google Map
@@ -182,8 +183,12 @@ class Ai1ec_Events_Controller {
 			// =======
 			// = CSS =
 			// =======
-			wp_enqueue_style( 'ai1ec-general', AI1EC_CSS_URL . '/general.css', array(), AI1EC_VERSION );
-			wp_enqueue_style( 'ai1ec-event', AI1EC_CSS_URL . '/event.css', array(), AI1EC_VERSION );
+			$ai1ec_view_helper->theme_enqueue_style( 'ai1ec-general', 'general.css' );
+			$ai1ec_view_helper->theme_enqueue_style( 'ai1ec-event', 'event.css' );
+			// Load the print style only if the parameter print is set to true.
+			if( isset( $_GET['print'] ) && $_GET['print'] === 'true' ) {
+				$ai1ec_view_helper->theme_enqueue_style( 'ai1ec-print', 'print.css' );
+			}
 		}
 	}
 
@@ -236,8 +241,11 @@ class Ai1ec_Events_Controller {
 
 			$all_day_event    = $event->allday ? 'checked="checked"' : '';
 
+
 			$start_timestamp  = $ai1ec_events_helper->gmt_to_local( $event->start );
 			$end_timestamp 	  = $ai1ec_events_helper->gmt_to_local( $event->end );
+
+			$multi_day        = $event->multiday;
 
 			$show_map         = $event->show_map;
 			$google_map       = $show_map ? 'checked="checked"' : '';
@@ -290,22 +298,22 @@ class Ai1ec_Events_Controller {
 			'timezone'        => $timezone,
 			'exdate'          => $exdate
 		);
-		$ai1ec_view_helper->display( 'box_time_and_date.php', $args );
+		$ai1ec_view_helper->display_admin( 'box_time_and_date.php', $args );
 
 		// =================================================
 		// = Display event location details and Google map =
 		// =================================================
 		$args = array(
-			'venue'						=> $venue,
-			'country' 				=> $country,
-			'address'					=> $address,
-			'city'						=> $city,
-			'province' 				=> $province,
-			'postal_code' 		=> $postal_code,
-			'google_map' 			=> $google_map,
-			'show_map'        => $show_map,
+			'venue'            => $venue,
+			'country'          => $country,
+			'address'          => $address,
+			'city'             => $city,
+			'province'         => $province,
+			'postal_code'      => $postal_code,
+			'google_map'       => $google_map,
+			'show_map'         => $show_map,
 		);
-		$ai1ec_view_helper->display( 'box_event_location.php', $args );
+		$ai1ec_view_helper->display_admin( 'box_event_location.php', $args );
 
 		// ======================
 		// = Display event cost =
@@ -313,7 +321,7 @@ class Ai1ec_Events_Controller {
 		$args = array(
 			'cost' => $cost
 		);
-		$ai1ec_view_helper->display( 'box_event_cost.php', $args );
+		$ai1ec_view_helper->display_admin( 'box_event_cost.php', $args );
 
 		// =========================================
 		// = Display organizer contact information =
@@ -323,7 +331,7 @@ class Ai1ec_Events_Controller {
 			'contact_phone'   => $contact_phone,
 			'contact_email'   => $contact_email,
 		);
-		$ai1ec_view_helper->display( 'box_event_contact.php', $args );
+		$ai1ec_view_helper->display_admin( 'box_event_contact.php', $args );
 
 		if( $ai1ec_settings->show_publish_button ) {
 			$args = array();
@@ -334,7 +342,7 @@ class Ai1ec_Events_Controller {
 			else
 				$args["button_value"] = __( 'Submit for Review', AI1EC_PLUGIN_NAME );
 
-			$ai1ec_view_helper->display( 'box_publish_button.php', $args );
+			$ai1ec_view_helper->display_admin( 'box_publish_button.php', $args );
 		}
 
 		/*
@@ -436,6 +444,7 @@ class Ai1ec_Events_Controller {
 		$event->recurrence_rules    = $rrule;
 		$event->exception_rules     = $exrule;
 		$event->exception_dates     = $exdate;
+
 		$event->save( ! $is_new );
 
 		$ai1ec_events_helper->delete_event_cache( $post_id );
@@ -611,7 +620,7 @@ class Ai1ec_Events_Controller {
 			'google_url'              => 'http://www.google.com/calendar/render?cid=' . urlencode( $subscribe_url ),
 			'show_subscribe_buttons'  => ! $ai1ec_settings->turn_off_subscription_buttons
 		);
-		$ai1ec_view_helper->display( 'event-single.php', $args );
+		$ai1ec_view_helper->display_theme( 'event-single.php', $args );
 	}
 
 	/**
@@ -640,7 +649,7 @@ class Ai1ec_Events_Controller {
 			'contact' => $event->contact_html,
 			'calendar_url' => $ai1ec_calendar_helper->get_calendar_url( $event ),
 		);
-		$ai1ec_view_helper->display( 'event-multi.php', $args );
+		$ai1ec_view_helper->display_theme( 'event-multi.php', $args );
 	}
 
 	/**
@@ -661,10 +670,10 @@ class Ai1ec_Events_Controller {
 		$location = str_replace( "\n", ', ', rtrim( $event->location ) );
 
 		$args = array(
-			'event' => &$event,
+			'event'    => &$event,
 			'location' => $location,
 		);
-		$ai1ec_view_helper->display( 'event-excerpt.php', $args );
+		$ai1ec_view_helper->display_theme( 'event-excerpt.php', $args );
 	}
 
 	/**
@@ -683,11 +692,11 @@ class Ai1ec_Events_Controller {
 			return '';
 
 		$args = array(
-			'address' => $event->address,
-			'gmap_url_link' => $ai1ec_events_helper->get_gmap_url( $event, false ),
-			'hide_maps_until_clicked' => $ai1ec_settings->hide_maps_until_clicked
+			'address'                 => $event->address,
+			'gmap_url_link'           => $ai1ec_events_helper->get_gmap_url( $event, false ),
+			'hide_maps_until_clicked' => $ai1ec_settings->hide_maps_until_clicked,
 		);
-		return $ai1ec_view_helper->get_view( 'event-map.php', $args );
+		return $ai1ec_view_helper->get_theme_view( 'event-map.php', $args );
 	}
 
 	/**
@@ -705,7 +714,7 @@ class Ai1ec_Events_Controller {
 		$args = array(
 			'event' => &$event,
 		);
-		return $ai1ec_view_helper->display( 'event-single-footer.php', $args );
+		return $ai1ec_view_helper->display_theme( 'event-single-footer.php', $args );
 	}
 
 	/**
@@ -719,7 +728,7 @@ class Ai1ec_Events_Controller {
 		global $ai1ec_view_helper;
 
 		$args = array( 'edit' => false );
-		$ai1ec_view_helper->display( 'event_categories-color_picker.php', $args );
+		$ai1ec_view_helper->display_admin( 'event_categories-color_picker.php', $args );
 	 }
 
 	 /**
@@ -742,12 +751,13 @@ class Ai1ec_Events_Controller {
 			$style = 'style="background-color: ' . $color . '"';
 			$clr = $color;
 		}
+
 		$args = array(
 			'style' => $style,
 			'color' => $clr,
 			'edit'  => true,
 		);
-		$ai1ec_view_helper->display( 'event_categories-color_picker.php', $args );
+		$ai1ec_view_helper->display_admin( 'event_categories-color_picker.php', $args );
 	}
 
 	 /**

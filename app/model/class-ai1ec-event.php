@@ -241,7 +241,7 @@ class Ai1ec_Event {
 	 * @var string
 	 **/
 	var $categories;
-	
+
 	/**
 	 * feed class variable
 	 *
@@ -434,6 +434,17 @@ class Ai1ec_Event {
 
 			case 'uid':
 				return $this->post_id . '@' . bloginfo( 'url' );
+
+			case "multiday":
+				return (
+					$ai1ec_events_helper->get_long_date( $this->start )
+					!=
+					$ai1ec_events_helper->get_long_date( $this->end - 1 )
+				);
+
+			case "multiday_end_date":
+				return $ai1ec_events_helper->get_multiday_end_date( $this->end - 1 );
+
 			// ========================
 			// = Get short-form dates =
 			// ========================
@@ -592,29 +603,43 @@ class Ai1ec_Event {
 			case 'color_style':
 			  if( $this->color_style === null ) {
 			    $categories = wp_get_post_terms( $this->post_id, 'events_categories' );
-			    if( $categories && ! empty( $categories ) )
-			      $this->color_style = $ai1ec_events_helper->get_event_category_color_style( $categories[0]->term_id, $this->allday );
+			    if( $categories && ! empty( $categories ) ) {
+			      $this->color_style = $ai1ec_events_helper->get_event_category_color_style( $categories[0]->term_id, $this->allday || $this->multiday );
+			    }
 		    }
 			  return $this->color_style;
 
-			// =========================================
-			// = Faded version of event category color =
-			// =========================================
-			case 'faded_color':
-			  if( $this->faded_color === null ) {
-			    $categories = wp_get_post_terms( $this->post_id, 'events_categories' );
-			    if( $categories && ! empty( $categories ) )
-			      $this->faded_color = $ai1ec_events_helper->get_event_category_faded_color( $categories[0]->term_id );
-		    }
-			  return $this->faded_color;
+      // =========================================
+      // = Faded version of event category color =
+      // =========================================
+      case 'faded_color':
+        if( $this->faded_color === null ) {
+          $categories = wp_get_post_terms( $this->post_id, 'events_categories' );
+          if( $categories && ! empty( $categories ) ) {
+            $this->faded_color = $ai1ec_events_helper->get_event_category_faded_color( $categories[0]->term_id );
+          }
+        }
+        return $this->faded_color;
 
-			// ===============================================
-			// = HTML of category color boxes for this event =
-			// ===============================================
-			case 'category_colors':
-			  if( $this->category_colors === null ) {
-			    $categories = wp_get_post_terms( $this->post_id, 'events_categories' );
-			    $this->category_colors = $ai1ec_events_helper->get_event_category_colors( $categories );
+      // ========================================
+      // = RGBA version of faded category color =
+      // ========================================
+      case 'rgba_color':
+        if( $this->rgba_color === null ) {
+          $categories = wp_get_post_terms( $this->post_id, 'events_categories' );
+          if( $categories && ! empty( $categories ) ) {
+            $this->rgba_color = $ai1ec_events_helper->get_event_category_rgba_color( $categories[0]->term_id );
+          }
+        }
+        return $this->rgba_color;
+
+      // ===============================================
+      // = HTML of category color boxes for this event =
+      // ===============================================
+      case 'category_colors':
+        if( $this->category_colors === null ) {
+          $categories = wp_get_post_terms( $this->post_id, 'events_categories' );
+          $this->category_colors = $ai1ec_events_helper->get_event_category_colors( $categories );
 		    }
 			  return $this->category_colors;
 
@@ -669,28 +694,28 @@ class Ai1ec_Event {
 		// = Insert events meta data =
 		// ===========================
 		$columns = array(
-			'post_id' 					=> $this->post_id,
-			'start'							=> $this->start,
-			'end'								=> $this->end,
-			'allday'						=> $this->allday,
-			'recurrence_rules'	=> $this->recurrence_rules,
-			'exception_rules'		=> $this->exception_rules,
-			'recurrence_dates'	=> $this->recurrence_dates,
-			'exception_dates' 	=> $this->exception_dates,
-			'venue' 						=> $this->venue,
-			'country'						=> $this->country,
-			'address'						=> $this->address,
-			'city'							=> $this->city,
-			'province'					=> $this->province,
-			'postal_code'				=> $this->postal_code,
-			'show_map'					=> $this->show_map,
-			'contact_name'			=> $this->contact_name,
-			'contact_phone'			=> $this->contact_phone,
-			'contact_email'			=> $this->contact_email,
-			'cost'							=> $this->cost,
-			'ical_feed_url' 		=> $this->ical_feed_url,
-			'ical_source_url' 	=> $this->ical_source_url,
-			'ical_uid' 					=> $this->ical_uid,
+			'post_id'          => $this->post_id,
+			'start'            => $this->start,
+			'end'              => $this->end,
+			'allday'           => $this->allday,
+			'recurrence_rules' => $this->recurrence_rules,
+			'exception_rules'  => $this->exception_rules,
+			'recurrence_dates' => $this->recurrence_dates,
+			'exception_dates'  => $this->exception_dates,
+			'venue'            => $this->venue,
+			'country'          => $this->country,
+			'address'          => $this->address,
+			'city'             => $this->city,
+			'province'         => $this->province,
+			'postal_code'      => $this->postal_code,
+			'show_map'         => $this->show_map,
+			'contact_name'     => $this->contact_name,
+			'contact_phone'    => $this->contact_phone,
+			'contact_email'    => $this->contact_email,
+			'cost'             => $this->cost,
+			'ical_feed_url'    => $this->ical_feed_url,
+			'ical_source_url'  => $this->ical_source_url,
+			'ical_uid'         => $this->ical_uid,
 		);
 
 		$format = array(
@@ -715,7 +740,7 @@ class Ai1ec_Event {
 			'%s',
 			'%s',
 			'%s',
-			'%s'
+			'%s',
 		);
 
 		$table_name = $wpdb->prefix . 'ai1ec_events';
@@ -769,7 +794,6 @@ class Ai1ec_Event {
 					// associate the event with the feed only if we have term id set
 					$a = wp_set_object_terms( $this->post_id, (int)$term->term_id, 'events_feeds', false );
 				}
-				
 			}
 
 			// =========================

@@ -214,8 +214,20 @@ class Ai1ec_Calendar_Controller {
     foreach( $categories as &$cat ) {
       $cat->color = $ai1ec_events_helper->get_category_color_square( $cat->term_id );
     }
+
+    // Supply view names and current view.
+    $view_names = array(
+      'month' => __( 'Month', AI1EC_PLUGIN_NAME ),
+      'week' => __( 'Week', AI1EC_PLUGIN_NAME ),
+      'oneday' => __( 'Day', AI1EC_PLUGIN_NAME ),
+      'agenda' => __( 'Agenda', AI1EC_PLUGIN_NAME ),
+    );
+    $current_view = substr( $this->request['action'], 6 );
+
 		// Define new arguments for overall calendar view
 		$args = array(
+      'view_names'              => $view_names,
+      'current_view'            => $current_view,
 			'view'                    => $view,
 			'create_event_url'        => $create_event_url,
 			'categories'              => $categories,
@@ -223,11 +235,12 @@ class Ai1ec_Calendar_Controller {
 			'selected_cat_ids'        => $cat_ids,
 			'selected_tag_ids'        => $tag_ids,
 			'selected_post_ids'       => $post_ids,
-			'show_subscribe_buttons'  => ! $ai1ec_settings->turn_off_subscription_buttons
+			'show_subscribe_buttons'  => ! $ai1ec_settings->turn_off_subscription_buttons,
+			'ai1ec_view_helper'       => $ai1ec_view_helper,
 		);
 
 		// Feed month view into generic calendar view
-		echo apply_filters( 'ai1ec_view', $ai1ec_view_helper->get_view( 'calendar.php', $args ), $args );
+		echo apply_filters( 'ai1ec_view', $ai1ec_view_helper->get_theme_view( 'calendar.php', $args ), $args );
 	}
 
 	/**
@@ -285,7 +298,8 @@ class Ai1ec_Calendar_Controller {
 			'active_event'     => $active_event,
 			'post_ids'         => join( ',', $post_ids ),
 		);
-		return apply_filters( 'ai1ec_get_month_view', $ai1ec_view_helper->get_view( 'month.php', $view_args ), $view_args );
+
+		return apply_filters( 'ai1ec_get_month_view', $ai1ec_view_helper->get_theme_view( 'month.php', $view_args ), $view_args );
 	}
 
 	/**
@@ -314,8 +328,8 @@ class Ai1ec_Calendar_Controller {
 		       $ai1ec_events_helper,
 		       $ai1ec_calendar_helper;
 
-		$defaults = array(  
-			'oneday_offset'  => 0, 
+		$defaults = array(
+			'oneday_offset'  => 0,
 			'active_event'  => null,
 			'categories'    => array(),
 			'tags'          => array(),
@@ -347,7 +361,7 @@ class Ai1ec_Calendar_Controller {
 			'done_allday_label' => false,
 			'done_grid'         => false
 		);
-		return apply_filters( 'ai1ec_get_oneday_view', $ai1ec_view_helper->get_view( 'oneday.php', $view_args ), $view_args );
+		return apply_filters( 'ai1ec_get_oneday_view', $ai1ec_view_helper->get_theme_view( 'oneday.php', $view_args ), $view_args );
 	}
 
 	/**
@@ -413,7 +427,7 @@ class Ai1ec_Calendar_Controller {
 			'done_allday_label' => false,
 			'done_grid'         => false
 		);
-		return apply_filters( 'ai1ec_get_week_view', $ai1ec_view_helper->get_view( 'week.php', $view_args ), $view_args );
+		return apply_filters( 'ai1ec_get_week_view', $ai1ec_view_helper->get_theme_view( 'week.php', $view_args ), $view_args );
 	}
 
 	/**
@@ -466,9 +480,9 @@ class Ai1ec_Calendar_Controller {
 			'pagination_links'  => $pagination_links,
 			'active_event'      => $active_event,
 			'expanded'          => $ai1ec_settings->agenda_events_expanded,
-			'post_ids'          => join( ',', $post_ids ),
+			'post_ids'          => join( ',', $post_ids )
 		);
-		return apply_filters( 'ai1ec_get_agenda_view', $ai1ec_view_helper->get_view( 'agenda.php', $args ), $args );
+		return apply_filters( 'ai1ec_get_agenda_view', $ai1ec_view_helper->get_theme_view( 'agenda.php', $args ), $args );
 	}
 
 	/**
@@ -642,13 +656,12 @@ class Ai1ec_Calendar_Controller {
 	 * CSS rules necessary for calendar container replacement.
 	 *
 	 * @return void
-	 **/
-	function load_css()
-	{
-		global $ai1ec_settings;
+	 */
+	function load_css() {
+		global $ai1ec_settings, $ai1ec_view_helper;
 
-		wp_enqueue_style( 'ai1ec-general', AI1EC_CSS_URL . '/general.css', array(), AI1EC_VERSION );
-		wp_enqueue_style( 'ai1ec-calendar', AI1EC_CSS_URL . '/calendar.css', array(), AI1EC_VERSION );
+		$ai1ec_view_helper->theme_enqueue_style( 'ai1ec-general', 'general.css' );
+		$ai1ec_view_helper->theme_enqueue_style( 'ai1ec-calendar', 'calendar.css' );
 
 		if( $ai1ec_settings->calendar_css_selector )
 			add_action( 'wp_head', array( &$this, 'selector_css' ) );
@@ -663,7 +676,7 @@ class Ai1ec_Calendar_Controller {
 	function selector_css() {
 		global $ai1ec_view_helper, $ai1ec_settings;
 
-		$ai1ec_view_helper->display_css(
+		$ai1ec_view_helper->display_admin_css(
 			'selector.css',
 			array( 'selector' => $ai1ec_settings->calendar_css_selector )
 		);
@@ -678,17 +691,17 @@ class Ai1ec_Calendar_Controller {
 	 **/
 	function load_js()
  	{
- 		global $ai1ec_settings;
+ 		global $ai1ec_settings, $ai1ec_view_helper;
 
 		// Include dependent scripts (jQuery plugins, modernizr)
-		wp_enqueue_script( 'jquery.scrollTo', AI1EC_JS_URL . '/jquery.scrollTo-min.js', array( 'jquery' ), AI1EC_VERSION );
-		wp_enqueue_script( 'jquery.tableScroll', AI1EC_JS_URL . '/jquery.tablescroll.js', array( 'jquery' ), AI1EC_VERSION );
-		wp_enqueue_script( 'modernizr.custom.78720', AI1EC_JS_URL . '/modernizr.custom.78720.js', array(), AI1EC_VERSION );
-		// Include element selector function
-		wp_enqueue_script( 'ai1ec-element-selector', AI1EC_JS_URL . '/element-selector.js', array( 'jquery', 'jquery.scrollTo' ), AI1EC_VERSION );
+		$ai1ec_view_helper->theme_enqueue_script( 'jquery.scrollTo', 'jquery.scrollTo-min.js', array( 'jquery' ) );
+		$ai1ec_view_helper->theme_enqueue_script( 'jquery.tableScroll', 'jquery.tablescroll.js', array( 'jquery' ) );
+		$ai1ec_view_helper->theme_enqueue_script( 'modernizr.custom.78720', 'modernizr.custom.78720.js' );
+    // Include element selector function
+    $ai1ec_view_helper->admin_enqueue_script( 'ai1ec-element-selector', 'element-selector.js', array( 'jquery' ) );
 		// Include custom script
-		wp_enqueue_script( 'ai1ec-calendar', AI1EC_JS_URL . '/calendar.js',
-			array( 'jquery', 'jquery.scrollTo', 'jquery.tableScroll', 'modernizr.custom.78720' ), AI1EC_VERSION );
+		$ai1ec_view_helper->theme_enqueue_script( 'ai1ec-calendar', 'calendar.min.js',
+			array( 'jquery', 'jquery.scrollTo', 'jquery.tableScroll', 'modernizr.custom.78720' ) );
 
 		$data = array(
 			// Point script to AJAX URL - use relative to plugin URL to fix domain mapping issues
