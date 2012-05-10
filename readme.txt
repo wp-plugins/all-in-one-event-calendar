@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
 Tested up to: 3.3.2
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 
 A calendar system with month, week, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
@@ -14,7 +14,7 @@ Welcome to the [All-in-One Calendar Plugin](http://then.ly/), from [Then.ly](htt
 
 Our new calendar system combines a clean visual design, solid architectural patterns and a powerful set of features to create the most advanced calendar system available for WordPress. Best of all: it’s completely free.
 
-**New in version 1.6:** Download the free Premium version at [then.ly](http://then./y) and choose from 3 custom designed themes for your Calendar, or develop your own!
+**New in version 1.6:** Download the free Premium version at [then.ly](http://then.ly/) and choose from 3 custom designed themes for your Calendar, or develop your own!
 
 = Calendar Features For Users =
 
@@ -82,6 +82,9 @@ https://vimeo.com/41738066
 * Filter by post ids (separate ids by comma): **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+= Version 1.6.2 Premium =
+* Fixed bug that was breaking adding/importing/editing events
+* Enabled updates and update notifications when there is a newer version
 
 = Version 1.6.1 Premium =
 * Fixed bug that was breaking widget management screen
