@@ -35,7 +35,7 @@
                 // TODO: This div should not be needed, but with multi-day
                 // event bars it is required until a better method of arranging
                 // events is contrived:
-              if( ! $week['added_stretcher'] ): ?>
+              if( ! isset( $week['added_stretcher'] ) ): ?>
                 <div class="ai1ec-day-stretcher"></div>
                 <?php $week['added_stretcher'] = TRUE; ?>
               <?php endif; ?>

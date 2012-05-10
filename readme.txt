@@ -4,9 +4,9 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.1.3
 Tested up to: 3.3.2
-Stable tag: 1.6
+Stable tag: 1.6.1
 
-An event calendar system with month, week, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
+A calendar system with month, week, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
 == Description ==
 
@@ -83,7 +83,11 @@ https://vimeo.com/41738066
 
 == Changelog ==
 
-= Version 1.6 Premium = 
+= Version 1.6.1 Premium =
+* Fixed bug that was breaking widget management screen
+* Removed some warnings from month view in certain setups
+
+= Version 1.6 Premium =
 * Choose new Calendar Themes
 * Duplicate Events
 * Create Print View
@@ -94,13 +98,16 @@ https://vimeo.com/41738066
 * Security updates
 * Bug fixes
 
-= Version 1.6 = 
+= Version 1.6.1 =
+* Fixed bug that was breaking widget management screen
+* Removed some warnings from month view in certain setups
+
+= Version 1.6 =
 * Create Print View
 * Turn on/off autocomplete for addresses
 * See more intuitive views of multi-day events on weekly and monthly calendars
 * Security updates
 * Bug Fixes
-
 
 = Version 1.5 =
 * Added daily view
@@ -296,8 +303,8 @@ To place the calendar in a DOM/HTML element besides the default page content con
 
 == Upgrade Notice ==
 
-= 1.6 Premium = 
-The All-in-One Calendar can only be upgrade to Premium from version 1.6 and above, or by downloading directly from 
+= 1.6 Premium =
+The All-in-One Calendar can only be upgraded to the Premium version from version 1.6 and above, or by downloading directly from [then.ly](http://then.ly/).
 
 = 1.0.3 =
 When upgrading to from below `1.0.3` you must reactivate the plugin.
