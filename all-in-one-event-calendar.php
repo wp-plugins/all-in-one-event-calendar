@@ -5,7 +5,7 @@
  * Description: A calendar system with month, week, day, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
  * Author: Then.ly
  * Author URI: http://then.ly/
- * Version: 1.6.1
+ * Version: 1.6.2
  */
 @set_time_limit( 0 );
 @ini_set( 'memory_limit',           '256M' );
@@ -24,12 +24,12 @@ define( 'AI1EC_PLUGIN_BASENAME',    plugin_basename( __FILE__ ) );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1EC_VERSION',            '1.6.1' );
+define( 'AI1EC_VERSION',            '1.6.2' );
 
 // ====================
 // = Database Version =
 // ====================
-define( 'AI1EC_DB_VERSION',         108 );
+define( 'AI1EC_DB_VERSION',         109 );
 
 // ================
 // = Cron Version =
@@ -37,6 +37,7 @@ define( 'AI1EC_DB_VERSION',         108 );
 define( 'AI1EC_CRON_VERSION',       102 );
 define( 'AI1EC_N_CRON_VERSION',     101 );
 define( 'AI1EC_N_CRON_FREQ',        'daily' );
+define( 'AI1EC_UPDATES_URL',        'http://then.ly/assets/thenly-all-in-one-calendar-1.6.2.zip' );
 
 // ===============
 // = Plugin Path =

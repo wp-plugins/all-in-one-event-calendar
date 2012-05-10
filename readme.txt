@@ -14,7 +14,7 @@ Welcome to the [All-in-One Calendar Plugin](http://then.ly/), from [Then.ly](htt
 
 Our new calendar system combines a clean visual design, solid architectural patterns and a powerful set of features to create the most advanced calendar system available for WordPress. Best of all: it’s completely free.
 
-**New in version 1.6:** Download the free Premium version at [then.ly](http://then./y) and choose from 3 custom designed themes for your Calendar, or develop your own!
+**New in version 1.6:** Download the free Premium version at [then.ly](http://then.ly/) and choose from 3 custom designed themes for your Calendar, or develop your own!
 
 = Calendar Features For Users =
 
@@ -82,6 +82,9 @@ https://vimeo.com/41738066
 * Filter by post ids (separate ids by comma): **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+= Version 1.6.2 Premium =
+* Fixed bug that was breaking adding/importing/editing events
+* Enabled updates and update notifications when there is a newer version
 
 = Version 1.6.1 Premium =
 * Fixed bug that was breaking widget management screen

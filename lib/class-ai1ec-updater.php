@@ -29,7 +29,7 @@ class Ai1ec_Updater extends WP_Upgrader {
 
 		$this->run( 
 			array(
-				'package'           => 'http://then.ly/assets/thenly-all-in-one-calendar-1.6.zip',
+				'package'           => AI1EC_UPDATES_URL,
 				'destination'       => WP_PLUGIN_DIR,
 				'clear_destination' => true,
 				'clear_working'     => true,
