@@ -25,7 +25,6 @@ This plugin has many features we hope will prove useful to users, including:
 * Easy **sharing** with Google Calendar, Apple iCal, MS Outlook and any other system that accepts iCalendar (.ics) feeds
 * Embedded **Google Maps**
 * **Color-coded** events based on category
-* **Event-registration** ready
 * **Month**, **week**, **day** and **agenda** views
 * **Upcoming Events** widget
 * Direct links to **filtered calendar views**

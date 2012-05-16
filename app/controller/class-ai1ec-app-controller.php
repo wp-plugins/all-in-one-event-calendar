@@ -77,6 +77,11 @@ class Ai1ec_App_Controller {
 
 		// Configure MySQL to operate in GMT time
 		$wpdb->query( "SET time_zone = '+0:00'" );
+		
+		if( $ai1ec_settings->allow_statistics == TRUE ) {
+			$ai1ec_settings->allow_statistics = false;
+			$ai1ec_settings->save();
+		}
 
 		// Load plugin text domain
 		$this->load_textdomain();

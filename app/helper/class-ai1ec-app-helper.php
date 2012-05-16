@@ -702,7 +702,7 @@ class Ai1ec_App_Helper {
 			);
 			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
 		}
-
+		/*
 		if( $ai1ec_settings->show_data_notification ) {
 			$args = array(
 				'label'  => 'All-in-One Calendar Notice',
@@ -718,7 +718,7 @@ class Ai1ec_App_Helper {
 				'button' => (object) array( 'class' => 'ai1ec-dismiss-notification', 'value' => 'Dismiss' ),
 			);
 			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
-		}
+		}*/
 
 		// If calendar page ID has not been set, and we're not updating the settings
 		// page, the calendar is not properly set up yet.
