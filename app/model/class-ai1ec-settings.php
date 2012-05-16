@@ -322,7 +322,7 @@ class Ai1ec_Settings {
 			'timezone'                      => get_option( 'timezone_string' ),
 			'geo_region_biasing'            => FALSE,
 			'show_data_notification'        => TRUE,
-      'allow_statistics'              => TRUE,
+      'allow_statistics'              => FALSE,
 			'disable_autocompletion'        => FALSE,
 		);
 
