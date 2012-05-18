@@ -1,4 +1,4 @@
-=== All-in-One Calendar ===
+=== All-in-One Event Calendar ===
 Contributors: theseed, hubrik, vtowel, yani.iliev
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9JJMUW48W2ED8
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
@@ -10,7 +10,7 @@ A calendar system with month, week, agenda views, upcoming events widget, color-
 
 == Description ==
 
-Welcome to the [All-in-One Calendar Plugin](http://then.ly/), from [Then.ly](http://then.ly/). The All-in-One Calendar is a new way to list your events in WordPress and easily share them with the rest of the world.
+Welcome to the [All-in-One Event Calendar Plugin](http://then.ly/), from [Then.ly](http://then.ly/). The All-in-One Event Calendar is a new way to list your events in WordPress and easily share them with the rest of the world.
 
 Our new calendar system combines a clean visual design, solid architectural patterns and a powerful set of features to create the most advanced calendar system available for WordPress. Best of all: it’s completely free.
 
@@ -36,13 +36,13 @@ This plugin has many features we hope will prove useful to users, including:
 * Events from [The Events Calendar](http://wordpress.org/extend/plugins/the-events-calendar/) plugin can also be easily imported
 * Create a Calendar administration role to allow for a dedicated calendar application
 
-Importing and exporting iCalendar (.ics) feeds is one of the strongest features of the All-in-One Calendar system. Enter an event on one site and you can have it appear automatically in another website's calendar. You can even send events from a specific category or tag (or combination of categories and tags).
+Importing and exporting iCalendar (.ics) feeds is one of the strongest features of the All-in-One Event Calendar system. Enter an event on one site and you can have it appear automatically in another website's calendar. You can even send events from a specific category or tag (or combination of categories and tags).
 
 Why is this cool? It allows event creators to create one event and have it displayed on a few or thousands of calendars with no extra work. And it also allows calendar owners to populate their calendar from other calendar feeds without having to go through the hassle of creating new events. For example, a soccer league can send its game schedule to a community sports calendar, which, in turn, can send only featured games (from all the sports leagues it aggregates) to a community calendar, which features sports as just one category.
 
 = Additional Features =
 
-The All-in-One Calendar Plugin also has a few features that will prove useful for website and blog owners:
+The All-in-One Event Calendar Plugin also has a few features that will prove useful for website and blog owners:
 
 * Each event is SEO-optimized
 * Each event links to the original calendar
@@ -309,7 +309,7 @@ To place the calendar in a DOM/HTML element besides the default page content con
 == Upgrade Notice ==
 
 = 1.6 Premium =
-The All-in-One Calendar can only be upgraded to the Premium version from version 1.6 and above, or by downloading directly from [then.ly](http://then.ly/).
+The All-in-One Event Calendar can only be upgraded to the Premium version from version 1.6 and above, or by downloading directly from [then.ly](http://then.ly/).
 
 = 1.0.3 =
 When upgrading to from below `1.0.3` you must reactivate the plugin.
