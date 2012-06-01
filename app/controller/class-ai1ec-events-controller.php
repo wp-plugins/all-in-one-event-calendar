@@ -118,7 +118,7 @@ class Ai1ec_Events_Controller {
 			// Include element selector function
 			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-element-selector', 'element-selector.js', array( 'jquery' ) );
 			// Include jQuery Tools form elements
-			$ai1ec_view_helper->admin_enqueue_script( 'jquery.tools-form', 'jquery-tools-1.2.5.min.js', array( 'jquery' ) );
+			$ai1ec_view_helper->admin_enqueue_script( 'jquery.tools', 'jquery.tools.min.js', array( 'jquery' ) );
 			// Include add new event script
 			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-blockui', 'jquery.blockUI.js', array( 'jquery' ) );
 			// Include date picker plugin
@@ -127,7 +127,7 @@ class Ai1ec_Events_Controller {
 			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-add_new_event', 'add_new_event.js', array( 'jquery',
 			                                                                                         'jquery.timespan',
 			                                                                                         'ai1ec-element-selector',
-			                                                                                         'jquery.tools-form',
+			                                                                                         'jquery.tools',
 			                                                                                         'ai1ec-blockui',
 			                                                                                         'ai1ec-datepicker' ) );
 

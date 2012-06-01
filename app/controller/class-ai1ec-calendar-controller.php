@@ -267,7 +267,8 @@ class Ai1ec_Calendar_Controller {
  	{
 		global $ai1ec_view_helper,
 		       $ai1ec_events_helper,
-		       $ai1ec_calendar_helper;
+		       $ai1ec_calendar_helper,
+		       $ai1ec_settings;
 
     $defaults = array(
       'month_offset'  => 0,
@@ -291,12 +292,13 @@ class Ai1ec_Calendar_Controller {
 		$pagination_links = $ai1ec_calendar_helper->get_month_pagination_links( $month_offset );
 
 		$view_args = array(
-			'title'            => date_i18n( 'F Y', $timestamp, true ),
-			'weekdays'         => $ai1ec_calendar_helper->get_weekdays(),
-			'cell_array'       => $cell_array,
-			'pagination_links' => $pagination_links,
-			'active_event'     => $active_event,
-			'post_ids'         => join( ',', $post_ids ),
+			'title'                  => date_i18n( 'F Y', $timestamp, true ),
+			'weekdays'               => $ai1ec_calendar_helper->get_weekdays(),
+			'cell_array'             => $cell_array,
+			'show_location_in_title' => $ai1ec_settings->show_location_in_title,
+			'pagination_links'       => $pagination_links,
+			'active_event'           => $active_event,
+			'post_ids'               => join( ',', $post_ids ),
 		);
 
 		return apply_filters( 'ai1ec_get_month_view', $ai1ec_view_helper->get_theme_view( 'month.php', $view_args ), $view_args );
@@ -326,7 +328,8 @@ class Ai1ec_Calendar_Controller {
  	{
 		global $ai1ec_view_helper,
 		       $ai1ec_events_helper,
-		       $ai1ec_calendar_helper;
+		       $ai1ec_calendar_helper,
+		       $ai1ec_settings;
 
 		$defaults = array(
 			'oneday_offset'  => 0,
@@ -351,15 +354,16 @@ class Ai1ec_Calendar_Controller {
 		$pagination_links = $ai1ec_calendar_helper->get_oneday_pagination_links( $oneday_offset );
 
 		$view_args = array(
-			'title'            => date_i18n( 'j F Y', $timestamp, true ),
-			'cell_array'       => $cell_array,
-			'now_top'           => $bits['hours'] * 60 + $bits['minutes'],
-			'pagination_links' => $pagination_links,
-			'active_event'     => $active_event,
-			'post_ids'         => join( ',', $post_ids ),
-			'time_format'       => get_option( 'time_format', 'g a' ),
-			'done_allday_label' => false,
-			'done_grid'         => false
+			'title'                  => date_i18n( 'j F Y', $timestamp, true ),
+			'cell_array'             => $cell_array,
+			'show_location_in_title' => $ai1ec_settings->show_location_in_title,
+			'now_top'                => $bits['hours'] * 60 + $bits['minutes'],
+			'pagination_links'       => $pagination_links,
+			'active_event'           => $active_event,
+			'post_ids'               => join( ',', $post_ids ),
+			'time_format'            => get_option( 'time_format', 'g a' ),
+			'done_allday_label'      => false,
+			'done_grid'              => false
 		);
 		return apply_filters( 'ai1ec_get_oneday_view', $ai1ec_view_helper->get_theme_view( 'oneday.php', $view_args ), $view_args );
 	}
@@ -388,7 +392,8 @@ class Ai1ec_Calendar_Controller {
  	{
 		global $ai1ec_view_helper,
 		       $ai1ec_events_helper,
-		       $ai1ec_calendar_helper;
+		       $ai1ec_calendar_helper,
+		       $ai1ec_settings;
 
 		$defaults = array(
 			'week_offset'   => 0,
@@ -415,17 +420,18 @@ class Ai1ec_Calendar_Controller {
 			array( 'cat_ids' => $categories, 'cat_ids' => $tags, 'post_ids' => $post_ids ) );
 		$pagination_links = $ai1ec_calendar_helper->get_week_pagination_links( $week_offset );
 
-		/* translators: "%s" represents the week's starting date */
+		// Translators: "%s" below represents the week's start date.
 		$view_args = array(
-			'title'             => sprintf( __( 'Week of %s', AI1EC_PLUGIN_NAME ), date_i18n( __( 'F j', AI1EC_PLUGIN_NAME ), $timestamp, true ) ),
-			'cell_array'        => $cell_array,
-			'now_top'           => $bits['hours'] * 60 + $bits['minutes'],
-			'pagination_links'  => $pagination_links,
-			'active_event'      => $active_event,
-			'post_ids'          => join( ',', $post_ids ),
-			'time_format'       => get_option( 'time_format', 'g a' ),
-			'done_allday_label' => false,
-			'done_grid'         => false
+			'title'                  => sprintf( __( 'Week of %s', AI1EC_PLUGIN_NAME ), date_i18n( __( 'F j', AI1EC_PLUGIN_NAME ), $timestamp, true ) ),
+			'cell_array'             => $cell_array,
+			'show_location_in_title' => $ai1ec_settings->show_location_in_title,
+			'now_top'                => $bits['hours'] * 60 + $bits['minutes'],
+			'pagination_links'       => $pagination_links,
+			'active_event'           => $active_event,
+			'post_ids'               => join( ',', $post_ids ),
+			'time_format'            => get_option( 'time_format', 'g a' ),
+			'done_allday_label'      => false,
+			'done_grid'              => false
 		);
 		return apply_filters( 'ai1ec_get_week_view', $ai1ec_view_helper->get_theme_view( 'week.php', $view_args ), $view_args );
 	}
@@ -474,13 +480,15 @@ class Ai1ec_Calendar_Controller {
 
 		// Incorporate offset into date
 		$args = array(
-			'title'             => __( 'Agenda', AI1EC_PLUGIN_NAME ),
-			'dates'             => $dates,
-			'page_offset'       => $page_offset,
-			'pagination_links'  => $pagination_links,
-			'active_event'      => $active_event,
-			'expanded'          => $ai1ec_settings->agenda_events_expanded,
-			'post_ids'          => join( ',', $post_ids )
+			'title'                  => __( 'Agenda', AI1EC_PLUGIN_NAME ),
+			'dates'                  => $dates,
+			'show_location_in_title' => $ai1ec_settings->show_location_in_title,
+			'show_year_in_agenda_dates' => $ai1ec_settings->show_year_in_agenda_dates,
+			'page_offset'            => $page_offset,
+			'pagination_links'       => $pagination_links,
+			'active_event'           => $active_event,
+			'expanded'               => $ai1ec_settings->agenda_events_expanded,
+			'post_ids'               => join( ',', $post_ids )
 		);
 		return apply_filters( 'ai1ec_get_agenda_view', $ai1ec_view_helper->get_theme_view( 'agenda.php', $args ), $args );
 	}

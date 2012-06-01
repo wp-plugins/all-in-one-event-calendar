@@ -683,42 +683,60 @@ class Ai1ec_App_Helper {
 		       $plugin_page,
 		       $ai1ec_themes_controller;
 
+		// No themes available notice.
 		if( ! $ai1ec_themes_controller->are_themes_available() ) {
 			$args = array(
 				'label'  => 'All-in-One Calendar Notice',
 				'msg'    => sprintf(
-					__( '<p><strong>Calendar Themes are not installed.</strong></p>' .
-					'<p>Our automated install couldn\'t install your themes automatically. ' .
-					'You will need to install calendar themes manually by following these steps:</p>' .
-					'<ol><li>Go to <strong>%s</strong>.</li>' .
-					'<li>Copy the <strong>%s</strong> folder to the clipboard.</li>' .
-					'<li>Go to <strong>%s</strong>.</li>' .
-					'<li>Paste the <strong>%s</strong> folder that you copied to the clipboard in step 2.</li>' .
-					'<li>Refresh this page and if this notice is gone, themes are installed.</li></ol>', AI1EC_PLUGIN_NAME ),
+					__( '<p><strong>Core calendar files are not installed.</strong></p>' .
+					'<p>Our automated install couldn\'t install certain core files automatically. ' .
+					'You will need to install these files manually by following these steps:</p>' .
+					'<ol><li>Gain access to your WordPress files. Either direct filesystem access or FTP access is fine.</li>' .
+					'<li>Navigate to the <strong>%s</strong> folder.</li>' .
+					'<li>Copy the <strong>%s</strong> folder and all of its contents into the <strong>%s</strong> folder.</li>' .
+					'<li>You should now have a folder named <strong>%s</strong> containing all the same files and sub-folders as <strong>%s</strong> does.</li>' .
+					'<li>Refresh this page and if this notice is gone, the core files are installed.</li></ol>', AI1EC_PLUGIN_NAME ),
 					AI1EC_PATH,
 					AI1EC_THEMES_FOLDER,
 					WP_CONTENT_DIR,
-					AI1EC_THEMES_FOLDER )
+					WP_CONTENT_DIR . '/' . AI1EC_THEMES_FOLDER,
+					AI1EC_PATH . '/' . AI1EC_THEMES_FOLDER )
 			);
 			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
 		}
-		/*
+
+		// Outdated themes notice (on all pages except update themes page).
+		if ( $plugin_page != AI1EC_PLUGIN_NAME . '-update-themes' && $ai1ec_themes_controller->are_themes_outdated() ) {
+			$args = array(
+				'label' => 'All-in-One Calendar Notice',
+				'msg' => sprintf(
+					__( '<p><strong>Core calendar files are out of date.</strong> ' .
+					'We have found updates for some of your core calendar files and you should update them now to ensure proper functioning of your calendar.</p>' .
+					'<p><strong>Warning:</strong> If you have previously modified any core calendar files, ' .
+					'your changes may be lost during update. Please make a backup of all modifications before proceeding.</p>' .
+					'<p>Once you are ready, please <a href="%s">update your core calendar files</a>.</p>', AI1EC_PLUGIN_NAME ),
+					admin_url( AI1EC_UPDATE_THEMES_BASE_URL )
+				),
+			);
+			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
+		}
+
 		if( $ai1ec_settings->show_data_notification ) {
 			$args = array(
 				'label'  => 'All-in-One Calendar Notice',
 				'msg'    =>
 					sprintf(
-						__( '<p>We collect some basic information about how your calendar works in order to deliver a better ' .
+						__( '<p>We would like to collect some basic information about how your calendar works in order to deliver a better ' .
 						'and faster calendar system and one that will help you promote your events even more.</p>' .
 						'<p>You can find more detailed information by <a href="%s" target="_blank">clicking here &raquo;</a></p>' .
-						'<p>You may opt out of sending data to us by unchecking &quot;Allow Then.ly to collect statistics&quot; checkbox located on plugin\'s <a href="%s">Settings page</a>.</p>', AI1EC_PLUGIN_NAME ),
+						'<p>You may opt in of sending data to us by checking &quot;Allow Then.ly to collect statistics&quot; checkbox located on plugin\'s <a href="%s">Settings page</a>.</p>', AI1EC_PLUGIN_NAME ),
 						'http://then.ly/all-in-one-event-calendar-privacy-policy/',
 						admin_url( AI1EC_SETTINGS_BASE_URL )
 					),
 				'button' => (object) array( 'class' => 'ai1ec-dismiss-notification', 'value' => 'Dismiss' ),
 			);
 			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
-		}*/
+		}
 
 		// If calendar page ID has not been set, and we're not updating the settings
 		// page, the calendar is not properly set up yet.
@@ -728,7 +746,7 @@ class Ai1ec_App_Helper {
 
 			// Display messages for blog admin.
 			if( current_user_can( 'manage_ai1ec_options' ) ) {
-				// If not on the settings page already, direct user there.
+				// If on the settings page, instruct user as to what to do.
 				if( $plugin_page == AI1EC_PLUGIN_NAME . '-settings' ) {
 					if( ! $ai1ec_settings->calendar_page_id ) {
 						$messages[] = __( 'Select an option in the <strong>Calendar page</strong> dropdown list.', AI1EC_PLUGIN_NAME );
@@ -738,7 +756,7 @@ class Ai1ec_App_Helper {
 					}
 					$messages[] = __( 'Click <strong>Update Settings</strong>.', AI1EC_PLUGIN_NAME );
 				}
-				// Else instruct user as to what to do on the settings page.
+				// Else, not on the settings page, so direct user there.
 				else {
 					$messages[] = sprintf(
 						__( 'The plugin is installed, but has not been configured. <a href="%s">Click here to set it up now &raquo;</a>', AI1EC_PLUGIN_NAME ),

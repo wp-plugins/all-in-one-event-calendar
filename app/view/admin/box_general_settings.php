@@ -30,6 +30,18 @@
 </label>
 <br class="clear" />
 
+<label for="show_year_in_agenda_dates">
+<input class="checkbox" name="show_year_in_agenda_dates" id="show_year_in_agenda_dates" type="checkbox" value="1" <?php echo $show_year_in_agenda_dates ?> />
+<?php _e( '<strong>Show year</strong> in agenda date labels', AI1EC_PLUGIN_NAME ) ?>
+</label>
+<br class="clear" />
+
+<label for="show_location_in_title">
+<input class="checkbox" name="show_location_in_title" id="show_location_in_title" type="checkbox" value="1" <?php echo $show_location_in_title ?> />
+<?php _e( '<strong>Show location in event titles</strong> in calendar views', AI1EC_PLUGIN_NAME ) ?>
+</label>
+<br class="clear" />
+
 <label for="exclude_from_search">
 <input class="checkbox" name="exclude_from_search" id="exclude_from_search" type="checkbox" value="1" <?php echo $exclude_from_search ?> />
 <?php _e( '<strong>Exclude</strong> events from search results', AI1EC_PLUGIN_NAME ) ?>
@@ -94,7 +106,7 @@
 
 <label for="allow_statistics">
 <input class="checkbox" name="allow_statistics" id="allow_statistics" type="checkbox" value="1" <?php echo $allow_statistics ?> />
-<?php _e( 'Allow The Seed to collect calendar statistics', AI1EC_PLUGIN_NAME ) ?>
+<?php _e( 'Allow Then.ly to collect calendar statistics', AI1EC_PLUGIN_NAME ) ?>
 </label>
 <br class="clear" />
 

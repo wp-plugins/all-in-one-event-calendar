@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LESSC="lessc --yui-compress --include-path=."
+LESSC="lessc --include-path=."
 
 if which -s lessc; then
 	$LESSC general.less > ../css/general.css

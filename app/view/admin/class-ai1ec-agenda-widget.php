@@ -202,6 +202,8 @@ class Ai1ec_Agenda_Widget extends WP_Widget {
 		$args['show_subscribe_buttons'] = $instance['show_subscribe_buttons'];
 		$args['show_calendar_button']   = $instance['show_calendar_button'];
 		$args['dates']                  = $dates;
+		$args['show_location_in_title'] = $ai1ec_settings->show_location_in_title;
+		$args['show_year_in_agenda_dates'] = $ai1ec_settings->show_year_in_agenda_dates;
 		$args['calendar_url']           = $ai1ec_calendar_helper->get_calendar_url( null, $limit );
 		$args['subscribe_url']          = AI1EC_EXPORT_URL . $subscribe_filter;
 

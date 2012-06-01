@@ -42,14 +42,18 @@
 
 							<div class="ai1ec-day">
 								<div class="ai1ec-date"><?php echo $day['date'] ?></div>
-								<?php foreach( $day['events'] as $event ): ?>
+								<?php foreach ( $day['events'] as $event ): ?>
 									<a href="<?php echo esc_attr( get_permalink( $event->post_id ) ) . $event->instance_id ?>"
-										<?php if( $event->multiday ) echo 'end-date="' . $event->multiday_end_date . '"'; ?>
+										<?php if( $event->multiday ) : ?>
+											data-end-day="<?php echo $event->multiday_end_day; ?>"
+											data-start-truncated="<?php echo $event->start_truncated ? 'true' : 'false'; ?>"
+											data-end-truncated="<?php echo $event->end_truncated ? 'true' : 'false'; ?>"
+										<?php endif; ?>
 										class="ai1ec-event-container
 											ai1ec-event-id-<?php echo $event->post_id ?>
 											ai1ec-event-instance-id-<?php echo $event->instance_id ?>
-											<?php if( $event->allday ) echo 'ai1ec-allday' ?>
-											<?php if( $event->multiday ) echo 'ai1ec-multiday' ?>">
+											<?php if ( $event->allday ) echo 'ai1ec-allday' ?>
+											<?php if ( $event->multiday ) echo 'ai1ec-multiday' ?>">
 
 										<?php // Insert post ID for use by JavaScript filtering later ?>
 										<input type="hidden" class="ai1ec-post-id" value="<?php echo $event->post_id ?>" />
@@ -76,6 +80,9 @@
 												    <?php $read_more = strlen( apply_filters( 'the_title', $event->post->post_title ) ) > 35 ? '...' : '' ?>
                             <?php echo esc_html( substr( apply_filters( 'the_title', $event->post->post_title ), 0, 35 ) . $read_more );  ?>
 												  <?php endif; ?>
+													<?php if ( $show_location_in_title && isset( $event->venue ) && $event->venue != '' ): ?>
+														<span class="ai1ec-event-location"><?php echo esc_html( sprintf( __( '@ %s', AI1EC_PLUGIN_NAME ), $event->venue ) ); ?></span>
+													<?php endif; ?>
 												</span>
 												<?php if( $event->allday ): ?>
 													<small><?php esc_html_e( '(all-day)', AI1EC_PLUGIN_NAME ) ?></small>

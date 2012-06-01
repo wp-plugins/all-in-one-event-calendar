@@ -1,10 +1,10 @@
-/**
- * @file
- *
- * CSS declarations for all parts of a WordPress site in which the All-in-One
- * Calendar plugin is active. Mostly the bare minimum required for proper
- * styling of widgets.
- */
+//
+// @file
+//
+// CSS declarations for all parts of a WordPress site in which the All-in-One
+// Calendar plugin is active. Mostly the bare minimum required for proper
+// styling of widgets.
+//
 
 // ======================
 // = Variables & mixins =
@@ -50,7 +50,6 @@
   font-size: @baseFontSize;
   line-height: @baseLineHeight;
   color: @textColor;
-  background-color: @bodyBackground;
 
   // Tweaks to info-styled buttons.
   .btn-info,
@@ -254,6 +253,14 @@
   .ai1ec-weekday {
     font-size: 0.9em !important;
     line-height: 1.5em;
+  }
+  .ai1ec-year {
+    color: @agendaDateTitleMonthText;
+    background: @agendaDateTitleBorder;
+    font-size: 0.8em !important;
+    letter-spacing: 0.15em;
+    padding: 0 0.1em;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
   }
 
   // Agenda widget view events.

@@ -122,8 +122,17 @@ class Ai1ec_View_Helper {
 
 		if( $file_found === false ) {
 			throw new Ai1ec_File_Not_Found( "The specified file '" . $file . "' doesn't exist." );
-		} else {
-			wp_enqueue_script( $name, $file, $deps, AI1EC_VERSION, $in_footer );
+		}
+		else {
+			// Append core themes version to version string to make sure recently
+			// updated files are used.
+			wp_enqueue_script(
+				$name,
+				$file,
+				$deps,
+				AI1EC_VERSION . '-' . get_option( 'ai1ec_themes_version', 1 ),
+				$in_footer
+			);
 		}
 	}
 
@@ -195,8 +204,16 @@ class Ai1ec_View_Helper {
 
 		if( $file_found === false ) {
 			throw new Ai1ec_File_Not_Found( "The specified file '" . $file . "' doesn't exist." );
-		} else {
-			wp_enqueue_style( $name, $file, $deps, AI1EC_VERSION );
+		}
+		else {
+			// Append core themes version to version string to make sure recently
+			// updated files are used.
+			wp_enqueue_style(
+				$name,
+				$file,
+				$deps,
+				AI1EC_VERSION . '-' . get_option( 'ai1ec_themes_version', 1 )
+			);
 		}
 	}
 

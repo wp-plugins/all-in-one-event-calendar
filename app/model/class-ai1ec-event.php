@@ -435,6 +435,9 @@ class Ai1ec_Event {
 			case 'uid':
 				return $this->post_id . '@' . bloginfo( 'url' );
 
+			// ==================================
+			// = Month view multiday properties =
+			// ==================================
 			case "multiday":
 				return (
 					$ai1ec_events_helper->get_long_date( $this->start )
@@ -442,8 +445,8 @@ class Ai1ec_Event {
 					$ai1ec_events_helper->get_long_date( $this->end - 1 )
 				);
 
-			case "multiday_end_date":
-				return $ai1ec_events_helper->get_multiday_end_date( $this->end - 1 );
+			case "multiday_end_day":
+				return $ai1ec_events_helper->get_multiday_end_day( $this->end - 1 );
 
 			// ========================
 			// = Get short-form dates =

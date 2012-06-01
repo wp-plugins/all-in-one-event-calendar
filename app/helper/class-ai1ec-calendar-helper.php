@@ -68,16 +68,15 @@ class Ai1ec_Calendar_Helper {
 		$bits = $ai1ec_events_helper->gmgetdate( $time );
 		$last_day = gmdate( 't', $time );
 
-		$start_time = gmmktime( 0, 0, 0, $bits['mon'], 1, $bits['year'] );
-		$end_time   = gmmktime( 0, 0, 0, $bits['mon'], $last_day + 1, $bits['year'] );
+		$start_time = $the_first = gmmktime( 0, 0, 0, $bits['mon'], 1, $bits['year'] );
+		$end_time   = $the_last = gmmktime( 0, 0, 0, $bits['mon'], $last_day + 1, $bits['year'] );
 
-		$month_events = $this->get_events_between( $start_time, $end_time, $filter );
+		$month_events = $this->get_events_between( $start_time, $end_time, $filter, TRUE );
 
 		// ==========================================
 		// = Iterate through each date of the month =
 		// ==========================================
-		for( $day = 1; $day <= $last_day; $day++ )
-		{
+		for ( $day = 1; $day <= $last_day; $day++ ) {
 			$start_time = gmmktime( 0, 0, 0, $bits['mon'], $day, $bits['year'] );
 			$end_time = gmmktime( 0, 0, 0, $bits['mon'], $day + 1, $bits['year'] );
 
@@ -85,15 +84,33 @@ class Ai1ec_Calendar_Helper {
 			$_events = array();
 			$_allday_events = array();
 			$_multiday_events = array();
-			foreach( $month_events as $event ) {
+			foreach ( $month_events as $event ) {
 				$event_start = $ai1ec_events_helper->gmt_to_local( $event->start );
-				if( $event_start >= $start_time && $event_start < $end_time ) {
-					if( $event->allday )
+				$event_end = $ai1ec_events_helper->gmt_to_local( $event->end );
+				// Add this event if:
+				// 1. we are populating the 1st & this event starts before the 1st, or
+				// 2. this event starts on the currently populated day
+				if ( $day == 1 && $event_start < $the_first ||
+				     $event_start >= $start_time && $event_start < $end_time ) {
+					// Set multiday properties. TODO: Should these be made event object
+					// properties? They probably shouldn't be saved to the DB, so I'm not
+					// sure. Just creating properties dynamically for now.
+					if ( $event_start < $the_first ) {
+						$event->start_truncated = TRUE;
+					}
+					if ( $event_end >= $the_last ) {
+						$event->end_truncated = TRUE;
+					}
+					// Categorize event.
+					if ( $event->allday ) {
 						$_allday_events[] = $event;
-					elseif ($event->multiday)
+					}
+					elseif ( $event->multiday ) {
 						$_multiday_events[] = $event;
-					else
+					}
+					else {
 						$_events[] = $event;
+					}
 				}
 			}
 

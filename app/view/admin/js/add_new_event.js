@@ -535,41 +535,6 @@ jQuery( function( $ ){
 			}
 		});
 
-		// Hide / Show the coordinates table when clicking the checkbox
-		$( '#ai1ec_input_coordinates' ).change( function() {
-			// If the checkbox is checked
-			if( this.checked === true ) {
-				$( '#ai1ec_table_coordinates' ).css( { visibility : 'visible' } );
-			} else {
-				// Hide the table
-				$( '#ai1ec_table_coordinates' ).css( { visibility : 'hidden' } );
-				// Erase the input fields
-				$( '#ai1ec_table_coordinates input' ).val( '' );
-				// Clean up error messages
-				$( 'div.ai1ec-error' ).remove();
-			}
-		});
-		// Validate the coordinates when clicking Publish
-		$( '#publish' ).click( function( e ) {
-			if ( ai1ec_check_lat_long_fields_filled_when_publishing_event( e ) === true ) {
-				// Convert commas to dots
-				ai1ec_convert_commas_to_dots_for_coordinates();
-				// Check that fields are ok and there are no errors
-				ai1ec_check_lat_long_ok_for_search( e );
-			}
-		});
-
-		$( 'input.coordinates' ).blur ( function( e ) {
-			// Convert commas to dots
-			ai1ec_convert_commas_to_dots_for_coordinates();
-			// Check if the coordinates are valid.
-			var valid = ai1ec_check_lat_long_ok_for_search( e );
-			// If they are valid, update the map.
-			if( valid === true ) {
-				ai1ec_update_map_from_coordinates();
-			}
-		});
-
 		ai1ec_selector( '#ai1ec_weekly_date_select' );
 		ai1ec_selector( '#ai1ec_montly_date_select' );
 		ai1ec_selector( '#ai1ec_yearly_date_select' );

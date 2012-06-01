@@ -93,7 +93,9 @@ class Ai1ec_Themes_Controller {
   }
 
 	/**
-	 * are_themes_available function
+	 * Returns whether core theme files were able to be copied over to wp-content.
+	 * Checks if they are already there, and if they are not, tries to copy them
+	 * over. If they can't be copied, returns false.
 	 *
 	 * @return bool
 	 **/
@@ -111,8 +113,27 @@ class Ai1ec_Themes_Controller {
 
 			if( @is_dir( AI1EC_THEMES_ROOT ) === false || @is_dir( AI1EC_DEFAULT_THEME_PATH ) === false )
 				return false;
+
+			// Update installed core themes version.
+			update_option( 'ai1ec_themes_version', AI1EC_THEMES_VERSION );
 		}
 		return true;
+	}
+
+	/**
+	 * Returns whether core theme files need to be updated (only if core theme
+	 * files exist in the first place, checked using above function).
+	 *
+	 * @return bool
+	 */
+	public function are_themes_outdated() {
+		if ( ! $this->are_themes_available() ) {
+			return FALSE;
+		}
+		if ( get_option( 'ai1ec_themes_version', 1 ) >= AI1EC_THEMES_VERSION ) {
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 	/**
@@ -140,6 +161,104 @@ class Ai1ec_Themes_Controller {
 		} else {
 			copy( $source, $destination );
 		}
+	}
+
+
+	/**
+	 * Register Update Calendar Themes page in wp-admin.
+	 */
+	function register_theme_updater() {
+		// Add menu item for theme update page, but without the actual menu item
+		// by removing it again right away.
+		add_submenu_page(
+			'themes.php',
+			__( 'Update Core Calendar Files', AI1EC_PLUGIN_NAME ),
+			__( 'Update Core Calendar Files', AI1EC_PLUGIN_NAME ),
+			'install_themes',
+			AI1EC_PLUGIN_NAME . '-update-themes',
+			array( &$this, 'update_core_themes' )
+		);
+		remove_submenu_page( 'themes.php', AI1EC_PLUGIN_NAME . '-update-themes' );
+	}
+
+	/**
+	 * Called by the Update Calendar Themes page. Updates core themes with any
+	 * files that have changed since the last time a theme update has run.
+	 */
+	function update_core_themes() {
+		global $ai1ec_view_helper;
+
+		$src_dir = trailingslashit( AI1EC_PATH . '/' . AI1EC_THEMES_FOLDER . '/' );
+		$dest_dir = trailingslashit( AI1EC_THEMES_ROOT . '/' );
+
+		// Get previous version of core themes.
+		$active_version = get_option( 'ai1ec_themes_version', 1 );
+
+		$files = array();
+		if ( $active_version < 2 ) {
+			// Copy over files updated between AI1EC 1.6 and 1.7 RC1
+			$files[] = 'vortex/agenda.php';
+			$files[] = 'vortex/agenda-widget.php';
+			$files[] = 'vortex/js/bootstrap-dropdown.js';
+			$files[] = 'vortex/js/bootstrap-tooltip.js';
+			$files[] = 'vortex/js/general.min.js';
+			$files[] = 'vortex/css/calendar.css';
+			$files[] = 'vortex/css/event.css';
+			$files[] = 'vortex/css/general.css';
+			$files[] = 'vortex/css/print.css';
+			$files[] = 'vortex/less/build-css.sh';
+			$files[] = 'vortex/less/calendar.less';
+			$files[] = 'vortex/less/event.less';
+			$files[] = 'vortex/less/general.less';
+			$files[] = 'vortex/less/mixins-custom.less';
+			$files[] = 'vortex/less/variables.less';
+			$files[] = 'vortex/month.php';
+			$files[] = 'vortex/oneday.php';
+			$files[] = 'vortex/style.css';
+			$files[] = 'vortex/week.php';
+		}
+
+		if ( $active_version < 3 ) {
+			// Copy over files updated between AI1EC 1.7 RC1 and AI1EC 1.7 RC2
+			$files[] = 'vortex/js/calendar.min.js';
+			$files[] = 'vortex/js/calendar.js';
+		}
+
+		if ( $active_version < 4 ) {
+			// Copy over files updated between AI1EC 1.7 RC2 and AI1EC 1.7 RC3
+			$files[] = 'vortex/js/calendar.min.js';
+			$files[] = 'vortex/js/calendar.js';
+		}
+
+		// Remove duplicates.
+		$files = array_unique( $files );
+
+		$errors = array();
+		foreach ( $files as $file ) {
+			if ( ! copy( $src_dir . $file, $dest_dir . $file ) ) {
+				$errors[] = sprintf(
+					__( '<div class="error"><p><strong>There was an error updating one of the files.</strong> Please FTP to your web server and manually copy <pre>%s</pre> to <pre>%s</pre></p></div>', AI1EC_PLUGIN_NAME ),
+					$src_dir . $file,
+					$dest_dir . $file
+				);
+			}
+		}
+
+		update_option( 'ai1ec_themes_version', AI1EC_THEMES_VERSION );
+
+		if ( $errors ) {
+			$msg = __( '<div id="message" class="error"><h3>Errors occurred while we tried to update your core calendar files.</h3><p><strong>Please follow any instructions listed below or your calendar may malfunction:</strong></p></div>', AI1EC_PLUGIN_NAME );
+		}
+		else {
+			$msg = __( '<div id="message" class="updated"><h3>Your core calendar files were updated successfully.</h3></div>', AI1EC_PLUGIN_NAME );
+		}
+
+		$args = array(
+			'msg' => $msg,
+			'errors' => $errors,
+		);
+
+		$ai1ec_view_helper->display_admin( 'themes-updated.php', $args );
 	}
 
   /**
