@@ -46,8 +46,8 @@ if ( ! jQuery.fn.tooltip ) {
         if (this.options.trigger != 'manual') {
           eventIn  = this.options.trigger == 'hover' ? 'mouseenter' : 'focus'
           eventOut = this.options.trigger == 'hover' ? 'mouseleave' : 'blur'
-          this.$element.on(eventIn, this.options.selector, $.proxy(this.enter, this))
-          this.$element.on(eventOut, this.options.selector, $.proxy(this.leave, this))
+          this.$element.delegate(this.options.selector, eventIn, $.proxy(this.enter, this))
+          this.$element.delegate(this.options.selector, eventOut, $.proxy(this.leave, this))
         }
 
         this.options.selector ?

@@ -939,9 +939,7 @@ class Ai1ec_Events_Helper {
 	}
 
 	/**
-	 * get_multiday_end_date function
-	 *
-	 * Format a date for use in JS functions to extend multiday bars;
+	 * Return the  for use in JS functions to extend multiday bars;
 	 * this is also converted to the local timezone.
 	 *
 	 * @param int $timestamp
@@ -949,10 +947,10 @@ class Ai1ec_Events_Helper {
 	 *
 	 * @return string
 	 **/
-	function get_multiday_end_date( $timestamp, $convert_from_gmt = true ) {
+	function get_multiday_end_day( $timestamp, $convert_from_gmt = true ) {
 		if( $convert_from_gmt )
 			$timestamp = $this->gmt_to_local( $timestamp );
-		return date_i18n( 'F Y d', $timestamp, true );
+		return date_i18n( 'd', $timestamp, true );
 	}
 
 	/**
@@ -1548,7 +1546,7 @@ class Ai1ec_Events_Helper {
 			// convert to timestamp
 			$_exdate = strtotime( $_exdate );
 			if( $to_gmt ) {
-				$_exdate = $this->gmt_to_local( $_exdate );
+				$_exdate = $this->local_to_gmt( $_exdate );
 			} else {
 				$_exdate = $this->gmt_to_local( $_exdate );
 			}

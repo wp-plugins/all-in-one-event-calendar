@@ -242,6 +242,20 @@ class Ai1ec_Settings {
 	var $disable_autocompletion;
 
 	/**
+	 * Show location name in event title in various calendar views.
+	 *
+	 * @var bool
+	 */
+	var $show_location_in_title;
+
+	/**
+	 * Show year in agenda date labels.
+	 *
+	 * @var bool
+	 */
+	var $show_year_in_agenda_dates;
+
+	/**
 	 * __construct function
 	 *
 	 * Default constructor
@@ -260,6 +274,11 @@ class Ai1ec_Settings {
 	static function get_instance()
  	{
 		if( self::$_instance === NULL ) {
+			// if W3TC is enabled, we have to empty the cache
+			// before requesting it
+			if( defined( 'W3TC' ) ) {
+				wp_cache_delete( 'alloptions', 'options' );
+			}
 			// get the settings from the database
 			self::$_instance = get_option( 'ai1ec_settings' );
 
@@ -322,8 +341,10 @@ class Ai1ec_Settings {
 			'timezone'                      => get_option( 'timezone_string' ),
 			'geo_region_biasing'            => FALSE,
 			'show_data_notification'        => TRUE,
-      'allow_statistics'              => FALSE,
+      'allow_statistics'              => FALSE, // stats are opt-in
 			'disable_autocompletion'        => FALSE,
+			'show_location_in_title'        => TRUE,
+			'show_year_in_agenda_dates'     => FALSE,
 		);
 
 		foreach( $defaults as $key => $default ) {
@@ -370,7 +391,9 @@ class Ai1ec_Settings {
           'input_24h_time',
           'geo_region_biasing',
           'allow_statistics',
-          'disable_autocompletion'
+          'disable_autocompletion',
+          'show_location_in_title',
+          'show_year_in_agenda_dates',
         );
 
         // Assign parameters to settings.

@@ -114,6 +114,8 @@ jQuery( document ).ready( function( $ ) {
 
 	/**
 	 * Load a calendar view represented by the given hash value.
+	 *
+	 * @param {string} hash The hash string requesting a calendar view
 	 */
 	function load_view( hash ) {
 
@@ -347,7 +349,7 @@ jQuery( document ).ready( function( $ ) {
 					});
 					for ( var i = addDropdownContainer; i < $events.length; i++ ) {
 						// Need to reset styles for events in dropdown.
-						revert_multiday_bar( $events[i] )
+						revert_multiday_bar( $events[i] );
 
 						// Add an arrow for multiday events.
 						if ( $( $events[i] ).hasClass( "ai1ec-multiday" ) ) {
@@ -395,7 +397,7 @@ jQuery( document ).ready( function( $ ) {
 	// *** Month view ***
 
 	/**
-	 * Extends day bars for multiday intervals
+	 * Extends day bars for multiday events.
 	 */
 	function extend_multiday_events() {
 
@@ -403,25 +405,22 @@ jQuery( document ).ready( function( $ ) {
 		revert_multiday_events();
 
 		var $days = $('.ai1ec-day');
-		$('.ai1ec-month-view .ai1ec-multiday:visible').each(function() {
+		$('.ai1ec-month-view .ai1ec-multiday:visible').each( function() {
 			var container = this.parentNode;
 
 			var elHeight = $(this).outerHeight( true );
 			var elWidth = $(container).width() + 1;
 
-			var $elTitle = $(".ai1ec-event-title", this).first();
+			var $elTitle = $( '.ai1ec-event-title', this ).first();
 
-			var endDate = this.getAttribute("end-date");
-			var endDay = endDate.split(/ /)[2];
-			var endMonthYear = endDate.substr(0, endDate.lastIndexOf(" "));
+			var endDay = $(this).data( 'endDay' );
 
-			var $startEl = $(".ai1ec-date", container);
+			var $startEl = $( '.ai1ec-date', container );
 			var startDay = $startEl.html();
 
-			var nextMonthBar = false;
-			if (endMonthYear != $(".ai1ec-calendar-title").html()) {
-				endDay = $(".ai1ec-date", $days[$days.length-1]).html();
-				nextMonthBar = true;
+			var nextMonthBar = $( this ).data( 'endTruncated' );
+			if ( nextMonthBar ) {
+				endDay = $( '.ai1ec-date', $days[$days.length - 1] ).html();
 			}
 
 			var $evtContainer = $(this);
@@ -431,80 +430,98 @@ jQuery( document ).ready( function( $ ) {
 			var daysLeft = deltaDays;
 			var lineWidth = 0;
 
-			$(this).css("width", 0);
-
-			$days.each( function(i) {
-				var $dayEl = $( ".ai1ec-date", this );
+			$days.each( function( i ) {
+				var $dayEl = $( '.ai1ec-date', this );
 				var $td = $( this.parentNode );
 				cellNum = $td.index();
 
-				if ( parseInt( $dayEl.html() ) >= startDay &&
-					 parseInt( $dayEl.html() ) <= endDay ) {
+				var day = parseInt( $dayEl.html() );
+				if ( day >= startDay && day <= endDay ) {
 
-					if ( parseInt( $dayEl.html() ) == startDay ) {
-						marginSize = parseInt( $dayEl.css("marginBottom") ) + 16;
+					if ( day == startDay ) {
+						marginSize = parseInt( $dayEl.css( 'marginBottom' ) ) + 16;
 					}
 					if ( cellNum != 0 ) {
+						// Extend initial event bar to the end of first (!) week.
+						if ( curLine == 0 ) {
 							lineWidth = $td.offset().left + $td.width() - $(container).offset().left;
-					} else {
-						if ( parseInt( $dayEl.html() ) > startDay && daysLeft != 0 ) {
-							var $block = $evtContainer.clone(false);
-							$dayEl.parent().append($block);
-
-							$block.addClass("ai1ec-multiday-bar");
-
-							$block
-								.css({
-									position: "absolute",
-									left: '1px',
-									top: parseInt($dayEl.css("marginBottom")) + 13, // line height is 16px - 3px of initial margin
-									backgroundColor: bgColor
-								});
-
-							var j = ( daysLeft > 7 ? i + 7 - 1 : i + daysLeft - 1 );
-							var w = ( $( $days[j] ).offset().left + $( $days[j] ).width() - $($days[j].parentNode.parentNode).offset().left);
-
-							$block.css( "width", w - 1 );
-
-							if ( daysLeft > 1 ) {
-								$block.append( create_multiday_arrow( 1, bgColor ));
-							}
-
-							$block.append( create_multiday_arrow( 2, bgColor ));
-							curLine++;
 						}
+					}
+					else if ( day > startDay && daysLeft != 0 ) {
+						var $block = $evtContainer.clone(false);
+						$dayEl.parent().append($block);
+
+						// Create a new spanning multiday bar. "ai1ec-multiday-bar" is used
+						// for proper styling, while "ai1ec-multiday-clone" identifies the
+						// clones so they can be removed when required.
+						$block.addClass( 'ai1ec-multiday-bar ai1ec-multiday-clone' );
+
+						$block
+							.css({
+								position: "absolute",
+								left: '1px',
+								top: parseInt( $dayEl.css( 'marginBottom' ) ) + 13, // line height is 16px - 3px of initial margin
+								backgroundColor: bgColor
+							});
+
+						var j = ( daysLeft > 7 ? i + 7 - 1 : i + daysLeft - 1 );
+						var w = ( $( $days[j] ).offset().left + $( $days[j] ).width() - $($days[j].parentNode.parentNode).offset().left);
+
+						$block.css( 'width', w - 3 );
+
+						if ( daysLeft > 7 ) {
+							$block.append( create_multiday_arrow( 1, bgColor ));
+						}
+
+						$block.append( create_multiday_arrow( 2, bgColor ));
+						curLine++;
 					}
 
 					// Keep constant margin (number of bars) during the first row.
 					if ( curLine == 0 ) {
-						$dayEl.css({ "marginBottom": marginSize + "px" });
+						$dayEl.css({ 'marginBottom': marginSize + 'px' });
+					}
 					// But need to reset it and append margins from the begining for
 					// subsequent weeks.
-					} else {
-						$dayEl.css({ "marginBottom": "+=16px" });
+					else {
+						$dayEl.css({ 'marginBottom': '+=16px' });
 					}
-					// Adding "start arrow" to the end of multi-month bars.
-					if ( nextMonthBar ) {
-						$evtContainer.append( create_multiday_arrow( 1, bgColor ));
-					}
+
 					daysLeft--;
 				}
 			});
+			// Adding "start arrow" to the end of multi-month bars.
+			if ( nextMonthBar ) {
+				var $lastBarPiece = $( '.' + $evtContainer[0].className.replace( /\s+/igm, '.' ) ).last();
+				$lastBarPiece.append( create_multiday_arrow( 1, bgColor ));
+			}
+
 			$(this).css({
-				position: "absolute",
-				top: $startEl.outerHeight( true ) - elHeight - 1 + "px",
+				position: 'absolute',
+				top: $startEl.outerHeight( true ) - elHeight - 1 + 'px',
 				left: '1px',
-				width: lineWidth + "px"
+				width: lineWidth + 'px'
 			});
-			// Add an arrow to the initial bar for multi-week events.
+
+			// Add an ending arrow to the initial event bar for multi-week events.
 			if ( curLine > 0 ) {
 				$(this).append( create_multiday_arrow( 1, bgColor ) );
 			}
-		})
+			// Add a starting arrow to the initial event bar for events starting in
+			// previous month.
+			if ( $(this).data( 'startTruncated' ) ) {
+				$(this)
+					.append( create_multiday_arrow( 2, bgColor ) )
+					.addClass( 'ai1ec-multiday-bar' );
+			}
+		});
 	}
 
 	/**
 	 * Creates arrow for multiday bars.
+	 *
+	 * @param {int}    type  1 for ending arrow, 2 for starting arrow
+	 * @param {string} color Color of the multiday event
 	 */
 	function create_multiday_arrow( type, color ) {
 		var $arrow = $( '<div class="ai1ec-multiday-arrow' + type + '"></div>' );
@@ -521,28 +538,31 @@ jQuery( document ).ready( function( $ ) {
 	 * Reverts styling added for multiday bars. Needed to apply filters.
 	 */
 	function revert_multiday_events() {
-		$(".ai1ec-month-view .ai1ec-date").each(function() {
+		var $view = $( '.ai1ec-month-view' );
+		$( '.ai1ec-date', $view ).each(function() {
 			$(this).css({ marginBottom: "1px" });
 		});
 
-		$('.ai1ec-month-view .ai1ec-multiday-bar').remove();
-		$('.ai1ec-month-view .ai1ec-multiday-arrow1').remove();
-		$('.ai1ec-month-view .ai1ec-multiday-arrow2').remove();
+		$( '.ai1ec-multiday-clone', $view ).remove();
 
-		$('.ai1ec-month-view .ai1ec-multiday').each( function () {
-			revert_multiday_bar(this);
+		$( '.ai1ec-multiday', $view ).each( function() {
+			revert_multiday_bar( this );
 		});
 	}
 
-	function revert_multiday_bar(bar) {
+	/**
+	 * Reverts first multibar of a multiday event to its initial appearance.
+	 */
+	function revert_multiday_bar( bar ) {
 		$( bar ).css({
-				position: "relative",
-				left: "auto",
-			top: "auto",
-			width: "auto"
-		})
-		var weekBarsClassName = "."+bar.className.replace(/\s+/igm, ".") + ".ai1ec-multiday-bar"
-		$(weekBarsClassName).remove();
+			position: 'relative',
+			left: 'auto',
+			top: 'auto',
+			width: 'auto'
+		});
+
+		var weekBarsSelector = '.' + bar.className.replace( /\s+/igm, '.' ) + '.ai1ec-multiday-clone';
+		$( weekBarsSelector ).remove();
 
 		$( '.ai1ec-multiday-arrow1, ai1ec-multiday-arrow2', bar ).remove();
 	}
@@ -648,7 +668,7 @@ jQuery( document ).ready( function( $ ) {
 		// post IDs. Only include filter selectors that have a selection.
 		var selected_ids = new Array();
 
-		selected_cats =
+		var selected_cats =
 			$('.ai1ec-filters-container .ai1ec-dropdown.active + #ai1ec-selected-categories').val();
 		if( selected_cats ) {
 			selected_ids.push( selected_cats );
@@ -657,7 +677,7 @@ jQuery( document ).ready( function( $ ) {
 			selected_cats = '';
 		}
 
-		selected_tags =
+		var selected_tags =
 			$('.ai1ec-filters-container .ai1ec-dropdown.active + #ai1ec-selected-tags').val();
 		if( selected_tags ) {
 			selected_ids.push( selected_tags );
@@ -668,12 +688,13 @@ jQuery( document ).ready( function( $ ) {
 
 		selected_ids = selected_ids.join();
 
-		// Modify export URL
+		// Modify export URL.
 		var export_url = ai1ec_convert_entities( ai1ec_calendar.export_url );
 		if( selected_ids.length ) {
 			export_url += selected_cats + selected_tags;
 			$( '.ai1ec-subscribe-filtered' ).fadeIn( 'fast' );
-		} else {
+		}
+		else {
 			$( '.ai1ec-subscribe-filtered' ).fadeOut( 'fast' );
 		}
 		$( '.ai1ec-subscribe' ).attr( 'href', export_url );
@@ -726,8 +747,10 @@ jQuery( document ).ready( function( $ ) {
 					}
 				} );
 
-				// If there are multiday events in this view, stretch them out.
+				// If there are multiday events in this view, revert them and recreate
+				// them after filters have been applied.
 				if ( $('.ai1ec-month-view .ai1ec-multiday').length ) {
+					revert_multiday_events();
 					extend_multiday_events();
 				}
 			},
@@ -845,6 +868,7 @@ jQuery( document ).ready( function( $ ) {
 
 		// If in month view, extend multiday events.
 		if ( $('.ai1ec-month-view .ai1ec-multiday').length ) {
+			revert_multiday_events();
 			extend_multiday_events();
 		}
 
@@ -853,8 +877,12 @@ jQuery( document ).ready( function( $ ) {
 	}
 
 	// If there are preselected tag/cat IDs, update the filter UI.
-	if( $('#ai1ec-selected-categories').val() != '' ||
-			$('#ai1ec-selected-tags').val() != '' )
+	var selected_cats = $('#ai1ec-selected-categories').val(),
+	    selected_tags = $('#ai1ec-selected-tags').val();
+	if( typeof( selected_cats ) == 'string' && selected_cats != '' ||
+	    typeof( selected_tags ) == 'string' && selected_tags != '' ) {
 		update_filter_selectors();
+	}
+
 	initialize_view();
 } );

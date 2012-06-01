@@ -130,10 +130,34 @@ class Ai1ec_Importer_Helper {
 			{
 				$start = $e->getProperty( 'dtstart', 1, true );
 				$end   = $e->getProperty( 'dtend', 1, true );
-
-				// If end can't be found, check for duration property
-				if( empty( $end ) ) 
-    				$end = $e->getProperty( 'duration', 1, true, true );
+				// For cases where a "VEVENT" calendar component
+				// specifies a "DTSTART" property with a DATE value type but no
+				// "DTEND" nor "DURATION" property, the event's duration is taken to
+				// be one day.  For cases where a "VEVENT" calendar component
+				// specifies a "DTSTART" property with a DATE-TIME value type but no
+				// "DTEND" property, the event ends on the same calendar date and
+				// time of day specified by the "DTSTART" property.
+				if( empty( $end ) )  {
+					// #1 if duration is present, assign it to end time
+					$end = $e->getProperty( 'duration', 1, true, true );
+					if( empty( $end ) ) {
+						// #2 if only DATE value is set for start, set duration to 1 day
+						if( ! isset( $start['value']['hour'] ) ) {
+							$end = array( 
+								'year'  => $start['value']['year'], 
+								'month' => $start['value']['month'], 
+								'day'   => $start['value']['day'], 
+								'hour'  => 23, 
+								'min'   => 59, 
+								'sec'   => 59,
+								'tz'    => $start['value']['tz']
+							);
+						} else {
+							// #3 set end date to start time
+							$end = $start;
+						}
+					}
+				}
 
 				// Event is all-day if no time components are defined
 				$allday = ! isset( $start['value']['hour'] );

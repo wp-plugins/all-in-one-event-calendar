@@ -27,8 +27,8 @@ if ( ! jQuery.fn.dropdown ) {
 
     var toggle = '[data-toggle="dropdown"]'
       , Dropdown = function ( element ) {
-          var $el = $(element).on('click.dropdown.data-api', this.toggle)
-          $('html').on('click.dropdown.data-api', function () {
+          var $el = $(element).delegate(this.toggle, 'click.dropdown.data-api')
+          $('html').bind('click.dropdown.data-api', function () {
             $el.parent().removeClass('open')
           })
         }
@@ -85,8 +85,8 @@ if ( ! jQuery.fn.dropdown ) {
      * =================================== */
 
     $(function () {
-      $('html').on('click.dropdown.data-api', clearMenus)
-      $('body').on('click.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+      $('html').bind('click.dropdown.data-api', clearMenus)
+      $('body').delegate(toggle, 'click.dropdown.data-api', Dropdown.prototype.toggle)
     })
 
   }( window.jQuery );

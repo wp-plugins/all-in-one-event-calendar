@@ -340,6 +340,8 @@ class Ai1ec_Settings_Helper {
     $timezone_control               = $this->get_timezone_dropdown( $ai1ec_settings->timezone );
     $allow_statistics               = $ai1ec_settings->allow_statistics ? 'checked=checked' : '';
     $disable_autocompletion         = $ai1ec_settings->disable_autocompletion ? 'checked=checked' : '';
+    $show_location_in_title         = $ai1ec_settings->show_location_in_title ? 'checked=checked' : '';
+    $show_year_in_agenda_dates      = $ai1ec_settings->show_year_in_agenda_dates ? 'checked=checked' : '';
 
     $args = array(
       'calendar_page'                 => $calendar_page,
@@ -360,6 +362,8 @@ class Ai1ec_Settings_Helper {
       'geo_region_biasing'            => $geo_region_biasing,
       'allow_statistics'              => $allow_statistics,
       'disable_autocompletion'	      => $disable_autocompletion,
+      'show_location_in_title'	      => $show_location_in_title,
+      'show_year_in_agenda_dates'     => $show_year_in_agenda_dates,
     );
     $ai1ec_view_helper->display_admin( 'box_general_settings.php', $args );
   }

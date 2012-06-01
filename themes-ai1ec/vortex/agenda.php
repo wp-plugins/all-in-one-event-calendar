@@ -38,6 +38,9 @@
 					<div class="ai1ec-month"><?php echo date_i18n( 'M', $timestamp, true ) ?></div>
 					<div class="ai1ec-day"><?php echo date_i18n( 'j', $timestamp, true ) ?></div>
 					<div class="ai1ec-weekday"><?php echo date_i18n( 'D', $timestamp, true ) ?></div>
+					<?php if ( $show_year_in_agenda_dates ): ?>
+						<div class="ai1ec-year"><?php echo date_i18n( 'Y', $timestamp, true ) ?></div>
+					<?php endif; ?>
 				</h3>
 				<ol class="ai1ec-date-events">
 					<?php foreach( $date_info['events'] as $category ): ?>
@@ -61,6 +64,9 @@
 											<?php if( $event->allday ): ?>
 												<span class="ai1ec-allday-label"><?php _e( '(all-day)', AI1EC_PLUGIN_NAME ) ?></span>
 											<?php endif ?>
+											<?php if ( $show_location_in_title && isset( $event->venue ) && $event->venue != '' ): ?>
+												<span class="ai1ec-event-location"><?php echo sprintf( __( '@ %s', AI1EC_PLUGIN_NAME ), $event->venue ); ?></span>
+											<?php endif; ?>
 										</div>
 										<div class="ai1ec-event-time">
 											<?php if( $event->allday ): ?>
@@ -108,6 +114,9 @@
 									<?php endif ?>
 									<div class="ai1ec-event-title">
 										<?php echo esc_html( apply_filters( 'the_title', $event->post->post_title ) ) ?>
+										<?php if ( $show_location_in_title && isset( $event->venue ) && $event->venue != '' ): ?>
+											<span class="ai1ec-event-location"><?php echo sprintf( __( '@ %s', AI1EC_PLUGIN_NAME ), $event->venue ); ?></span>
+										<?php endif; ?>
 										<?php if( $event->allday ): ?>
 											<span class="ai1ec-allday-label"><?php _e( '(all-day)', AI1EC_PLUGIN_NAME ) ?></span>
 										<?php endif ?>

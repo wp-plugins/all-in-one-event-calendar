@@ -77,11 +77,6 @@ class Ai1ec_App_Controller {
 
 		// Configure MySQL to operate in GMT time
 		$wpdb->query( "SET time_zone = '+0:00'" );
-		
-		if( $ai1ec_settings->allow_statistics == TRUE ) {
-			$ai1ec_settings->allow_statistics = false;
-			$ai1ec_settings->save();
-		}
 
 		// Load plugin text domain
 		$this->load_textdomain();
@@ -95,9 +90,8 @@ class Ai1ec_App_Controller {
 		// Enable stats collection
 		$this->install_n_cron();
 
-		// Continue loading hooks only if themes are installed
-		// otherwise display a notification on the backend with instructions
-		// how to install themes
+		// Continue loading hooks only if themes are installed. Otherwise display a
+		// notification on the backend with instructions how to install themes.
 		if( ! $ai1ec_themes_controller->are_themes_available() ) {
 			add_action( 'admin_notices', array( &$ai1ec_app_helper, 'admin_notices' ) );
 			return;
@@ -120,6 +114,11 @@ class Ai1ec_App_Controller {
 		add_action( 'admin_init',                               array( &$ai1ec_importer_controller, 'register_importer' ) );
 		// Install admin menu items.
 		add_action( 'admin_menu',                               array( &$this, 'admin_menu' ), 9 );
+		// Enable theme updater page if last version of core themes is older than
+		// current version.
+		if ( $ai1ec_themes_controller->are_themes_outdated() ) {
+			add_action( 'admin_menu',                             array( &$ai1ec_themes_controller, 'register_theme_updater' ) );
+		}
 		// Add Event counts to dashboard.
 		add_action( 'right_now_content_table_end',              array( &$ai1ec_app_helper, 'right_now_content_table_end' ) );
 		// add content for our custom columns
@@ -624,7 +623,7 @@ class Ai1ec_App_Controller {
 
 		return $content;
 	}
-	
+
 	/**
 	 * upgrade function
 	 *
