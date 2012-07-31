@@ -1,27 +1,27 @@
 <?php
-// 
+//
 //  class-ai1ec-exporter-helper.php
 //  all-in-one-event-calendar
-//  
+//
 //  Created by The Seed Studio on 2011-07-13.
-// 
+//
 
 /**
  * Ai1ec_Exporter_Helper class
  *
  * @package Helpers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_Exporter_Helper {
 	/**
 	 * _instance class variable
 	 *
 	 * Class instance
-	 * 
+	 *
 	 * @var null | object
 	 **/
 	private static $_instance = NULL;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -31,7 +31,7 @@ class Ai1ec_Exporter_Helper {
 
 	/**
 	 * get_instance function
-	 * 
+	 *
 	 * Return singleton instance
 	 *
 	 * @return object
@@ -40,10 +40,10 @@ class Ai1ec_Exporter_Helper {
 		if( self::$_instance === NULL ) {
 			self::$_instance = new self();
 		}
-		
+
 		return self::$_instance;
 	}
-	
+
 	/**
 	 * insert_event_in_calendar function
 	 *
@@ -94,18 +94,18 @@ class Ai1ec_Exporter_Helper {
 			$e->setProperty( 'dtend', gmdate( "Ymd\THis\Z", $ai1ec_events_helper->gmt_to_local( $event->end ) ), $dtend );
 		}
 		$e->setProperty( 'location', $event->address );
-		
+
 		$contact = ! empty( $event->contact_name ) ? $event->contact_name : '';
 		$contact .= ! empty( $event->contact_phone ) ? " ($event->contact_phone)" : '';
 		$contact .= ! empty( $event->contact_email ) ? " <$event->contact_email>" : '';
 		$e->setProperty( 'contact', $contact );
-		
+
 		$rrule = array();
 		if( ! empty( $event->recurrence_rules ) ) {
 			$rules = array();
 			foreach( explode( ';', $event->recurrence_rules ) AS $v) {
 				if( strpos( $v, '=' ) === false ) continue;
-				
+
 				list($k, $v) = explode( '=', $v );
 				// If $v is a comma-separated list, turn it into array for iCalcreator
 				switch( $k ) {
@@ -136,13 +136,13 @@ class Ai1ec_Exporter_Helper {
 				$rrule[ $k ] = $v;
 			}
 		}
-		
+
 		$exrule = array();
 		if( ! empty( $event->exception_rules ) ) {
 			$rules = array();
 			foreach( explode( ';', $event->exception_rules ) AS $v) {
 				if( strpos( $v, '=' ) === false ) continue;
-				
+
 				list($k, $v) = explode( '=', $v );
 				// If $v is a comma-separated list, turn it into array for iCalcreator
 				switch( $k ) {

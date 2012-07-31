@@ -10,7 +10,7 @@
  * Ai1ec_Importer_Helper class
  *
  * @package Helpers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_Importer_Helper {
 	/**
@@ -65,7 +65,7 @@ class Ai1ec_Importer_Helper {
 				':' . $t['value']['min'] .
 				':' . $t['value']['sec'];
 		$timezone = '';
-		if( isset( $t['value']['tz'] ) && $t['value']['tz'] == 'Z' ) 
+		if( isset( $t['value']['tz'] ) && $t['value']['tz'] == 'Z' )
 			$timezone = 'Z';
 		elseif( isset( $t['params']['TZID'] ) )
 			$timezone = $t['params']['TZID'];
@@ -92,8 +92,7 @@ class Ai1ec_Importer_Helper {
 		// include ical parser
 		if( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
 			// Parser that requires PHP v5.3.0 or up
-			require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10.23/iCalcreator.class.php' );
-			require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10.23//iCalUtilityFunctions.class.php' );
+			require_once( AI1EC_LIB_PATH . '/iCalcreator-2.12/iCalcreator.class.php' );
 		} else {
 			// Parser that works on PHP versions below 5.3.0
 			require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10/iCalcreator.class.php' );
@@ -143,12 +142,12 @@ class Ai1ec_Importer_Helper {
 					if( empty( $end ) ) {
 						// #2 if only DATE value is set for start, set duration to 1 day
 						if( ! isset( $start['value']['hour'] ) ) {
-							$end = array( 
-								'year'  => $start['value']['year'], 
-								'month' => $start['value']['month'], 
-								'day'   => $start['value']['day'], 
-								'hour'  => 23, 
-								'min'   => 59, 
+							$end = array(
+								'year'  => $start['value']['year'],
+								'month' => $start['value']['month'],
+								'day'   => $start['value']['day'],
+								'hour'  => 23,
+								'min'   => 59,
 								'sec'   => 59,
 								'tz'    => $start['value']['tz']
 							);

@@ -1,7 +1,7 @@
-<div class="thenly">
+<div class="timely">
 	<div class="hero-unit">
 		<h1><?php _e( 'Welcome', AI1EC_PLUGIN_NAME ); ?></h1>
-		<p><?php _e( 'to the All-in-One Calendar by <a href="http://then.ly/" target="_blank">Then.ly</a>', AI1EC_PLUGIN_NAME ); ?></p>
+		<p><?php _e( 'to the All-in-One Event Calendar by <a href="http://time.ly/" target="_blank">Timely</a>', AI1EC_PLUGIN_NAME ); ?></p>
 	</div>
 
 	<div class="clearfix">

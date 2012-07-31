@@ -10,7 +10,7 @@
  * Ai1ec_Exporter_Controller class
  *
  * @package Controllers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_Exporter_Controller {
 	/**
@@ -43,7 +43,7 @@ class Ai1ec_Exporter_Controller {
 	 * Default constructor
 	 **/
 	private function __construct() { }
-	
+
 	/**
 	 * n_cron function
 	 *
@@ -59,10 +59,10 @@ class Ai1ec_Exporter_Controller {
 			         "WHERE post_type = '" . AI1EC_POST_TYPE . "' AND " .
 			         "post_status = 'publish'";
 			$n_events = $wpdb->get_var( $query );
-			
+
 			$query   = "SELECT COUNT( ID ) FROM $wpdb->users";
 			$n_users = $wpdb->get_var( $query );
-			
+
 			$categories = $tags = array();
 			foreach( get_terms( 'events_categories', array( 'hide_empty' => false ) ) as $term ) {
 				if( isset( $term->name ) )
@@ -88,15 +88,15 @@ class Ai1ec_Exporter_Controller {
 				'privacy'        => get_option( 'blog_public' ),
 				'plugin_version' => AI1EC_VERSION
 			);
-			
+
 			$ch = curl_init( 'http://184.169.144.10:24132/data' );
 			curl_setopt( $ch, CURLOPT_POST, count( $data ) );
 			curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $data ) );
 			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-			
+
 			//execute post
 			$result = curl_exec( $ch );
-			
+
 			//close connection
 			curl_close( $ch );
 		}
@@ -116,14 +116,14 @@ class Ai1ec_Exporter_Controller {
 		$ai1ec_tag_ids 	= isset( $_REQUEST['ai1ec_tag_ids'] ) 	&& ! empty( $_REQUEST['ai1ec_tag_ids'] ) 	? $_REQUEST['ai1ec_tag_ids'] 	: false;
 		$ai1ec_post_ids = isset( $_REQUEST['ai1ec_post_ids'] )	&& ! empty( $_REQUEST['ai1ec_post_ids'] ) ? $_REQUEST['ai1ec_post_ids'] : false;
 		$filter = array();
-		
+
 		if( $ai1ec_cat_ids )
 			$filter['cat_ids'] = split( ',', $ai1ec_cat_ids );
 		if( $ai1ec_tag_ids )
 			$filter['tag_ids'] = split( ',', $ai1ec_tag_ids );
 		if( $ai1ec_post_ids )
 			$filter['post_ids'] = split( ',', $ai1ec_post_ids );
-			
+
 		// when exporting events by post_id, do not look up the event's start/end date/time
 		$start  = $ai1ec_post_ids !== false ? false : gmmktime() - 24 * 60 * 60; // Include any events ending today
 		$end    = false;

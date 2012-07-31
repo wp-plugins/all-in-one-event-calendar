@@ -10,7 +10,7 @@
  * Ai1ec_Events_Controller class
  *
  * @package Controllers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_Events_Controller {
 	/**
@@ -183,7 +183,7 @@ class Ai1ec_Events_Controller {
 			// =======
 			// = CSS =
 			// =======
-			$ai1ec_view_helper->theme_enqueue_style( 'ai1ec-general', 'general.css' );
+			$ai1ec_view_helper->theme_enqueue_style( 'ai1ec-general', 'style.css' );
 			$ai1ec_view_helper->theme_enqueue_style( 'ai1ec-event', 'event.css' );
 			// Load the print style only if the parameter print is set to true.
 			if( isset( $_GET['print'] ) && $_GET['print'] === 'true' ) {

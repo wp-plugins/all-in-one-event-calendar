@@ -10,7 +10,7 @@
  * Ai1ec_Event class
  *
  * @package Models
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_Event {
 	/**
@@ -498,24 +498,32 @@ class Ai1ec_Event {
 
 			case 'timespan_html':
 				$timespan = '';
-				$long_start_date = $this->long_start_date;
-				$long_end_date   = $this->long_end_date;
+				$long_start_date = str_replace( ' ', '&nbsp;', esc_html( $this->long_start_date ) );
+				$long_end_date   = str_replace( ' ', '&nbsp;', esc_html( $this->long_end_date ) );
 
 				if( $this->allday ) {
 					$timespan .= $long_start_date;
-					if( $long_end_date != $long_start_date )
+					if( $long_end_date != $long_start_date ) {
 						$timespan .= " – $long_end_date";
-					$timespan = esc_html( $timespan );
+					}
 					$timespan .= '<span class="ai1ec-allday-label">';
 					$timespan .= __( ' (all-day)', AI1EC_PLUGIN_NAME );
 					$timespan .= '</span>';
-				} else {
-					if( $long_end_date != $long_start_date )
-						$timespan .= esc_html( $this->long_start_time . ' – ' . $this->long_end_time );
-					elseif( $this->start != $this->end )
-						$timespan .= esc_html( $this->long_start_time . ' - ' . $this->end_time );
-					else
-						$timespan .= esc_html( $this->long_start_time );
+				}
+				else {
+					$long_start_time = str_replace( ' ', '&nbsp;', esc_html( $this->long_start_time ) );
+					$long_end_time   = str_replace( ' ', '&nbsp;', esc_html( $this->long_end_time ) );
+					$end_time        = str_replace( ' ', '&nbsp;', esc_html( $this->end_time ) );
+
+					if( $long_end_date != $long_start_date ) {
+						$timespan .= $long_start_time . ' – ' . $long_end_time;
+					}
+					elseif( $this->start != $this->end ) {
+						$timespan .= $long_start_time . ' - ' . $end_time;
+					}
+					else {
+						$timespan .= $long_start_time;
+					}
 				}
 				return $timespan;
 

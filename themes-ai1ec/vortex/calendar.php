@@ -1,4 +1,4 @@
-<!-- START All-in-One Calendar Plugin - Version <?php echo AI1EC_VERSION ?> -->
+<!-- START All-in-One Event Calendar Plugin - Version <?php echo AI1EC_VERSION ?> -->
 <table class="ai1ec-calendar-toolbar">
   <tbody>
     <tr>
@@ -122,4 +122,4 @@
     <?php _e( 'Subscribe in Google Calendar', AI1EC_PLUGIN_NAME ) ?>
   </a>
 <?php endif ?>
-<!-- END All-in-One Calendar Plugin -->
+<!-- END All-in-One Event Calendar Plugin -->

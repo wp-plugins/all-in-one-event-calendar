@@ -1,4 +1,4 @@
-<table class="thenly ai1ec-event ai1ec-multi-event ai1ec-event-id-<?php echo $event->post_id ?> <?php if( $event->multiday ) echo 'ai1ec-multiday' ?> <?php if( $event->allday ) echo 'ai1ec-allday' ?>">
+<table class="timely ai1ec-event ai1ec-multi-event ai1ec-event-id-<?php echo $event->post_id ?> <?php if( $event->multiday ) echo 'ai1ec-multiday' ?> <?php if( $event->allday ) echo 'ai1ec-allday' ?>">
 	<tbody>
 		<tr>
 			<th scope="row" class="ai1ec-time"><?php _e( 'When:', AI1EC_PLUGIN_NAME ); ?></th>

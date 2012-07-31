@@ -17,30 +17,26 @@ var ai1ec_convert_commas_to_dots_for_coordinates = function() {
  * Shows the error message after the field
  *
  * @param Object the dom element after which we put the error
- *
  * @param the error message
- *
  */
 var ai1ec_show_error_message_after_element = function( el, error_message ) {
 	// Create the element to append in case of error
 	var error = jQuery( '<div />',
 			{
-				text : error_message,
-				class : "ai1ec-error"
+				'text': error_message,
+				'class': 'ai1ec-error'
 			}
 	);
 	// Insert error message
 	jQuery( el ).after( error );
 }
+
 /**
- *
- * prevent default actions and stop immediate propagation if the publish button was clicked and
- * gives focus to the passed element
+ * Prevent default actions and stop immediate propagation if the publish button
+ * was clicked and gives focus to the passed element.
  *
  * @param Object the event object
- *
  * @param Object the element to focus
- *
  */
 var ai1ec_prevent_actions_and_focus_on_errors = function( e, el ) {
 	// If the validation was triggered  by clicking publish
@@ -332,6 +328,33 @@ jQuery( function( $ ){
 		// create the data to send
 		var data = {
 			action: 'ai1ec_disable_notification',
+			note:   false
+		};
+
+		$.post( ajaxurl, data, function( response ) {
+			if( response.error ) {
+				// tell the user that there is an error
+				alert( response.message );
+			} else {
+				// hide notification message
+				$parent.remove();
+			}
+		});
+	});
+
+	/**
+	 * Click event handler for Dismiss button of intro video.
+	 * That disables the intro video notification for admin users.
+	 */
+	$( '.ai1ec-dismiss-intro-video' ).live( 'click', function() {
+		var $button = $( this );
+		var $parent = $( this ).parent().parent();
+		// disable the update button
+		$button.attr( 'disabled', true );
+
+		// create the data to send
+		var data = {
+			action: 'ai1ec_disable_intro_video',
 			note:   false
 		};
 

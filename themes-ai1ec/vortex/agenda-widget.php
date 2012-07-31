@@ -4,7 +4,7 @@
 	<?php echo $before_title . $title . $after_title; ?>
 <?php endif; ?>
 
-<div class="thenly ai1ec-agenda-widget-view">
+<div class="timely ai1ec-agenda-widget-view">
 
 	<?php if( ! $dates ): ?>
 		<p class="ai1ec-no-results">

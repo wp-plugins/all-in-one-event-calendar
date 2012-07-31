@@ -10,7 +10,7 @@
  * Ai1ec_App_Helper class
  *
  * @package Helpers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_App_Helper {
 	/**
@@ -683,10 +683,53 @@ class Ai1ec_App_Helper {
 		       $plugin_page,
 		       $ai1ec_themes_controller;
 
+		// Display introductory video notice if not disabled.
+		if( $ai1ec_settings->show_intro_video ) {
+			$args = array(
+				'label' => __( 'Welcome to the All-in-One Event Calendar, by timely', AI1EC_PLUGIN_NAME ),
+				'msg' => sprintf(
+					'<div class="timely"><a href="#ai1ec-video-modal" data-toggle="modal" ' .
+						'class="button-primary pull-left">%s</a>' .
+						'<div class="pull-left">&nbsp;</div></div>',
+					__( 'Watch the introductory video »', AI1EC_PLUGIN_NAME )
+				),
+				'button' => (object) array(
+					'class' => 'ai1ec-dismiss-intro-video',
+					'value' => __( 'Dismiss', AI1EC_PLUGIN_NAME ),
+				),
+			);
+			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
+			// Find out if CSS for Bootstrap modals has been attached. If not, embed
+			// it inline.
+			if ( ! wp_style_is( 'timely-bootstrap' ) ) {
+				$ai1ec_view_helper->display_admin_css( 'bootstrap.min.css' );
+			}
+			// Find out if JS for Bootstrap modals has been attached. If not, embed
+			// it inline.
+			if ( ! wp_script_is( 'timely-bootstrap-modal' ) ) {
+				$ai1ec_view_helper->display_admin_js( 'bootstrap-modal.js' );
+			}
+			$args = array(
+				'modal_id' => 'ai1ec-video-modal',
+				'video_container_id' => 'ai1ec-video',
+				'title' => __( 'Introducing the All-in-One Event Calendar, by Timely',
+					AI1EC_PLUGIN_NAME ),
+				'youtube_id' => 'XJ-KHOqBKuQ',
+				'footer' => sprintf( '<div style="text-align: center;">' .
+					'<a class="btn btn-large btn-primary" href="%s">' .
+					'<i class="icon-download-alt"></i> %s</a></div>',
+					admin_url( 'edit.php?post_type=' . AI1EC_POST_TYPE . '&amp;page=' .
+						AI1EC_PLUGIN_NAME . '-upgrade' ),
+					__( 'Upgrade to Premium for Free', AI1EC_PLUGIN_NAME )
+				),
+			);
+			$ai1ec_view_helper->display_admin( 'video_modal.php', $args );
+		}
+
 		// No themes available notice.
 		if( ! $ai1ec_themes_controller->are_themes_available() ) {
 			$args = array(
-				'label'  => 'All-in-One Calendar Notice',
+				'label'  => __( 'All-in-One Event Calendar Notice', AI1EC_PLUGIN_NAME ),
 				'msg'    => sprintf(
 					__( '<p><strong>Core calendar files are not installed.</strong></p>' .
 					'<p>Our automated install couldn\'t install certain core files automatically. ' .
@@ -708,7 +751,7 @@ class Ai1ec_App_Helper {
 		// Outdated themes notice (on all pages except update themes page).
 		if ( $plugin_page != AI1EC_PLUGIN_NAME . '-update-themes' && $ai1ec_themes_controller->are_themes_outdated() ) {
 			$args = array(
-				'label' => 'All-in-One Calendar Notice',
+				'label' => __( 'All-in-One Event Calendar Notice', AI1EC_PLUGIN_NAME ),
 				'msg' => sprintf(
 					__( '<p><strong>Core calendar files are out of date.</strong> ' .
 					'We have found updates for some of your core calendar files and you should update them now to ensure proper functioning of your calendar.</p>' .
@@ -723,24 +766,30 @@ class Ai1ec_App_Helper {
 
 		if( $ai1ec_settings->show_data_notification ) {
 			$args = array(
-				'label'  => 'All-in-One Calendar Notice',
+				'label'  => __( 'All-in-One Event Calendar Notice', AI1EC_PLUGIN_NAME ),
 				'msg'    =>
 					sprintf(
 						__( '<p>We would like to collect some basic information about how your calendar works in order to deliver a better ' .
 						'and faster calendar system and one that will help you promote your events even more.</p>' .
-						'<p>You can find more detailed information by <a href="%s" target="_blank">clicking here &raquo;</a></p>' .
-						'<p>You may opt in of sending data to us by checking &quot;Allow Then.ly to collect statistics&quot; checkbox located on plugin\'s <a href="%s">Settings page</a>.</p>', AI1EC_PLUGIN_NAME ),
-						'http://then.ly/all-in-one-event-calendar-privacy-policy/',
+						'<p>You can find more detailed information by <a href="%s" target="_blank">clicking here</a>.</p>' .
+						'<p>You may opt in by checking the <strong>Publicize, promote, and share my events</strong> checkbox located on the <a href="%s">Settings page</a>.</p>', AI1EC_PLUGIN_NAME ),
+						'http://time.ly/event-search-calendar',
 						admin_url( AI1EC_SETTINGS_BASE_URL )
 					),
-				'button' => (object) array( 'class' => 'ai1ec-dismiss-notification', 'value' => 'Dismiss' ),
+				'button' => (object) array(
+					'class' => 'ai1ec-dismiss-notification',
+					'value' => __( 'Dismiss', AI1EC_PLUGIN_NAME ),
+				),
 			);
 			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
 		}
 
-		// If calendar page ID has not been set, and we're not updating the settings
-		// page, the calendar is not properly set up yet.
-		if( ! $ai1ec_settings->calendar_page_id || ! get_option( 'timezone_string' ) && ! isset( $_REQUEST['ai1ec_save_settings'] ) ) {
+		// If calendar page or time zone has not been set, this is a fresh install.
+		// Additionally, if we're not already updating the settings, alert user
+		// appropriately that the calendar is not properly set up.
+		if( ! $ai1ec_settings->calendar_page_id ||
+			  ! get_option( 'timezone_string' ) &&
+			  ! isset( $_REQUEST['ai1ec_save_settings'] ) ) {
 			$args = array();
 			$messages = array();
 
@@ -758,10 +807,11 @@ class Ai1ec_App_Helper {
 				}
 				// Else, not on the settings page, so direct user there.
 				else {
-					$messages[] = sprintf(
+					$msg .= sprintf(
 						__( 'The plugin is installed, but has not been configured. <a href="%s">Click here to set it up now &raquo;</a>', AI1EC_PLUGIN_NAME ),
 						admin_url( AI1EC_SETTINGS_BASE_URL )
 					);
+					$messages[] = $msg;
 				}
 			}
 			// Else display messages for other blog users
@@ -779,7 +829,7 @@ class Ai1ec_App_Helper {
 			else {
 				$args['msg'] = "<p>$messages[0]</p>";
 			}
-			$args['label'] = __( 'All-in-One Calendar Notice', AI1EC_PLUGIN_NAME );
+			$args['label'] = __( 'All-in-One Event Calendar Notice', AI1EC_PLUGIN_NAME );
 			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
 		}
 	}
@@ -866,7 +916,7 @@ class Ai1ec_App_Helper {
 					) );
 				// Styles.
 				$ai1ec_view_helper->admin_enqueue_style( 'ai1ec-settings', 'settings.css' );
-				$ai1ec_view_helper->admin_enqueue_style( 'thenly-bootstrap', 'bootstrap.min.css' );
+				$ai1ec_view_helper->admin_enqueue_style( 'timely-bootstrap', 'bootstrap.min.css' );
 				break;
 		}
 	}

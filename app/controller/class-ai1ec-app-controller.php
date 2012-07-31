@@ -10,7 +10,7 @@
  * Ai1ec_App_Controller class
  *
  * @package Controllers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_App_Controller {
 	/**
@@ -93,7 +93,10 @@ class Ai1ec_App_Controller {
 		// Continue loading hooks only if themes are installed. Otherwise display a
 		// notification on the backend with instructions how to install themes.
 		if( ! $ai1ec_themes_controller->are_themes_available() ) {
-			add_action( 'admin_notices', array( &$ai1ec_app_helper, 'admin_notices' ) );
+			// Enables the hidden themes installer page
+			add_action( 'admin_menu', array( &$ai1ec_themes_controller, 'register_theme_installer' ), 1 );
+			// Redirects the user to install theme page
+			add_action( 'admin_menu', array( &$this, 'check_themes' ), 2 );
 			return;
 		}
 
@@ -202,8 +205,9 @@ class Ai1ec_App_Controller {
 		add_action( 'wp_ajax_ai1ec_get_repeat_box', array( &$ai1ec_events_helper, 'get_repeat_box' ) );
 		add_action( 'wp_ajax_ai1ec_get_date_picker_box', array( &$ai1ec_events_helper, 'get_date_picker_box' ) );
 
-		// Disable notification
+		// Disable notifications
 		add_action( 'wp_ajax_ai1ec_disable_notification', array( &$ai1ec_settings_controller, 'disable_notification' ) );
+		add_action( 'wp_ajax_ai1ec_disable_intro_video', array( &$ai1ec_settings_controller, 'disable_intro_video' ) );
 
 		// ==============
 		// = Shortcodes =
@@ -406,7 +410,8 @@ class Ai1ec_App_Controller {
 		global $ai1ec_settings_controller,
            $ai1ec_settings_helper,
            $ai1ec_settings,
-           $ai1ec_themes_controller;
+           $ai1ec_themes_controller,
+           $submenu;
 
 		// =======================
 		// = Calendar Feeds Page =
@@ -428,17 +433,24 @@ class Ai1ec_App_Controller {
 		// = Settings Page =
 		// =================
 		$ai1ec_settings->settings_page = add_submenu_page(
-			'options-general.php',
-			__( 'Calendar', AI1EC_PLUGIN_NAME ),
-			__( 'Calendar', AI1EC_PLUGIN_NAME ),
+			'edit.php?post_type=' . AI1EC_POST_TYPE,
+			__( 'Settings', AI1EC_PLUGIN_NAME ),
+			__( 'Settings', AI1EC_PLUGIN_NAME ),
 			'manage_ai1ec_options',
 			AI1EC_PLUGIN_NAME . '-settings',
 			array( &$ai1ec_settings_controller, 'view_settings' )
+		);
+		// Make copy of Settings page at its old location.
+		$submenu['options-general.php'][] = array(
+			__( 'Calendar', AI1EC_PLUGIN_NAME ),
+			'manage_ai1ec_options',
+			AI1EC_SETTINGS_BASE_URL,
 		);
 		// Allow settings page to have additional meta boxes added to it.
 		add_action( "load-{$ai1ec_settings->settings_page}", array( &$ai1ec_settings_helper, 'add_settings_meta_boxes') );
 		// Load our plugin's meta boxes.
 		add_action( "load-{$ai1ec_settings->settings_page}", array( &$ai1ec_settings_controller, 'add_settings_meta_boxes' ) );
+
 		// ========================
 		// = Calendar Update Page =
 		// ========================
@@ -517,10 +529,12 @@ class Ai1ec_App_Controller {
 				// Parse categories by name
 				if( isset( $attr["cat_name"] ) && ! empty( $attr["cat_name"] ) ) {
 					foreach( explode( ',', $attr["cat_name"] ) as $c ) {
-						$cid = get_term_by( "name", $c, "events_categories" );
+						$cid = get_term_by( "name", trim( $c ), "events_categories" );
 						if( $cid !== false ) {
 							// if term was found, include it
-							$_REQUEST["ai1ec_cat_ids"] = $cid->term_id . ',';
+							$_REQUEST["ai1ec_cat_ids"] = isset( $_REQUEST["ai1ec_cat_ids"] ) ?
+							                             $_REQUEST["ai1ec_cat_ids"] . $cid->term_id . ',' :
+							                             $cid->term_id . ',';
 						}
 					}
 					// remove last comma only if there is some content in the var
@@ -540,10 +554,12 @@ class Ai1ec_App_Controller {
 				// Parse tags by name
 				if( isset( $attr["tag_name"] ) && ! empty( $attr["tag_name"] ) ) {
 					foreach( explode( ',', $attr["tag_name"] ) as $t ) {
-						$tid = get_term_by( "name", $t, "events_tags" );
+						$tid = get_term_by( "name", trim( $t ), "events_tags" );
 						if( $tid !== false ) {
 							// if term was found, include it
-							$_REQUEST["ai1ec_tag_ids"] = $tid->term_id . ',';
+							$_REQUEST["ai1ec_tag_ids"] = isset( $_REQUEST["ai1ec_tag_ids"] ) ?
+							                             $_REQUEST["ai1ec_tag_ids"] . $tid->term_id . ',' :
+							                             $tid->term_id . ',';
 						}
 					}
 					// remove last comma only if there is some content in the var
@@ -617,7 +633,7 @@ class Ai1ec_App_Controller {
 		// the calendar container div
 		if( in_the_loop() )
 			$content =
-				'<div id="ai1ec-container" class="ai1ec-container thenly">' .
+				'<div id="ai1ec-container" class="ai1ec-container timely">' .
 				$content . $this->page_content .
 				'</div>';
 
@@ -636,9 +652,20 @@ class Ai1ec_App_Controller {
 		// use our custom class
 		$upgrader = new Ai1ec_Updater();
 		// update the plugin
-		$upgrader->upgrade( 'all-in-one-event-calendar' );
-		// give user a way out of the page
-		echo '<a href="' . admin_url( 'edit.php?post_type=' . AI1EC_POST_TYPE ) . '">Continue here</a>';
+		$upgrader->upgrade( 'all-in-one-event-calendar/all-in-one-event-calendar.php' );
+	}
+
+	/**
+	 * check_themes function
+	 *
+	 * This function checks if the user is not on install themes page
+	 * and redirects the user to that page
+	 *
+	 * @return void
+	 **/
+	function check_themes() {
+		if( ! isset( $_REQUEST["page"] ) || $_REQUEST["page"] != AI1EC_PLUGIN_NAME . '-install-themes' )
+			wp_redirect( admin_url( AI1EC_INSTALL_THEMES_BASE_URL ) );
 	}
 }
 // END class

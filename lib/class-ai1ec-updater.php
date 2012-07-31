@@ -48,6 +48,12 @@ class Ai1ec_Updater extends WP_Upgrader {
 
 		// Force refresh of plugin update information
 		delete_site_transient( 'update_plugins' );
+		wp_cache_delete( 'plugins', 'plugins' );
+
+		// activate the plugin
+		activate_plugin( $plugin );
+		echo '<p>Plugin activated.</p>';
+		echo '<a href="' . admin_url( 'index.php' ) . '">Continue Here</a>';
 	}
 
 	//Hooked to pre_install
@@ -81,7 +87,7 @@ class Ai1ec_Updater extends WP_Upgrader {
 		$plugins_dir = $wp_filesystem->wp_plugins_dir();
 		$this_plugin_dir = trailingslashit( dirname( $plugins_dir . $plugin ) );
 
-		$ai1ec_themes = trailingslashit( AI1EC_THEMES_ROOT );
+		$ai1ec_themes = $wp_filesystem->wp_content_dir() . AI1EC_THEMES_FOLDER;
 		if( $wp_filesystem->exists( $ai1ec_themes ) ) {
 			$wp_filesystem->delete( $ai1ec_themes, true );
 		}

@@ -10,7 +10,7 @@
  * Ai1ec_Settings class
  *
  * @package Models
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_Settings {
 	/**
@@ -228,6 +228,13 @@ class Ai1ec_Settings {
 	var $show_data_notification;
 
   /**
+	 * Whether to display the introductory video notice.
+	 *
+	 * @var bool
+	 */
+	var $show_intro_video;
+
+	/**
    * allow_statistics class variable
    *
    * @var bool
@@ -341,6 +348,7 @@ class Ai1ec_Settings {
 			'timezone'                      => get_option( 'timezone_string' ),
 			'geo_region_biasing'            => FALSE,
 			'show_data_notification'        => TRUE,
+			'show_intro_video'              => TRUE,
       'allow_statistics'              => FALSE, // stats are opt-in
 			'disable_autocompletion'        => FALSE,
 			'show_location_in_title'        => TRUE,
@@ -437,6 +445,18 @@ class Ai1ec_Settings {
    */
 	function update_notification( $value = FALSE ) {
 		$this->show_data_notification = $value;
+		update_option( 'ai1ec_settings', $this );
+	}
+
+  /**
+   * Update setting of show_intro_video - whether to display the
+   * intro video notice on the admin side.
+   *
+   * @param  boolean $value The new setting for show_intro_video.
+   * @return void
+   */
+	function update_intro_video( $value = FALSE ) {
+		$this->show_intro_video = $value;
 		update_option( 'ai1ec_settings', $this );
 	}
 

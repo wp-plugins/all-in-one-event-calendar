@@ -102,11 +102,11 @@
 </label>
 <br class="clear" />
 
-<h2><?php _e( 'Sharing Data', AI1EC_PLUGIN_NAME ) ?></h2>
+<h2><?php _e( 'Promoting Events', AI1EC_PLUGIN_NAME ) ?></h2>
 
 <label for="allow_statistics">
 <input class="checkbox" name="allow_statistics" id="allow_statistics" type="checkbox" value="1" <?php echo $allow_statistics ?> />
-<?php _e( 'Allow Then.ly to collect calendar statistics', AI1EC_PLUGIN_NAME ) ?>
+<?php printf( __( '<strong>Publicize, promote, and share my events</strong> marked as public on the Timely network. (<a href="%s" target="_blank">Learn more »</a>)', AI1EC_PLUGIN_NAME ), 'http://time.ly/event-search-calendar' ); ?>
 </label>
 <br class="clear" />
 
