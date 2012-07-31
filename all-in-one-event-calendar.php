@@ -212,7 +212,7 @@ define( 'AI1EC_DEFAULT_THEME_URL',  AI1EC_THEMES_URL . '/' . AI1EC_DEFAULT_THEME
 // ======================================================
 // = INSTALL THEMES PAGE BASE URL (wrap in admin_url()) =
 // ======================================================
-define( 'AI1EC_INSTALL_THEMES_BASE_URL', 'edit.php?post_type=' . AI1EC_POST_TYPE . '&page=' . AI1EC_PLUGIN_NAME . '-install-themes' );
+define( 'AI1EC_INSTALL_THEMES_BASE_URL', 'themes.php?page=' . AI1EC_PLUGIN_NAME . '-install-themes' );
 
 // ================
 // = RSS FEED URL =
