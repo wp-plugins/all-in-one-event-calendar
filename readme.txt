@@ -3,19 +3,19 @@ Contributors: theseed, hubrik, vtowel, yani.iliev
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9JJMUW48W2ED8
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.2
-Tested up to: 3.4
-Stable tag: 1.7
+Tested up to: 3.4.1
+Stable tag: 1.8
+License: GNU General Public License, version 3 (GPL-3.0)
 
-A calendar system with month, week, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
+A calendar system with month, week, day, agenda views; upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
 
 == Description ==
 
-Welcome to the [All-in-One Event Calendar Plugin](http://then.ly/), from [Then.ly](http://then.ly/). The All-in-One Event Calendar is a new way to list your events in WordPress and easily share them with the rest of the world.
+Welcome to the [All-in-One Event Calendar Plugin](http://time.ly/), from [Timely](http://time.ly/). The All-in-One Event Calendar is a new way to list your events in WordPress and easily share them with the rest of the world.
 
 Our new calendar system combines a clean visual design, solid architectural patterns and a powerful set of features to create the most advanced calendar system available for WordPress. Best of all: it’s completely free.
 
-Download the free Premium version at [then.ly](http://then.ly/) and choose from 3 custom designed themes for your Calendar, or develop your own!
-
+Download the free Premium version at [time.ly](http://time.ly/) and choose from 3 custom designed themes for your Calendar, or develop your own! Also featuring Facebook Integration, Posterboard View and JavaScript and UI enhancements.
 
 = Calendar Features For Users =
 
@@ -50,16 +50,15 @@ The All-in-One Event Calendar Plugin also has a few features that will prove use
 * Your calendar can be embedded into a WordPress page without needing to create template files or modify the theme
 
 = Video =
-https://vimeo.com/41738066
+http://www.youtube.com/watch?v=XJ-KHOqBKuQ
 
 = Helpful Links =
 
-* [**Check out the DEMO »**](http://demo.theseednetwork.com/)
-* [**Get help from our Help Desk »**](http://help.then.ly)
+* [**Get help from our Help Desk »**](http://help.time.ly)
 
 == Frequently Asked Questions ==
 
-[**Get help from our Help Desk »**](http://help.then.ly)
+[**Get help from our Help Desk »**](http://help.time.ly)
 
 = Shortcodes =
 
@@ -82,6 +81,9 @@ https://vimeo.com/41738066
 * Filter by post ids (separate ids by comma): **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+= Version 1.8 =
+* Branding switch from Then.ly to Timely
+
 = Version 1.7 =
 * Restored support for WordPress 3.2.x, which fixes numerous JavaScript issues in that version of WordPress
 * Removed opaque background from calendar containers to better match WP theme background
@@ -302,7 +304,7 @@ To place the calendar in a DOM/HTML element besides the default page content con
 == Upgrade Notice ==
 
 = 1.6 Premium =
-The All-in-One Event Calendar can only be upgraded to the Premium version from version 1.6 and above, or by downloading directly from [then.ly](http://then.ly/).
+The All-in-One Event Calendar can only be upgraded to the Premium version from version 1.6 and above, or by downloading directly from [time.ly](http://time.ly/).
 
 = 1.0.3 =
 When upgrading to from below `1.0.3` you must reactivate the plugin.

@@ -10,7 +10,7 @@
  * Ai1ec_Calendar_Controller class
  *
  * @package Controllers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_Calendar_Controller {
 	/**
@@ -668,7 +668,7 @@ class Ai1ec_Calendar_Controller {
 	function load_css() {
 		global $ai1ec_settings, $ai1ec_view_helper;
 
-		$ai1ec_view_helper->theme_enqueue_style( 'ai1ec-general', 'general.css' );
+		$ai1ec_view_helper->theme_enqueue_style( 'ai1ec-general', 'style.css' );
 		$ai1ec_view_helper->theme_enqueue_style( 'ai1ec-calendar', 'calendar.css' );
 
 		if( $ai1ec_settings->calendar_css_selector )

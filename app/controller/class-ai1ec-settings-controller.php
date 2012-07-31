@@ -10,7 +10,7 @@
  * Ai1ec_Settings_Controller class
  *
  * @package Controllers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_Settings_Controller {
 	/**
@@ -57,7 +57,7 @@ class Ai1ec_Settings_Controller {
 			$this->save( 'settings' );
 		}
 		$args = array(
-			'title' => __( 'All-in-One Calendar: Settings', AI1EC_PLUGIN_NAME ),
+			'title' => __( 'All-in-One Event Calendar: Settings', AI1EC_PLUGIN_NAME ),
 			'settings_page' => $ai1ec_settings->settings_page,
 		);
 		$ai1ec_view_helper->display_admin( 'settings.php', $args );
@@ -76,7 +76,7 @@ class Ai1ec_Settings_Controller {
 			$this->save( 'feeds' );
 		}
 		$args = array(
-			'title' => __( 'All-in-One Calendar: Calendar Feeds', AI1EC_PLUGIN_NAME ),
+			'title' => __( 'All-in-One Event Calendar: Calendar Feeds', AI1EC_PLUGIN_NAME ),
 			'settings_page' => $ai1ec_settings->feeds_page,
 		);
 		$ai1ec_view_helper->display_admin( 'settings.php', $args );
@@ -270,7 +270,7 @@ class Ai1ec_Settings_Controller {
 	}
 
 	/**
-	 * disable_notification function
+	 * Disable data notification (AJAX callback).
 	 *
 	 * @return void
 	 **/
@@ -278,6 +278,23 @@ class Ai1ec_Settings_Controller {
 		global $ai1ec_view_helper, $ai1ec_settings;
 
 		$ai1ec_settings->update_notification( false );
+		$output = array(
+			'error' 	=> false,
+			'message'	=> 'Request successful.'
+		);
+
+		$ai1ec_view_helper->json_response( $output );
+	}
+
+	/**
+	 * Disable intro video (AJAX callback).
+	 *
+	 * @return void
+	 **/
+	function disable_intro_video() {
+		global $ai1ec_view_helper, $ai1ec_settings;
+
+		$ai1ec_settings->update_intro_video( false );
 		$output = array(
 			'error' 	=> false,
 			'message'	=> 'Request successful.'
@@ -313,11 +330,11 @@ class Ai1ec_Settings_Controller {
 			'left-side',
 			'default'
 		);
-		// Add the 'Then.ly Support' meta box.
+		// Add the 'Timely Support' meta box.
 		add_meta_box(
-			'the-seed-studio-settings',
-			_x( 'Then.ly Support', 'meta box', AI1EC_PLUGIN_NAME ),
-			array( &$ai1ec_settings_helper, 'the_seed_studio_meta_box' ),
+			'ai1ec-support',
+			_x( 'Timely Support', 'meta box', AI1EC_PLUGIN_NAME ),
+			array( &$ai1ec_settings_helper, 'support_meta_box' ),
 			$ai1ec_settings->settings_page,
 			'right-side',
 			'default'
@@ -342,11 +359,11 @@ class Ai1ec_Settings_Controller {
 			'left-side',
 			'default'
 		);
-		// Add the 'Then.ly Support' meta box.
+		// Add the 'Timely Support' meta box.
 		add_meta_box(
-			'the-seed-studio-settings',
-			_x( 'Then.ly Support', 'meta box', AI1EC_PLUGIN_NAME ),
-			array( &$ai1ec_settings_helper, 'the_seed_studio_meta_box' ),
+			'ai1ec-support',
+			_x( 'Timely Support', 'meta box', AI1EC_PLUGIN_NAME ),
+			array( &$ai1ec_settings_helper, 'support_meta_box' ),
 			$ai1ec_settings->feeds_page,
 			'right-side',
 			'default'
@@ -376,7 +393,7 @@ class Ai1ec_Settings_Controller {
 	function plugin_row_meta( $links, $file ) {
 		if( $file == AI1EC_PLUGIN_BASENAME ) {
 			$links[] = sprintf( __( '<a href="%s" target="_blank">Donate</a>', AI1EC_PLUGIN_NAME ), 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9JJMUW48W2ED8' );
-			$links[] = sprintf( __( '<a href="%s" target="_blank">Get Support</a>', AI1EC_PLUGIN_NAME ), 'http://help.then.ly' );
+			$links[] = sprintf( __( '<a href="%s" target="_blank">Get Support</a>', AI1EC_PLUGIN_NAME ), 'http://help.time.ly/' );
 		}
 
 		return $links;

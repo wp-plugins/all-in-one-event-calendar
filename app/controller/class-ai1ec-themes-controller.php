@@ -10,7 +10,7 @@
  * Ai1ec_Themes_Controller class
  *
  * @package Controllers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_Themes_Controller {
 	/**
@@ -93,31 +93,35 @@ class Ai1ec_Themes_Controller {
   }
 
 	/**
-	 * Returns whether core theme files were able to be copied over to wp-content.
-	 * Checks if they are already there, and if they are not, tries to copy them
-	 * over. If they can't be copied, returns false.
+	 * are_themes_available function
+	 *
+	 * Checks if core calendar theme folder is present in wp-content.
 	 *
 	 * @return bool
 	 **/
 	public function are_themes_available() {
-		//  are themes folder and Vortex theme available?
-		if( @is_dir( AI1EC_THEMES_ROOT ) === true && @is_dir( AI1EC_DEFAULT_THEME_PATH ) === true ) {
+		//  Are calendar themes folder and Vortex theme present under wp-content ?
+		if( @is_dir( AI1EC_THEMES_ROOT ) === true && @is_dir( AI1EC_DEFAULT_THEME_PATH ) === true )
 			return true;
-		} else {
-			// try to create AI1EC_THEMES_ROOT
-			if( ! @mkdir( AI1EC_THEMES_ROOT ) )
-				return false;
 
-			// copy themes-ai1ec from plugin's root to wp-content's themes root
-			$this->copy_directory( AI1EC_PATH . '/' . AI1EC_THEMES_FOLDER, AI1EC_THEMES_ROOT );
+		return false;
+	}
 
-			if( @is_dir( AI1EC_THEMES_ROOT ) === false || @is_dir( AI1EC_DEFAULT_THEME_PATH ) === false )
-				return false;
-
-			// Update installed core themes version.
-			update_option( 'ai1ec_themes_version', AI1EC_THEMES_VERSION );
-		}
-		return true;
+	/**
+	 * Register Install Calendar Themes page in wp-admin.
+	 */
+	function register_theme_installer() {
+		// Add menu item for theme install page, but remove it using remove_submenu_page
+		// to generate a "ghost" page
+		add_submenu_page(
+			'themes.php',
+			__( 'Install Calendar Themes', AI1EC_PLUGIN_NAME ),
+			__( 'Install Calendar Themes', AI1EC_PLUGIN_NAME ),
+			'install_themes',
+			AI1EC_PLUGIN_NAME . '-install-themes',
+			array( &$this, 'install_themes' )
+		);
+		remove_submenu_page( 'themes.php', AI1EC_PLUGIN_NAME . '-install-themes' );
 	}
 
 	/**
@@ -165,20 +169,98 @@ class Ai1ec_Themes_Controller {
 
 
 	/**
+	 * install_themes function
+	 *
+	 * @return void
+	 **/
+	function install_themes() {
+		?>
+		<div class="wrap">
+			<?php
+			screen_icon();
+			?>
+			<h2><?php _e( 'Install Calendar Themes', AI1EC_PLUGIN_NAME ) ?></h2>
+		<?php
+		// WP_Filesystem figures it out by itself, but the filesystem method may be overriden here
+		$method = '';
+		$url = wp_nonce_url( AI1EC_INSTALL_THEMES_BASE_URL, AI1EC_PLUGIN_NAME . '-theme-installer' );
+		if( false === ( $creds = request_filesystem_credentials( $url, $method, false, false ) ) ) {
+			// if we get here, then we don't have credentials yet,
+			// but have just produced a form for the user to fill in,
+			// so stop processing for now
+			return false; // stop the normal page form from displaying
+		}
+
+		// now we have some credentials, try to get the wp_filesystem running
+		if( ! WP_Filesystem( $creds ) ) {
+			// our credentials were no good, ask the user for them again
+			request_filesystem_credentials( $url, $method, true, false );
+			return false;
+		}
+		global $wp_filesystem;
+		$themes_root = $wp_filesystem->wp_content_dir() . AI1EC_THEMES_FOLDER;
+		$result = $wp_filesystem->mkdir( $themes_root );
+		if( $result === false ) {
+			?>
+			<p><?php _e( sprintf( 'Unable to create %s folder', AI1EC_THEMES_ROOT ), AI1EC_PLUGIN_NAME ) ?></p>
+			<p><?php _e( sprintf( 'Try to create %s folder manually and then restart the process',
+			            AI1EC_THEMES_ROOT ), AI1EC_PLUGIN_NAME ) ?></p>
+			</div>
+			<?php
+			return false;
+		}
+		$plugin_themes_dir = $wp_filesystem->wp_plugins_dir() . AI1EC_PLUGIN_NAME . DIRECTORY_SEPARATOR . AI1EC_THEMES_FOLDER;
+		$result = copy_dir( $plugin_themes_dir, $themes_root );
+		if( is_wp_error( $result ) ) {
+			?>
+			<div id="message" class="error">
+				<h3>
+					<?php _e( 'Errors occurred while we tried to install your core Calendar Themes', AI1EC_PLUGIN_NAME ) ?>.
+				</h3>
+				<p>
+					<strong>
+						<?php _e(
+							sprintf( 'Please fix the error listed below or your calendar may malfunction: %s', $result->get_error_message() ),
+							AI1EC_PLUGIN_NAME
+						) ?>
+					</strong>
+				</p>
+			</div>
+			<?php
+		} else {
+			update_option( 'ai1ec_themes_version', AI1EC_THEMES_VERSION );
+			?>
+			<div id="message" class="updated"><h3><?php _e( 'Calendar themes were installed successfully', AI1EC_PLUGIN_NAME ) ?>.</h3></div>
+			<p>
+				<a class="button" href="<?php echo AI1EC_SETTINGS_BASE_URL; ?>">
+					<?php _e( 'All-in-One Event Calendar Settings »', AI1EC_PLUGIN_NAME ); ?>
+				</a>
+			</p>
+			<?php
+		}
+		?>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Register Update Calendar Themes page in wp-admin.
 	 */
 	function register_theme_updater() {
 		// Add menu item for theme update page, but without the actual menu item
 		// by removing it again right away.
 		add_submenu_page(
-			'themes.php',
+			'edit.php?post_type=' . AI1EC_POST_TYPE,
 			__( 'Update Core Calendar Files', AI1EC_PLUGIN_NAME ),
 			__( 'Update Core Calendar Files', AI1EC_PLUGIN_NAME ),
 			'install_themes',
 			AI1EC_PLUGIN_NAME . '-update-themes',
 			array( &$this, 'update_core_themes' )
 		);
-		remove_submenu_page( 'themes.php', AI1EC_PLUGIN_NAME . '-update-themes' );
+		remove_submenu_page(
+			'edit.php?post_type=' . AI1EC_POST_TYPE,
+			AI1EC_PLUGIN_NAME . '-update-themes'
+		);
 	}
 
 	/**
@@ -204,14 +286,8 @@ class Ai1ec_Themes_Controller {
 			$files[] = 'vortex/js/general.min.js';
 			$files[] = 'vortex/css/calendar.css';
 			$files[] = 'vortex/css/event.css';
-			$files[] = 'vortex/css/general.css';
+			$files[] = 'vortex/css/style.css';
 			$files[] = 'vortex/css/print.css';
-			$files[] = 'vortex/less/build-css.sh';
-			$files[] = 'vortex/less/calendar.less';
-			$files[] = 'vortex/less/event.less';
-			$files[] = 'vortex/less/general.less';
-			$files[] = 'vortex/less/mixins-custom.less';
-			$files[] = 'vortex/less/variables.less';
 			$files[] = 'vortex/month.php';
 			$files[] = 'vortex/oneday.php';
 			$files[] = 'vortex/style.css';
@@ -228,6 +304,18 @@ class Ai1ec_Themes_Controller {
 			// Copy over files updated between AI1EC 1.7 RC2 and AI1EC 1.7 RC3
 			$files[] = 'vortex/js/calendar.min.js';
 			$files[] = 'vortex/js/calendar.js';
+		}
+
+		if ( $active_version < 5 ) {
+			// Copy over files updated between AI1EC 1.7 RC3 and AI1EC 1.8 RC3
+			$files[] = 'vortex/agenda-widget.php';
+			$files[] = 'vortex/calendar.php';
+			$files[] = 'vortex/css/calendar.css';
+			$files[] = 'vortex/css/event.css';
+			$files[] = 'vortex/event-exceprt.php';
+			$files[] = 'vortex/event-multi.php';
+			$files[] = 'vortex/event-single.php';
+			$files[] = 'vortex/style.css';
 		}
 
 		// Remove duplicates.

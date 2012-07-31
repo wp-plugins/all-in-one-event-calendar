@@ -10,7 +10,7 @@
  * Ai1ec_Events_Helper class
  *
  * @package Helpers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_Events_Helper {
 	/**

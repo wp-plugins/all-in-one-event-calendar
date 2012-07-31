@@ -55,14 +55,14 @@
 .ai1ec-calendar-toolbar td:first-child {
   text-align: left;
 }
-.thenly #ai1ec-view-dropdown a.btn,
-.thenly #ai1ec-view-dropdown .dropdown-menu a {
+.timely #ai1ec-view-dropdown a.btn,
+.timely #ai1ec-view-dropdown .dropdown-menu a {
   line-height: 21px;
 }
-.thenly #ai1ec-view-dropdown a.btn .caret {
+.timely #ai1ec-view-dropdown a.btn .caret {
   margin-top: 9px;
 }
-.thenly #ai1ec-view-dropdown a img {
+.timely #ai1ec-view-dropdown a img {
   border: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -915,6 +915,7 @@ table.ai1ec-oneday-view-original.tablescroll_body tr:first-child td {
   -webkit-border-radius: 0 0 0.5em 0.5em;
   -moz-border-radius: 0 0 0.5em 0.5em;
   border-radius: 0 0 0.5em 0.5em;
+  background: #fafae3;
   background: rgba(252, 252, 240, 0.85);
   background: -moz-linear-gradient(top, rgba(255, 255, 255, 0.75), #fafae3);
   background: -ms-linear-gradient(top, rgba(255, 255, 255, 0.75), #fafae3);

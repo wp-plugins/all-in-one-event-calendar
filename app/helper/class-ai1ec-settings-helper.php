@@ -10,7 +10,7 @@
  * Ai1ec_Settings_Helper class
  *
  * @package Helpers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_Settings_Helper {
 	/**
@@ -403,18 +403,18 @@ class Ai1ec_Settings_Helper {
 	}
 
 	/**
-	 * Renders the contents of the Seed Studio Support meta box.
+	 * Renders the contents of the Support meta box.
 	 *
 	 * @return void
 	 */
-	function the_seed_studio_meta_box( $object, $box ) {
+	function support_meta_box( $object, $box ) {
 		global $ai1ec_view_helper;
 		include_once( ABSPATH . WPINC . '/feed.php' );
 		// Initialize new feed
 		$newsItems = array();
 		$feed      = fetch_feed( AI1EC_RSS_FEED );
 		$newsItems = is_wp_error( $feed ) ? array() : $feed->get_items();
-		$ai1ec_view_helper->display_admin( 'box_the_seed_studio.php', array( 'news' => $newsItems ) );
+		$ai1ec_view_helper->display_admin( 'box_support.php', array( 'news' => $newsItems ) );
 	}
 
   /**

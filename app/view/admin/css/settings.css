@@ -7,11 +7,10 @@
   font-size: 20px !important;
   line-height: 28px !important;
 }
-.ai1ec-plugin-branding .thenly-logo {
-  text-align: center;
-}
-.ai1ec-plugin-branding .thenly-logo img {
-  max-width: 100%;
+.ai1ec-plugin-branding .timely-logo a {
+	background: url(../img/timely-logo.png) no-repeat center center;
+	display: block;
+	height: 140px;
 }
 .ai1ec-plugin-branding .ai1ec-follow-fan {
   padding: 10px 0 6px;
@@ -49,27 +48,27 @@
 	width: 100%;
 }
 
-.column-1-ai1ec #ai1ec-general-settings div.inside label {
+.column-1-ai1ec .inside label {
 	float: left;
 	clear: left;
 	margin: 0.25em 0;
 }
-.column-1-ai1ec #ai1ec-general-settings .checkbox {
+.column-1-ai1ec .checkbox {
 	float: left;
 	margin: 0.25em 0.5em 0 0;
 }
-.column-1-ai1ec #ai1ec-general-settings div.description {
+.column-1-ai1ec .inside .description {
 	clear: left;
 	font-size: 0.95em;
 	line-height: 1.5em;
-	margin-bottom: 1em;
+	margin: 0.25em 0 0.4em;
 }
-.column-1-ai1ec #ai1ec-general-settings label.textinput {
+.column-1-ai1ec .inside label.textinput {
 	width: 230px;
 }
-.column-1-ai1ec #ai1ec-general-settings h2 {
-	margin-bottom: 0;
-	margin-top: 10px;
+.column-1-ai1ec .inside h2 {
+	margin-bottom: 0 !important;
+	margin-top: 10px !important;
 }
 
 /* ICS Feeds */
@@ -123,14 +122,14 @@
 .ai1ec-donate {
 	text-align: center;
 }
-#ai1ec-rss-news {
-	margin: 0;
-	padding: 0px 0px 0px 20px;
-}
-#ai1ec-rss-news > li {
-	list-style: disc;
-}
 
 p.submit {
   padding-top: 0;
+}
+
+#ai1ec-blog-feed-container article {
+	margin: 8px 0;
+}
+#ai1ec-blog-feed-container header {
+	display: inline;
 }

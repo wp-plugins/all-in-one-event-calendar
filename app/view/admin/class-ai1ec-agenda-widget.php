@@ -14,7 +14,7 @@ class Ai1ec_Agenda_Widget extends WP_Widget {
 			'ai1ec_agenda_widget',
 			__( 'Upcoming Events', AI1EC_PLUGIN_NAME ),
 			array(
-				'description' => __( 'All-in-One Calendar: Lists upcoming events in Agenda view', AI1EC_PLUGIN_NAME ),
+				'description' => __( 'All-in-One Event Calendar: Lists upcoming events in Agenda view', AI1EC_PLUGIN_NAME ),
 				'class' => 'ai1ec-agenda-widget',
 			)
 		);

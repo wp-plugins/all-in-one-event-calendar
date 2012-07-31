@@ -10,7 +10,7 @@
  * Ai1ec_View_Helper class
  *
  * @package Helpers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_View_Helper {
 	/**
@@ -180,8 +180,16 @@ class Ai1ec_View_Helper {
 				'url'  => $active_template_url . '/' . AI1EC_CSS_FOLDER
 			),
 			(object) array(
+				'path' => $active_template_path,
+				'url'  => $active_template_url
+			),
+			(object) array(
 				'path' => AI1EC_DEFAULT_THEME_PATH . '/' . AI1EC_CSS_FOLDER,
 				'url'  => AI1EC_DEFAULT_THEME_URL . '/' . AI1EC_CSS_FOLDER
+			),
+			(object) array(
+				'path' => AI1EC_DEFAULT_THEME_PATH,
+				'url'  => AI1EC_DEFAULT_THEME_URL
 			),
 		);
 

@@ -10,7 +10,7 @@
  * Ai1ec_Importer_Controller class
  *
  * @package Controllers
- * @author The Seed Studio
+ * @author time.ly
  **/
 class Ai1ec_Importer_Controller {
 	/**
@@ -88,8 +88,8 @@ class Ai1ec_Importer_Controller {
 
 		if( ! isset( $wp_importers['ai1ec_the_events_calendar'] ) ) {
 			$wp_importers['ai1ec_the_events_calendar'] = array(
-				__( 'The Events Calendar → All-in-One Calendar', AI1EC_PLUGIN_NAME ),
-				__( 'Imports events created using The Events Calendar plugin into the All-in-One Calendar', AI1EC_PLUGIN_NAME ),
+				__( 'The Events Calendar → All-in-One Event Calendar', AI1EC_PLUGIN_NAME ),
+				__( 'Imports events created using The Events Calendar plugin into the All-in-One Event Calendar', AI1EC_PLUGIN_NAME ),
 				array( &$this, 'import_the_events_calendar' )
 			);
 		}

@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: All-in-One Calendar by Then.ly
- * Plugin URI: http://then.ly/
+ * Plugin Name: All-in-One Event Calendar by Timely
+ * Plugin URI: http://time.ly/
  * Description: A calendar system with month, week, day, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
- * Author: Then.ly
- * Author URI: http://then.ly/
- * Version: 1.7
+ * Author: Timely
+ * Author URI: http://time.ly/
+ * Version: 1.8
  */
 @set_time_limit( 0 );
 @ini_set( 'memory_limit',           '256M' );
@@ -24,7 +24,7 @@ define( 'AI1EC_PLUGIN_BASENAME',    plugin_basename( __FILE__ ) );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1EC_VERSION',            '1.7' );
+define( 'AI1EC_VERSION',            '1.8' );
 
 // ====================
 // = Database Version =
@@ -34,7 +34,7 @@ define( 'AI1EC_DB_VERSION',         109 );
 // ==========================
 // = Bundled themes version =
 // ==========================
-define( 'AI1EC_THEMES_VERSION',     4 );
+define( 'AI1EC_THEMES_VERSION',     5 );
 
 // ================
 // = Cron Version =
@@ -42,7 +42,7 @@ define( 'AI1EC_THEMES_VERSION',     4 );
 define( 'AI1EC_CRON_VERSION',       102 );
 define( 'AI1EC_N_CRON_VERSION',     101 );
 define( 'AI1EC_N_CRON_FREQ',        'daily' );
-define( 'AI1EC_UPDATES_URL',        'http://then.ly/assets/thenly-all-in-one-calendar-1.7.zip' );
+define( 'AI1EC_UPDATES_URL',        'http://time.ly/assets/timely-all-in-one-calendar-1.8.zip' );
 
 // ===============
 // = Plugin Path =
@@ -167,7 +167,7 @@ define( 'AI1EC_POST_TYPE',          'ai1ec_event' );
 // =====================================================
 // = UPDATE THEMES PAGE BASE URL (wrap in admin_url()) =
 // =====================================================
-define( 'AI1EC_UPDATE_THEMES_BASE_URL', 'themes.php?page=' . AI1EC_PLUGIN_NAME . '-update-themes' );
+define( 'AI1EC_UPDATE_THEMES_BASE_URL', 'edit.php?post_type=' . AI1EC_POST_TYPE . '&page=' . AI1EC_PLUGIN_NAME . '-update-themes' );
 
 // =====================================================
 // = FEED SETTINGS PAGE BASE URL (wrap in admin_url()) =
@@ -177,7 +177,7 @@ define( 'AI1EC_FEED_SETTINGS_BASE_URL', 'edit.php?post_type=' . AI1EC_POST_TYPE 
 // ================================================
 // = SETTINGS PAGE BASE URL (wrap in admin_url()) =
 // ================================================
-define( 'AI1EC_SETTINGS_BASE_URL',  'options-general.php?page=' . AI1EC_PLUGIN_NAME . '-settings' );
+define( 'AI1EC_SETTINGS_BASE_URL',  'edit.php?post_type=' . AI1EC_POST_TYPE . '&page=' . AI1EC_PLUGIN_NAME . '-settings' );
 
 // ======================
 // = Default Theme Name =
@@ -209,10 +209,15 @@ define( 'AI1EC_DEFAULT_THEME_PATH', AI1EC_THEMES_ROOT . '/' . AI1EC_DEFAULT_THEM
 // =====================
 define( 'AI1EC_DEFAULT_THEME_URL',  AI1EC_THEMES_URL . '/' . AI1EC_DEFAULT_THEME_NAME );
 
+// ======================================================
+// = INSTALL THEMES PAGE BASE URL (wrap in admin_url()) =
+// ======================================================
+define( 'AI1EC_INSTALL_THEMES_BASE_URL', 'edit.php?post_type=' . AI1EC_POST_TYPE . '&page=' . AI1EC_PLUGIN_NAME . '-install-themes' );
+
 // ================
 // = RSS FEED URL =
 // ================
-define( 'AI1EC_RSS_FEED',           'http://feeds.feedburner.com/ai1ec' );
+define( 'AI1EC_RSS_FEED',           'http://time.ly/feed/' );
 
 // ======================================
 // = FAKE CATEGORY ID FOR CALENDAR PAGE =
@@ -241,8 +246,7 @@ define( 'AI1EC_EXPORT_URL',         $tmp . "&controller=ai1ec_exporter_controlle
 // ====================================
 if( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
 	// Parser that requires PHP v5.3.0 or up
-	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10.23/iCalcreator.class.php' );
-	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10.23//iCalUtilityFunctions.class.php' );
+	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.12/iCalcreator.class.php' );
 } else {
 	// Parser that works on PHP versions below 5.3.0
 	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10/iCalcreator.class.php' );
