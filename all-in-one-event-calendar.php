@@ -5,7 +5,7 @@
  * Description: A calendar system with month, week, day, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
  * Author: Timely
  * Author URI: http://time.ly/
- * Version: 1.8.1
+ * Version: 1.8.2
  */
 @set_time_limit( 0 );
 @ini_set( 'memory_limit',           '256M' );
@@ -24,7 +24,7 @@ define( 'AI1EC_PLUGIN_BASENAME',    plugin_basename( __FILE__ ) );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1EC_VERSION',            '1.8.1' );
+define( 'AI1EC_VERSION',            '1.8.2' );
 
 // ====================
 // = Database Version =
@@ -34,7 +34,7 @@ define( 'AI1EC_DB_VERSION',         109 );
 // ==========================
 // = Bundled themes version =
 // ==========================
-define( 'AI1EC_THEMES_VERSION',     5 );
+define( 'AI1EC_THEMES_VERSION',     6 );
 
 // ================
 // = Cron Version =
@@ -42,7 +42,7 @@ define( 'AI1EC_THEMES_VERSION',     5 );
 define( 'AI1EC_CRON_VERSION',       102 );
 define( 'AI1EC_N_CRON_VERSION',     101 );
 define( 'AI1EC_N_CRON_FREQ',        'daily' );
-define( 'AI1EC_UPDATES_URL',        'http://time.ly/assets/timely-all-in-one-calendar-1.8.2.zip' );
+define( 'AI1EC_UPDATES_URL',        'http://time.ly/assets/timely-all-in-one-calendar-1.8.3.zip' );
 
 // ===============
 // = Plugin Path =

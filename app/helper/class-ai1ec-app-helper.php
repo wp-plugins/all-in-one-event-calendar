@@ -686,7 +686,7 @@ class Ai1ec_App_Helper {
 		// Display introductory video notice if not disabled.
 		if( $ai1ec_settings->show_intro_video ) {
 			$args = array(
-				'label' => __( 'Welcome to the All-in-One Event Calendar, by timely', AI1EC_PLUGIN_NAME ),
+				'label' => __( 'Welcome to the All-in-One Event Calendar, by Timely', AI1EC_PLUGIN_NAME ),
 				'msg' => sprintf(
 					'<div class="timely"><a href="#ai1ec-video-modal" data-toggle="modal" ' .
 						'class="button-primary pull-left">%s</a>' .
