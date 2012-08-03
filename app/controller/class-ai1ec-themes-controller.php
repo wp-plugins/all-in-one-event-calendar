@@ -276,7 +276,12 @@ class Ai1ec_Themes_Controller {
 		// Get previous version of core themes.
 		$active_version = get_option( 'ai1ec_themes_version', 1 );
 
-		$files = array();
+		$files = array();             // files to copy
+		$files_to_delete = array();   // files to delete
+		$folders = array();           // folders to copy
+		$folders_to_delete = array(); // folders to delete
+		$folders_to_make = array();   // folders to make
+
 		if ( $active_version < 2 ) {
 			// Copy over files updated between AI1EC 1.6 and 1.7 RC1
 			$files[] = 'vortex/agenda.php';
@@ -312,26 +317,148 @@ class Ai1ec_Themes_Controller {
 			$files[] = 'vortex/calendar.php';
 			$files[] = 'vortex/css/calendar.css';
 			$files[] = 'vortex/css/event.css';
-			$files[] = 'vortex/event-exceprt.php';
+			$files[] = 'vortex/event-excerpt.php';
 			$files[] = 'vortex/event-multi.php';
 			$files[] = 'vortex/event-single.php';
 			$files[] = 'vortex/style.css';
 		}
 
-		// Remove duplicates.
-		$files = array_unique( $files );
+		if ( $active_version < 6 ) {
+			// Copy over files updated between AI1EC 1.8 RC3 and AI1EC 1.8.2
+			$files[] = 'vortex/event-excerpt.php';
+		}
 
+		// Remove duplicates.
+		$files             = array_unique( $files );
+		$files_to_delete   = array_unique( $files_to_delete );
+		$folders           = array_unique( $folders );
+		$folders_to_delete = array_unique( $folders_to_delete );
+		$folders_to_make   = array_unique( $folders_to_make );
+
+		// array to hold error notifications to the user while updating the themes
 		$errors = array();
-		foreach ( $files as $file ) {
-			if ( ! copy( $src_dir . $file, $dest_dir . $file ) ) {
-				$errors[] = sprintf(
-					__( '<div class="error"><p><strong>There was an error updating one of the files.</strong> Please FTP to your web server and manually copy <pre>%s</pre> to <pre>%s</pre></p></div>', AI1EC_PLUGIN_NAME ),
-					$src_dir . $file,
-					$dest_dir . $file
-				);
+
+		// do we have something to update?
+		if( count( $files ) > 0 ||
+		    count( $files_to_delete ) > 0 ||
+		    count( $folders ) > 0 ||
+		    count( $folders_to_delete ) > 0 ||
+		    count( $folders_to_make ) > 0 ) {
+
+			// WP_Filesystem figures it out by itself, but the filesystem method may be overriden here
+			$method = '';
+			$url = wp_nonce_url( AI1EC_UPDATE_THEMES_BASE_URL, AI1EC_PLUGIN_NAME . '-theme-updater' );
+			if( false === ( $creds = request_filesystem_credentials( $url, $method, false, false ) ) ) {
+				// if we get here, then we don't have credentials yet,
+				// but have just produced a form for the user to fill in,
+				// so stop processing for now
+				return false; // stop the normal page form from displaying
+			}
+
+			// now we have some credentials, try to get the wp_filesystem running
+			if( ! WP_Filesystem( $creds ) ) {
+				// our credentials were no good, ask the user for them again
+				request_filesystem_credentials( $url, $method, true, false );
+				return false;
+			}
+
+			global $wp_filesystem;
+
+			// 1. Create new folders
+			foreach ( $folders_to_make as $folder_to_make ) {
+				// try to create the folder
+				if( FALSE === $wp_filesystem->mkdir( $dest_dir . $folder_to_make ) ) {
+					// we were not able to create the folder, notify the user
+					$errors[] = sprintf(
+						__( '<div class="error"><p><strong>There was an error creating one of the theme folders.</strong> Please FTP to your web server and manually create <pre>%s</pre></p></div>', AI1EC_PLUGIN_NAME ),
+						$dest_dir . $folder_to_make
+					);
+				}
+			}
+
+			// 2. Copy folders
+			foreach ( $folders as $folder ) {
+				// try to copy the folder
+				$result = copy_dir( $src_dir . $folder, $dest_dir . $folder );
+				if( is_wp_error( $result ) ) {
+					// we were not able to copy the folder, notify the user
+					$errors[] = sprintf(
+						__( '<div class="error"><p><strong>There was an error("%s") while copying theme folders.</strong> Please FTP to your web server and manually copy <pre>%s</pre> to <pre>%s</pre></p></div>', AI1EC_PLUGIN_NAME ),
+						$result->get_error_message(),
+						$src_dir . $folder,
+						$dest_dir . $folder
+					);
+				}
+			}
+
+			// 3. Copy files
+			// loop over files
+			foreach ( $files as $file ) {
+				// copy only files that exist
+				if( $wp_filesystem->exists( $src_dir . $file ) ) {
+					// was file copied successfully?
+					if ( ! $wp_filesystem->copy( $src_dir . $file, $dest_dir . $file, true, FS_CHMOD_FILE ) ) {
+						// If copy failed, chmod file to 0644 and try again.
+						$wp_filesystem->chmod( $dest_dir . $file, 0644);
+						if ( ! $wp_filesystem->copy( $src_dir . $file, $dest_dir . $file, true, FS_CHMOD_FILE ) ) {
+							// we were not able to copy the file, notify the user
+							$errors[] = sprintf(
+								__( '<div class="error"><p><strong>There was an error updating one of the files.</strong> Please FTP to your web server and manually copy <pre>%s</pre> to <pre>%s</pre></p></div>', AI1EC_PLUGIN_NAME ),
+								$src_dir . $file,
+								$dest_dir . $file
+							);
+						}
+					}
+				}
+			}
+
+			// 4. Remove folders
+			foreach ( $folders_to_delete as $folder_to_delete ) {
+				// check if folder exist
+				if( $wp_filesystem->is_dir( $dest_dir . $folder_to_delete ) ) {
+					// folder actions are always recursive
+					$recursive = true;
+					// try to delete the folder
+					if( FALSE === $wp_filesystem->delete( $dest_dir . $folder_to_delete, $recursive ) ) {
+						// If delete failed, chmod folder recursively to 0644 and try again.
+						$wp_filesystem->chmod( $dest_dir . $folder_to_delete, 0644, $recursive );
+						if( FALSE === $wp_filesystem->delete( $dest_dir . $folder_to_delete, $recursive ) ) {
+							// we were not able to remove the folder, notify the user
+							$errors[] = sprintf(
+									__( '<div class="error"><p><strong>There was an error deleting one of the folders.</strong> Please FTP to your web server and manually delete <pre>%s</pre></p></div>', AI1EC_PLUGIN_NAME ),
+									$dest_dir . $folder_to_delete
+							);
+						}
+					}
+				}
+			}
+
+			// 5. Remove files
+			foreach ( $files_to_delete as $file ) {
+				// check if file exist
+				if( $wp_filesystem->exists( $dest_dir . $file ) ) {
+					// try to delete the file
+					if( FALSE === $wp_filesystem->delete( $dest_dir . $file ) ) {
+						// If delete failed, chmod file to 0644 and try again.
+						$wp_filesystem->chmod( $dest_dir . $file, 0644 );
+						if( FALSE === $wp_filesystem->delete( $dest_dir . $file ) ) {
+							// we were not able to remove the file, notify the user
+							$errors[] = sprintf(
+									__( '<div class="error"><p><strong>There was an error deleting one of the files.</strong> Please FTP to your web server and manually delete <pre>%s</pre></p></div>', AI1EC_PLUGIN_NAME ),
+									$dest_dir . $file
+							);
+						}
+					}
+				}
 			}
 		}
 
+		// TODO: Only update the theme version when the update was successful.
+		// Otherwise provide a way for the user to review the error log that this
+		// update generated and to run the update again, after fixing the reported
+		// errors.
+
+		// Update theme version
 		update_option( 'ai1ec_themes_version', AI1EC_THEMES_VERSION );
 
 		if ( $errors ) {
