@@ -82,6 +82,9 @@ http://www.youtube.com/watch?v=XJ-KHOqBKuQ
 
 == Changelog ==
 
+= Version 1.9 =
+* Bug fixes
+
 = Version 1.8.2 =
 * Improved theme updater
 * Fixed some typos in language files
