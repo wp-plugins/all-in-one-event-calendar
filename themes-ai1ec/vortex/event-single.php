@@ -5,7 +5,7 @@
 			<th scope="row" class="ai1ec-time"><?php _e( 'When:', AI1EC_PLUGIN_NAME ) ?></th>
 			<td colspan="2" class="ai1ec-time">
 				<a class="ai1ec-calendar-link btn pull-right" href="<?php echo $calendar_url ?>">
-					<i class="icon-arrow-left"></i> <?php _e( 'Back to Calendar', AI1EC_PLUGIN_NAME ) ?>
+					<i class="timely-icon-arrow-left"></i> <?php _e( 'Back to Calendar', AI1EC_PLUGIN_NAME ) ?>
 				</a>
 				<?php echo $event->timespan_html ?>
 			</td>
@@ -61,7 +61,7 @@
 		<tr>
 			<th scope="row" class="ai1ec-tags">
 				<?php if( $tags ): ?>
-					<i class="icon-tags"></i> <?php _e( 'Tags:', AI1EC_PLUGIN_NAME ) ?>
+					<i class="timely-icon-tag"></i> <?php _e( 'Tags:', AI1EC_PLUGIN_NAME ) ?>
 				<?php endif ?>
 			</th>
 			<td class="ai1ec-tags"><?php echo $tags ?></td>

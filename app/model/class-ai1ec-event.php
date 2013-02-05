@@ -439,11 +439,13 @@ class Ai1ec_Event {
 			// = Month view multiday properties =
 			// ==================================
 			case "multiday":
-				return (
-					$ai1ec_events_helper->get_long_date( $this->start )
-					!=
-					$ai1ec_events_helper->get_long_date( $this->end - 1 )
-				);
+				// Event is multiday if it is longer than 24 hours, and it ends on a
+				// different day than it starts.
+				return
+					$this->end - $this->start >= 24 * 60 * 60
+					&&
+					$ai1ec_events_helper->get_long_date( $this->start ) !=
+					$ai1ec_events_helper->get_long_date( $this->end - 1 );
 
 			case "multiday_end_day":
 				return $ai1ec_events_helper->get_multiday_end_day( $this->end - 1 );

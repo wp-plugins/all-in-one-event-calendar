@@ -162,7 +162,12 @@ class Ai1ec_Agenda_Widget extends WP_Widget {
 		global $ai1ec_view_helper,
 		       $ai1ec_events_helper,
 		       $ai1ec_calendar_helper,
-		       $ai1ec_settings;
+		       $ai1ec_settings,
+		       $ai1ec_themes_controller;
+
+		if ( $ai1ec_themes_controller->frontend_outdated_themes_notice() ) {
+			return;
+		}
 
 		$defaults = array(
 			'hide_on_calendar_page'  => true,
@@ -174,8 +179,9 @@ class Ai1ec_Agenda_Widget extends WP_Widget {
 		$instance = wp_parse_args( $instance, $defaults );
 
 		if( $instance['hide_on_calendar_page'] &&
-		    is_page( $ai1ec_settings->calendar_page_id ) )
+		    is_page( $ai1ec_settings->calendar_page_id ) ) {
 			return;
+		}
 
 		// Add params to the subscribe_url for filtering by Limits (category, tag)
 		$subscribe_filter  = '';

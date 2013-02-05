@@ -64,7 +64,7 @@
     	<?php if( $show_calendar_button ): ?>
     		<a class="btn btn-mini pull-right ai1ec-calendar-link" href="<?php echo $calendar_url; ?>">
     			<?php _e( 'View Calendar', AI1EC_PLUGIN_NAME ); ?>
-          <i class="icon-arrow-right"></i>
+          <i class="timely-icon-forward"></i>
     		</a>
     	<?php endif; ?>
 

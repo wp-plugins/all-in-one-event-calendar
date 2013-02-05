@@ -616,7 +616,7 @@ class Ai1ec_View_Helper {
 		header( 'Content-type: application/json' );
 
 		// Output JSON-encoded result and quit
-		echo json_encode( $data );
+		echo json_encode( ai1ec_utf8( $data ) );
 		exit;
 	}
 

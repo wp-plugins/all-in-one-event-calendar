@@ -480,13 +480,6 @@ class Ai1ec_App_Controller {
 					 $ai1ec_events_helper,
 					 $post;
 
-		// regex pattern to match our shortcode [ai1ec]
-		// \[(\[?)(ai1ec)\b([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*+(?:\[(?!\/\2\])[^\[]*+)*+)\[\/\2\])?)(\]?)
-		$out = array();
-		if( isset( $post->post_content ) ) {
-			preg_match( "/\[(\[?)(ai1ec)\b([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*+(?:\[(?!\/\2\])[^\[]*+)*+)\[\/\2\])?)(\]?)/s", $post->post_content, $out );
-		}
-
 		// Find out if the calendar page ID is defined, and we're on it
 		if( $ai1ec_settings->calendar_page_id &&
 				is_page( $ai1ec_settings->calendar_page_id ) )
@@ -495,92 +488,6 @@ class Ai1ec_App_Controller {
 			// the page doesn't require a password
 			if( ! post_password_required( $ai1ec_settings->calendar_page_id ) ) {
 				ob_start();
-				// Render view
-				$ai1ec_calendar_controller->view();
-				// Save page content to local variable
-				$this->page_content = ob_get_contents();
-				ob_end_clean();
-
-				// Replace page content - make sure it happens at (almost) the very end of
-				// page content filters (some themes are overly ambitious here)
-				add_filter( 'the_content', array( &$this, 'append_content' ), PHP_INT_MAX - 1 );
-			}
-		} else if( isset( $out[2] ) && $out[2] == 'ai1ec' ) {
-			// if content has [ai1ec] shortcode, display the calendar page
-			$attr = shortcode_parse_atts( $out[3] );
-			// Proceed only if the page password is correctly entered OR
-			// the page doesn't require a password
-			if( ! post_password_required( $post->ID ) ) {
-				ob_start();
-				if( isset( $attr["view"] ) && ! empty( $attr["view"] ) ) {
-					switch( $attr["view"] ) {
-						case "monthly":
-							$_REQUEST["action"] = "ai1ec_month";
-							break;
-						case "weekly":
-							$_REQUEST["action"] = "ai1ec_week";
-							break;
-						case "agenda":
-							$_REQUEST["action"] = "ai1ec_agenda";
-							break;
-					}
-				}
-
-				// Parse categories by name
-				if( isset( $attr["cat_name"] ) && ! empty( $attr["cat_name"] ) ) {
-					foreach( explode( ',', $attr["cat_name"] ) as $c ) {
-						$cid = get_term_by( "name", trim( $c ), "events_categories" );
-						if( $cid !== false ) {
-							// if term was found, include it
-							$_REQUEST["ai1ec_cat_ids"] = isset( $_REQUEST["ai1ec_cat_ids"] ) ?
-							                             $_REQUEST["ai1ec_cat_ids"] . $cid->term_id . ',' :
-							                             $cid->term_id . ',';
-						}
-					}
-					// remove last comma only if there is some content in the var
-					if( isset( $_REQUEST["ai1ec_cat_ids"] ) && strlen( $_REQUEST["ai1ec_cat_ids"] ) > 2 ) {
-						$_REQUEST["ai1ec_cat_ids"] = substr( $_REQUEST["ai1ec_cat_ids"], 0, -1 );
-					}
-				}
-
-				// Parse categories by id
-				if( isset( $attr["cat_id"] ) && ! empty( $attr["cat_id"] ) ) {
-					// append cat_id to the ai1ec_cat_ids array
-					$_REQUEST["ai1ec_cat_ids"] = ( isset( $_REQUEST["ai1ec_cat_ids"] ) && strlen( $_REQUEST["ai1ec_cat_ids"] ) > 0 )
-																				 ? $_REQUEST["ai1ec_cat_ids"] . ',' . $attr["cat_id"]
-																				 : $attr["cat_id"];
-				}
-
-				// Parse tags by name
-				if( isset( $attr["tag_name"] ) && ! empty( $attr["tag_name"] ) ) {
-					foreach( explode( ',', $attr["tag_name"] ) as $t ) {
-						$tid = get_term_by( "name", trim( $t ), "events_tags" );
-						if( $tid !== false ) {
-							// if term was found, include it
-							$_REQUEST["ai1ec_tag_ids"] = isset( $_REQUEST["ai1ec_tag_ids"] ) ?
-							                             $_REQUEST["ai1ec_tag_ids"] . $tid->term_id . ',' :
-							                             $tid->term_id . ',';
-						}
-					}
-					// remove last comma only if there is some content in the var
-					if( isset( $_REQUEST["ai1ec_tag_ids"] ) && strlen( $_REQUEST["ai1ec_tag_ids"] ) > 2 ) {
-						$_REQUEST["ai1ec_tag_ids"] = substr( $_REQUEST["ai1ec_tag_ids"], 0, -1 );
-					}
-				}
-
-				// Parse tags by id
-				if( isset( $attr["tag_id"] ) && ! empty( $attr["tag_id"] ) ) {
-					// append tag_id to the ai1ec_tag_ids array
-					$_REQUEST["ai1ec_tag_ids"] = ( isset( $_REQUEST["ai1ec_tag_ids"] ) && strlen( $_REQUEST["ai1ec_tag_ids"] ) > 0 )
-																				 ? $_REQUEST["ai1ec_tag_ids"] . ',' . $attr["tag_id"]
-																				 : $attr["tag_id"];
-				}
-
-				// Parse posts by id
-				if( isset( $attr["post_id"] ) && ! empty( $attr["post_id"] ) ) {
-					$_REQUEST["ai1ec_post_ids"] = $attr["post_id"];
-				}
-
 				// Render view
 				$ai1ec_calendar_controller->view();
 				// Save page content to local variable

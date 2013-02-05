@@ -9,10 +9,10 @@
 	<?php if( $dates ): ?>
 		<div class="btn-group">
 			<a id="ai1ec-expand-all" class="btn btn-mini">
-				<i class="icon-plus-sign"></i> <?php _e( 'Expand All', AI1EC_PLUGIN_NAME ) ?>
+				<i class="timely-icon-plus-sign"></i> <?php _e( 'Expand All', AI1EC_PLUGIN_NAME ) ?>
 			</a><a
 			id="ai1ec-collapse-all" class="btn btn-mini">
-				<i class="icon-minus-sign"></i> <?php _e( 'Collapse All', AI1EC_PLUGIN_NAME ) ?>
+				<i class="timely-icon-minus-sign"></i> <?php _e( 'Collapse All', AI1EC_PLUGIN_NAME ) ?>
 			</a>
 		</div>
 	<?php endif; ?>
@@ -83,7 +83,7 @@
 										<div class="ai1ec-event-overlay">
 											<a class="ai1ec-read-more btn"
 												href="<?php echo esc_attr( get_permalink( $event->post_id ) . $event->instance_id ) ?>">
-												<?php _e( 'Read more', AI1EC_PLUGIN_NAME ) ?> <i class="icon-arrow-right"></i>
+												<?php _e( 'Read more', AI1EC_PLUGIN_NAME ) ?> <i class="timely-icon-forward"></i>
 											</a>
 											<?php if( $event->categories_html ): ?>
 												<div class="ai1ec-categories">

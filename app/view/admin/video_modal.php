@@ -42,5 +42,13 @@
 	}
 
 	var onYouTubeIframeAPIReady = ai1ecVideo().onYouTubeIframeAPIReady;
+
+	<?php if ( ! $css_loaded || ! $js_loaded ): ?>
+		jQuery( function( $ ) {
+			$( 'head' )
+				.append( '<link rel="stylesheet" type="text/css" href="<?php echo $css_url; ?>" />' );
+			$.getScript( '<?php echo $js_url; ?>' );
+		} );
+	<?php endif; ?>
 /* ]]> */
 </script>

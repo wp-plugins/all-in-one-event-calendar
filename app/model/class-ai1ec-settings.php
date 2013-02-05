@@ -304,6 +304,18 @@ class Ai1ec_Settings {
 	}
 
 	/**
+	 * is_timezone_open_for_change method
+	 *
+	 * Check if it is allowed to change timezone.
+	 * It is *yes* (`bool(true)`) if WordPress timezone string was not set.
+	 *
+	 * @return bool True if timezone may be modified
+	 */
+	static public function is_timezone_open_for_change() {
+		return ( ! get_option( 'timezone_string' ) );
+	}
+
+	/**
 	 * save function
 	 *
 	 * Save settings to the database.
@@ -314,7 +326,9 @@ class Ai1ec_Settings {
 		update_option( 'ai1ec_settings', $this );
 		update_option( 'start_of_week', $this->week_start_day );
 		update_option( 'ai1ec_cron_version', get_option( 'ai1ec_cron_version' ) + 1 );
-		update_option( 'timezone_string', $this->timezone );
+		if ( $this->is_timezone_open_for_change() ) {
+			update_option( 'timezone_string', $this->timezone );
+		}
 	}
 
 	/**

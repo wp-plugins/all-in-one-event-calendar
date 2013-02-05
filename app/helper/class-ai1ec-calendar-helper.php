@@ -91,7 +91,7 @@ class Ai1ec_Calendar_Helper {
 				// 1. we are populating the 1st & this event starts before the 1st, or
 				// 2. this event starts on the currently populated day
 				if ( $day == 1 && $event_start < $the_first ||
-				     $event_start >= $start_time && $event_start < $end_time ) {
+						 $event_start >= $start_time && $event_start < $end_time ) {
 					// Set multiday properties. TODO: Should these be made event object
 					// properties? They probably shouldn't be saved to the DB, so I'm not
 					// sure. Just creating properties dynamically for now.
@@ -518,26 +518,33 @@ class Ai1ec_Calendar_Helper {
 	 * negative $page_offset can be provided, which will return events *before*
 	 * the reference time, as expected.
 	 *
-	 * @param int $time	          limit to events starting after this (local) UNIX time
+	 * @param int $time           limit to events starting after this (local) UNIX time
 	 * @param int $limit          return a maximum of this number of items
 	 * @param int $page_offset    offset the result set by $limit times this number
 	 * @param array $filter       Array of filters for the events returned.
 	 *		                        ['cat_ids']   => non-associatative array of category IDs
-	 *		                        ['tag_ids']   => non-associatative array of tag IDs
-	 *                            ['post_ids']  => non-associatative array of post IDs
+	 *                                      ['tag_ids']   => non-associatative array of tag IDs
+	 *                                      ['post_ids']  => non-associatative array of post IDs
+	 * @param int $last_day       Last day (time), that was displayed
 	 *
-	 * @return array              three-element array:
+	 * @return array              five-element array:
 	 *                              ['events'] an array of matching event objects
-	 *															['prev'] true if more previous events
-	 *															['next'] true if more next events
+	 *                              ['prev'] true if more previous events
+	 *                              ['next'] true if more next events
+	 *                              ['date_first'] UNIX timestamp (date part) of first event
+	 *                              ['date_last'] UNIX timestamp (date part) of last event
 	 **/
-	function get_events_relative_to( $time, $limit = 0, $page_offset = 0, $filter = array() ) {
+	function get_events_relative_to( $time, $limit = 0, $page_offset = 0, $filter = array(), $last_day = null ) {
 
 		global $wpdb, $ai1ec_events_helper;
 
 		// Figure out what the beginning of the day is to properly query all-day
 		// events; then convert to GMT time
 		$bits = $ai1ec_events_helper->gmgetdate( $time );
+
+		// Even if there ARE more than 5 times the limit results - we shall not
+		// try to fetch and display these, as it would crash system
+		$upper_boundary = ( false !== $last_day ) ? 5 * $limit : $limit;
 
 		// Convert timestamp to GMT time
 		$time = $ai1ec_events_helper->local_to_gmt( $time );
@@ -557,41 +564,67 @@ class Ai1ec_Calendar_Helper {
 		// $filter elements specified
 		$this->_get_filter_sql( $filter );
 
+		$filter_date_clause = ( $page_offset >= 0 )
+																			? 'i.end >= FROM_UNIXTIME( %d ) '
+																			: 'i.start < FROM_UNIXTIME( %d ) ';
+		$order_direction    = ( $page_offset >= 0 ) ? 'ASC' : 'DESC';
+		if ( false !== $last_day ) {
+			if ( 0 == $last_day ) {
+				$last_day = (int)$_SERVER['REQUEST_TIME'];
+			}
+			$filter_date_clause = ' i.start ';
+			if ( $page_offset < 0 ) {
+				$filter_date_clause .= '<';
+				$order_direction     = 'DESC';
+			} else {
+				$filter_date_clause .= '>';
+				$order_direction     = 'ASC';
+			}
+			$filter_date_clause .= ' FROM_UNIXTIME( %d ) ';
+			$args[0]             = $last_day;
+			$first_record        = 0;
+		}
+
 		$query = $wpdb->prepare(
-			"SELECT SQL_CALC_FOUND_ROWS p.*, e.post_id, i.id AS instance_id, " .
-			"UNIX_TIMESTAMP( i.start ) AS start, " .
-			"UNIX_TIMESTAMP( i.end ) AS end, " .
+			'SELECT SQL_CALC_FOUND_ROWS p.*, e.post_id, i.id AS instance_id, ' .
+			'UNIX_TIMESTAMP( i.start ) AS start, ' .
+			'UNIX_TIMESTAMP( i.end ) AS end, ' .
 			// Treat event instances that span 24 hours as all-day
-			"IF( e.allday, e.allday, i.end = DATE_ADD( i.start, INTERVAL 1 DAY ) ) AS allday, " .
-			"e.recurrence_rules, e.exception_rules, e.recurrence_dates, e.exception_dates, " .
-			"e.venue, e.country, e.address, e.city, e.province, e.postal_code, " .
-			"e.show_map, e.contact_name, e.contact_phone, e.contact_email, e.cost, " .
-			"e.ical_feed_url, e.ical_source_url, e.ical_organizer, e.ical_contact, e.ical_uid " .
-			"FROM {$wpdb->prefix}ai1ec_events e " .
-				"INNER JOIN $wpdb->posts p ON e.post_id = p.ID " .
-				"INNER JOIN {$wpdb->prefix}ai1ec_event_instances i ON e.post_id = i.post_id " .
+			'IF( e.allday, e.allday, i.end = DATE_ADD( i.start, INTERVAL 1 DAY ) ) AS allday, ' .
+			'e.recurrence_rules, e.exception_rules, e.recurrence_dates, e.exception_dates, ' .
+			'e.venue, e.country, e.address, e.city, e.province, e.postal_code, ' .
+			'e.show_map, e.contact_name, e.contact_phone, e.contact_email, e.cost, ' .
+			'e.ical_feed_url, e.ical_source_url, e.ical_organizer, e.ical_contact, e.ical_uid ' .
+			'FROM ' . $wpdb->prefix . 'ai1ec_events e ' .
+				'INNER JOIN ' . $wpdb->posts . ' p ON e.post_id = p.ID ' .
+				'INNER JOIN ' . $wpdb->prefix . 'ai1ec_event_instances i ON e.post_id = i.post_id ' .
 				$filter['filter_join'] .
 			"WHERE post_type = '" . AI1EC_POST_TYPE . "' " .
-			"AND " .
-				( $page_offset >= 0 ? "i.end >= FROM_UNIXTIME( %d ) "
-					: "i.start < FROM_UNIXTIME( %d ) "
-				) .
+			'AND ' . $filter_date_clause .
 			$filter['filter_where'] .
 			$post_status_where .
 			// Reverse order when viewing negative pages, to get correct set of
 			// records. Then reverse results later to order them properly.
-			"ORDER BY i.start " . ( $page_offset >= 0 ? 'ASC' : 'DESC' ) .
-				", post_title " . ( $page_offset >= 0 ? 'ASC' : 'DESC' ) .
-			" LIMIT $first_record, $limit",
+			'ORDER BY i.start ' . $order_direction .
+			', post_title ' . $order_direction .
+			' LIMIT ' . $first_record . ', ' . $upper_boundary,
 			$args );
 
 		$events = $wpdb->get_results( $query, ARRAY_A );
 
+		// Limit the number of records to convert to data-object
+		$events = $this->_limit_result_set( $events, $limit, ( false !== $last_day ) );
+
 		// Reorder records if in negative page offset
 		if( $page_offset < 0 ) $events = array_reverse( $events );
 
-		foreach( $events as &$event ) {
-			$event = new Ai1ec_Event( $event );
+		$date_first = $date_last = null;
+		foreach ( $events as &$event ) {
+			if ( null === $date_first ) {
+				$date_first = $event['start'];
+			}
+			$date_last = $event['start'];
+			$event     = new Ai1ec_Event( $event );
 		}
 
 		// Find out if there are more records in the current nav direction
@@ -624,10 +657,46 @@ class Ai1ec_Calendar_Helper {
 			$next = $more;
 		}
 		return array(
-			'events' => $events,
-			'prev' => $prev,
-			'next' => $next,
+			'events'     => $events,
+			'prev'       => $prev,
+			'next'       => $next,
+			'date_first' => $date_first,
+			'date_last'  => $date_last,
 		);
+	}
+
+	/**
+	 * _limit_result_set function
+	 *
+	 * Slice given number of events from list, with exception when all
+	 * events from last day shall be included.
+	 *
+	 * @param array $events   List of events to slice
+	 * @param int   $limit    Number of events to slice-off
+	 * @param bool  $last_day Set to true to include all events from last day ignoring {$limit}
+	 *
+	 * @return array Sliced events list
+	 */
+	protected function _limit_result_set( array $events, $limit, $last_day )
+	{
+		global $ai1ec_events_helper;
+		$limited_events = array();
+		$start_day_previous = null;
+		foreach ( $events as $event ) {
+			$start_day = $ai1ec_events_helper->date_to_gmdatestamp( $event['start'] );
+			if ( --$limit < 0 ) {
+				if ( true === $last_day ) {
+					if ( $start_day != $start_day_previous ) {
+						break;
+					}
+				} else {
+					break;
+				}
+			}
+			$limited_events[]   = $event;
+			$start_day_previous = $start_day;
+		}
+		return $limited_events;
 	}
 
 	/**
@@ -657,7 +726,15 @@ class Ai1ec_Calendar_Helper {
 			$date = $ai1ec_events_helper->gmt_to_local( $event->start );
 			$date = $ai1ec_events_helper->gmgetdate( $date );
 			$timestamp = gmmktime( 0, 0, 0, $date['mon'], $date['mday'], $date['year'] );
-			$category = $event->allday||$event->multiday ? 'allday' : 'notallday';
+			// Ensure all-day & non all-day categories are created in correct order.
+			if ( ! isset( $dates[$timestamp]['events'] ) ) {
+				$dates[$timestamp]['events'] = array(
+					'allday'    => array(),
+					'notallday' => array(),
+				);
+			}
+			// Add the event.
+			$category = $event->allday ? 'allday' : 'notallday';
 			$dates[$timestamp]['events'][$category][] = $event;
 		}
 
@@ -773,23 +850,20 @@ class Ai1ec_Calendar_Helper {
 		global $ai1ec_settings;
 		static $weekdays;
 
-		if( ! isset( $weekdays ) )
-		{
+		if( ! isset( $weekdays ) ) {
 			$time = strtotime( 'next Sunday' );
 			$time = strtotime( "+{$ai1ec_settings->week_start_day} days", $time );
 
 			$weekdays = array();
 			for( $i = 0; $i < 7; $i++ ) {
 				$weekdays[] = date_i18n( 'D', $time );
-				$time += 60 * 60 * 24; // Add a day
+				$time = strtotime( '+1 day', $time ); // Add a day
 			}
 		}
 		return $weekdays;
 	}
 
 	/**
-	 * get_day_pagination_links function
-	 *
 	 * Returns a non-associative array of four links for the day view of the
 	 * calendar:
 	 * previous day, next day, in that order.
@@ -799,9 +873,9 @@ class Ai1ec_Calendar_Helper {
 	 * @param int $cur_offset day offset of current day, needed for hrefs
 	 *
 	 * @return array          array of link information as described above
-	 **/
-    function get_oneday_pagination_links( $cur_offset ) {
-    	global $ai1ec_events_helper;
+	 */
+	function get_oneday_pagination_links( $cur_offset ) {
+		global $ai1ec_events_helper;
 
 		$links = array();
 
@@ -819,15 +893,15 @@ class Ai1ec_Calendar_Helper {
 			'href' => '#action=ai1ec_oneday&ai1ec_oneday_offset=' . ( $cur_offset - 1 ),
 		);
 		$links[] = array(
-			'id' => 'ai1ec-prev-day',
+			'id' => 'ai1ec-next-day',
 			'text' =>
 					date_i18n( __( 'j F Y', AI1EC_PLUGIN_NAME ), gmmktime( 0, 0, 0, $bits['mon'], $bits['mday'] + 1, $bits['year'] ))
-                    .' ›',
+										.' ›',
 			'href' => '#action=ai1ec_oneday&ai1ec_oneday_offset=' . ( $cur_offset + 1 ),
 		);
 
 		return $links;
-     }
+	}
 
 	/**
 	 * get_month_pagination_links function
@@ -937,26 +1011,44 @@ class Ai1ec_Calendar_Helper {
 	 * @param int $cur_offset page offset of agenda view, needed for hrefs
 	 * @param int $prev       whether there are more events before the current page
 	 * @param int $next       whether there are more events after the current page
+	 * @param int $date_first   UNIX timestamp (date part) for first event in display list
+	 * @param int $date_last    UNIX timestamp (date part) for last event in display list
 	 *
 	 * @return array          array of link information as described above
 	 **/
-	function get_agenda_pagination_links( $cur_offset, $prev = false, $next = false ) {
+	function get_agenda_pagination_links(
+		$cur_offset,
+		$prev       = false,
+		$next       = false,
+		$date_first = null,
+		$date_last  = null
+	) {
 		global $ai1ec_settings;
 
 		$links = array();
 
-		if( $prev ) {
+		$href_format = '#action=ai1ec_agenda&ai1ec_page_offset=%d'
+					. '&ai1ec_time_limit=%d';
+		if ( $prev ) {
+			$text = sprintf(
+						__( '« Previous Events', AI1EC_PLUGIN_NAME ),
+						$ai1ec_settings->agenda_events_per_page
+			);
 			$links['prev'] = array(
-				'id' => 'ai1ec-prev-page',
-				'text' => sprintf( __( '« Previous Events', AI1EC_PLUGIN_NAME ), $ai1ec_settings->agenda_events_per_page ),
-				'href' => '#action=ai1ec_agenda&ai1ec_page_offset=' . ( $cur_offset - 1 ),
+						'id'   => 'ai1ec-prev-page',
+						'text' => $text,
+						'href' => sprintf( $href_format, -1, $date_first - 1 ),
 			);
 		}
-		if( $next ) {
+		if ( $next ) {
+			$text = sprintf(
+						__( 'Next Events »', AI1EC_PLUGIN_NAME ),
+						$ai1ec_settings->agenda_events_per_page
+			);
 			$links['next'] = array(
-				'id' => 'ai1ec-next-page',
-				'text' => sprintf( __( 'Next Events »', AI1EC_PLUGIN_NAME ), $ai1ec_settings->agenda_events_per_page ),
-				'href' => '#action=ai1ec_agenda&ai1ec_page_offset=' . ( $cur_offset + 1 ),
+						'id'   => 'ai1ec-next-page',
+						'text' => $text,
+						'href' => sprintf( $href_format, 1, $date_last + 1 ),
 			);
 		}
 

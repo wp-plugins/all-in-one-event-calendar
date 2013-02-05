@@ -141,6 +141,41 @@ class Ai1ec_Themes_Controller {
 	}
 
 	/**
+	 * Returns a notice informing admin to update the core theme files if core
+	 * theme files are determined to be out of date. Else returns '' (evaluates
+	 * to false). If $echo is true, outputs the notice. Else outputs nothing.
+	 *
+	 * @see  Ai1ec_Themes_Controller::are_themes_outdated()
+	 *
+	 * @param  boolean $echo Whether to output the message or just return it.
+	 * @return boolean       Whether core theme files are out of date.
+	 */
+	public function frontend_outdated_themes_notice( $echo = true ) {
+		$output = '';
+		if ( $this->are_themes_outdated() ) {
+			$output .= '<p><em>';
+			$output .= __( 'The All-in-One Event Calendar core theme files are out of date and the calendar has been temporarily disabled.', AI1EC_PLUGIN_NAME );
+			$output .= ' ';
+			if ( current_user_can( 'install_themes' ) ) {
+				$output .= sprintf(
+					__( 'To enable the calendar, please <a href="%s">log into the WordPress dashboard</a> and follow the instructions.', AI1EC_PLUGIN_NAME ),
+					esc_attr( admin_url() )
+				);
+			}
+			else {
+				$output .= __( 'To enable the calendar, an administrator must log into the WordPress dashboard and follow the instructions.', AI1EC_PLUGIN_NAME );
+			}
+			$output .= '</em></p>';
+		}
+
+		if ( $echo ) {
+			echo $output;
+		}
+
+		return $output;
+	}
+
+	/**
 	 * copy_directory function
 	 *
 	 * @return void
@@ -328,6 +363,26 @@ class Ai1ec_Themes_Controller {
 			$files[] = 'vortex/event-excerpt.php';
 		}
 
+		if ( $active_version < 7 ) {
+			// Perform updates between AI1EC 1.8.2 and AI1EC 1.8.2 (no Font Awesome)
+			$files[] = 'vortex/agenda-widget.php';
+			$files[] = 'vortex/agenda.php';
+			$files[] = 'vortex/calendar.php';
+			$files[] = 'vortex/event-map.php';
+			$files[] = 'vortex/event-single-footer.php';
+			$files[] = 'vortex/event-single.php';
+			$files[] = 'vortex/font/timely-icons.eot';
+			$files[] = 'vortex/font/timely-icons.svg';
+			$files[] = 'vortex/font/timely-icons.ttf';
+			$files[] = 'vortex/font/timely-icons.woff';
+			$files[] = 'vortex/style.css';
+			$files_to_delete[] = 'vortex/font/fontawesome-webfont.eot';
+			$files_to_delete[] = 'vortex/font/fontawesome-webfont.svg';
+			$files_to_delete[] = 'vortex/font/fontawesome-webfont.svgz';
+			$files_to_delete[] = 'vortex/font/fontawesome-webfont.ttf';
+			$files_to_delete[] = 'vortex/font/fontawesome-webfont.woff';
+		}
+
 		// Remove duplicates.
 		$files             = array_unique( $files );
 		$files_to_delete   = array_unique( $files_to_delete );
@@ -368,11 +423,12 @@ class Ai1ec_Themes_Controller {
 			foreach ( $folders_to_make as $folder_to_make ) {
 				// try to create the folder
 				if( FALSE === $wp_filesystem->mkdir( $dest_dir . $folder_to_make ) ) {
-					// we were not able to create the folder, notify the user
-					$errors[] = sprintf(
-						__( '<div class="error"><p><strong>There was an error creating one of the theme folders.</strong> Please FTP to your web server and manually create <pre>%s</pre></p></div>', AI1EC_PLUGIN_NAME ),
-						$dest_dir . $folder_to_make
-					);
+					// We were not able to create the folder; unimportant and not worth
+					// notifying the user. Also quite likely to happen in many normal
+					// situations (usually the directoy has already been created). Only
+					// the files that are not copied (perhaps due to a missing folder, or
+					// other reason) are important, as only that affects functionality of
+					// themes.
 				}
 			}
 
@@ -423,11 +479,11 @@ class Ai1ec_Themes_Controller {
 						// If delete failed, chmod folder recursively to 0644 and try again.
 						$wp_filesystem->chmod( $dest_dir . $folder_to_delete, 0644, $recursive );
 						if( FALSE === $wp_filesystem->delete( $dest_dir . $folder_to_delete, $recursive ) ) {
-							// we were not able to remove the folder, notify the user
-							$errors[] = sprintf(
-									__( '<div class="error"><p><strong>There was an error deleting one of the folders.</strong> Please FTP to your web server and manually delete <pre>%s</pre></p></div>', AI1EC_PLUGIN_NAME ),
-									$dest_dir . $folder_to_delete
-							);
+							// We were not able to remove the folder; unimportant and not
+							// worth notifying the user. Also quite likely to happen in many
+							// normal situations (usually the directory has already been
+							// deleted). Only the files that are not removed are important, as
+							// only that affects functionality of themes.
 						}
 					}
 				}

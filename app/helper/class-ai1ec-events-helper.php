@@ -1125,6 +1125,29 @@ class Ai1ec_Events_Helper {
 	}
 
 	/**
+	 * date_to_gmdatestamp function
+	 *
+	 * Converts date (date-time) to GMT date expressed as UNIX timestamp
+	 *
+	 * @param int $input_time Local timestamp
+	 *
+	 * @return int Timestamp date representation in GMT zone
+	 **/
+	function date_to_gmdatestamp( $input_time ) {
+		$time  = $this->gmt_to_local( $input_time );
+		$time  = $this->gmgetdate( $time );
+		$stamp = gmmktime(
+		  0,             // hour
+		  0,             // minute
+		  0,             // second
+		  $time['mon'],  // month
+		  $time['mday'], // day-of-month
+		  $time['year']  // year
+		);
+		return $stamp;
+	}
+
+	/**
 	 * get_gmap_url function
 	 *
 	 * Returns the URL to the Google Map for the given event object.
@@ -1903,11 +1926,94 @@ class Ai1ec_Events_Helper {
 	}
 
 	/**
-	 * shortcode function
+	 * shortcode method
 	 *
-	 * @return void
+	 * Generate replacement content for [ai1ec] shortcode.
+	 *
+	 * @param array	 $atts	  Attributes provided on shortcode
+	 * @param string $content Tag internal content (shall be empty)
+	 * @param string $tag	  Used tag name (must be 'ai1ec' always)
+	 *
+	 * @staticvar $call_count Used to restrict to single calendar per page
+	 *
+	 * @return string Replacement for shortcode entry
 	 **/
-	function shortcode( $atts, $content = "" ) { }
+	function shortcode( $atts, $content = '', $tag = 'ai1ec' ) {
+		static $call_count = 0;
+		global $ai1ec_settings;
+		++$call_count;
+		if ( $call_count > 1 ) { // not implemented
+			return false; // so far process only first request
+		}
+		$view = $ai1ec_settings->default_calendar_view;
+		$categories  = $tags = $post_ids = array();
+		$known_views = array(
+			'agenda'      => true,
+			'month'       => true,
+			'week'        => true,
+		);
+		if ( isset( $atts['view'] ) ) {
+			if ( 'ly' === substr( $atts['view'], -2 ) ) {
+				$atts['view'] = substr( $atts['view'], 0, -2 );
+			}
+			if ( ! isset( $known_views[$atts['view']] ) ) {
+				return false;
+			}
+			$view = $atts['view'];
+		}
+		$view = 'ai1ec_' . $view;
+		$mappings = array(
+			'cat_name' => 'categories',
+			'cat_id'   => 'categories',
+			'tag_name' => 'tags',
+			'tag_id'   => 'tags',
+			'post_id'  => 'post_ids',
+		);
+		foreach ( $mappings as $att_name => $type ) {
+			if ( ! isset( $atts[$att_name] ) ) {
+				continue;
+			}
+			$raw_values = explode( ',', $atts[$att_name] );
+			foreach ( $raw_values as $argument ) {
+				if ( 'post_id' === $att_name ) {
+					if ( ( $argument = (int)$argument ) > 0 ) {
+						$post_ids[] = $argument;
+					}
+				} else {
+					if ( ! is_numeric( $argument ) ) {
+						$argument = trim( $argument );
+						foreach ( array( 'name', 'slug' ) as $field ) {
+							$record = get_term_by(
+								$field,
+								$argument,
+								'events_' . $type
+							);
+							if ( false !== $record ) {
+								$argument = $record;
+								break;
+							}
+						}
+						if ( false === $argument ) {
+							continue;
+						}
+						$argument = (int)$argument->term_id;
+					} else {
+						if ( ( $argument = (int)$argument ) <= 0 ) {
+							continue;
+						}
+					}
+					${$type}[] = $argument;
+				}
+			}
+		}
+		$query = array(
+			'ai1ec_cat_ids'	 => implode( ',', $categories ),
+			'ai1ec_tag_ids'	 => implode( ',', $tags ),
+			'ai1ec_post_ids' => implode( ',', $post_ids ),
+			'action'         => $view,
+		);
+		return $this->_get_view_and_restore_globals( $query );
+	}
 
 	/**
 	 * get_week_start_day_offset function
@@ -1924,5 +2030,47 @@ class Ai1ec_Events_Helper {
 
 		return - ( 7 - ( $ai1ec_settings->week_start_day - $wday ) ) % 7;
 	}
+
+	/**
+	 * _get_view_and_restore_globals method
+	 *
+	 * Set global request ($_REQUEST) variables, call rendering routines
+	 * and reset $_REQUEST afterwards.
+	 *
+	 * @uses do_action				To launch
+	 *	'ai1ec_load_frontend_js' action
+	 * @uses Ai1ec_App_Controller::append_content() To wrap output in
+	 *	namespaced container
+	 *
+	 * @param array $arguments Arguments to set for rendering
+	 *
+	 * @return string Rendered view
+	 */
+	protected function _get_view_and_restore_globals( $arguments ) {
+		global $ai1ec_calendar_controller, $ai1ec_app_controller;
+		$restore_map = array();
+		foreach ( $arguments as $key => $value ) {
+			if ( isset( $_REQUEST[$key] ) ) {
+				$restore_map[$key] = $_REQUEST[$key];
+			} else {
+				$restore_map[$key] = NULL;
+			}
+			$_REQUEST[$key] = $value;
+		}
+		ob_start();
+		$ai1ec_calendar_controller->view();
+		$page_content = ob_get_clean();
+		$page_content = $ai1ec_app_controller->append_content( $page_content );
+		do_action( 'ai1ec_load_frontend_js', true );
+		foreach ( $restore_map as $key => $value ) {
+			if ( NULL === $value ) {
+				unset( $_REQUEST[$key] );
+			} else {
+				$_REQUEST[$key] = $value;
+			}
+		}
+		return $page_content;
+	}
+
 }
 // END class
