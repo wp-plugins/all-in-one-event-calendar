@@ -15,7 +15,7 @@ Welcome to the [All-in-One Event Calendar Plugin](http://time.ly/), from [Timely
 
 Our new calendar system combines a clean visual design, solid architectural patterns and a powerful set of features to create the most advanced calendar system available for WordPress. Best of all: it’s completely free.
 
-Download the free Premium version at [time.ly](http://time.ly/) and choose from 3 custom designed themes for your Calendar, or develop your own! Also featuring Facebook Integration, Posterboard View and JavaScript and UI enhancements.
+Download the free Standard edition at [time.ly](http://time.ly/) and choose from 3 custom designed themes for your Calendar, or develop your own! Also featuring Facebook Integration, Posterboard View and JavaScript and UI enhancements.
 
 = Calendar Features For Users =
 
