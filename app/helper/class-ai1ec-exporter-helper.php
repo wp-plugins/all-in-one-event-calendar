@@ -62,22 +62,24 @@ class Ai1ec_Exporter_Helper {
 		$tz = get_option( 'timezone_string' );
 
 		$e = & $c->newComponent( 'vevent' );
-		$uid = $event->ical_uid ? $event->ical_uid : $event->post->guid;
+		$uid = $event->ical_uid ?
+			$event->ical_uid : addcslashes( $event->post->guid, "\\;,\n" );
 		$e->setProperty( 'uid', $uid );
 		$e->setProperty( 'url', get_permalink( $event->post_id ) );
 		$e->setProperty( 'summary', html_entity_decode( apply_filters( 'the_title', $event->post->post_title ), ENT_QUOTES, 'UTF-8' ) );
 		$content = apply_filters( 'the_content', $event->post->post_content );
 		$content = str_replace(']]>', ']]&gt;', $content);
 		$e->setProperty( 'description', $content );
-		if( $event->allday ) {
+		if ( $event->allday ) {
 			$dtstart = $dtend = array();
 			$dtstart["VALUE"] = $dtend["VALUE"] = 'DATE';
 			// For exporting all day events, don't set a timezone
-			if( $tz && !$export )
+			if ( $tz && !$export ) {
 				$dtstart["TZID"] = $dtend["TZID"] = $tz;
+			}
 
 			// For exporting all day events, only set the date not the time
-			if( $export ) {
+			if ( $export ) {
 				$e->setProperty( 'dtstart', gmdate( "Ymd", $ai1ec_events_helper->gmt_to_local( $event->start ) ), $dtstart );
 				$e->setProperty( 'dtend', gmdate( "Ymd", $ai1ec_events_helper->gmt_to_local( $event->end ) ), $dtend );
 			} else {
@@ -86,14 +88,17 @@ class Ai1ec_Exporter_Helper {
 			}
 		} else {
 			$dtstart = $dtend = array();
-			if( $tz )
+			if ( $tz ) {
 				$dtstart["TZID"] = $dtend["TZID"] = $tz;
+			}
 
 			$e->setProperty( 'dtstart', gmdate( "Ymd\THis\Z", $ai1ec_events_helper->gmt_to_local( $event->start ) ), $dtstart );
 
 			$e->setProperty( 'dtend', gmdate( "Ymd\THis\Z", $ai1ec_events_helper->gmt_to_local( $event->end ) ), $dtend );
 		}
-		$e->setProperty( 'location', $event->address );
+		if ( $event->address ) {
+			$e->setProperty( 'location', $event->address );
+		}
 
 		$contact = ! empty( $event->contact_name ) ? $event->contact_name : '';
 		$contact .= ! empty( $event->contact_phone ) ? " ($event->contact_phone)" : '';
@@ -101,14 +106,15 @@ class Ai1ec_Exporter_Helper {
 		$e->setProperty( 'contact', $contact );
 
 		$rrule = array();
-		if( ! empty( $event->recurrence_rules ) ) {
+		if ( ! empty( $event->recurrence_rules ) ) {
 			$rules = array();
-			foreach( explode( ';', $event->recurrence_rules ) AS $v) {
-				if( strpos( $v, '=' ) === false ) continue;
+			foreach ( explode( ';', $event->recurrence_rules ) as $v) {
+				if ( strpos( $v, '=' ) === false ) continue;
 
 				list($k, $v) = explode( '=', $v );
+				$k = strtoupper( $k );
 				// If $v is a comma-separated list, turn it into array for iCalcreator
-				switch( $k ) {
+				switch ( $k ) {
 					case 'BYSECOND':
           case 'BYMINUTE':
           case 'BYHOUR':
@@ -125,9 +131,9 @@ class Ai1ec_Exporter_Helper {
 						break;
 				}
 				// iCalcreator requires a more complex array structure for BYDAY...
-				if( $k == 'BYDAY' ) {
+				if ( $k == 'BYDAY' ) {
 					$v = array();
-					foreach( $exploded as $day ) {
+					foreach ( $exploded as $day ) {
 						$v[] = array( 'DAY' => $day );
 					}
 				} else {
@@ -138,14 +144,15 @@ class Ai1ec_Exporter_Helper {
 		}
 
 		$exrule = array();
-		if( ! empty( $event->exception_rules ) ) {
+		if ( ! empty( $event->exception_rules ) ) {
 			$rules = array();
-			foreach( explode( ';', $event->exception_rules ) AS $v) {
-				if( strpos( $v, '=' ) === false ) continue;
+			foreach ( explode( ';', $event->exception_rules ) as $v) {
+				if ( strpos( $v, '=' ) === false ) continue;
 
 				list($k, $v) = explode( '=', $v );
+				$k = strtoupper( $k );
 				// If $v is a comma-separated list, turn it into array for iCalcreator
-				switch( $k ) {
+				switch ( $k ) {
 					case 'BYSECOND':
           case 'BYMINUTE':
           case 'BYHOUR':
@@ -162,9 +169,9 @@ class Ai1ec_Exporter_Helper {
 						break;
 				}
 				// iCalcreator requires a more complex array structure for BYDAY...
-				if( $k == 'BYDAY' ) {
+				if ( $k == 'BYDAY' ) {
 					$v = array();
-					foreach( $exploded as $day ) {
+					foreach ( $exploded as $day ) {
 						$v[] = array( 'DAY' => $day );
 					}
 				} else {
@@ -175,11 +182,11 @@ class Ai1ec_Exporter_Helper {
 		}
 
 		// add rrule to exported calendar
-		if( ! empty( $rrule ) )  $e->setProperty( 'rrule', $rrule );
+		if ( ! empty( $rrule ) )  $e->setProperty( 'rrule', $rrule );
 		// add exrule to exported calendar
-		if( ! empty( $exrule ) ) $e->setProperty( 'exrule', $exrule );
+		if ( ! empty( $exrule ) ) $e->setProperty( 'exrule', $exrule );
 		// add exdates to exported calendar
-		if( ! empty( $event->exception_dates ) )
+		if ( ! empty( $event->exception_dates ) )
 			$e->setProperty( 'exdate', explode( ',', $event->exception_dates ) );
 	}
 }

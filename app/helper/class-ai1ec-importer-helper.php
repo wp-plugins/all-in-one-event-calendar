@@ -92,7 +92,7 @@ class Ai1ec_Importer_Helper {
 		// include ical parser
 		if( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
 			// Parser that requires PHP v5.3.0 or up
-			require_once( AI1EC_LIB_PATH . '/iCalcreator-2.12/iCalcreator.class.php' );
+			require_once( AI1EC_LIB_PATH . '/iCalcreator-2.14/iCalcreator.class.php' );
 		} else {
 			// Parser that works on PHP versions below 5.3.0
 			require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10/iCalcreator.class.php' );
@@ -160,6 +160,11 @@ class Ai1ec_Importer_Helper {
 
 				// Event is all-day if no time components are defined
 				$allday = ! isset( $start['value']['hour'] );
+				// Also check the proprietary MS all-day field.
+				$ms_allday = $e->getProperty( 'X-MICROSOFT-CDO-ALLDAYEVENT' );
+				if ( ! empty( $ms_allday ) && $ms_allday[1] == 'TRUE' ) {
+					$allday = true;
+				}
 
 				// convert times to GMT UNIX timestamps
 				$start = $this->time_array_to_timestamp( $start, $timezone );
@@ -176,11 +181,17 @@ class Ai1ec_Importer_Helper {
 				// zone), must convert all-day event start/end dates to date only (the
 				// *intended* local date, non-GMT-ified)
 				if( $allday ) {
-					$start = $ai1ec_events_helper->gmt_to_local( $start );
+					// If feed hasn't provided a time zone, iCalcreator returns all-day
+					// start & end times that are correct for the local time zone. We must
+					// not localize again lest we cause incorrect offsets.
+					if ( $timezone ) {
+						$start = $ai1ec_events_helper->gmt_to_local( $start );
+						$end = $ai1ec_events_helper->gmt_to_local( $end );
+					}
+
 					$start = $ai1ec_events_helper->gmgetdate( $start );
 					$start = gmmktime( 0, 0, 0, $start['mon'], $start['mday'], $start['year'] );
 					$start = $ai1ec_events_helper->local_to_gmt( $start );
-					$end = $ai1ec_events_helper->gmt_to_local( $end );
 					$end = $ai1ec_events_helper->gmgetdate( $end );
 					$end = gmmktime( 0, 0, 0, $end['mon'], $end['mday'], $end['year'] );
 					$end = $ai1ec_events_helper->local_to_gmt( $end );

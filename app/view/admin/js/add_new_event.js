@@ -315,6 +315,13 @@ var isUrl = function( s ) {
 // ====================
 jQuery( function( $ ){
 
+	// Initialize any popovers required on the page.
+	// Currently only popovers in the Support box (if present) need to be
+	// initialized.
+	$( '#ai1ec-support .ai1ec-download a[title]' ).popover( {
+		placement: 'left'
+	} );
+
 	/**
 	 * Click event handler for Dismiss button
 	 * that disables the data notification for admin users
@@ -372,9 +379,7 @@ jQuery( function( $ ){
 	/**
 	 * Event post creation/edit form
 	 */
-	if( $('#ai1ec_event' ).length )
-	{
-
+	if( $('#ai1ec_event' ).length ) {
 		var now = new Date( ai1ec_add_new_event.now * 1000 );
 
 		/**

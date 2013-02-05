@@ -5,7 +5,7 @@
  * Description: A calendar system with month, week, day, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
  * Author: Timely
  * Author URI: http://time.ly/
- * Version: 1.8.2
+ * Version: 1.9
  */
 @set_time_limit( 0 );
 @ini_set( 'memory_limit',           '256M' );
@@ -24,7 +24,7 @@ define( 'AI1EC_PLUGIN_BASENAME',    plugin_basename( __FILE__ ) );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1EC_VERSION',            '1.8.2' );
+define( 'AI1EC_VERSION',            '1.9' );
 
 // ====================
 // = Database Version =
@@ -34,15 +34,15 @@ define( 'AI1EC_DB_VERSION',         109 );
 // ==========================
 // = Bundled themes version =
 // ==========================
-define( 'AI1EC_THEMES_VERSION',     6 );
+define( 'AI1EC_THEMES_VERSION',     7 );
 
 // ================
 // = Cron Version =
 // ================
-define( 'AI1EC_CRON_VERSION',       102 );
-define( 'AI1EC_N_CRON_VERSION',     101 );
+define( 'AI1EC_CRON_VERSION',       103 );
+define( 'AI1EC_N_CRON_VERSION',     102 );
 define( 'AI1EC_N_CRON_FREQ',        'daily' );
-define( 'AI1EC_UPDATES_URL',        'http://time.ly/assets/timely-all-in-one-calendar-1.8.3.zip' );
+define( 'AI1EC_UPDATES_URL',        'http://time.ly/plugin/standard/latest' );
 
 // ===============
 // = Plugin Path =
@@ -246,7 +246,7 @@ define( 'AI1EC_EXPORT_URL',         $tmp . "&controller=ai1ec_exporter_controlle
 // ====================================
 if( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
 	// Parser that requires PHP v5.3.0 or up
-	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.12/iCalcreator.class.php' );
+	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.14/iCalcreator.class.php' );
 } else {
 	// Parser that works on PHP versions below 5.3.0
 	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10/iCalcreator.class.php' );

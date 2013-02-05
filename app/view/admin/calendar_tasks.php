@@ -10,7 +10,7 @@
 				<div class="span6">
 					<p>
 						<a class="btn btn-primary btn-large" href="<?php echo esc_attr( $add_url ); ?>">
-							<i class="icon-plus"></i>&nbsp;&nbsp;<?php _e( 'Post Your Event', AI1EC_PLUGIN_NAME ); ?>
+							<i class="timely-icon-subscribe-events"></i>&nbsp;&nbsp;<?php _e( 'Post Your Event', AI1EC_PLUGIN_NAME ); ?>
 						</a>
 					</p>
 					<strong><?php _e( 'Add a new event to the calendar.', AI1EC_PLUGIN_NAME ); ?></strong>
@@ -21,7 +21,7 @@
 				<div class="span6">
 					<p>
 						<a class="btn btn-primary btn-large" href="<?php echo esc_attr( $edit_url ); ?>">
-							<i class="icon-pencil"></i>&nbsp;&nbsp;<?php _e( 'Manage Events', AI1EC_PLUGIN_NAME ); ?>
+							<i class="timely-icon-pencil"></i>&nbsp;&nbsp;<?php _e( 'Manage Events', AI1EC_PLUGIN_NAME ); ?>
 						</a>
 					</p>
 					<strong><?php _e( 'View and edit all your events.', AI1EC_PLUGIN_NAME ); ?></strong>
@@ -36,7 +36,7 @@
 				<div class="span6">
 					<p>
 						<a class="btn" href="<?php echo esc_attr( $categories_url ); ?>">
-							<i class="icon-tags icon-large"></i> <?php _e( 'Manage Event Categories', AI1EC_PLUGIN_NAME ); ?>
+							<i class="timely-icon-filter-tag-category timely-icon-large"></i> <?php _e( 'Manage Event Categories', AI1EC_PLUGIN_NAME ); ?>
 						</a>
 					</p>
 					<p><strong><?php _e( 'Organize and color-code your events.', AI1EC_PLUGIN_NAME ); ?></strong></p>
@@ -47,7 +47,7 @@
 				<div class="span6">
 					<p>
 						<a class="btn" href="<?php echo esc_attr( $themes_url ); ?>">
-							<i class="icon-leaf icon-large"></i> <?php _e( 'Choose Your Theme', AI1EC_PLUGIN_NAME ); ?>
+							<i class="timely-icon-multiple-views timely-icon-large"></i> <?php _e( 'Choose Your Theme', AI1EC_PLUGIN_NAME ); ?>
 						</a>
 					</p>
 					<p><strong><?php _e( 'Change the look and feel.', AI1EC_PLUGIN_NAME ); ?></strong></p>
@@ -60,7 +60,7 @@
 				<div class="span6">
 					<p>
 						<a class="btn" href="<?php echo esc_attr( $feeds_url ); ?>">
-							<i class="icon-refresh icon-large"></i> <?php _e( 'Manage Calendar Feeds', AI1EC_PLUGIN_NAME ); ?>
+							<i class="timely-icon-import-events timely-icon-large"></i> <?php _e( 'Manage Calendar Feeds', AI1EC_PLUGIN_NAME ); ?>
 						</a>
 					</p>
 					<p><strong><?php _e( 'Subscribe to other calendars.', AI1EC_PLUGIN_NAME ); ?></strong></p>
@@ -71,7 +71,7 @@
 				<div class="span6">
 					<p>
 						<a class="btn" href="<?php echo esc_attr( $settings_url ); ?>">
-							<i class="icon-cog icon-large"></i> <?php _e( 'Edit Calendar Settings', AI1EC_PLUGIN_NAME ); ?>
+							<i class="timely-icon-gear timely-icon-large"></i> <?php _e( 'Edit Calendar Settings', AI1EC_PLUGIN_NAME ); ?>
 						</a>
 					</p>
 					<p><strong><?php _e( 'Make this calendar your own.', AI1EC_PLUGIN_NAME ); ?></strong></p>

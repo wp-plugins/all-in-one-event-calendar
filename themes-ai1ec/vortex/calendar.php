@@ -27,7 +27,7 @@
       <?php if( $create_event_url ): ?>
         <td>
           <a class="btn" href="<?php echo $create_event_url ?>">
-            <i class="icon-plus"></i> <?php _e( 'Post Your Event', AI1EC_PLUGIN_NAME ) ?>
+            <i class="timely-icon-plus"></i> <?php _e( 'Post Your Event', AI1EC_PLUGIN_NAME ) ?>
           </a>
         </td>
       <?php endif ?>
@@ -35,14 +35,14 @@
       <?php if( $categories || $tags ): ?>
           <div class="ai1ec-filters-container">
             <span class="ai1ec-label">
-              <a class="ai1ec-clear-filters" rel="tooltip" title="<?php _e( 'Clear Filters', AI1EC_PLUGIN_NAME ) ?>"><i class="icon-remove"></i></a>
+              <a class="ai1ec-clear-filters" rel="tooltip" title="<?php _e( 'Clear Filters', AI1EC_PLUGIN_NAME ) ?>"><i class="timely-icon-close"></i></a>
               <?php _e( 'Filter:', AI1EC_PLUGIN_NAME ) ?>
             </span>
 
             <?php if( $categories ): ?>
               <span class="ai1ec-filter-selector-container">
                 <a class="btn ai1ec-dropdown">
-                  <i class="icon-folder-open"></i>
+                  <i class="timely-icon-folder"></i>
                   <?php _e( 'Categories', AI1EC_PLUGIN_NAME ) ?>
                   <span class="caret"></span>
                 </a>
@@ -68,7 +68,7 @@
             <?php if( $tags ): ?>
               <span class="ai1ec-filter-selector-container">
                 <a class="btn ai1ec-dropdown">
-                  <i class="icon-tags"></i>
+                  <i class="timely-icon-tag"></i>
                   <?php _e( 'Tags', AI1EC_PLUGIN_NAME ) ?>
                   <span class="caret"></span>
                 </a>
@@ -94,7 +94,7 @@
           </div>
       <?php endif // $categories || $tags ?>
         <a id="ai1ec-print-button" href="#" class="btn">
-          <i class="icon-print"></i>
+          <i class="timely-icon-print"></i>
         </a>
       </td>
     </tr>

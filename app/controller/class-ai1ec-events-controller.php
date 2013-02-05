@@ -57,31 +57,46 @@ class Ai1ec_Events_Controller {
 	function delete_post( $pid ) {
 		global $wpdb;
 
-		$sql = "SELECT
-							ID
-						FROM
-							$wpdb->posts
-						WHERE
-							ID = %d AND
-							post_type = '" . AI1EC_POST_TYPE . "'";
+		$pid = (int)$pid;
+		$sql = '
+			SELECT
+				ID
+			FROM
+				' . $wpdb->posts . '
+			WHERE
+				ID        = ' . $pid . ' AND
+				post_type = \'' . AI1EC_POST_TYPE . '\'';
 
 		// is this post an event?
-		if( $wpdb->get_var( $wpdb->prepare( $sql, $pid ) ) ) {
-			$table_name = $wpdb->prefix . 'ai1ec_events';
-			$sql = "DELETE FROM
-								$table_name
-							WHERE
-								post_id = %d";
-			// delete from ai1ec_events
-			$wpdb->query( $wpdb->prepare( $sql, $pid ) );
+		if ( $wpdb->get_var( $sql ) ) {
+			try {
+				$table_name = $wpdb->prefix . 'ai1ec_events';
+				$sql        = '
+					DELETE FROM
+						' . $table_name . '
+					WHERE
+						post_id = ' . $pid;
+				// delete from ai1ec_events
+				$wpdb->query( $sql );
 
-			$table_name = $wpdb->prefix . 'ai1ec_event_instances';
-			$sql = "DELETE FROM
-								$table_name
-							WHERE
-								post_id = %d";
-			// delete from ai1ec_event_instances
-			return $wpdb->query( $wpdb->prepare( $sql, $pid ) );
+				$table_name = $wpdb->prefix . 'ai1ec_event_instances';
+				$sql = '
+					DELETE FROM
+						' . $table_name . '
+					WHERE
+						post_id = ' . $pid;
+				// delete from ai1ec_event_instances
+				return $wpdb->query( $sql );
+			} catch ( Ai1ec_Event_Not_Found $exception ) {
+				/**
+				 * Possible reason, why event `delete` is triggered, albeit
+				 * no details are found corresponding to it - the WordPress
+				 * is not transactional - it uses no means, to ensure, that
+				 * everything is deleted once and forever and thus it could
+				 * happen so, that partial records are left in DB.
+				 */
+				return true; // already deleted
+			}
 		}
 		return true;
 	}
@@ -124,12 +139,21 @@ class Ai1ec_Events_Controller {
 			// Include date picker plugin
 			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-datepicker', 'datepicker.js', array( 'jquery' ) );
 
-			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-add_new_event', 'add_new_event.js', array( 'jquery',
-			                                                                                         'jquery.timespan',
-			                                                                                         'ai1ec-element-selector',
-			                                                                                         'jquery.tools',
-			                                                                                         'ai1ec-blockui',
-			                                                                                         'ai1ec-datepicker' ) );
+			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-bootstrap-tooltip', 'bootstrap-tooltip.js', array( 'jquery' ) );
+			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-bootstrap-popover', 'bootstrap-popover.js', array( 'jquery', 'ai1ec-bootstrap-tooltip' ) );
+			$ai1ec_view_helper->admin_enqueue_script(
+				'ai1ec-add_new_event',
+				'add_new_event.js',
+				array(
+					'jquery',
+					'jquery.timespan',
+					'ai1ec-element-selector',
+					'jquery.tools',
+					'ai1ec-blockui',
+					'ai1ec-datepicker',
+					'ai1ec-bootstrap-popover',
+				)
+			);
 
 			$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-color-picker', 'colorpicker.js', array( 'jquery' ) );
 
@@ -233,7 +257,7 @@ class Ai1ec_Events_Controller {
 		$exdate           = '';
 
 		try
-	 	{
+		{
 			$event = new Ai1ec_Event( $post->ID );
 
 			// Existing event was found. Initialize form values with values from
@@ -512,9 +536,9 @@ class Ai1ec_Events_Controller {
 	 * @return void
 	 **/
 	function event_excerpt( $text )
- 	{
+	{
 		global $ai1ec_view_helper,
-		       $ai1ec_events_helper;
+					 $ai1ec_events_helper;
 
 		if( get_post_type() != AI1EC_POST_TYPE )
 			return $text;
@@ -528,7 +552,7 @@ class Ai1ec_Events_Controller {
 		// Re-apply any filters to the post content that normally would have been
 		// applied if it weren't for our interference (below).
 		echo
-		 	shortcode_unautop( wpautop(
+			shortcode_unautop( wpautop(
 				$ai1ec_events_helper->trim_excerpt( $event->post->post_content )
 			) );
 
@@ -600,8 +624,8 @@ class Ai1ec_Events_Controller {
 	function single_view( &$event )
 	{
 		global $ai1ec_view_helper,
-		       $ai1ec_calendar_helper,
-		       $ai1ec_settings;
+					 $ai1ec_calendar_helper,
+					 $ai1ec_settings;
 
 		$subscribe_url = AI1EC_EXPORT_URL . "&ai1ec_post_ids=$event->post_id";
 		$subscribe_url = str_replace( 'webcal://', 'http://', $subscribe_url );
@@ -636,7 +660,7 @@ class Ai1ec_Events_Controller {
 	function multi_view( &$event )
 	{
 		global $ai1ec_view_helper,
-		       $ai1ec_calendar_helper;
+					 $ai1ec_calendar_helper;
 
 		$location = str_replace( "\n", ', ', rtrim( $event->location ) );
 
@@ -665,7 +689,7 @@ class Ai1ec_Events_Controller {
 	function excerpt_view( &$event )
 	{
 		global $ai1ec_view_helper,
-		       $ai1ec_calendar_helper;
+					 $ai1ec_calendar_helper;
 
 		$location = str_replace( "\n", ', ', rtrim( $event->location ) );
 
@@ -732,13 +756,13 @@ class Ai1ec_Events_Controller {
 	 }
 
 	 /**
- 	 * events_categories_edit_form_fields function
- 	 *
- 	 *
- 	 *
- 	 * @return void
- 	 **/
- 	 function events_categories_edit_form_fields( $term ) {
+	 * events_categories_edit_form_fields function
+	 *
+	 *
+	 *
+	 * @return void
+	 **/
+	 function events_categories_edit_form_fields( $term ) {
 		global $ai1ec_view_helper, $wpdb;
 
 		$table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
@@ -761,40 +785,40 @@ class Ai1ec_Events_Controller {
 	}
 
 	 /**
-	  * edited_events_categories function
-	  *
-	  *
-	  *
-	  * @return void
-	  **/
+		* edited_events_categories function
+		*
+		*
+		*
+		* @return void
+		**/
 	function created_events_categories( $term_id ) {
-	  global $wpdb;
-	  $tag_color_value = '';
-	  if( isset( $_POST["tag-color-value"] ) && ! empty( $_POST["tag-color-value"] ) ) {
-	    $tag_color_value = $_POST["tag-color-value"];
-	  }
+		global $wpdb;
+		$tag_color_value = '';
+		if( isset( $_POST["tag-color-value"] ) && ! empty( $_POST["tag-color-value"] ) ) {
+			$tag_color_value = $_POST["tag-color-value"];
+		}
 
-	  $table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
-	  $wpdb->insert( $table_name, array( 'term_id' => $term_id, 'term_color' => $tag_color_value ), array( '%d', '%s' ) );
+		$table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
+		$wpdb->insert( $table_name, array( 'term_id' => $term_id, 'term_color' => $tag_color_value ), array( '%d', '%s' ) );
 	}
 
 	function edited_events_categories( $term_id ) {
-	  global $wpdb;
-	  $tag_color_value = '';
-	  if( isset( $_POST["tag-color-value"] ) && ! empty( $_POST["tag-color-value"] ) ) {
-	    $tag_color_value = $_POST["tag-color-value"];
-	  }
+		global $wpdb;
+		$tag_color_value = '';
+		if( isset( $_POST["tag-color-value"] ) && ! empty( $_POST["tag-color-value"] ) ) {
+			$tag_color_value = $_POST["tag-color-value"];
+		}
 
-	  $table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
-	  $term = $wpdb->get_var( $wpdb->prepare( "SELECT term_id FROM {$table_name} WHERE term_id = %d", $term_id ) );
+		$table_name = $wpdb->prefix . 'ai1ec_event_category_colors';
+		$term = $wpdb->get_var( $wpdb->prepare( "SELECT term_id FROM {$table_name} WHERE term_id = %d", $term_id ) );
 
-	  if( is_null( $term ) ) {
-	    // term doesn't exist, create it
-	    $wpdb->insert( $table_name, array( 'term_id' => $term_id, 'term_color' => $tag_color_value ), array( '%d', '%s' ) );
-	  } else {
-	    // term exist, update it
-	    $wpdb->update( $table_name, array( 'term_color' => $tag_color_value ), array( 'term_id' => $term_id ), array( '%s' ), array( '%d' ) );
-	  }
+		if( is_null( $term ) ) {
+			// term doesn't exist, create it
+			$wpdb->insert( $table_name, array( 'term_id' => $term_id, 'term_color' => $tag_color_value ), array( '%d', '%s' ) );
+		} else {
+			// term exist, update it
+			$wpdb->update( $table_name, array( 'term_color' => $tag_color_value ), array( 'term_id' => $term_id ), array( '%s' ), array( '%d' ) );
+		}
 
 
 	}

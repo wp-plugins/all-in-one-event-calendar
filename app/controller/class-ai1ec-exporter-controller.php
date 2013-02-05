@@ -144,7 +144,7 @@ class Ai1ec_Exporter_Controller {
 		foreach( $events as $event ) {
 			$ai1ec_exporter_helper->insert_event_in_calendar( $event, $c, $export = true );
 		}
-		$str = $c->createCalendar();
+		$str = ltrim( $c->createCalendar() );
 
 		header( 'Content-type: text/calendar; charset=utf-8' );
 		echo $str;

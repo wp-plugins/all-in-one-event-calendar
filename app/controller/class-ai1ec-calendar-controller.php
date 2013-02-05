@@ -116,14 +116,17 @@ class Ai1ec_Calendar_Controller {
 				break;
 
 			case 'ai1ec_agenda':
-				$this->request['ai1ec_page_offset'] =
+				$this->request['ai1ec_page_offset']  =
 					isset( $_REQUEST['ai1ec_page_offset'] ) ? intval( $_REQUEST['ai1ec_page_offset'] ) : 0;
 				// Parse active event parameter as an integer ID
 				$this->request['ai1ec_active_event'] = isset( $_REQUEST['ai1ec_active_event'] ) ? intval( $_REQUEST['ai1ec_active_event'] ) : null;
 				// Category/tag filter parameters
-				$this->request['ai1ec_cat_ids'] = isset( $_REQUEST['ai1ec_cat_ids'] ) ? $_REQUEST['ai1ec_cat_ids'] : null;
-				$this->request['ai1ec_tag_ids'] = isset( $_REQUEST['ai1ec_tag_ids'] ) ? $_REQUEST['ai1ec_tag_ids'] : null;
-				$this->request['ai1ec_post_ids'] = isset( $_REQUEST['ai1ec_post_ids'] ) ? $_REQUEST['ai1ec_post_ids'] : null;
+				$this->request['ai1ec_cat_ids']      = isset( $_REQUEST['ai1ec_cat_ids'] ) ? $_REQUEST['ai1ec_cat_ids'] : null;
+				$this->request['ai1ec_tag_ids']      = isset( $_REQUEST['ai1ec_tag_ids'] ) ? $_REQUEST['ai1ec_tag_ids'] : null;
+				$this->request['ai1ec_post_ids']     = isset( $_REQUEST['ai1ec_post_ids'] ) ? $_REQUEST['ai1ec_post_ids'] : null;
+				$this->request['ai1ec_time_limit']   = (isset( $_REQUEST['ai1ec_time_limit'] ))
+                                                                     ? (int)$_REQUEST['ai1ec_time_limit']
+                                                                     : 0;
 				break;
 
 			case 'ai1ec_term_filter':
@@ -159,7 +162,12 @@ class Ai1ec_Calendar_Controller {
  	{
 		global $ai1ec_view_helper,
 		       $ai1ec_settings,
-		       $ai1ec_events_helper;
+		       $ai1ec_events_helper,
+		       $ai1ec_themes_controller;
+
+		if ( $ai1ec_themes_controller->frontend_outdated_themes_notice() ) {
+			return;
+		}
 
 		$this->process_request();
 
@@ -196,6 +204,7 @@ class Ai1ec_Calendar_Controller {
 
 			case 'ai1ec_agenda':
 				$args['page_offset'] = $this->request['ai1ec_page_offset'];
+				$args['time_limit']  = $this->request['ai1ec_time_limit'];
 				$view = $this->get_agenda_view( $args );
 				break;
 		}
@@ -444,6 +453,7 @@ class Ai1ec_Calendar_Controller {
 	 *
 	 * @param array $args     associative array with any of these elements:
 	 *   int page_offset   => specifies which page to display relative to today's page
+	 *   int time_limit    => specifies upper/lower (depending on direction) time limit
 	 *   int active_event  => specifies which event to make visible when
 	 *                        page is loaded
 	 *   array categories  => restrict events returned to the given set of
@@ -467,16 +477,22 @@ class Ai1ec_Calendar_Controller {
 
 		// Get events, then classify into date array
 		$event_results = $ai1ec_calendar_helper->get_events_relative_to(
-			$timestamp,
-			$ai1ec_settings->agenda_events_per_page,
-			$page_offset,
-			array( 'post_ids' => $post_ids )
+		      $timestamp,
+		      $ai1ec_settings->agenda_events_per_page,
+		      $page_offset,
+		      array( 'post_ids' => $post_ids ),
+		      $time_limit
 		);
+		$last_event = end( $event_results['events'] );
 		$dates = $ai1ec_calendar_helper->get_agenda_date_array( $event_results['events'] );
 
-		$pagination_links =
-			$ai1ec_calendar_helper->get_agenda_pagination_links(
-			 	$page_offset, $event_results['prev'], $event_results['next'] );
+		$pagination_links = $ai1ec_calendar_helper->get_agenda_pagination_links(
+		      $page_offset,
+		      $event_results['prev'],
+		      $event_results['next'],
+		      $event_results['date_first'],
+		      $event_results['date_last']
+		);
 
 		// Incorporate offset into date
 		$args = array(
@@ -589,6 +605,7 @@ class Ai1ec_Calendar_Controller {
 		// View arguments
 		$args = array(
 			'page_offset'  => $this->request['ai1ec_page_offset'],
+			'time_limit'   => $this->request['ai1ec_time_limit'],
 			'active_event' => $this->request['ai1ec_active_event'],
 			'post_ids'     => array_filter( explode( ',', $this->request['ai1ec_post_ids'] ), 'is_numeric' ),
 		);

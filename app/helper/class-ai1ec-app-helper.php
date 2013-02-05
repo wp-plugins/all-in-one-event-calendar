@@ -683,6 +683,20 @@ class Ai1ec_App_Helper {
 		       $plugin_page,
 		       $ai1ec_themes_controller;
 
+		// Display Lite version unsupported notice.
+		$args = array(
+			'msg' => '<p class="timely ai1ec-upgrade-notice"><span><strong>' .
+				__( 'All-in-One Event Calendar Notice', AI1EC_PLUGIN_NAME ) .
+				':</strong> ' .
+				__( 'You are using the <strong>Lite</strong> Calendar. This edition of the plugin is no longer supported.', AI1EC_PLUGIN_NAME ) .
+				'</span> <a href="' .
+				esc_attr( admin_url( 'edit.php?post_type=' . AI1EC_POST_TYPE . '&page=' . AI1EC_PLUGIN_NAME . '-upgrade' ) ) .
+				'" class="btn btn-primary">' .
+				__( 'Upgrade to the <span><strong>Standard</strong> Calendar</span> for free', AI1EC_PLUGIN_NAME ) .
+				'</a></p>',
+		);
+		$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
+
 		// Display introductory video notice if not disabled.
 		if( $ai1ec_settings->show_intro_video ) {
 			$args = array(
@@ -699,16 +713,6 @@ class Ai1ec_App_Helper {
 				),
 			);
 			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
-			// Find out if CSS for Bootstrap modals has been attached. If not, embed
-			// it inline.
-			if ( ! wp_style_is( 'timely-bootstrap' ) ) {
-				$ai1ec_view_helper->display_admin_css( 'bootstrap.min.css' );
-			}
-			// Find out if JS for Bootstrap modals has been attached. If not, embed
-			// it inline.
-			if ( ! wp_script_is( 'timely-bootstrap-modal' ) ) {
-				$ai1ec_view_helper->display_admin_js( 'bootstrap-modal.js' );
-			}
 			$args = array(
 				'modal_id' => 'ai1ec-video-modal',
 				'video_container_id' => 'ai1ec-video',
@@ -717,11 +721,18 @@ class Ai1ec_App_Helper {
 				'youtube_id' => 'XJ-KHOqBKuQ',
 				'footer' => sprintf( '<div style="text-align: center;">' .
 					'<a class="btn btn-large btn-primary" href="%s">' .
-					'<i class="icon-download-alt"></i> %s</a></div>',
+					'<i class="timely-icon-arrow-down timely-icon-large"></i> %s</a></div>',
 					admin_url( 'edit.php?post_type=' . AI1EC_POST_TYPE . '&amp;page=' .
 						AI1EC_PLUGIN_NAME . '-upgrade' ),
 					__( 'Upgrade to Premium for Free', AI1EC_PLUGIN_NAME )
 				),
+				// Required CSS and JS may not have has been attached. Let template know
+				// about it so that it can be dynamically added to <head> (it's now too
+				// late in the WP bootstrap to add CSS/JS to <head>).
+				'css_loaded' => wp_style_is( 'timely-bootstrap' ),
+				'css_url' => AI1EC_ADMIN_THEME_CSS_URL . '/bootstrap.min.css',
+				'js_loaded' => wp_script_is( 'timely-bootstrap-modal' ),
+				'js_url' => AI1EC_ADMIN_THEME_JS_URL . '/bootstrap-modal.js',
 			);
 			$ai1ec_view_helper->display_admin( 'video_modal.php', $args );
 		}
@@ -787,8 +798,8 @@ class Ai1ec_App_Helper {
 		// If calendar page or time zone has not been set, this is a fresh install.
 		// Additionally, if we're not already updating the settings, alert user
 		// appropriately that the calendar is not properly set up.
-		if( ! $ai1ec_settings->calendar_page_id ||
-			  ! get_option( 'timezone_string' ) &&
+		if( (! $ai1ec_settings->calendar_page_id ||
+			  ! get_option( 'timezone_string' )) &&
 			  ! isset( $_REQUEST['ai1ec_save_settings'] ) ) {
 			$args = array();
 			$messages = array();
@@ -891,6 +902,7 @@ class Ai1ec_App_Helper {
 
 		// Common styles.
 		$ai1ec_view_helper->admin_enqueue_style( 'ai1ec-admin', 'admin.css' );
+		$ai1ec_view_helper->admin_enqueue_style( 'timely-bootstrap', 'bootstrap.min.css' );
 
 		switch( $hook_suffix ) {
 			// Event lists.
@@ -899,7 +911,7 @@ class Ai1ec_App_Helper {
 				// Scripts.
 				$ai1ec_view_helper->admin_enqueue_script( 'ai1ec-widget', 'widget.js', array( 'jquery' ), AI1EC_VERSION );
 				// Styles.
-				$ai1ec_view_helper->admin_enqueue_style( 'ai1ec-widget', '/widget.css', array(), AI1EC_VERSION );
+				$ai1ec_view_helper->admin_enqueue_style( 'ai1ec-widget', 'widget.css', array(), AI1EC_VERSION );
 				break;
 
 			// Calendar settings & feeds screens.
@@ -916,7 +928,6 @@ class Ai1ec_App_Helper {
 					) );
 				// Styles.
 				$ai1ec_view_helper->admin_enqueue_style( 'ai1ec-settings', 'settings.css' );
-				$ai1ec_view_helper->admin_enqueue_style( 'timely-bootstrap', 'bootstrap.min.css' );
 				break;
 		}
 	}

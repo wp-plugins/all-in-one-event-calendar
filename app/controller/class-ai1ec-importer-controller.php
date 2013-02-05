@@ -54,9 +54,13 @@ class Ai1ec_Importer_Controller {
 	function cron()
 	{
 		global $wpdb,
-					 $ai1ec_importer_helper,
-					 $ai1ec_events_helper,
-					 $ai1ec_settings_controller;
+		       $ai1ec_importer_helper,
+		       $ai1ec_events_helper,
+		       $ai1ec_app_helper,
+		       $ai1ec_settings_controller;
+
+		// Initializing custom post type and custom taxonomies
+		$ai1ec_app_helper->create_post_type();
 
 		// ====================
 		// = Select all feeds =

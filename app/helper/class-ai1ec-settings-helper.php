@@ -342,6 +342,7 @@ class Ai1ec_Settings_Helper {
     $disable_autocompletion         = $ai1ec_settings->disable_autocompletion ? 'checked=checked' : '';
     $show_location_in_title         = $ai1ec_settings->show_location_in_title ? 'checked=checked' : '';
     $show_year_in_agenda_dates      = $ai1ec_settings->show_year_in_agenda_dates ? 'checked=checked' : '';
+    $show_timezone                  = $ai1ec_settings->is_timezone_open_for_change();
 
     $args = array(
       'calendar_page'                 => $calendar_page,
@@ -357,7 +358,7 @@ class Ai1ec_Settings_Helper {
       'inject_categories'             => $inject_categories,
       'input_date_format'             => $input_date_format,
       'input_24h_time'                => $input_24h_time,
-      'show_timezone'                 => ! get_option( 'timezone_string' ),
+      'show_timezone'                 => $show_timezone,
       'timezone_control'              => $timezone_control,
       'geo_region_biasing'            => $geo_region_biasing,
       'allow_statistics'              => $allow_statistics,
@@ -413,7 +414,7 @@ class Ai1ec_Settings_Helper {
 		// Initialize new feed
 		$newsItems = array();
 		$feed      = fetch_feed( AI1EC_RSS_FEED );
-		$newsItems = is_wp_error( $feed ) ? array() : $feed->get_items();
+		$newsItems = is_wp_error( $feed ) ? array() : $feed->get_items( 0, 5 );
 		$ai1ec_view_helper->display_admin( 'box_support.php', array( 'news' => $newsItems ) );
 	}
 

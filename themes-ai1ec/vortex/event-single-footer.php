@@ -6,7 +6,7 @@
 			<?php if( $event->ical_source_url ): ?>
 				<a href="<?php echo esc_attr( $event->ical_source_url ) ?>" target="_blank">
 					<?php _e( 'View original post', AI1EC_PLUGIN_NAME ) ?>
-          <i class="icon-external-link"></i>
+          <i class="timely-icon-forward"></i>
 				</a>
 			<?php endif ?>
 		</p>
