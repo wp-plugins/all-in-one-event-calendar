@@ -1,5 +1,5 @@
 <div class="message updated">
-	<?php if ( $label ) : ?>
+	<?php if ( isset( $label ) && ! empty( $label ) ) : ?>
 		<h3><?php echo $label; ?></h3>
 	<?php endif; ?>
 	<?php echo $msg; ?>

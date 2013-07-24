@@ -65,7 +65,7 @@
 												<span class="ai1ec-allday-label"><?php _e( '(all-day)', AI1EC_PLUGIN_NAME ) ?></span>
 											<?php endif ?>
 											<?php if ( $show_location_in_title && isset( $event->venue ) && $event->venue != '' ): ?>
-												<span class="ai1ec-event-location"><?php echo sprintf( __( '@ %s', AI1EC_PLUGIN_NAME ), $event->venue ); ?></span>
+												<span class="ai1ec-event-location"><?php echo sprintf( __( '@ %s', AI1EC_PLUGIN_NAME ), esc_html( $event->venue ) ); ?></span>
 											<?php endif; ?>
 										</div>
 										<div class="ai1ec-event-time">
@@ -115,7 +115,7 @@
 									<div class="ai1ec-event-title">
 										<?php echo esc_html( apply_filters( 'the_title', $event->post->post_title ) ) ?>
 										<?php if ( $show_location_in_title && isset( $event->venue ) && $event->venue != '' ): ?>
-											<span class="ai1ec-event-location"><?php echo sprintf( __( '@ %s', AI1EC_PLUGIN_NAME ), $event->venue ); ?></span>
+											<span class="ai1ec-event-location"><?php echo sprintf( __( '@ %s', AI1EC_PLUGIN_NAME ), esc_html( $event->venue ) ); ?></span>
 										<?php endif; ?>
 										<?php if( $event->allday ): ?>
 											<span class="ai1ec-allday-label"><?php _e( '(all-day)', AI1EC_PLUGIN_NAME ) ?></span>

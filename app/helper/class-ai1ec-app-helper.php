@@ -818,7 +818,7 @@ class Ai1ec_App_Helper {
 				}
 				// Else, not on the settings page, so direct user there.
 				else {
-					$msg .= sprintf(
+					$msg = sprintf(
 						__( 'The plugin is installed, but has not been configured. <a href="%s">Click here to set it up now &raquo;</a>', AI1EC_PLUGIN_NAME ),
 						admin_url( AI1EC_SETTINGS_BASE_URL )
 					);

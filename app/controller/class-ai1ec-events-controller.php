@@ -636,7 +636,7 @@ class Ai1ec_Events_Controller {
 			'exclude'                 => $event->exclude_html,
 			'categories'              => $event->categories_html,
 			'tags'                    => $event->tags_html,
-			'location'                => nl2br( $event->location ),
+			'location'                => nl2br( esc_html( $event->location ) ),
 			'map'                     => $this->get_map_view( $event ),
 			'contact'                 => $event->contact_html,
 			'calendar_url'            => $ai1ec_calendar_helper->get_calendar_url( $event ),
@@ -662,15 +662,17 @@ class Ai1ec_Events_Controller {
 		global $ai1ec_view_helper,
 					 $ai1ec_calendar_helper;
 
-		$location = str_replace( "\n", ', ', rtrim( $event->location ) );
+		$location = esc_html(
+			str_replace( "\n", ', ', rtrim( $event->location ) )
+		);
 
 		$args = array(
-			'event' => &$event,
-			'recurrence' => $event->recurrence_html,
-			'categories' => $event->categories_html,
-			'tags' => $event->tags_html,
-			'location' => $location,
-			'contact' => $event->contact_html,
+			'event'        => $event,
+			'recurrence'   => $event->recurrence_html,
+			'categories'   => $event->categories_html,
+			'tags'         => $event->tags_html,
+			'location'     => $location,
+			'contact'      => $event->contact_html,
 			'calendar_url' => $ai1ec_calendar_helper->get_calendar_url( $event ),
 		);
 		$ai1ec_view_helper->display_theme( 'event-multi.php', $args );
@@ -691,10 +693,12 @@ class Ai1ec_Events_Controller {
 		global $ai1ec_view_helper,
 					 $ai1ec_calendar_helper;
 
-		$location = str_replace( "\n", ', ', rtrim( $event->location ) );
+		$location = esc_html(
+			str_replace( "\n", ', ', rtrim( $event->location ) )
+		);
 
 		$args = array(
-			'event'    => &$event,
+			'event'    => $event,
 			'location' => $location,
 		);
 		$ai1ec_view_helper->display_theme( 'event-excerpt.php', $args );

@@ -7,6 +7,26 @@
 //
 
 /**
+ * Split input into a list of integers
+ *
+ * @param string $input     String containing integers
+ * @param string $separator Separator for integers
+ *
+ * @return array List (map) of integers
+ */
+function ai1ec_make_ints_array( $input, $separator = ',' ) {
+	$list   = explode( $separator, $input );
+	$output = array();
+	foreach ( $list as $value ) {
+		$value = (int)$value;
+		if ( $value > 0 ) {
+			$output[$value] = $value;
+		}
+	}
+	return $output;
+}
+
+/**
  * url_get_contents function
  *
  * @param string $url URL 

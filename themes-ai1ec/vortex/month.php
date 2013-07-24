@@ -81,7 +81,7 @@
                             <?php echo esc_html( substr( apply_filters( 'the_title', $event->post->post_title ), 0, 35 ) . $read_more );  ?>
 												  <?php endif; ?>
 													<?php if ( $show_location_in_title && isset( $event->venue ) && $event->venue != '' ): ?>
-														<span class="ai1ec-event-location"><?php echo esc_html( sprintf( __( '@ %s', AI1EC_PLUGIN_NAME ), $event->venue ) ); ?></span>
+														<span class="ai1ec-event-location"><?php echo esc_html( sprintf( __( '@ %s', AI1EC_PLUGIN_NAME ), esc_html( $event->venue ) ) ); ?></span>
 													<?php endif; ?>
 												</span>
 												<?php if( $event->allday ): ?>

@@ -117,12 +117,15 @@ class Ai1ec_Exporter_Controller {
 		$ai1ec_post_ids = isset( $_REQUEST['ai1ec_post_ids'] )	&& ! empty( $_REQUEST['ai1ec_post_ids'] ) ? $_REQUEST['ai1ec_post_ids'] : false;
 		$filter = array();
 
-		if( $ai1ec_cat_ids )
-			$filter['cat_ids'] = split( ',', $ai1ec_cat_ids );
-		if( $ai1ec_tag_ids )
-			$filter['tag_ids'] = split( ',', $ai1ec_tag_ids );
-		if( $ai1ec_post_ids )
-			$filter['post_ids'] = split( ',', $ai1ec_post_ids );
+		if ( $ai1ec_cat_ids ) {
+			$filter['cat_ids'] = ai1ec_make_ints_array( $ai1ec_cat_ids );
+		}
+		if ( $ai1ec_tag_ids ) {
+			$filter['tag_ids'] = ai1ec_make_ints_array( $ai1ec_tag_ids );
+		}
+		if ( $ai1ec_post_ids ) {
+			$filter['post_ids'] = ai1ec_make_ints_array( $ai1ec_post_ids );
+		}
 
 		// when exporting events by post_id, do not look up the event's start/end date/time
 		$start  = $ai1ec_post_ids !== false ? false : gmmktime() - 24 * 60 * 60; // Include any events ending today

@@ -305,223 +305,114 @@ class Ai1ec_Themes_Controller {
 	function update_core_themes() {
 		global $ai1ec_view_helper;
 
-		$src_dir = trailingslashit( AI1EC_PATH . '/' . AI1EC_THEMES_FOLDER . '/' );
-		$dest_dir = trailingslashit( AI1EC_THEMES_ROOT . '/' );
+		$src_dir = trailingslashit( AI1EC_PATH . DIRECTORY_SEPARATOR . AI1EC_THEMES_FOLDER );
+		$dest_dir = trailingslashit( AI1EC_THEMES_ROOT );
 
-		// Get previous version of core themes.
-		$active_version = get_option( 'ai1ec_themes_version', 1 );
+		// List of core themes.
+		$folders = array(
+			'vortex',
+		);
 
-		$files = array();             // files to copy
-		$files_to_delete = array();   // files to delete
-		$folders = array();           // folders to copy
-		$folders_to_delete = array(); // folders to delete
-		$folders_to_make = array();   // folders to make
+		// Array to hold error notifications to the user while updating the themes.
+		$delete_errors = array();
+		$copy_errors = array();
 
-		if ( $active_version < 2 ) {
-			// Copy over files updated between AI1EC 1.6 and 1.7 RC1
-			$files[] = 'vortex/agenda.php';
-			$files[] = 'vortex/agenda-widget.php';
-			$files[] = 'vortex/js/bootstrap-dropdown.js';
-			$files[] = 'vortex/js/bootstrap-tooltip.js';
-			$files[] = 'vortex/js/general.min.js';
-			$files[] = 'vortex/css/calendar.css';
-			$files[] = 'vortex/css/event.css';
-			$files[] = 'vortex/css/style.css';
-			$files[] = 'vortex/css/print.css';
-			$files[] = 'vortex/month.php';
-			$files[] = 'vortex/oneday.php';
-			$files[] = 'vortex/style.css';
-			$files[] = 'vortex/week.php';
+		// WP_Filesystem figures it out by itself, but the filesystem method may be
+		// overriden here.
+		$method = '';
+		$url = wp_nonce_url(
+			AI1EC_UPDATE_THEMES_BASE_URL,
+			AI1EC_PLUGIN_NAME . '-theme-updater'
+		);
+		$creds = request_filesystem_credentials( $url, $method, false, false );
+		if ( false === $creds ) {
+			// If we get here, then we don't have credentials yet,
+			// but have just produced a form for the user to fill in,
+			// so stop processing for now.
+			return false; // Stop the normal page form from displaying.
 		}
 
-		if ( $active_version < 3 ) {
-			// Copy over files updated between AI1EC 1.7 RC1 and AI1EC 1.7 RC2
-			$files[] = 'vortex/js/calendar.min.js';
-			$files[] = 'vortex/js/calendar.js';
+		// Now we have some credentials, try to get the wp_filesystem running.
+		if ( ! WP_Filesystem( $creds ) ) {
+			// Our credentials were no good, ask the user for them again.
+			request_filesystem_credentials( $url, $method, true, false );
+			return false;
 		}
 
-		if ( $active_version < 4 ) {
-			// Copy over files updated between AI1EC 1.7 RC2 and AI1EC 1.7 RC3
-			$files[] = 'vortex/js/calendar.min.js';
-			$files[] = 'vortex/js/calendar.js';
+		global $wp_filesystem;
+
+		// 1. Remove old folders.
+		foreach ( $folders as $folder ) {
+			$folder = $dest_dir . $folder;
+			// Check if folder exists.
+			if ( $wp_filesystem->is_dir( $folder ) ) {
+				// Try to delete it recusively.
+				if ( false === $wp_filesystem->delete( $folder, true ) ) {
+					// If delete failed, chmod folder recursively to 0644 and try again.
+					$wp_filesystem->chmod( $folder, 0644, $recursive );
+					if ( false === $wp_filesystem->delete( $folder, true ) ) {
+						// We were not able to remove the folder; notify the user.
+						$delete_errors[] = $folder;
+					}
+				}
+			}
 		}
 
-		if ( $active_version < 5 ) {
-			// Copy over files updated between AI1EC 1.7 RC3 and AI1EC 1.8 RC3
-			$files[] = 'vortex/agenda-widget.php';
-			$files[] = 'vortex/calendar.php';
-			$files[] = 'vortex/css/calendar.css';
-			$files[] = 'vortex/css/event.css';
-			$files[] = 'vortex/event-excerpt.php';
-			$files[] = 'vortex/event-multi.php';
-			$files[] = 'vortex/event-single.php';
-			$files[] = 'vortex/style.css';
+		// 2. Copy fresh versions of folders.
+		foreach ( $folders as $folder ) {
+			$src_folder = $src_dir . $folder;
+			$dest_folder = $dest_dir . $folder;
+			// Try to copy the folder.
+			$result = copy_dir( $src_dir, $dest_dir );
+			if ( is_wp_error( $result ) ) {
+				// We were not able to copy the folder; notify the user.
+				$copy_errors[] = $src_folder;
+			}
 		}
 
-		if ( $active_version < 6 ) {
-			// Copy over files updated between AI1EC 1.8 RC3 and AI1EC 1.8.2
-			$files[] = 'vortex/event-excerpt.php';
-		}
-
-		if ( $active_version < 7 ) {
-			// Perform updates between AI1EC 1.8.2 and AI1EC 1.8.2 (no Font Awesome)
-			$files[] = 'vortex/agenda-widget.php';
-			$files[] = 'vortex/agenda.php';
-			$files[] = 'vortex/calendar.php';
-			$files[] = 'vortex/event-map.php';
-			$files[] = 'vortex/event-single-footer.php';
-			$files[] = 'vortex/event-single.php';
-			$files[] = 'vortex/font/timely-icons.eot';
-			$files[] = 'vortex/font/timely-icons.svg';
-			$files[] = 'vortex/font/timely-icons.ttf';
-			$files[] = 'vortex/font/timely-icons.woff';
-			$files[] = 'vortex/style.css';
-			$files_to_delete[] = 'vortex/font/fontawesome-webfont.eot';
-			$files_to_delete[] = 'vortex/font/fontawesome-webfont.svg';
-			$files_to_delete[] = 'vortex/font/fontawesome-webfont.svgz';
-			$files_to_delete[] = 'vortex/font/fontawesome-webfont.ttf';
-			$files_to_delete[] = 'vortex/font/fontawesome-webfont.woff';
-		}
-
-		// Remove duplicates.
-		$files             = array_unique( $files );
-		$files_to_delete   = array_unique( $files_to_delete );
-		$folders           = array_unique( $folders );
-		$folders_to_delete = array_unique( $folders_to_delete );
-		$folders_to_make   = array_unique( $folders_to_make );
-
-		// array to hold error notifications to the user while updating the themes
 		$errors = array();
 
-		// do we have something to update?
-		if( count( $files ) > 0 ||
-		    count( $files_to_delete ) > 0 ||
-		    count( $folders ) > 0 ||
-		    count( $folders_to_delete ) > 0 ||
-		    count( $folders_to_make ) > 0 ) {
-
-			// WP_Filesystem figures it out by itself, but the filesystem method may be overriden here
-			$method = '';
-			$url = wp_nonce_url( AI1EC_UPDATE_THEMES_BASE_URL, AI1EC_PLUGIN_NAME . '-theme-updater' );
-			if( false === ( $creds = request_filesystem_credentials( $url, $method, false, false ) ) ) {
-				// if we get here, then we don't have credentials yet,
-				// but have just produced a form for the user to fill in,
-				// so stop processing for now
-				return false; // stop the normal page form from displaying
-			}
-
-			// now we have some credentials, try to get the wp_filesystem running
-			if( ! WP_Filesystem( $creds ) ) {
-				// our credentials were no good, ask the user for them again
-				request_filesystem_credentials( $url, $method, true, false );
-				return false;
-			}
-
-			global $wp_filesystem;
-
-			// 1. Create new folders
-			foreach ( $folders_to_make as $folder_to_make ) {
-				// try to create the folder
-				if( FALSE === $wp_filesystem->mkdir( $dest_dir . $folder_to_make ) ) {
-					// We were not able to create the folder; unimportant and not worth
-					// notifying the user. Also quite likely to happen in many normal
-					// situations (usually the directoy has already been created). Only
-					// the files that are not copied (perhaps due to a missing folder, or
-					// other reason) are important, as only that affects functionality of
-					// themes.
-				}
-			}
-
-			// 2. Copy folders
-			foreach ( $folders as $folder ) {
-				// try to copy the folder
-				$result = copy_dir( $src_dir . $folder, $dest_dir . $folder );
-				if( is_wp_error( $result ) ) {
-					// we were not able to copy the folder, notify the user
-					$errors[] = sprintf(
-						__( '<div class="error"><p><strong>There was an error("%s") while copying theme folders.</strong> Please FTP to your web server and manually copy <pre>%s</pre> to <pre>%s</pre></p></div>', AI1EC_PLUGIN_NAME ),
-						$result->get_error_message(),
-						$src_dir . $folder,
-						$dest_dir . $folder
-					);
-				}
-			}
-
-			// 3. Copy files
-			// loop over files
-			foreach ( $files as $file ) {
-				// copy only files that exist
-				if( $wp_filesystem->exists( $src_dir . $file ) ) {
-					// was file copied successfully?
-					if ( ! $wp_filesystem->copy( $src_dir . $file, $dest_dir . $file, true, FS_CHMOD_FILE ) ) {
-						// If copy failed, chmod file to 0644 and try again.
-						$wp_filesystem->chmod( $dest_dir . $file, 0644);
-						if ( ! $wp_filesystem->copy( $src_dir . $file, $dest_dir . $file, true, FS_CHMOD_FILE ) ) {
-							// we were not able to copy the file, notify the user
-							$errors[] = sprintf(
-								__( '<div class="error"><p><strong>There was an error updating one of the files.</strong> Please FTP to your web server and manually copy <pre>%s</pre> to <pre>%s</pre></p></div>', AI1EC_PLUGIN_NAME ),
-								$src_dir . $file,
-								$dest_dir . $file
-							);
-						}
-					}
-				}
-			}
-
-			// 4. Remove folders
-			foreach ( $folders_to_delete as $folder_to_delete ) {
-				// check if folder exist
-				if( $wp_filesystem->is_dir( $dest_dir . $folder_to_delete ) ) {
-					// folder actions are always recursive
-					$recursive = true;
-					// try to delete the folder
-					if( FALSE === $wp_filesystem->delete( $dest_dir . $folder_to_delete, $recursive ) ) {
-						// If delete failed, chmod folder recursively to 0644 and try again.
-						$wp_filesystem->chmod( $dest_dir . $folder_to_delete, 0644, $recursive );
-						if( FALSE === $wp_filesystem->delete( $dest_dir . $folder_to_delete, $recursive ) ) {
-							// We were not able to remove the folder; unimportant and not
-							// worth notifying the user. Also quite likely to happen in many
-							// normal situations (usually the directory has already been
-							// deleted). Only the files that are not removed are important, as
-							// only that affects functionality of themes.
-						}
-					}
-				}
-			}
-
-			// 5. Remove files
-			foreach ( $files_to_delete as $file ) {
-				// check if file exist
-				if( $wp_filesystem->exists( $dest_dir . $file ) ) {
-					// try to delete the file
-					if( FALSE === $wp_filesystem->delete( $dest_dir . $file ) ) {
-						// If delete failed, chmod file to 0644 and try again.
-						$wp_filesystem->chmod( $dest_dir . $file, 0644 );
-						if( FALSE === $wp_filesystem->delete( $dest_dir . $file ) ) {
-							// we were not able to remove the file, notify the user
-							$errors[] = sprintf(
-									__( '<div class="error"><p><strong>There was an error deleting one of the files.</strong> Please FTP to your web server and manually delete <pre>%s</pre></p></div>', AI1EC_PLUGIN_NAME ),
-									$dest_dir . $file
-							);
-						}
-					}
-				}
-			}
+		if ( $delete_errors ) {
+			$error = '<div class="error"><p><strong>';
+			$error .= __( 'There was an error while removing outdated core themes from your themes folder.', AI1EC_PLUGIN_NAME );
+			$error .= '</strong> ';
+			$error .= __( 'Please FTP to your web server and manually delete:', AI1EC_PLUGIN_NAME );
+			$error .= '</p><blockquote><div><code>';
+			$error .= implode( '</code></div><div><code>', $delete_errors );
+			$error .= '</code></div></blockquote></div>';
+			$errors[] = $error;
 		}
 
-		// TODO: Only update the theme version when the update was successful.
-		// Otherwise provide a way for the user to review the error log that this
-		// update generated and to run the update again, after fixing the reported
-		// errors.
+		if ( $copy_errors ) {
+			$error = '<div class="error"><p><strong>';
+			$error .= __( 'There was an error while copying core themes from the plugin into the themes folder.', AI1EC_PLUGIN_NAME );
+			$error .= '</strong> ';
+			$error .= __( 'Please FTP to your web server and manually copy the folders:', AI1EC_PLUGIN_NAME );
+			$error .= '</p><blockquote><div><code>';
+			$error .= implode( '</code></div><div><code>', $copy_errors );
+			$error .= '</code></div></blockquote>';
+			$error .= '<p>' . __( 'to', AI1EC_PLUGIN_NAME ) . ' <code>' . $dest_dir .
+				'</code></p></div>';
+			$errors[] = $error;
+		}
 
-		// Update theme version
-		update_option( 'ai1ec_themes_version', AI1EC_THEMES_VERSION );
-
+		// Unsuccessful core theme file update.
 		if ( $errors ) {
-			$msg = __( '<div id="message" class="error"><h3>Errors occurred while we tried to update your core calendar files.</h3><p><strong>Please follow any instructions listed below or your calendar may malfunction:</strong></p></div>', AI1EC_PLUGIN_NAME );
+			array_unshift(
+				$errors,
+				__( '<div id="message" class="error"><h3>Errors occurred while we tried to update your core Calendar Themes</h3><p><strong>Please follow any instructions listed below or your calendar may malfunction:</strong></p></div>', AI1EC_PLUGIN_NAME )
+			);
 		}
+		// Successful core theme file update.
 		else {
-			$msg = __( '<div id="message" class="updated"><h3>Your core calendar files were updated successfully.</h3></div>', AI1EC_PLUGIN_NAME );
+			// Update theme version
+			update_option( 'ai1ec_themes_version', AI1EC_THEMES_VERSION );
+
+			$msg = '<div id="message" class="updated"><h3>';
+			$msg .= __( 'Your core Calendar Themes were updated successfully', AI1EC_PLUGIN_NAME );
+			$msg .= '</h3><p>';
+			$msg .= __( 'Be sure to <strong>reload your browser</strong> when viewing your site to make sure the most current scripts are used.', AI1EC_PLUGIN_NAME );
+			$msg .= '</p></div>';
 		}
 
 		$args = array(
