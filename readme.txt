@@ -3,8 +3,8 @@ Contributors: theseed, hubrik, vtowel, yani.iliev, jbutkus
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9JJMUW48W2ED8
 Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed, wordpress ics importer, wordpress ical importer, upcoming events, todo, notes, journal, freebusy, availability, web calendar, web events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec, google calendar sync, ical sync, events sync, holiday calendar, calendar 2011, events 2011, widget, events widget, upcoming events widget, calendar widget, agenda widget
 Requires at least: 3.2
-Tested up to: 3.5.2
-Stable tag: 1.10
+Tested up to: 3.6
+Stable tag: 1.10.1
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with month, week, day, agenda views; upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
@@ -81,6 +81,8 @@ http://www.youtube.com/watch?v=XJ-KHOqBKuQ
 * Filter by post ids (separate ids by comma): **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+= Version 1.10.1 =
+* Fixed issue with jQuery blockUI
 
 = Version 1.10 =
 * Fixed several possible vulnerabilities (courtesy for finding goes to

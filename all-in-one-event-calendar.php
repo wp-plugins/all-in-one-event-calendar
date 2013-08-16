@@ -24,7 +24,7 @@ define( 'AI1EC_PLUGIN_BASENAME',    plugin_basename( __FILE__ ) );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1EC_VERSION',            '1.10' );
+define( 'AI1EC_VERSION',            '1.10.1' );
 
 // ====================
 // = Database Version =
