@@ -54,11 +54,11 @@ http://www.youtube.com/watch?v=XJ-KHOqBKuQ
 
 = Helpful Links =
 
-* [**Get help from our Help Desk »**](http://help.time.ly)
+* [**Get help from our Help Desk »**](http://support.time.ly)
 
 == Frequently Asked Questions ==
 
-[**Get help from our Help Desk »**](http://help.time.ly)
+[**Get help from our Help Desk »**](http://support.time.ly)
 
 = Shortcodes =
 
