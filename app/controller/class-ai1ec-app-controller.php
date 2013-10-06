@@ -338,27 +338,25 @@ class Ai1ec_App_Controller {
 	function install_n_cron() {
 		global $ai1ec_settings;
 
+		$hook_name = 'ai1ec_n_cron';
+		$optn_name = $hook_name . '_version';
+
+		// delete our scheduled crons
+		wp_clear_scheduled_hook( $hook_name );
+
 		// if stats are disabled, cancel the cron
-		if( $ai1ec_settings->allow_statistics == false ) {
-			// delete our scheduled crons
-			wp_clear_scheduled_hook( 'ai1ec_n_cron_version' );
-
-			// remove the cron version
-			delete_option( 'ai1ec_n_cron_version' );
-
-			// prevent the execution of the code below
-			return;
+		if ( ! $ai1ec_settings->allow_statistics ) {
+			delete_option( $optn_name ); // remove the cron version
+			return NULL; // prevent the execution of the code below
 		}
 
-		// If existing CRON version is not consistent with current plugin's version,
-		// or does not exist, then create/update cron using
-		if( get_option( 'ai1ec_n_cron_version' ) != AI1EC_N_CRON_VERSION ) {
-			// delete our scheduled crons
-			wp_clear_scheduled_hook( 'ai1ec_n_cron_version' );
+		// If existing CRON version is not consistent with current plugin's
+		// version, or does not exist, then create/update cron using
+		if ( AI1EC_N_CRON_VERSION != get_option( $optn_name ) ) {
 			// set the new cron
-			wp_schedule_event( time(), AI1EC_N_CRON_FREQ, 'ai1ec_n_cron' );
+			wp_schedule_event( time(), AI1EC_N_CRON_FREQ, $hook_name );
 			// update the cron version
-			update_option( 'ai1ec_n_cron_version', AI1EC_N_CRON_VERSION );
+			update_option( $optn_name, AI1EC_N_CRON_VERSION );
 		}
 	}
 
