@@ -60,8 +60,7 @@ class Ai1ec_App_Controller {
 	 *
 	 * Default constructor - application initialization
 	 **/
-	private function __construct()
-	{
+	private function __construct() {
 		global $wpdb,
 		       $ai1ec_app_helper,
 		       $ai1ec_events_controller,
@@ -73,7 +72,10 @@ class Ai1ec_App_Controller {
 		       $ai1ec_themes_controller;
 
 		// register_activation_hook
-		register_activation_hook( AI1EC_PLUGIN_NAME . '/' . AI1EC_PLUGIN_NAME . '.php', array( &$this, 'activation_hook' ) );
+		register_activation_hook(
+			AI1EC_PLUGIN_NAME . '/' . AI1EC_PLUGIN_NAME . '.php',
+			array( $this, 'activation_hook' )
+		);
 
 		// Configure MySQL to operate in GMT time
 		$wpdb->query( "SET time_zone = '+0:00'" );
@@ -87,13 +89,14 @@ class Ai1ec_App_Controller {
 		// Enable stats collection
 		$this->install_n_cron();
 
-		// Continue loading hooks only if themes are installed. Otherwise display a
-		// notification on the backend with instructions how to install themes.
-		if( ! $ai1ec_themes_controller->are_themes_available() ) {
+		// Continue loading hooks only if themes are installed. Otherwise
+		// display a notification on the backend with instructions how to
+		// install themes.
+		if ( ! $ai1ec_themes_controller->are_themes_available() ) {
 			// Enables the hidden themes installer page
-			add_action( 'admin_menu', array( &$ai1ec_themes_controller, 'register_theme_installer' ), 1 );
+			add_action( 'admin_menu', array( $ai1ec_themes_controller, 'register_theme_installer' ), 1 );
 			// Redirects the user to install theme page
-			add_action( 'admin_menu', array( &$this, 'check_themes' ), 2 );
+			add_action( 'admin_menu', array( $this, 'check_themes' ), 2 );
 			return;
 		}
 
@@ -101,113 +104,113 @@ class Ai1ec_App_Controller {
 		// = ACTIONS =
 		// ===========
 		// Calendar theme initialization
-		add_action( 'after_setup_theme',                        array( &$ai1ec_themes_controller, 'setup_theme' ) );
+		add_action( 'after_setup_theme',                        array( $ai1ec_themes_controller, 'setup_theme' ) );
 		// Create custom post type
-		add_action( 'init',                                     array( &$ai1ec_app_helper, 'create_post_type' ) );
+		add_action( 'init',                                     array( $ai1ec_app_helper, 'create_post_type' ) );
 		// Handle ICS export requests
-		add_action( 'init',                                     array( &$this, 'parse_standalone_request' ) );
+		add_action( 'init',                                     array( $this, 'parse_standalone_request' ) );
 		// General initialization
-		add_action( 'init',                                     array( &$ai1ec_events_controller, 'init' ) );
+		add_action( 'init',                                     array( $ai1ec_events_controller, 'init' ) );
 		// Load plugin text domain
-		add_action( 'init',                                     array( &$this, 'load_textdomain' ) );
+		add_action( 'init',                                     array( $this, 'load_textdomain' ) );
 		// Register The Event Calendar importer
-		add_action( 'admin_init',                               array( &$ai1ec_importer_controller, 'register_importer' ) );
+		add_action( 'admin_init',                               array( $ai1ec_importer_controller, 'register_importer' ) );
 		// Install admin menu items.
-		add_action( 'admin_menu',                               array( &$this, 'admin_menu' ), 9 );
+		add_action( 'admin_menu',                               array( $this, 'admin_menu' ), 9 );
 		// Enable theme updater page if last version of core themes is older than
 		// current version.
 		if ( $ai1ec_themes_controller->are_themes_outdated() ) {
-			add_action( 'admin_menu',                             array( &$ai1ec_themes_controller, 'register_theme_updater' ) );
+			add_action( 'admin_menu',                             array( $ai1ec_themes_controller, 'register_theme_updater' ) );
 		}
 		// Add Event counts to dashboard.
-		add_action( 'right_now_content_table_end',              array( &$ai1ec_app_helper, 'right_now_content_table_end' ) );
+		add_action( 'right_now_content_table_end',              array( $ai1ec_app_helper, 'right_now_content_table_end' ) );
 		// add content for our custom columns
-		add_action( 'manage_posts_custom_column',               array( &$ai1ec_app_helper, 'custom_columns' ), 10, 2 );
+		add_action( 'manage_posts_custom_column',               array( $ai1ec_app_helper, 'custom_columns' ), 10, 2 );
 		// Add filtering dropdowns for event categories and tags
-		add_action( 'restrict_manage_posts',                    array( &$ai1ec_app_helper, 'taxonomy_filter_restrict_manage_posts' ) );
+		add_action( 'restrict_manage_posts',                    array( $ai1ec_app_helper, 'taxonomy_filter_restrict_manage_posts' ) );
 		// Trigger display of page in front-end depending on request
-		add_action( 'template_redirect',                        array( &$this, 'route_request' ) );
+		add_action( 'template_redirect',                        array( $this, 'route_request' ) );
 		// Add meta boxes to event creation/edit form.
-		add_action( 'add_meta_boxes',                           array( &$ai1ec_app_helper, 'add_meta_boxes' ) );
-		add_filter( 'screen_layout_columns',                    array( &$ai1ec_app_helper, 'screen_layout_columns' ), 10, 2 );
+		add_action( 'add_meta_boxes',                           array( $ai1ec_app_helper, 'add_meta_boxes' ) );
+		add_filter( 'screen_layout_columns',                    array( $ai1ec_app_helper, 'screen_layout_columns' ), 10, 2 );
 		// Save event data when post is saved
-		add_action( 'save_post',                                array( &$ai1ec_events_controller, 'save_post' ), 10, 2 );
+		add_action( 'save_post',                                array( $ai1ec_events_controller, 'save_post' ), 10, 2 );
 		// Delete event data when post is deleted
-		add_action( 'delete_post',                              array( &$ai1ec_events_controller, 'delete_post' ) );
+		add_action( 'delete_post',                              array( $ai1ec_events_controller, 'delete_post' ) );
 		// Notification cron job hook
-		add_action( 'ai1ec_n_cron',                             array( &$ai1ec_exporter_controller, 'n_cron' ) );
+		add_action( 'ai1ec_n_cron',                             array( $ai1ec_exporter_controller, 'n_cron' ) );
 		// Category colors
-		add_action( 'events_categories_add_form_fields',        array( &$ai1ec_events_controller, 'events_categories_add_form_fields' ) );
-		add_action( 'events_categories_edit_form_fields',       array( &$ai1ec_events_controller, 'events_categories_edit_form_fields' ) );
-		add_action( 'created_events_categories',                array( &$ai1ec_events_controller, 'created_events_categories' ) );
-		add_action( 'edited_events_categories',                 array( &$ai1ec_events_controller, 'edited_events_categories' ) );
-		add_action( 'admin_notices',                            array( &$ai1ec_app_helper, 'admin_notices' ) );
+		add_action( 'events_categories_add_form_fields',        array( $ai1ec_events_controller, 'events_categories_add_form_fields' ) );
+		add_action( 'events_categories_edit_form_fields',       array( $ai1ec_events_controller, 'events_categories_edit_form_fields' ) );
+		add_action( 'created_events_categories',                array( $ai1ec_events_controller, 'created_events_categories' ) );
+		add_action( 'edited_events_categories',                 array( $ai1ec_events_controller, 'edited_events_categories' ) );
+		add_action( 'admin_notices',                            array( $ai1ec_app_helper, 'admin_notices' ) );
 		// Scripts/styles for settings and widget admin screens.
-		add_action( 'admin_enqueue_scripts',                    array( &$ai1ec_app_helper, 'admin_enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts',                    array( $ai1ec_app_helper, 'admin_enqueue_scripts' ) );
 		// Widgets
 		add_action( 'widgets_init', create_function( '', "return register_widget( 'Ai1ec_Agenda_Widget' );" ) );
 
 		// ===========
 		// = FILTERS =
 		// ===========
-		add_filter( 'posts_orderby',                            array( &$ai1ec_app_helper, 'orderby' ), 10, 2 );
+		add_filter( 'posts_orderby',                            array( $ai1ec_app_helper, 'orderby' ), 10, 2 );
 		// add custom column names and change existing columns
-		add_filter( 'manage_ai1ec_event_posts_columns',         array( &$ai1ec_app_helper, 'change_columns' ) );
+		add_filter( 'manage_ai1ec_event_posts_columns',         array( $ai1ec_app_helper, 'change_columns' ) );
 		// filter the post lists by custom filters
-		add_filter( 'parse_query',                              array( &$ai1ec_app_helper, 'taxonomy_filter_post_type_request' ) );
+		add_filter( 'parse_query',                              array( $ai1ec_app_helper, 'taxonomy_filter_post_type_request' ) );
 		// Filter event post content, in single- and multi-post views
-		add_filter( 'the_content',                              array( &$ai1ec_events_controller, 'event_content' ), PHP_INT_MAX - 1 );
+		add_filter( 'the_content',                              array( $ai1ec_events_controller, 'event_content' ), PHP_INT_MAX - 1 );
 		// Override excerpt filters for proper event display in excerpt form
-		add_filter( 'get_the_excerpt',                          array( &$ai1ec_events_controller, 'event_excerpt' ), 11 );
-		add_filter( 'the_excerpt',                              array( &$ai1ec_events_controller, 'event_excerpt_noautop' ), 11 );
+		add_filter( 'get_the_excerpt',                          array( $ai1ec_events_controller, 'event_excerpt' ), 11 );
+		add_filter( 'the_excerpt',                              array( $ai1ec_events_controller, 'event_excerpt_noautop' ), 11 );
 		remove_filter( 'the_excerpt',                           'wpautop', 10 );
 		// Update event post update messages
-		add_filter( 'post_updated_messages',                    array( &$ai1ec_events_controller, 'post_updated_messages' ) );
+		add_filter( 'post_updated_messages',                    array( $ai1ec_events_controller, 'post_updated_messages' ) );
 		// Sort the custom columns
-		add_filter( 'manage_edit-ai1ec_event_sortable_columns', array( &$ai1ec_app_helper, 'sortable_columns' ) );
-		add_filter( 'map_meta_cap',                             array( &$ai1ec_app_helper, 'map_meta_cap' ), 10, 4 );
+		add_filter( 'manage_edit-ai1ec_event_sortable_columns', array( $ai1ec_app_helper, 'sortable_columns' ) );
+		add_filter( 'map_meta_cap',                             array( $ai1ec_app_helper, 'map_meta_cap' ), 10, 4 );
 		// Inject event categories, only in front-end, depending on setting
 		if( $ai1ec_settings->inject_categories && ! is_admin() ) {
-			add_filter( 'get_terms',                              array( &$ai1ec_app_helper, 'inject_categories' ), 10, 3 );
-			add_filter( 'wp_list_categories',                     array( &$ai1ec_app_helper, 'selected_category_link' ), 10, 2 );
+			add_filter( 'get_terms',                              array( $ai1ec_app_helper, 'inject_categories' ), 10, 3 );
+			add_filter( 'wp_list_categories',                     array( $ai1ec_app_helper, 'selected_category_link' ), 10, 2 );
 		}
 		// Rewrite event category URLs to point to calendar page.
-		add_filter( 'term_link',                                array( &$ai1ec_app_helper, 'calendar_term_link' ), 10, 3 );
+		add_filter( 'term_link',                                array( $ai1ec_app_helper, 'calendar_term_link' ), 10, 3 );
 		// Add a link to settings page on the plugin list page.
-		add_filter( 'plugin_action_links_' . AI1EC_PLUGIN_BASENAME, array( &$ai1ec_settings_controller, 'plugin_action_links' ) );
+		add_filter( 'plugin_action_links_' . AI1EC_PLUGIN_BASENAME, array( $ai1ec_settings_controller, 'plugin_action_links' ) );
 		// Add a link to donate page on plugin list page.
-		add_filter( 'plugin_row_meta',                          array( &$ai1ec_settings_controller, 'plugin_row_meta' ), 10, 2 );
-		add_filter( 'post_type_link',                           array( &$ai1ec_events_helper, 'post_type_link' ), 10, 3 );
-		add_filter( 'ai1ec_template_root_path',                 array( &$ai1ec_themes_controller, 'template_root_path' ) );
-		add_filter( 'ai1ec_template_root_url',                  array( &$ai1ec_themes_controller, 'template_root_url' ) );
+		add_filter( 'plugin_row_meta',                          array( $ai1ec_settings_controller, 'plugin_row_meta' ), 10, 2 );
+		add_filter( 'post_type_link',                           array( $ai1ec_events_helper, 'post_type_link' ), 10, 3 );
+		add_filter( 'ai1ec_template_root_path',                 array( $ai1ec_themes_controller, 'template_root_path' ) );
+		add_filter( 'ai1ec_template_root_url',                  array( $ai1ec_themes_controller, 'template_root_url' ) );
 
 		// ========
 		// = AJAX =
 		// ========
 		// Add iCalendar feed
-		add_action( 'wp_ajax_ai1ec_add_ics',    array( &$ai1ec_settings_controller, 'add_ics_feed' ) );
+		add_action( 'wp_ajax_ai1ec_add_ics',    array( $ai1ec_settings_controller, 'add_ics_feed' ) );
 		// Delete iCalendar feed
-		add_action( 'wp_ajax_ai1ec_delete_ics', array( &$ai1ec_settings_controller, 'delete_ics_feed' ) );
+		add_action( 'wp_ajax_ai1ec_delete_ics', array( $ai1ec_settings_controller, 'delete_ics_feed' ) );
 		// Flush iCalendar feed
-		add_action( 'wp_ajax_ai1ec_flush_ics',  array( &$ai1ec_settings_controller, 'flush_ics_feed' ) );
+		add_action( 'wp_ajax_ai1ec_flush_ics',  array( $ai1ec_settings_controller, 'flush_ics_feed' ) );
 		// Update iCalendar feed
-		add_action( 'wp_ajax_ai1ec_update_ics', array( &$ai1ec_settings_controller, 'update_ics_feed' ) );
+		add_action( 'wp_ajax_ai1ec_update_ics', array( $ai1ec_settings_controller, 'update_ics_feed' ) );
 
 		// RRule to Text
-		add_action( 'wp_ajax_ai1ec_rrule_to_text', array( &$ai1ec_events_helper, 'convert_rrule_to_text' ) );
+		add_action( 'wp_ajax_ai1ec_rrule_to_text', array( $ai1ec_events_helper, 'convert_rrule_to_text' ) );
 
 		// Display Repeat Box
-		add_action( 'wp_ajax_ai1ec_get_repeat_box', array( &$ai1ec_events_helper, 'get_repeat_box' ) );
-		add_action( 'wp_ajax_ai1ec_get_date_picker_box', array( &$ai1ec_events_helper, 'get_date_picker_box' ) );
+		add_action( 'wp_ajax_ai1ec_get_repeat_box', array( $ai1ec_events_helper, 'get_repeat_box' ) );
+		add_action( 'wp_ajax_ai1ec_get_date_picker_box', array( $ai1ec_events_helper, 'get_date_picker_box' ) );
 
 		// Disable notifications
-		add_action( 'wp_ajax_ai1ec_disable_notification', array( &$ai1ec_settings_controller, 'disable_notification' ) );
-		add_action( 'wp_ajax_ai1ec_disable_intro_video', array( &$ai1ec_settings_controller, 'disable_intro_video' ) );
+		add_action( 'wp_ajax_ai1ec_disable_notification', array( $ai1ec_settings_controller, 'disable_notification' ) );
+		add_action( 'wp_ajax_ai1ec_disable_intro_video', array( $ai1ec_settings_controller, 'disable_intro_video' ) );
 
 		// ==============
 		// = Shortcodes =
 		// ==============
-		add_shortcode( 'ai1ec', array( &$ai1ec_events_helper, 'shortcode' ) );
+		add_shortcode( 'ai1ec', array( $ai1ec_events_helper, 'shortcode' ) );
 
 	}
 
@@ -234,9 +237,13 @@ class Ai1ec_App_Controller {
 	 * @return void
 	 **/
 	function load_textdomain() {
-		if( self::$_load_domain === FALSE ) {
-			load_plugin_textdomain( AI1EC_PLUGIN_NAME, false, AI1EC_LANGUAGE_PATH );
-			self::$_load_domain = TRUE;
+		if ( false === self::$_load_domain ) {
+			load_plugin_textdomain(
+				AI1EC_PLUGIN_NAME,
+				false,
+				AI1EC_LANGUAGE_PATH
+			);
+			self::$_load_domain = true;
 		}
 	}
 
