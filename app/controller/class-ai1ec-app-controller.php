@@ -84,9 +84,6 @@ class Ai1ec_App_Controller {
 		// Install/update database schema as necessary
 		$this->install_schema();
 
-		// Install/update cron as necessary
-		$this->install_cron();
-
 		// Enable stats collection
 		$this->install_n_cron();
 
@@ -137,8 +134,6 @@ class Ai1ec_App_Controller {
 		add_action( 'save_post',                                array( &$ai1ec_events_controller, 'save_post' ), 10, 2 );
 		// Delete event data when post is deleted
 		add_action( 'delete_post',                              array( &$ai1ec_events_controller, 'delete_post' ) );
-		// Cron job hook
-		add_action( 'ai1ec_cron',                               array( &$ai1ec_importer_controller, 'cron' ) );
 		// Notification cron job hook
 		add_action( 'ai1ec_n_cron',                             array( &$ai1ec_exporter_controller, 'n_cron' ) );
 		// Category colors
@@ -316,18 +311,6 @@ class Ai1ec_App_Controller {
 					PRIMARY KEY  (id)
 				) CHARACTER SET utf8;";
 
-			// ======================
-			// = Create table feeds =
-			// ======================
-			$table_name = $wpdb->prefix . 'ai1ec_event_feeds';
-			$sql .= "CREATE TABLE $table_name (
-					feed_id       bigint(20) NOT NULL AUTO_INCREMENT,
-					feed_url      varchar(255) NOT NULL,
-					feed_category bigint(20) NOT NULL,
-					feed_tags     varchar(255) NOT NULL,
-					PRIMARY KEY  (feed_id)
-				) CHARACTER SET utf8;";
-
 			// ================================
 			// = Create table category colors =
 			// ================================
@@ -342,27 +325,6 @@ class Ai1ec_App_Controller {
 			dbDelta( $sql );
 
 			update_option( 'ai1ec_db_version', AI1EC_DB_VERSION );
-		}
-	}
-
-	/**
-	 * install_cron function
-	 *
-	 * This function sets up the cron job for updating the events, and upgrades it if it is out of date.
-	 *
-	 * @return void
-	 **/
-	function install_cron() {
-		// If existing CRON version is not consistent with current plugin's version,
-		// or does not exist, then create/update cron using
-		if( get_option( 'ai1ec_cron_version' ) != AI1EC_CRON_VERSION ) {
-			global $ai1ec_settings;
-			// delete our scheduled crons
-			wp_clear_scheduled_hook( 'ai1ec_cron' );
-			// set the new cron
-			wp_schedule_event( time(), $ai1ec_settings->cron_freq, 'ai1ec_cron' );
-			// update the cron version
-			update_option( 'ai1ec_cron_version', AI1EC_CRON_VERSION );
 		}
 	}
 
@@ -412,22 +374,6 @@ class Ai1ec_App_Controller {
            $ai1ec_settings,
            $ai1ec_themes_controller,
            $submenu;
-
-		// =======================
-		// = Calendar Feeds Page =
-		// =======================
-		$ai1ec_settings->feeds_page = add_submenu_page(
-			'edit.php?post_type=' . AI1EC_POST_TYPE,
-			__( 'Calendar Feeds', AI1EC_PLUGIN_NAME ),
-			__( 'Calendar Feeds', AI1EC_PLUGIN_NAME ),
-			'manage_ai1ec_feeds',
-			AI1EC_PLUGIN_NAME . '-feeds',
-			array( &$ai1ec_settings_controller, 'view_feeds' )
-		);
-		// Allow feeds page to have additional meta boxes added to it.
-		add_action( "load-{$ai1ec_settings->feeds_page}", array( &$ai1ec_settings_helper, 'add_feeds_meta_boxes') );
-		// Load our plugin's meta boxes.
-		add_action( "load-{$ai1ec_settings->feeds_page}", array( &$ai1ec_settings_controller, 'add_feeds_meta_boxes' ) );
 
 		// =================
 		// = Settings Page =
