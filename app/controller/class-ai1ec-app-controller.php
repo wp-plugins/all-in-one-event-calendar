@@ -96,8 +96,8 @@ class Ai1ec_App_Controller {
 			// Enables the hidden themes installer page
 			add_action( 'admin_menu', array( $ai1ec_themes_controller, 'register_theme_installer' ), 1 );
 			// Redirects the user to install theme page
-			add_action( 'admin_menu', array( $this, 'check_themes' ), 2 );
-			return;
+			add_action( 'admin_notices', array( $ai1ec_app_helper, 'admin_notices_themes' ) );
+			return NULL;
 		}
 
 		// ===========
@@ -513,17 +513,5 @@ class Ai1ec_App_Controller {
 		$upgrader->upgrade( 'all-in-one-event-calendar/all-in-one-event-calendar.php' );
 	}
 
-	/**
-	 * check_themes function
-	 *
-	 * This function checks if the user is not on install themes page
-	 * and redirects the user to that page
-	 *
-	 * @return void
-	 **/
-	function check_themes() {
-		if( ! isset( $_REQUEST["page"] ) || $_REQUEST["page"] != AI1EC_PLUGIN_NAME . '-install-themes' )
-			wp_redirect( admin_url( AI1EC_INSTALL_THEMES_BASE_URL ) );
-	}
 }
 // END class

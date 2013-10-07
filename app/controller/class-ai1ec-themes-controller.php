@@ -93,17 +93,17 @@ class Ai1ec_Themes_Controller {
   }
 
 	/**
-	 * are_themes_available function
+	 * Check if core calendar theme folder is present in wp-content/ directory
 	 *
-	 * Checks if core calendar theme folder is present in wp-content.
-	 *
-	 * @return bool
-	 **/
+	 * @return bool Existence
+	 */
 	public function are_themes_available() {
-		//  Are calendar themes folder and Vortex theme present under wp-content ?
-		if( @is_dir( AI1EC_THEMES_ROOT ) === true && @is_dir( AI1EC_DEFAULT_THEME_PATH ) === true )
+		if (
+			true === @is_dir( AI1EC_THEMES_ROOT ) &&
+			true === @is_dir( AI1EC_DEFAULT_THEME_PATH )
+		) {
 			return true;
-
+		}
 		return false;
 	}
 
@@ -111,17 +111,20 @@ class Ai1ec_Themes_Controller {
 	 * Register Install Calendar Themes page in wp-admin.
 	 */
 	function register_theme_installer() {
-		// Add menu item for theme install page, but remove it using remove_submenu_page
-		// to generate a "ghost" page
+		// Add menu item for theme install page, but remove it using
+		// `remove_submenu_page()` to generate a "ghost" page
 		add_submenu_page(
 			'themes.php',
 			__( 'Install Calendar Themes', AI1EC_PLUGIN_NAME ),
 			__( 'Install Calendar Themes', AI1EC_PLUGIN_NAME ),
 			'install_themes',
 			AI1EC_PLUGIN_NAME . '-install-themes',
-			array( &$this, 'install_themes' )
+			array( $this, 'install_themes' )
 		);
-		remove_submenu_page( 'themes.php', AI1EC_PLUGIN_NAME . '-install-themes' );
+		remove_submenu_page(
+			'themes.php',
+			AI1EC_PLUGIN_NAME . '-install-themes'
+		);
 	}
 
 	/**

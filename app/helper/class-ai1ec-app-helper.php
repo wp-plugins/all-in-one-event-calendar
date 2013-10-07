@@ -670,6 +670,32 @@ class Ai1ec_App_Helper {
 		return $output;
 	}
 
+	/**
+	 * Display notice when themes are unavailable
+	 *
+	 * Provide some instructions how to re-install themes.
+	 *
+	 * @return void Method doesn't return
+	 */
+	public function admin_notices_themes() {
+		if ( ! $this->_are_notices_available( true ) ) {
+			return NULL;
+		}
+		global $ai1ec_view_helper;
+		$args = array(
+			'label'  => __( 'All-in-One Event Calendar Notice', AI1EC_PLUGIN_NAME ),
+			'msg'    => sprintf(
+				__(
+					'<p><strong>Core calendar files are not installed.</strong></p>' .
+					'<p>Please visit <a href="%s">Themes Installer page</a> to fix this issue.<br />Until then calendar will be unavailable.</p>',
+					AI1EC_PLUGIN_NAME
+				),
+				admin_url( AI1EC_INSTALL_THEMES_BASE_URL )
+			),
+		);
+		$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
+	}
+
   /**
    * admin_notices function
    *
@@ -678,6 +704,9 @@ class Ai1ec_App_Helper {
    * @return void
    **/
   function admin_notices() {
+		if ( ! $this->_are_notices_available() ) {
+			return NULL;
+		}
     global $ai1ec_view_helper,
 		       $ai1ec_settings,
 		       $plugin_page,
@@ -738,7 +767,7 @@ class Ai1ec_App_Helper {
 		}
 
 		// No themes available notice.
-		if( ! $ai1ec_themes_controller->are_themes_available() ) {
+		if ( ! $ai1ec_themes_controller->are_themes_available() ) {
 			$args = array(
 				'label'  => __( 'All-in-One Event Calendar Notice', AI1EC_PLUGIN_NAME ),
 				'msg'    => sprintf(
@@ -843,6 +872,50 @@ class Ai1ec_App_Helper {
 			$args['label'] = __( 'All-in-One Event Calendar Notice', AI1EC_PLUGIN_NAME );
 			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
 		}
+	}
+
+	/**
+	 * Check whereas our notices should be displayed on this page
+	 *
+	 * Limits notices to Ai1EC pages and WordPress "Plugins", "Updates" pages.
+	 * Important notices are also displayable in WordPress "Dashboard".
+	 *
+	 * @param bool $is_important Set to true for serious (i.e. error) notices
+	 *
+	 * @return bool Availability
+	 */
+	protected function _are_notices_available( $is_important = false ) {
+		// In CRON `get_current_screen()` is not present
+		// and we wish to have notice on all "our" pages
+		if (
+			isset( $_GET['page'] ) &&
+			0 === strncasecmp(
+				$_GET['page'],
+				AI1EC_PLUGIN_NAME,
+				strlen( AI1EC_PLUGIN_NAME )
+			) ||
+			isset( $_GET['post_type'] ) &&
+			AI1EC_POST_TYPE === $_GET['post_type'] ||
+			! function_exists( 'get_current_screen' )
+		) {
+			return true;
+		}
+		$screen   = get_current_screen();
+		$allow_on = array(
+			'plugins',
+			'update-core',
+		);
+		if ( $is_important ) {
+			$allow_on[] = 'dashboard';
+		}
+		if (
+			is_object( $screen ) &&
+			isset( $screen->id ) &&
+			in_array( $screen->id, $allow_on )
+		) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
