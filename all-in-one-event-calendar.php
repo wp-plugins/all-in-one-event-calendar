@@ -241,25 +241,6 @@ $tmp = str_replace( 'http://', 'webcal://', AI1EC_SCRIPT_URL );
 // ==============
 define( 'AI1EC_EXPORT_URL',         $tmp . "&controller=ai1ec_exporter_controller&action=export_events&cb=" . rand() );
 
-// ====================================
-// = Include iCal parsers and helpers =
-// ====================================
-if( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
-	// Parser that requires PHP v5.3.0 or up
-	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.14/iCalcreator.class.php' );
-} else {
-	// Parser that works on PHP versions below 5.3.0
-	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10/iCalcreator.class.php' );
-	require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10/iCalUtilityFunctions.class.php' );
-}
-require_once( AI1EC_LIB_PATH . '/SG_iCal.php' );
-require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Line.php' );
-require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Duration.php' );
-require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Freq.php' );
-require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Recurrence.php' );
-require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Parser.php' );
-require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Query.php' );
-require_once( AI1EC_LIB_PATH . '/helpers/SG_iCal_Factory.php' );
 // include our global functions
 require_once( AI1EC_LIB_PATH . '/global-functions.php' );
 

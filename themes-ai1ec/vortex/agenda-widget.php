@@ -68,21 +68,6 @@
     		</a>
     	<?php endif; ?>
 
-    	<?php if( $show_subscribe_buttons ): ?>
-    		<span class="ai1ec-subscribe-buttons pull-left">
-    			<a class="btn btn-mini ai1ec-subscribe"
-    				href="<?php echo $subscribe_url; ?>"
-    				title="<?php _e( 'Subscribe to this calendar using your favourite calendar program (iCal, Outlook, etc.)', AI1EC_PLUGIN_NAME ); ?>" />
-    				<?php _e( '✔ Subscribe', AI1EC_PLUGIN_NAME ); ?>
-    			</a>
-    			<a class="btn btn-mini ai1ec-subscribe-google" target="_blank"
-    				href="http://www.google.com/calendar/render?cid=<?php echo urlencode( str_replace( 'webcal://', 'http://', $subscribe_url ) ); ?>"
-    				title="<?php _e( 'Subscribe to this calendar in your Google Calendar', AI1EC_PLUGIN_NAME ); ?>" />
-    				<img src="<?php echo $this->get_theme_img_url( 'google-calendar.png' ); ?>" />
-    				<?php _e( 'Add to Google', AI1EC_PLUGIN_NAME ); ?>
-    			</a>
-    		</span>
-    	<?php endif; ?>
     </p>
   <?php endif; ?>
 
