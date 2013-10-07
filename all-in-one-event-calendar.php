@@ -42,7 +42,6 @@ define( 'AI1EC_THEMES_VERSION',     8 );
 define( 'AI1EC_CRON_VERSION',       104 );
 define( 'AI1EC_N_CRON_VERSION',     103 );
 define( 'AI1EC_N_CRON_FREQ',        'daily' );
-define( 'AI1EC_UPDATES_URL',        'http://time.ly/standard-calendar' );
 
 // ===============
 // = Plugin Path =

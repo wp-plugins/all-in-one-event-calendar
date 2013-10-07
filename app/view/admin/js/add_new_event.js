@@ -348,7 +348,32 @@ jQuery( function( $ ){
 			}
 		});
 	});
+	/**
+	 * Click event handler for Dismiss button
+	 * that disables the data notification for admin users
+	 */
+	$( '.ai1ec-dismiss-standard-notification' ).live( 'click', function() {
+		var $button = $( this );
+		var $parent = $( this ).parent().parent();
+		// disable the update button
+		$button.attr( 'disabled', true );
 
+		// create the data to send
+		var data = {
+			action: 'ai1ec_disable_standard_notice',
+			note:   false
+		};
+
+		$.post( ajaxurl, data, function( response ) {
+			if( response.error ) {
+				// tell the user that there is an error
+				alert( response.message );
+			} else {
+				// hide notification message
+				$parent.remove();
+			}
+		});
+	});
 	/**
 	 * Click event handler for Dismiss button of intro video.
 	 * That disables the intro video notification for admin users.

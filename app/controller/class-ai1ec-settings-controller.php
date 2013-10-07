@@ -102,6 +102,22 @@ class Ai1ec_Settings_Controller {
 	}
 
 	/**
+	 * Disable standard notification (AJAX callback).
+	 *
+	 * @return void
+	 **/
+	function disable_standard_notice() {
+		global $ai1ec_view_helper, $ai1ec_settings;
+
+		$ai1ec_settings->update_standard_notification( false );
+		$output = array(
+			'error' 	=> false,
+			'message'	=> 'Request successful.'
+		);
+		
+		$ai1ec_view_helper->json_response( $output );
+	}
+	/**
 	 * Disable intro video (AJAX callback).
 	 *
 	 * @return void

@@ -67,7 +67,6 @@
           <i class="timely-icon-forward"></i>
     		</a>
     	<?php endif; ?>
-
     </p>
   <?php endif; ?>
 

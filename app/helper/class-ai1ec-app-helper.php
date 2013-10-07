@@ -712,19 +712,31 @@ class Ai1ec_App_Helper {
 		       $plugin_page,
 		       $ai1ec_themes_controller;
 
-		// Display Lite version unsupported notice.
-		$args = array(
-			'msg' => '<p class="timely ai1ec-upgrade-notice"><span><strong>' .
+		if( $ai1ec_settings->show_standard_notice ) {
+			// Display Lite version unsupported notice.
+			$args = array(
+				'msg' => '<p class="timely ai1ec-upgrade-notice"><span><strong>' .
 				__( 'All-in-One Event Calendar Notice', AI1EC_PLUGIN_NAME ) .
 				':</strong> ' .
-				__( 'You are using the <strong>Lite</strong> Calendar. This edition of the plugin is no longer supported.', AI1EC_PLUGIN_NAME ) .
+				__( 'You are using the <strong>"Lite"</strong> Timely calendar. Visit ', AI1EC_PLUGIN_NAME ) .
 				'</span> <a href="' .
-				esc_attr( admin_url( 'edit.php?post_type=' . AI1EC_POST_TYPE . '&page=' . AI1EC_PLUGIN_NAME . '-upgrade' ) ) .
-				'" class="btn btn-primary">' .
-				__( 'Upgrade to the <span><strong>Standard</strong> Calendar</span> for free', AI1EC_PLUGIN_NAME ) .
-				'</a></p>',
-		);
-		$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
+				esc_attr( "http://time.ly" ) .
+				'" target="_BLANK">' .
+				__( '<span><strong>our website</strong></span>', AI1EC_PLUGIN_NAME ) .
+				'</a> and follow ' . 
+				'<a href=" ' .
+				esc_attr( "http://support.time.ly/manually-upgrading-the-calendar/" ) .
+				'" target="_BLANK">' .
+				__( '<span><strong>this guide</strong></span>', AI1EC_PLUGIN_NAME ) .
+				'</a> to upgrade to the free "Standard" version with additional features.',
+				'button' => (object) array(
+					'class' => 'ai1ec-dismiss-standard-notification',
+					'value' => __( 'Dismiss', AI1EC_PLUGIN_NAME ),
+				),
+			);
+			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
+		}
+
 
 		// Display introductory video notice if not disabled.
 		if( $ai1ec_settings->show_intro_video ) {

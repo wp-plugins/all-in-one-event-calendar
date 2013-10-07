@@ -206,7 +206,7 @@ class Ai1ec_App_Controller {
 		// Disable notifications
 		add_action( 'wp_ajax_ai1ec_disable_notification', array( $ai1ec_settings_controller, 'disable_notification' ) );
 		add_action( 'wp_ajax_ai1ec_disable_intro_video', array( $ai1ec_settings_controller, 'disable_intro_video' ) );
-
+		add_action( 'wp_ajax_ai1ec_disable_standard_notice', array( $ai1ec_settings_controller, 'disable_standard_notice' ) );
 		// ==============
 		// = Shortcodes =
 		// ==============
@@ -402,18 +402,6 @@ class Ai1ec_App_Controller {
 		// Load our plugin's meta boxes.
 		add_action( "load-{$ai1ec_settings->settings_page}", array( &$ai1ec_settings_controller, 'add_settings_meta_boxes' ) );
 
-		// ========================
-		// = Calendar Update Page =
-		// ========================
-		add_submenu_page(
-			'edit.php?post_type=' . AI1EC_POST_TYPE,
-			__( 'Upgrade', AI1EC_PLUGIN_NAME ),
-			__( 'Upgrade', AI1EC_PLUGIN_NAME ),
-			'update_plugins',
-			AI1EC_PLUGIN_NAME . '-upgrade',
-			array( &$this, 'upgrade' )
-		);
-		remove_submenu_page( 'edit.php?post_type=' . AI1EC_POST_TYPE, AI1EC_PLUGIN_NAME . '-upgrade' );
 	}
 
 	/**
@@ -496,21 +484,6 @@ class Ai1ec_App_Controller {
 				'</div>';
 
 		return $content;
-	}
-
-	/**
-	 * upgrade function
-	 *
-	 * @return void
-	 **/
-	function upgrade() {
-		// continue only if user can update plugins
-		if ( ! current_user_can( 'update_plugins' ) )
-			wp_die( __( 'You do not have sufficient permissions to update plugins for this site.' ) );
-		// use our custom class
-		$upgrader = new Ai1ec_Updater();
-		// update the plugin
-		$upgrader->upgrade( 'all-in-one-event-calendar/all-in-one-event-calendar.php' );
 	}
 
 }

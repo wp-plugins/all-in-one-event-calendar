@@ -263,6 +263,13 @@ class Ai1ec_Settings {
 	var $show_year_in_agenda_dates;
 
 	/**
+	 * Show the standard notification.
+	 *
+	 * @var bool
+	 */
+	var $show_standard_notice;
+
+	/**
 	 * __construct function
 	 *
 	 * Default constructor
@@ -363,10 +370,11 @@ class Ai1ec_Settings {
 			'geo_region_biasing'            => FALSE,
 			'show_data_notification'        => TRUE,
 			'show_intro_video'              => TRUE,
-      'allow_statistics'              => FALSE, // stats are opt-in
+			'allow_statistics'              => FALSE, // stats are opt-in
 			'disable_autocompletion'        => FALSE,
 			'show_location_in_title'        => TRUE,
 			'show_year_in_agenda_dates'     => FALSE,
+			'show_standard_notice'          => TRUE,
 		);
 
 		foreach( $defaults as $key => $default ) {
@@ -459,6 +467,18 @@ class Ai1ec_Settings {
    */
 	function update_notification( $value = FALSE ) {
 		$this->show_data_notification = $value;
+		update_option( 'ai1ec_settings', $this );
+	}
+
+	/**
+	 * Update setting of show_data_notification - whether to display data
+	 * collection notice on the admin side.
+	 *
+	 * @param  boolean $value The new setting for show_data_notification.
+	 * @return void
+	 */
+	function update_standard_notification( $value = FALSE ) {
+		$this->show_standard_notice = $value;
 		update_option( 'ai1ec_settings', $this );
 	}
 
