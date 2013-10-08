@@ -123,6 +123,23 @@ class Ai1ec_Events_Helper {
 	}
 
 	/**
+	 * when using BYday you need an array of arrays.
+	 * This function create valid arrays that keep into account the presence
+	 * of a week number beofre the day
+	 *
+	 * @param string $val
+	 *
+	 * @return array
+	 */
+	private function create_byday_array( $val ) {
+		$week = substr( $val, 0, 1 );
+		if ( is_numeric( $week ) ) {
+			return array( $week, 'DAY' => substr( $val, 1 ) );
+		}
+		return array( 'DAY' => $val );
+	}
+
+	/**
 	 * Parse a `recurrence rule' into an array that can be used to calculate
 	 * recurrence instances.
 	 *
@@ -185,8 +202,8 @@ class Ai1ec_Events_Helper {
 	 * @param object $event Event to generate cache table for
 	 *
 	 * @return void
-	 **/
-	function cache_event( &$event ) {
+	 */
+	public function cache_event( $event ) {
 		global $wpdb;
 
 		// Convert event timestamps to local for correct calculations of
