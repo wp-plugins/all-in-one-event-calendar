@@ -56,8 +56,19 @@
 		</div>
 
 		<div class="row-fluid">
+			<?php if( $feeds_allowed ): ?>
+				<div class="span6">
+					<p>
+						<a class="btn" href="<?php echo esc_attr( $feeds_url ); ?>">
+							<i class="timely-icon-import-events timely-icon-large"></i> <?php _e( 'Manage Calendar Feeds', AI1EC_PLUGIN_NAME ); ?>
+						</a>
+					</p>
+					<p><strong><?php _e( 'Subscribe to other calendars.', AI1EC_PLUGIN_NAME ); ?></strong></p>
+				</div>
+			<?php endif; ?>
+
 			<?php if( $settings_allowed ): ?>
-				<div class="span12">
+				<div class="span6">
 					<p>
 						<a class="btn" href="<?php echo esc_attr( $settings_url ); ?>">
 							<i class="timely-icon-gear timely-icon-large"></i> <?php _e( 'Edit Calendar Settings', AI1EC_PLUGIN_NAME ); ?>

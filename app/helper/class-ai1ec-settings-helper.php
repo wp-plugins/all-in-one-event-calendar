@@ -244,6 +244,41 @@ class Ai1ec_Settings_Helper {
 	}
 
 	/**
+	 * get_feed_rows function
+	 *
+	 * Creates feed rows to display on settings page
+	 *
+	 * @return String feed rows
+	 **/
+	function get_feed_rows() {
+		global $wpdb,
+					 $ai1ec_view_helper;
+
+		// Select all added feeds
+		$table_name = $wpdb->prefix . 'ai1ec_event_feeds';
+		$sql = "SELECT * FROM {$table_name}";
+		$rows = $wpdb->get_results( $sql );
+
+		ob_start();
+		foreach( $rows as $row ) :
+			$feed_category = get_term( $row->feed_category, 'events_categories' );
+			$table_name = $wpdb->prefix . 'ai1ec_events';
+			$sql = "SELECT COUNT(*) FROM {$table_name} WHERE ical_feed_url = '%s'";
+			$events = $wpdb->get_var( $wpdb->prepare( $sql, $row->feed_url ) );
+			$args = array(
+				'feed_url' 			 => $row->feed_url,
+				'event_category' => $feed_category->name,
+				'tags'					 => stripslashes( $row->feed_tags ),
+				'feed_id'				 => $row->feed_id,
+				'events'				 => $events
+			);
+			$ai1ec_view_helper->display_admin( 'feed_row.php', $args );
+		endforeach;
+
+		return ob_get_clean();
+	}
+
+	/**
 	 * get_event_categories_select function
 	 *
 	 * Creates the dropdown element for selecting feed category
@@ -350,6 +385,25 @@ class Ai1ec_Settings_Helper {
 	}
 
 	/**
+   * Renders the contents of the Calendar Feeds meta box.
+	 *
+	 * @return void
+	 */
+	function feeds_meta_box( $object, $box )
+	{
+		global $ai1ec_view_helper,
+		       $ai1ec_settings_helper,
+		       $ai1ec_settings;
+
+		$args = array(
+			'cron_freq'          => $ai1ec_settings_helper->get_cron_freq_dropdown( $ai1ec_settings->cron_freq ),
+			'event_categories'   => $ai1ec_settings_helper->get_event_categories_select(),
+			'feed_rows'          => $ai1ec_settings_helper->get_feed_rows()
+		);
+		$ai1ec_view_helper->display_admin( 'box_feeds.php', $args );
+	}
+
+	/**
 	 * Renders the contents of the Support meta box.
 	 *
 	 * @return void
@@ -375,5 +429,15 @@ class Ai1ec_Settings_Helper {
     do_action( 'add_meta_boxes', $ai1ec_settings->settings_page );
   }
 
+	/**
+	 * This is called when the feeds page is loaded, so that any additional
+   * custom meta boxes can be added by other plugins, themes, etc.
+	 *
+	 * @return void
+	 */
+	function add_feeds_meta_boxes(){
+		global $ai1ec_settings;
+		do_action( 'add_meta_boxes', $ai1ec_settings->feeds_page );
+	}
 }
 // END class

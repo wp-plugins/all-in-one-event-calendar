@@ -45,6 +45,42 @@ class Ai1ec_Importer_Controller {
 	private function __construct() { }
 
 	/**
+	 * cron function
+	 *
+	 * Import all ICS feeds
+	 *
+	 * @return void
+	 **/
+	function cron()
+	{
+		global $wpdb,
+		       $ai1ec_importer_helper,
+		       $ai1ec_events_helper,
+		       $ai1ec_app_helper,
+		       $ai1ec_settings_controller;
+
+		// Initializing custom post type and custom taxonomies
+		$ai1ec_app_helper->create_post_type();
+
+		// ====================
+		// = Select all feeds =
+		// ====================
+		$table_name = $wpdb->prefix . 'ai1ec_event_feeds';
+		$sql = "SELECT * FROM {$table_name}";
+		$feeds = $wpdb->get_results( $sql );
+
+		// ===============================
+		// = go over each iCalendar feed =
+		// ===============================
+		foreach( $feeds as $feed ) {
+		  // flush the feed
+		  $ai1ec_settings_controller->flush_ics_feed( false, $feed->feed_url );
+		  // import the feed
+			$ai1ec_importer_helper->parse_ics_feed( $feed );
+		}
+	}
+
+	/**
 	 * register_importer function
 	 *
 	 * Registers the event calendar importer
