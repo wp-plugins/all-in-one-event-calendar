@@ -1437,24 +1437,24 @@ class Ai1ec_Events_Helper {
 	 **/
 	function rrule_to_text( $rrule = '') {
 		$txt = '';
-		$rc = new SG_iCal_Recurrence( new SG_iCal_Line( 'RRULE:' . $rrule ) );
-		switch( $rc->getFreq() ) {
+		$rc = new Ai1ec_Recurrence_Helper( $rrule );
+		switch( $rc->get_property( 'freq' ) ) {
 			case 'DAILY':
-				$this->_get_interval( $txt, 'daily', $rc->getInterval() );
+				$this->_get_interval( $txt, 'daily', $rc->get_property( 'interval' ) );
 				$this->_ending_sentence( $txt, $rc );
 				break;
 			case 'WEEKLY':
-				$this->_get_interval( $txt, 'weekly', $rc->getInterval() );
+				$this->_get_interval( $txt, 'weekly', $rc->get_property( 'interval' )  );
 				$this->_get_sentence_by( $txt, 'weekly', $rc );
 				$this->_ending_sentence( $txt, $rc );
 				break;
 			case 'MONTHLY':
-				$this->_get_interval( $txt, 'monthly', $rc->getInterval() );
+				$this->_get_interval( $txt, 'monthly', $rc->get_property( 'interval' )  );
 				$this->_get_sentence_by( $txt, 'monthly', $rc );
 				$this->_ending_sentence( $txt, $rc );
 				break;
 			case 'YEARLY':
-				$this->_get_interval( $txt, 'yearly', $rc->getInterval() );
+				$this->_get_interval( $txt, 'yearly', $rc->get_property( 'interval' )  );
 				$this->_get_sentence_by( $txt, 'yearly', $rc );
 				$this->_ending_sentence( $txt, $rc );
 				break;
@@ -1504,8 +1504,8 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	private function ics_rule_to( $rule, $to_gmt = false ) {
-		$rc = new SG_iCal_Recurrence( new SG_iCal_Line( 'RRULE:' . $rule ) );
-		if( $until = $rc->getUntil() ) {
+		$rc = new Ai1ec_Recurrence_Helper( $rule );
+		if( $until = $rc->get_property( 'until' ) ) {
 			if( ! is_int( $until ) ) {
 				$until = strtotime( $until );
 			}
@@ -1590,13 +1590,13 @@ class Ai1ec_Events_Helper {
 
 		switch( $freq ) {
 			case 'weekly':
-				if( $rc->getByDay() ) {
-					if( count( $rc->getByDay() ) > 1 ) {
+				if( $rc->get_property( 'byday' ) ) {
+					if( count( $rc->get_property( 'byday' ) ) > 1 ) {
 						// if there are more than 3 days
 						// use days's abbr
-						if( count( $rc->getByDay() ) > 2 ) {
+						if( count( $rc->get_property( 'byday' ) ) > 2 ) {
 							$_days = '';
-							foreach( $rc->getByDay() as $d ) {
+							foreach( $rc->get_property( 'byday' ) as $d ) {
 								$day = $this->get_weekday_by_id( $d, true );
 								$_days .= ' ' . $wp_locale->weekday_abbrev[$wp_locale->weekday[$day]] . ',';
 							}
@@ -1605,7 +1605,7 @@ class Ai1ec_Events_Helper {
 							$txt .= ' ' . _x( 'on', 'Recurrence editor - weekly tab', AI1EC_PLUGIN_NAME ) . $_days;
 						} else {
 							$_days = '';
-							foreach( $rc->getByDay() as $d ) {
+							foreach( $rc->get_property( 'byday' ) as $d ) {
 								$day = $this->get_weekday_by_id( $d, true );
 								$_days .= ' ' . $wp_locale->weekday[$day] . ' ' . __( 'and', AI1EC_PLUGIN_NAME );
 							}
@@ -1615,7 +1615,7 @@ class Ai1ec_Events_Helper {
 						}
 					} else {
 						$_days = '';
-						foreach( $rc->getByDay() as $d ) {
+						foreach( $rc->get_property( 'byday' ) as $d ) {
 							$day = $this->get_weekday_by_id( $d, true );
 							$_days .= ' ' . $wp_locale->weekday[$day];
 						}
@@ -1624,32 +1624,32 @@ class Ai1ec_Events_Helper {
 				}
 				break;
 			case 'monthly':
-				if( $rc->getByMonthDay() ) {
+				if( $rc->get_property( 'bymonthday' ) ) {
 					// if there are more than 2 days
-					if( count( $rc->getByMonthDay() ) > 2 ) {
+					if( count( $rc->get_property( 'bymonthday' ) ) > 2 ) {
 						$_days = '';
-						foreach( $rc->getByMonthDay() as $m_day ) {
+						foreach( $rc->get_property( 'bymonthday' ) as $m_day ) {
 							$_days .= ' ' . $this->_ordinal( $m_day ) . ',';
 						}
 						$_days = substr( $_days, 0, -1 );
 						$txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
-					} else if( count( $rc->getByMonthDay() ) > 1 ) {
+					} else if( count( $rc->get_property( 'bymonthday' ) ) > 1 ) {
 						$_days = '';
-						foreach( $rc->getByMonthDay() as $m_day ) {
+						foreach( $rc->get_property( 'bymonthday' ) as $m_day ) {
 							$_days .= ' ' . $this->_ordinal( $m_day ) . ' ' . __( 'and', AI1EC_PLUGIN_NAME );
 						}
 						$_days = substr( $_days, 0, -4 );
 						$txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
 					} else {
 						$_days = '';
-						foreach( $rc->getByMonthDay() as $m_day ) {
+						foreach( $rc->get_property( 'bymonthday' ) as $m_day ) {
 							$_days .= ' ' . $this->_ordinal( $m_day );
 						}
 						$txt .= ' ' . _x( 'on', 'Recurrence editor - monthly tab', AI1EC_PLUGIN_NAME ) . $_days . ' ' . __( 'of the month', AI1EC_PLUGIN_NAME );
 					}
-				} elseif( $rc->getByDay() ) {
+				} elseif( $rc->get_property( 'byday' ) ) {
 					$_days = '';
-					foreach( $rc->getByDay() as $d ) {
+					foreach( $rc->get_property( 'byday' ) as $d ) {
 						$_dnum  = substr( $d, 0, 1);
 						$_day   = substr( $d, 1, 3 );
 						$dnum   = ' ' . date_i18n( "jS", strtotime( $_dnum . '-01-1998 12:00:00' ) );
@@ -1660,19 +1660,19 @@ class Ai1ec_Events_Helper {
 				}
 				break;
 			case 'yearly':
-				if( $rc->getByMonth() ) {
+				if( $rc->get_property( 'bymonth' )) {
 					// if there are more than 2 months
-					if( count( $rc->getByMonth() ) > 2  ) {
+					if( count( $rc->get_property( 'bymonth' )) > 2  ) {
 						$_months = '';
-						foreach( $rc->getByMonth() as $_m ) {
+						foreach( $rc->get_property( 'bymonth' )as $_m ) {
 							$_m = $_m < 10 ? 0 . $_m : $_m;
 							$_months .= ' ' . $wp_locale->month_abbrev[$wp_locale->month[$_m]] . ',';
 						}
 						$_months = substr( $_months, 0, -1 );
 						$txt .= ' ' . _x( 'on', 'Recurrence editor - yearly tab', AI1EC_PLUGIN_NAME ) . $_months;
-					} else if( count( $rc->getByMonth() ) > 1 ) {
+					} else if( count( $rc->get_property( 'bymonth' )) > 1 ) {
 						$_months = '';
-						foreach( $rc->getByMonth() as $_m ) {
+						foreach( $rc->get_property( 'bymonth' )as $_m ) {
 							$_m = $_m < 10 ? 0 . $_m : $_m;
 							$_months .= ' ' . $wp_locale->month[$_m] . ' ' . __( 'and', AI1EC_PLUGIN_NAME );
 						}
@@ -1680,7 +1680,7 @@ class Ai1ec_Events_Helper {
 						$txt .= ' ' . _x( 'on', 'Recurrence editor - yearly tab', AI1EC_PLUGIN_NAME ) . $_months;
 					} else {
 						$_months = '';
-						foreach( $rc->getByMonth() as $_m ) {
+						foreach( $rc->get_property( 'bymonth' )as $_m ) {
 							$_m = $_m < 10 ? 0 . $_m : $_m;
 							$_months .= ' ' . $wp_locale->month[$_m];
 						}
@@ -1781,12 +1781,12 @@ class Ai1ec_Events_Helper {
 	 * @return void
 	 **/
 	function _ending_sentence( &$txt, &$rc ) {
-		if( $until = $rc->getUntil() ) {
+		if( $until = $rc->get_property( 'until' ) ) {
 			if( ! is_int( $until ) )
 				$until = strtotime( $until );
 			$txt .= ' ' . sprintf( __( 'until %s', AI1EC_PLUGIN_NAME ), date_i18n( get_option( 'date_format' ), $until, true ) );
 		}
-		else if( $count = $rc->getCount() )
+		else if( $count = $rc->get_property( 'count' ) )
 			$txt .= ' ' . sprintf( __( 'for %d occurrences', AI1EC_PLUGIN_NAME ), $count );
 		else
 			$txt .= ' - ' . __( 'forever', AI1EC_PLUGIN_NAME );
@@ -1871,12 +1871,12 @@ class Ai1ec_Events_Helper {
 				$rule = empty( $event->exception_rules )  ? '' : $event->exception_rules;
 			}
 
-			$rc = new SG_iCal_Recurrence( new SG_iCal_Line( 'RRULE:' . $rule ) );
+			$recurrence_helper = new Ai1ec_Recurrence_Helper( $rule );
 
-			if( $until = $rc->getUntil() ) {
+			if( $until = $recurrence_helper->get_property( 'until' ) ) {
 				$until = ( is_numeric( $until ) ) ? $until : strtotime( $until );
 			}
-			else if( $count = $rc->getCount() ) {
+			else if( $count = $recurrence_helper->get_property( 'count' ) ) {
 				$count = ( is_numeric( $count ) ) ? $count : 100;
 			}
 		} catch( Ai1ec_Event_Not_Found $e ) { /* event wasn't found, keep defaults */ }
