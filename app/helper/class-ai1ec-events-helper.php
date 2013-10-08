@@ -123,6 +123,59 @@ class Ai1ec_Events_Helper {
 	}
 
 	/**
+	 * Parse a `recurrence rule' into an array that can be used to calculate
+	 * recurrence instances.
+	 *
+	 * @see http://kigkonsult.se/iCalcreator/docs/using.html#EXRULE
+	 *
+	 * @param string $rule
+	 * @return array
+	 */
+	private function build_recurrence_rules_array( $rule ) {
+		$rules     = array();
+		$rule_list = explode( ';', $rule );
+		foreach ( $rule_list as $single_rule ) {
+			if ( false === strpos( $single_rule, '=' ) ) {
+				continue;
+			}
+			list( $key, $val ) = explode( '=', $single_rule );
+			$key               = strtoupper( $key );
+			switch ( $key ) {
+				case 'BYDAY':
+					$rules['BYDAY'] = array();
+					foreach ( explode( ',', $val ) as $day ) {
+						$rule_map = $this->create_byday_array( $day );
+						$rules['BYDAY'][] = $rule_map;
+						if (
+						preg_match( '/FREQ=(MONTH|YEAR)LY/i', $rule ) &&
+						1 === count( $rule_map )
+						) {
+							// monthly/yearly "last" recurrences need day name
+							$rules['BYDAY']['DAY'] = substr(
+								$rule_map['DAY'],
+								-2
+							);
+						}
+					}
+					break;
+	
+				case 'BYMONTHDAY':
+				case 'BYMONTH':
+					if ( false === strpos( $val, ',' ) ) {
+						$rules[$key] = $val;
+					} else {
+						$rules[$key] = explode( ',', $val );
+					}
+					break;
+	
+				default:
+					$rules[$key] = $val;
+			}
+		}
+		return $rules;
+	}
+
+	/**
 	 * cache_event function
 	 *
 	 * Creates a new entry in the cache table for each date that the event appears
@@ -136,106 +189,116 @@ class Ai1ec_Events_Helper {
 	function cache_event( &$event ) {
 		global $wpdb;
 
-		// Convert event's timestamps to local for correct calculations of
+		// Convert event timestamps to local for correct calculations of
 		// recurrence. Need to also remove PHP timezone offset for each date for
 		// SG_iCal to calculate correct recurring instances.
-		$event->start = $this->gmt_to_local( $event->start ) - date( 'Z', $event->start );
-		$event->end = $this->gmt_to_local( $event->end ) - date( 'Z', $event->end );
+		$event->start = $this->gmt_to_local( $event->start )
+			- date( 'Z', $event->start );
+		$event->end   = $this->gmt_to_local( $event->end )
+			- date( 'Z', $event->end );
 
 		$evs = array();
 		$e	 = array(
 			'post_id' => $event->post_id,
-			'start' 	=> $event->start,
-			'end'   	=> $event->end,
+			'start'   => $event->start,
+			'end'     => $event->end,
 		);
 		$duration = $event->getDuration();
 
-		// Timestamp of today's date + 10 years
-		$tif = gmmktime() + 315569260; //315 569 260 = 10 years in seconds
+		// Timestamp of today date + 3 years (94608000 seconds)
+		$tif = gmmktime() + 94608000;
 		// Always cache initial instance
 		$evs[] = $e;
 
 		$_start = $event->start;
 		$_end   = $event->end;
 
-		if( $event->recurrence_rules )
-		{
-			$count 	= 0;
+		if ( $event->recurrence_rules ) {
 			$start  = $event->start;
-			$exrule = array();
-			if( $event->exception_rules ) {
-				$exrule = $this->generate_dates_array_from_ics_rule( $start, $event->exception_rules );
+			$wdate = $startdate = iCalUtilityFunctions::_timestamp2date( $_start, 6 );
+			$enddate = iCalUtilityFunctions::_timestamp2date( $tif, 6 );
+			$exclude_dates = array();
+			$recurrence_dates = array();
+			if ( $event->exception_rules ) {
+				// creat an array for the rules
+				$exception_rules = $this->build_recurrence_rules_array( $event->exception_rules );
+				$exception_rules = iCalUtilityFunctions::_setRexrule( $exception_rules );
+				$result = array();
+				// The first array is the result and it is passed by reference
+				iCalUtilityFunctions::_recur2date(
+					$exclude_dates,
+					$exception_rules,
+					$wdate,
+					$startdate,
+					$enddate
+				);
 			}
-			$freq 	= $event->getFrequency( $exrule );
-
-			$freq->firstOccurrence();
-			while( ( $next = $freq->nextOccurrence( $start ) ) > 0 && $count < 1000 )
-			{
-				$count++;
-				$start      = $next;
-				$e['start'] = $start;
-				$e['end'] 	= $start + $duration;
+			$recurrence_rules = $this->build_recurrence_rules_array( $event->recurrence_rules );
+			$recurrence_rules = iCalUtilityFunctions::_setRexrule( $recurrence_rules );
+			iCalUtilityFunctions::_recur2date(
+				$recurrence_dates,
+				$recurrence_rules,
+				$wdate,
+				$startdate,
+				$enddate
+			);
+			// Add the instances
+			foreach ( $recurrence_dates as $date => $bool ) {
+				// The arrays are in the form timestamp => true so an isset call is what we need
+				if( isset( $exclude_dates[$date] ) ) {
+					continue;
+				}
+				$e['start'] = $date;
+				$e['end']   = $date + $duration;
 				$excluded   = false;
 
-				// if event's start date is 10 years in the future, stop the cache at this point
-				if( $start > $tif ) break;
 
 				// Check if exception dates match this occurence
 				if( $event->exception_dates ) {
-					if( $this->date_match_exdates( $start, $event->exception_dates ) )
+					if( $this->date_match_exdates( $date, $event->exception_dates ) )
 						$excluded = true;
 				}
 
 				// Add event only if it is not excluded
-				if( $excluded == false )
+				if ( $excluded == false ) {
 					$evs[] = $e;
+				}
 			}
 		}
 
 		// Make entries unique (sometimes recurrence generator creates duplicates?)
 		$evs_unique = array();
-		foreach( $evs as $ev ) {
-			$evs_unique[ md5( serialize( $ev ) ) ] = $ev;
+		foreach ( $evs as $ev ) {
+			$evs_unique[md5( serialize( $ev ) )] = $ev;
 		}
 
-		foreach( $evs_unique as $e )
-		{
+		foreach ( $evs_unique as $e ) {
 			// Find out if this event instance is already accounted for by an
 			// overriding 'RECURRENCE-ID' of the same iCalendar feed (by comparing the
 			// UID, start date, recurrence). If so, then do not create duplicate
 			// instance of event.
+			$start = $this->local_to_gmt( $e['start'] )
+				- date( 'Z', $e['start'] );
 			$matching_event_id = $event->ical_uid ?
-					$this->get_matching_event_id(
-						$event->ical_uid,
-						$event->ical_feed_url,
-						$start = $this->local_to_gmt( $e['start'] ) - date( 'Z', $e['start'] ),
-						false,	// Only search events that don't define recurrence (i.e. only search for RECURRENCE-ID events)
-						$event->post_id
-					)
-				: null;
+				$this->get_matching_event_id(
+					$event->ical_uid,
+					$event->ical_feed_url,
+					$start,
+					false,	// Only search events that does not define
+					// recurrence (i.e. only search for RECURRENCE-ID events)
+					$event->post_id
+				)
+				: NULL;
+
 
 			// If no other instance was found
-			if( is_null( $matching_event_id ) )
-			{
+			if ( NULL === $matching_event_id ) {
 				$start = getdate( $e['start'] );
-				$end = getdate( $e['end'] );
-
-				/*
-				// Commented out for now
-				// If event spans a day and end time is not midnight, or spans more than
-				// a day, then create instance for each spanning day
-				if( ( $start['mday'] != $end['mday'] &&
-							( $end['hours'] || $end['minutes'] || $end['seconds'] ) )
-						|| $e['end'] - $e['start'] > 60 * 60 * 24 ) {
-					$this->create_cache_table_entries( $e );
-				// Else cache single instance of event
-				} else {
-					$this->insert_event_in_cache_table( $e );
-				}
-				*/
+				$end   = getdate( $e['end'] );
 				$this->insert_event_in_cache_table( $e );
 			}
 		}
+
 	}
 
 	/**
@@ -402,71 +465,6 @@ class Ai1ec_Events_Helper {
 		return $this->create_select_element( 'ai1ec_repeat', $options, $selected, array( 5 ) );
 	}
 
-	/**
-	 * Returns an associative array containing the following information:
-	 *   string 'repeat' => pattern of repetition ('DAILY', 'WEEKENDS', etc.)
-	 *   int    'count'  => end after 'count' times
-	 *   int    'until'  => repeat until date (as UNIX timestamp)
-	 * Elements are null if no such recurrence information is available.
-	 *
-	 * @param  Ai1ec_Event  Event object to parse recurrence rules of
-	 * @return array        Array structured as described above
-	 **/
-	function parse_recurrence_rules( &$event )
-	{
-		$repeat   = null;
-		$count    = null;
-		$until    = null;
-		$end      = 0;
-		if( ! is_null( $event ) ) {
-			if( strlen( $event->recurrence_rules ) > 0 ) {
-				$line = new SG_iCal_Line( $event->recurrence_rules );
-				$rec = new SG_iCal_Recurrence( $line );
-				switch( $rec->req ) {
-					case 'DAILY':
-						$by_day = $rec->getByDay();
-						if( empty( $by_day ) ) {
-							$repeat = 'DAILY';
-						} elseif( $by_day[0] == 'SA+SU' ) {
-							$repeat = 'WEEKENDS';
-						} elseif( count( $by_day ) == 5 ) {
-							$repeat = 'WEEKDAYS';
-						} else {
-							foreach( $by_day as $d ) {
-								$repeat .= $d . '+';
-							}
-							$repeat = substr( $repeat, 0, -1 );
-						}
-						break;
-					case 'WEEKLY':
-						$repeat = 'WEEKLY';
-						break;
-					case 'MONTHLY':
-						$repeat = 'MONTHLY';
-						break;
-					case 'YEARLY':
-						$repeat = 'YEARLY';
-						break;
-				}
-				$count = $rec->getCount();
-				$until = $rec->getUntil();
-				if( $until ) {
-					$until = strtotime( $rec->getUntil() );
-					$until += date( 'Z', $until ); // Add timezone offset
-					$end = 2;
-				} elseif( $count )
-					$end = 1;
-				else
-					$end = 0;
-			}
-		}
-		return array(
-			'repeat'  => $repeat,
-			'count'   => $count,
-			'until'   => $until,
-			'end'     => $end
-		);
-	}
 
 	/**
 	 * Generates and returns "End after X times" input

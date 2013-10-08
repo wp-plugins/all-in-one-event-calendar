@@ -871,17 +871,6 @@ class Ai1ec_Event {
 	}
 
 	/**
-	 * getFrequency function
-	 *
-	 * Returns the frequency of the event
-	 *
-	 * @return object
-	 **/
-	function getFrequency( $excluded = array() ) {
-		return new SG_iCal_Freq( $this->recurrence_rules, $this->start, $excluded );
-	}
-
-	/**
 	 * getDuration function
 	 *
 	 * Returns the duration of the event
