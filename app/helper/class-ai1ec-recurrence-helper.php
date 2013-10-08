@@ -5,10 +5,11 @@
  * 
  * This class handles parsing of recurrence rules.
  */
-class Ai1ec_Recurrence_Helper {
+class Ai1ec_Recurrence_Helper
+{
 
 	public $rrule;
-	
+
 	protected $freq;
 	protected $until;
 	protected $count;
@@ -23,19 +24,26 @@ class Ai1ec_Recurrence_Helper {
 	protected $bymonth;
 	protected $bysetpos;
 	protected $wkst;
-	
+
 	protected $replacements = array(
-		'from'=>array('\\,', '\\n', '\\;', '\\:', '\\"'), 
-		'to'=>array(',', "\n", ';', ':', '"')
+		'from' => array( '\\,', '\\n', '\\;', '\\:', '\\"',), 
+		'to'   => array( ',',   "\n",  ';',   ':',   '"',  ),
 	);
-	
+
 	/**
 	 * A list of the properties that can have comma-separated lists for values.
 	 * @var array
 	 */
 	protected $comma_separated_properties = array(
-		'bysecond', 'byminute', 'byhour', 'byday', 'bymonthday',
-		'byyearday', 'byyearno', 'bymonth', 'bysetpos'
+		'bysecond'   => true,
+		'byminute'   => true,
+		'byhour'     => true,
+		'byday'      => true,
+		'bymonthday' => true,
+		'byyearday'  => true,
+		'byyearno'   => true,
+		'bymonth'    => true,
+		'bysetpos'   => true,
 	);
 
 	/**
@@ -69,8 +77,8 @@ class Ai1ec_Recurrence_Helper {
 			$property_value = $exploded_property[1];
 		
 			//split up the list of values into an array (if it's a list)
-			if ( in_array( $property_name, $this->comma_separated_properties ) ) {
-				$property_value = explode(',', $property_value);
+			if ( isset( $this->comma_separated_properties[$property_name] ) ) {
+				$property_value = explode( ',', $property_value );
 			}
 			$this->$property_name = $property_value;
 		}
