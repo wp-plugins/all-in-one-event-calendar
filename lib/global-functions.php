@@ -26,38 +26,7 @@ function ai1ec_make_ints_array( $input, $separator = ',' ) {
 	return $output;
 }
 
-/**
- * url_get_contents function
- *
- * @param string $url URL 
- *
- * @return string
- **/
-function url_get_contents( $url ) {
-	// holds the output
-	$output = "";
 
-	// To make a remote call in wordpress it's better to use the wrapper functions instead
-	// of class methods. http://codex.wordpress.org/HTTP_API
-	// SSL Verification was disabled in the cUrl call
-	$result = wp_remote_get( $url, array( 'sslverify' => false, 'timeout' => 120 ) );
-	// The wrapper functions return an WP_error if anything goes wrong.
-	if( is_wp_error( $result ) ) {
-		// We explicitly return false to notify an error. This is exactly the same behaviour we had before
-		// because both curl_exec() and file_get_contents() returned false on error
-		return FALSE;
-	}
-
-	$output = $result['body'];
-
-	// check if data is utf-8
-	if( ! SG_iCal_Parser::_ValidUtf8( $output ) ) {
-		// Encode the data in utf-8
-		$output = utf8_encode( $output );
-	}
-
-	return $output;
-}
 
 /**
  * is_curl_available function
