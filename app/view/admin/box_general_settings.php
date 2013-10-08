@@ -54,6 +54,12 @@
 </label>
 <br class="clear" />
 
+<label for="turn_off_subscription_buttons">
+<input class="checkbox" name="turn_off_subscription_buttons" id="turn_off_subscription_buttons" type="checkbox" value="1" <?php echo $turn_off_subscription_buttons ?> />
+<?php _e( 'Hide <strong>Subscribe</strong>/<strong>Add to Calendar</strong> buttons in calendar and single event views', AI1EC_PLUGIN_NAME ) ?>
+</label>
+<br class="clear" />
+
 <label for="hide_maps_until_clicked">
 <input class="checkbox" name="hide_maps_until_clicked" id="hide_maps_until_clicked" type="checkbox" value="1" <?php echo $hide_maps_until_clicked ?> />
 <?php _e( 'Hide <strong>Google Maps</strong> until clicked', AI1EC_PLUGIN_NAME ) ?>
