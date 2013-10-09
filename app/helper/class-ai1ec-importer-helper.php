@@ -90,14 +90,7 @@ class Ai1ec_Importer_Helper {
 		$count = 0;
 
 		// include ical parser
-		if( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
-			// Parser that requires PHP v5.3.0 or up
-			require_once( AI1EC_LIB_PATH . '/iCalcreator-2.14/iCalcreator.class.php' );
-		} else {
-			// Parser that works on PHP versions below 5.3.0
-			require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10/iCalcreator.class.php' );
-			require_once( AI1EC_LIB_PATH . '/iCalcreator-2.10/iCalUtilityFunctions.class.php' );
-		}
+		require_once( AI1EC_LIB_PATH . '/iCalcreator-2.16/iCalcreator.class.php' );
 
 		// set unique id, required if any component UID is missing
 		$config = array( 'unique_id' => 'ai1ec' );
