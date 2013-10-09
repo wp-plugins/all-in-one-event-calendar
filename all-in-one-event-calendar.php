@@ -5,7 +5,7 @@
  * Description: A calendar system with month, week, day, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
  * Author: Timely
  * Author URI: http://time.ly/
- * Version: 1.10.2
+ * Version: 1.10.3
  */
 @set_time_limit( 0 );
 @ini_set( 'memory_limit',           '256M' );
@@ -24,7 +24,7 @@ define( 'AI1EC_PLUGIN_BASENAME',    plugin_basename( __FILE__ ) );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1EC_VERSION',            '1.10.2' );
+define( 'AI1EC_VERSION',            '1.10.3' );
 
 // ====================
 // = Database Version =
@@ -39,8 +39,8 @@ define( 'AI1EC_THEMES_VERSION',     8 );
 // ================
 // = Cron Version =
 // ================
-define( 'AI1EC_CRON_VERSION',       104 );
-define( 'AI1EC_N_CRON_VERSION',     103 );
+define( 'AI1EC_CRON_VERSION',       105 );
+define( 'AI1EC_N_CRON_VERSION',     104 );
 define( 'AI1EC_N_CRON_FREQ',        'daily' );
 
 // ===============
