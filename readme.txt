@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: calendar, events, ics, ics feed, wordpress ical importer, google calendar, ical, iCalendar, all-in-one, events sync, events widget, calendar widget
 Requires at least: 3.2
 Tested up to: 3.6
-Stable tag: 1.10.2
+Stable tag: 1.10.3
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with month, week, day, agenda views; upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
@@ -81,7 +81,19 @@ http://www.youtube.com/watch?v=XJ-KHOqBKuQ
 * Filter by post ids (separate ids by comma): **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
-= Version 1.10.2
+
+= Version 1.10.3 =
+* Removed GPL license incompatible library
+* Modified notices to be displayed only on calendar, Plugins and
+Updates windows in admin area
+* Modified themes installation page to make it possible to postpone
+action required to take on it
+* Disabled automatic upgrades to Standard version to comply with
+WordPress.org plugins directory listing rules
+* Fixed an issue that caused the plugin to generate statistics reports
+too frequently resulting in higher than expected server loads
+
+= Version 1.10.2 =
 * Fixed issue with upgrading to standard. Now it downloads latest standard
 
 = Version 1.10.1 =
