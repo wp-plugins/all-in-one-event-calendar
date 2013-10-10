@@ -678,7 +678,11 @@ class Ai1ec_App_Helper {
 	 * @return void Method doesn't return
 	 */
 	public function admin_notices_themes() {
-		if ( ! $this->_are_notices_available( true ) ) {
+		if (
+			! $this->_are_notices_available( true ) ||
+			isset( $_GET['page'] ) &&
+			AI1EC_PLUGIN_NAME . '-install-themes' === $_GET['page']
+		) {
 			return NULL;
 		}
 		global $ai1ec_view_helper;
@@ -687,7 +691,7 @@ class Ai1ec_App_Helper {
 			'msg'    => sprintf(
 				__(
 					'<p><strong>Core calendar files are not installed.</strong></p>' .
-					'<p>Please visit <a href="%s">Themes Installer page</a> to fix this issue.<br />Until then calendar will be unavailable.</p>',
+					'<p>Please visit the <a href="%s">Themes Installer page</a> to fix this issue. Until then, the calendar will be unavailable.</p>',
 					AI1EC_PLUGIN_NAME
 				),
 				admin_url( AI1EC_INSTALL_THEMES_BASE_URL )
