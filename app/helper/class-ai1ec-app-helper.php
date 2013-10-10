@@ -763,9 +763,8 @@ class Ai1ec_App_Helper {
 				'footer' => sprintf( '<div style="text-align: center;">' .
 					'<a class="btn btn-large btn-primary" href="%s">' .
 					'<i class="timely-icon-arrow-down timely-icon-large"></i> %s</a></div>',
-					admin_url( 'edit.php?post_type=' . AI1EC_POST_TYPE . '&amp;page=' .
-						AI1EC_PLUGIN_NAME . '-upgrade' ),
-					__( 'Upgrade to Premium for Free', AI1EC_PLUGIN_NAME )
+					'http://support.time.ly/manually-upgrading-the-calendar/',
+					__( 'Upgrade to Standard for Free', AI1EC_PLUGIN_NAME )
 				),
 				// Required CSS and JS may not have has been attached. Let template know
 				// about it so that it can be dynamically added to <head> (it's now too
