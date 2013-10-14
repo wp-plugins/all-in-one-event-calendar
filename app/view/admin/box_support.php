@@ -23,7 +23,7 @@
 <div class="ai1ec-download row-fluid">
 	<div class="span6">
 		<div>
-			<a href="http://support.time.ly/manually-upgrading-the-calendar/" class="btn btn-large ai1ec-download-btn">
+			<a href="http://support.time.ly/difference-lite-standard-versions/" class="btn btn-large ai1ec-download-btn">
 				<?php printf(
 					__( 'Upgrade to the %s for free', AI1EC_PLUGIN_NAME ),
 					'<div><i class="timely-icon-gift"></i> ' .
