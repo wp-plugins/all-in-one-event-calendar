@@ -729,7 +729,7 @@ class Ai1ec_App_Helper {
 				__( '<span><strong>our website</strong></span>', AI1EC_PLUGIN_NAME ) .
 				'</a> and follow ' . 
 				'<a href=" ' .
-				esc_attr( "http://support.time.ly/manually-upgrading-the-calendar/" ) .
+				esc_attr( 'http://support.time.ly/difference-lite-standard-versions/' ) .
 				'" target="_BLANK">' .
 				__( '<span><strong>this guide</strong></span>', AI1EC_PLUGIN_NAME ) .
 				'</a> to upgrade to the free "Standard" version with additional features.',
