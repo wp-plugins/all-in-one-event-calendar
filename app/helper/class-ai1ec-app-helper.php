@@ -679,7 +679,7 @@ class Ai1ec_App_Helper {
 	 */
 	public function admin_notices_themes() {
 		if (
-			! $this->_are_notices_available( true ) ||
+			! $this->_are_notices_available( 2 ) ||
 			isset( $_GET['page'] ) &&
 			AI1EC_PLUGIN_NAME . '-install-themes' === $_GET['page']
 		) {
@@ -700,23 +700,94 @@ class Ai1ec_App_Helper {
 		$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
 	}
 
-  /**
-   * admin_notices function
-   *
-   * Notify the user about anything special.
-   *
-   * @return void
-   **/
-  function admin_notices() {
-		if ( ! $this->_are_notices_available() ) {
+	/**
+	 * Notify the user about anything special.
+	 *
+	 * @return void
+	 */
+	function admin_notices() {
+		if ( ! $this->_are_notices_available( 1 ) ) {
 			return NULL;
 		}
-    global $ai1ec_view_helper,
+		global $ai1ec_view_helper,
 		       $ai1ec_settings,
 		       $plugin_page,
 		       $ai1ec_themes_controller;
 
-		if( $ai1ec_settings->show_standard_notice ) {
+		// If calendar page or time zone has not been set, this is a fresh install.
+		// Additionally, if we're not already updating the settings, alert user
+		// appropriately that the calendar is not properly set up.
+		if (
+			(
+				! $ai1ec_settings->calendar_page_id ||
+				! get_option( 'timezone_string' )
+			) &&
+			! isset( $_REQUEST['ai1ec_save_settings'] )
+		) {
+			$args     = array();
+			$messages = array();
+
+			// Display messages for blog admin.
+			if ( current_user_can( 'manage_ai1ec_options' ) ) {
+				// If on the settings page, instruct user as to what to do.
+				if ( $plugin_page == AI1EC_PLUGIN_NAME . '-settings' ) {
+					if ( ! $ai1ec_settings->calendar_page_id ) {
+						$messages[] = __(
+							'Select an option in the <strong>Calendar page</strong> dropdown list.',
+							AI1EC_PLUGIN_NAME
+						);
+					}
+					if ( ! get_option( 'timezone_string' ) ) {
+						$messages[] = __(
+							'Select an option in the <strong>Timezone</strong> dropdown list.',
+							AI1EC_PLUGIN_NAME
+						);
+					}
+					$messages[] = __(
+						'Click <strong>Update Settings</strong>.',
+						AI1EC_PLUGIN_NAME
+					);
+				} else { // Else, not on the settings page, so direct user there.
+					$msg = sprintf(
+						__(
+							'The plugin is installed, but has not been configured. <a href="%s">Click here to set it up now &raquo;</a>',
+							AI1EC_PLUGIN_NAME
+						),
+						admin_url( AI1EC_SETTINGS_BASE_URL )
+					);
+					$messages[] = $msg;
+				}
+			} else { // Else display messages for other blog users
+				$messages[] = __(
+					'The plugin is installed, but has not been configured. Please log in as an Administrator to set it up.',
+					AI1EC_PLUGIN_NAME
+				);
+			}
+
+			// Format notice message.
+			if ( count($messages) > 1 ) {
+				$args['msg'] = __(
+					'<p>To set up the plugin:</p>',
+					AI1EC_PLUGIN_NAME
+				);
+				$args['msg'] .= '<ol><li>';
+				$args['msg'] .= implode( '</li><li>', $messages );
+				$args['msg'] .= '</li></ol>';
+			} else {
+				$args['msg'] = '<p>' . $messages[0] . '</p>';
+			}
+			$args['label'] = __(
+				'All-in-One Event Calendar Notice',
+				AI1EC_PLUGIN_NAME
+			);
+			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
+		}
+
+		if ( ! $this->_are_notices_available( 0 ) ) {
+			return NULL;
+		}
+
+		if ( $ai1ec_settings->show_standard_notice ) {
 			// Display Lite version unsupported notice.
 			$args = array(
 				'msg' => '<p class="timely ai1ec-upgrade-notice"><span><strong>' .
@@ -741,12 +812,11 @@ class Ai1ec_App_Helper {
 			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
 		}
 
-
 		// Display introductory video notice if not disabled.
-		if( $ai1ec_settings->show_intro_video ) {
+		if ( $ai1ec_settings->show_intro_video ) {
 			$args = array(
-				'label' => __( 'Welcome to the All-in-One Event Calendar, by Timely', AI1EC_PLUGIN_NAME ),
-				'msg' => sprintf(
+				'label'  => __( 'Welcome to the All-in-One Event Calendar, by Timely', AI1EC_PLUGIN_NAME ),
+				'msg'    => sprintf(
 					'<div class="timely"><a href="#ai1ec-video-modal" data-toggle="modal" ' .
 						'class="button-primary pull-left">%s</a>' .
 						'<div class="pull-left">&nbsp;</div></div>',
@@ -759,12 +829,15 @@ class Ai1ec_App_Helper {
 			);
 			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
 			$args = array(
-				'modal_id' => 'ai1ec-video-modal',
+				'modal_id'           => 'ai1ec-video-modal',
 				'video_container_id' => 'ai1ec-video',
-				'title' => __( 'Introducing the All-in-One Event Calendar, by Timely',
-					AI1EC_PLUGIN_NAME ),
-				'youtube_id' => 'XJ-KHOqBKuQ',
-				'footer' => sprintf( '<div style="text-align: center;">' .
+				'title'              => __(
+					'Introducing the All-in-One Event Calendar, by Timely',
+					AI1EC_PLUGIN_NAME
+				),
+				'youtube_id'         => 'XJ-KHOqBKuQ',
+				'footer'             => sprintf(
+					'<div style="text-align: center;">' .
 					'<a class="btn btn-large btn-primary" href="%s">' .
 					'<i class="timely-icon-arrow-down timely-icon-large"></i> %s</a></div>',
 					'http://support.time.ly/manually-upgrading-the-calendar/',
@@ -773,10 +846,10 @@ class Ai1ec_App_Helper {
 				// Required CSS and JS may not have has been attached. Let template know
 				// about it so that it can be dynamically added to <head> (it's now too
 				// late in the WP bootstrap to add CSS/JS to <head>).
-				'css_loaded' => wp_style_is( 'timely-bootstrap' ),
-				'css_url' => AI1EC_ADMIN_THEME_CSS_URL . '/bootstrap.min.css',
-				'js_loaded' => wp_script_is( 'timely-bootstrap-modal' ),
-				'js_url' => AI1EC_ADMIN_THEME_JS_URL . '/bootstrap-modal.js',
+				'css_loaded'         => wp_style_is( 'timely-bootstrap' ),
+				'css_url'            => AI1EC_ADMIN_THEME_CSS_URL . '/bootstrap.min.css',
+				'js_loaded'          => wp_script_is( 'timely-bootstrap-modal' ),
+				'js_url'             => AI1EC_ADMIN_THEME_JS_URL . '/bootstrap-modal.js',
 			);
 			$ai1ec_view_helper->display_admin( 'video_modal.php', $args );
 		}
@@ -804,10 +877,13 @@ class Ai1ec_App_Helper {
 		}
 
 		// Outdated themes notice (on all pages except update themes page).
-		if ( $plugin_page != AI1EC_PLUGIN_NAME . '-update-themes' && $ai1ec_themes_controller->are_themes_outdated() ) {
+		if (
+			$plugin_page != AI1EC_PLUGIN_NAME . '-update-themes' &&
+			$ai1ec_themes_controller->are_themes_outdated()
+		) {
 			$args = array(
 				'label' => __( 'All-in-One Event Calendar Notice', AI1EC_PLUGIN_NAME ),
-				'msg' => sprintf(
+				'msg'   => sprintf(
 					__( '<p><strong>Core calendar files are out of date.</strong> ' .
 					'We have found updates for some of your core calendar files and you should update them now to ensure proper functioning of your calendar.</p>' .
 					'<p><strong>Warning:</strong> If you have previously modified any core calendar files, ' .
@@ -819,7 +895,7 @@ class Ai1ec_App_Helper {
 			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
 		}
 
-		if( $ai1ec_settings->show_data_notification ) {
+		if ( $ai1ec_settings->show_data_notification ) {
 			$args = array(
 				'label'  => __( 'All-in-One Event Calendar Notice', AI1EC_PLUGIN_NAME ),
 				'msg'    =>
@@ -839,67 +915,23 @@ class Ai1ec_App_Helper {
 			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
 		}
 
-		// If calendar page or time zone has not been set, this is a fresh install.
-		// Additionally, if we're not already updating the settings, alert user
-		// appropriately that the calendar is not properly set up.
-		if( (! $ai1ec_settings->calendar_page_id ||
-			  ! get_option( 'timezone_string' )) &&
-			  ! isset( $_REQUEST['ai1ec_save_settings'] ) ) {
-			$args = array();
-			$messages = array();
-
-			// Display messages for blog admin.
-			if( current_user_can( 'manage_ai1ec_options' ) ) {
-				// If on the settings page, instruct user as to what to do.
-				if( $plugin_page == AI1EC_PLUGIN_NAME . '-settings' ) {
-					if( ! $ai1ec_settings->calendar_page_id ) {
-						$messages[] = __( 'Select an option in the <strong>Calendar page</strong> dropdown list.', AI1EC_PLUGIN_NAME );
-					}
-					if( ! get_option( 'timezone_string' ) ) {
-						$messages[] = __( 'Select an option in the <strong>Timezone</strong> dropdown list.', AI1EC_PLUGIN_NAME );
-					}
-					$messages[] = __( 'Click <strong>Update Settings</strong>.', AI1EC_PLUGIN_NAME );
-				}
-				// Else, not on the settings page, so direct user there.
-				else {
-					$msg = sprintf(
-						__( 'The plugin is installed, but has not been configured. <a href="%s">Click here to set it up now &raquo;</a>', AI1EC_PLUGIN_NAME ),
-						admin_url( AI1EC_SETTINGS_BASE_URL )
-					);
-					$messages[] = $msg;
-				}
-			}
-			// Else display messages for other blog users
-			else {
-				$messages[] = __( 'The plugin is installed, but has not been configured. Please log in as an Administrator to set it up.', AI1EC_PLUGIN_NAME );
-			}
-
-			// Format notice message.
-			if (count($messages) > 1) {
-				$args['msg'] = __( '<p>To set up the plugin:</p>', AI1EC_PLUGIN_NAME );
-				$args['msg'] .= '<ol><li>';
-				$args['msg'] .= implode( '</li><li>', $messages );
-				$args['msg'] .= '</li></ol>';
-			}
-			else {
-				$args['msg'] = "<p>$messages[0]</p>";
-			}
-			$args['label'] = __( 'All-in-One Event Calendar Notice', AI1EC_PLUGIN_NAME );
-			$ai1ec_view_helper->display_admin( 'admin_notices.php', $args );
-		}
 	}
 
 	/**
-	 * Check whereas our notices should be displayed on this page
+	 * Check whereas our notices should be displayed on this page.
 	 *
 	 * Limits notices to Ai1EC pages and WordPress "Plugins", "Updates" pages.
 	 * Important notices are also displayable in WordPress "Dashboard".
+	 * Levels of importance (see $importance) are as following:
+	 *     - 0 - messages limited to Ai1EC pages;
+	 *     - 1 - messages limited to [0] and Plugins/Updates pages;
+	 *     - 2 - messages limited to [1] and Dashboard.
 	 *
-	 * @param bool $is_important Set to true for serious (i.e. error) notices
+	 * @param int $importance The level of importance. See above for details.
 	 *
 	 * @return bool Availability
 	 */
-	protected function _are_notices_available( $is_important = false ) {
+	protected function _are_notices_available( $importance = 0 ) {
 		// In CRON `get_current_screen()` is not present
 		// and we wish to have notice on all "our" pages
 		if (
@@ -915,12 +947,15 @@ class Ai1ec_App_Helper {
 		) {
 			return true;
 		}
+		if ( $importance < 1 ) {
+			return false;
+		}
 		$screen   = get_current_screen();
 		$allow_on = array(
 			'plugins',
 			'update-core',
 		);
-		if ( $is_important ) {
+		if ( $importance > 1 ) {
 			$allow_on[] = 'dashboard';
 		}
 		if (
