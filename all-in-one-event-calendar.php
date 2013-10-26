@@ -5,7 +5,7 @@
  * Description: A calendar system with month, week, day, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
  * Author: Timely
  * Author URI: http://time.ly/
- * Version: 1.10.3
+ * Version: 1.10.4
  */
 @set_time_limit( 0 );
 @ini_set( 'memory_limit',           '256M' );
@@ -24,7 +24,7 @@ define( 'AI1EC_PLUGIN_BASENAME',    plugin_basename( __FILE__ ) );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1EC_VERSION',            '1.10.3' );
+define( 'AI1EC_VERSION',            '1.10.4' );
 
 // ====================
 // = Database Version =
@@ -98,6 +98,21 @@ define( 'AI1EC_VIEW_PATH',          AI1EC_APP_PATH . '/view' );
 // ====================
 define( 'AI1EC_ADMIN_THEME_PATH',   AI1EC_VIEW_PATH . '/admin' );
 
+// =======================
+// = Admin Local JS Path =
+// =======================
+define( 'AI1EC_LOCAL_JS_THEME_PATH', AI1EC_PATH . '/themes-ai1ec/vortex/js' );
+
+// =======================
+// = Admin Local JS Path =
+// =======================
+define( 'AI1EC_LOCAL_CSS_THEME_PATH', AI1EC_PATH . '/themes-ai1ec/vortex/css' );
+
+// =======================
+// = Admin Local JS Path =
+// =======================
+define( 'AI1EC_LOCAL_VIEW_THEME_PATH', AI1EC_PATH . '/themes-ai1ec/vortex' );
+
 // ==================
 // = Admin theme CSS path =
 // ==================
@@ -142,6 +157,16 @@ define( 'AI1EC_CSS_URL',            AI1EC_URL . '/' . AI1EC_CSS_FOLDER );
 // = JS URL =
 // ==========
 define( 'AI1EC_JS_URL',             AI1EC_URL . '/' . AI1EC_JS_FOLDER );
+
+// ================
+// = JS local URL =
+// ================
+define( 'AI1EC_LOCAL_JS_URL',       AI1EC_URL . '/themes-ai1ec/vortex/js' );
+
+// =================
+// = CSS local URL =
+// =================
+define( 'AI1EC_LOCAL_CSS_URL',      AI1EC_URL . '/themes-ai1ec/vortex/css' );
 
 // ================
 // = Admin JS URL =
