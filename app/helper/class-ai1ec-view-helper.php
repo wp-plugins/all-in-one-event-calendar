@@ -101,7 +101,12 @@ class Ai1ec_View_Helper {
 				'path' => AI1EC_DEFAULT_THEME_PATH . '/' . AI1EC_JS_FOLDER,
 				'url'  => AI1EC_DEFAULT_THEME_URL . '/' . AI1EC_JS_FOLDER
 			),
+			(object) array(
+				'path' => AI1EC_LOCAL_JS_THEME_PATH,
+				'url'  => AI1EC_LOCAL_JS_URL
+			),
 		);
+
 
 		$file_found = false;
 
@@ -110,6 +115,7 @@ class Ai1ec_View_Helper {
 			// $_file is a local var to hold the value of
 			// the file we are looking for
 			$_file = $theme_root->path . '/' . $file;
+
 			if( file_exists( $_file ) ) {
 				// file is found
 				$file_found = true;
@@ -191,6 +197,10 @@ class Ai1ec_View_Helper {
 				'path' => AI1EC_DEFAULT_THEME_PATH,
 				'url'  => AI1EC_DEFAULT_THEME_URL
 			),
+			(object) array(
+				'path' => AI1EC_LOCAL_CSS_THEME_PATH,
+				'url'  => AI1EC_LOCAL_CSS_URL
+			),
 		);
 
 		$file_found = false;
@@ -270,7 +280,8 @@ class Ai1ec_View_Helper {
 		// look for the file in the selected theme
 		$themes_root = array(
 			$ai1ec_themes_controller->active_template_path(),
-			AI1EC_DEFAULT_THEME_PATH
+			AI1EC_DEFAULT_THEME_PATH,
+			AI1EC_LOCAL_VIEW_THEME_PATH
 		);
 
 		// remove duplicates
