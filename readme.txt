@@ -29,7 +29,8 @@ your own! Additionally, you can install add-ons that give you
 Posterboard view, Facebook integration, inline Calendar Theme editing
 and more.
 
-**New in version 2.0:**
+= New in version 2.0 =
+
 * Made plugin modular, allowing users to install extensions for
 required features.
 * Improved performance by delaying resources initialization until
