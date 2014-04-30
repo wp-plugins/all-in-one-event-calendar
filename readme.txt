@@ -6,7 +6,7 @@ calendar widget
 Requires WorPress at least: 3.5
 Tested up to: 3.9
 Stable tag: 2.0.6
-License: GPLv2
+License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
 categories, recurrence, and import/export of facebook events and .ics
