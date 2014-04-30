@@ -1,16 +1,12 @@
 === All-in-One Event Calendar ===
 Contributors: hubrik, vtowel, yani.iliev, nicolapeluchetti, jbutkus
-Tags: calendar, event, events, ics, ics calendar, ical-feed, ics feed,
-wordpress ics importer, wordpress ical importer, upcoming events,
-todo, notes, journal, freebusy, availability, web calendar, web
-events, webcal, google calendar, ical, iCalendar, all-in-one, ai1ec,
-google calendar sync, ical sync, events sync, holiday calendar,
-calendar 2011, events 2011, widget, events widget, upcoming events
-widget, calendar widget, agenda widget, posterboard
+Tags: calendar, events, ics, ics feed, wordpress ical importer, google
+calendar, ical, iCalendar, all-in-one, events sync, events widget,
+calendar widget
 Requires WorPress at least: 3.5
-Tested up to: 3.5
+Tested up to: 3.9
 Stable tag: 2.0.6
-License: EULA.license
+License: GPLv2
 
 A calendar system with many views, upcoming events widget, color-coded
 categories, recurrence, and import/export of facebook events and .ics
