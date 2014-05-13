@@ -241,16 +241,16 @@ class Ai1ec_Front_Controller {
 		$option = $this->_registry->get( 'model.option' );
 		$theme  = $option->get( 'ai1ec_current_theme', array() );
 		$update = false;
-
+		$default_theme  = array(
+			'theme_dir'  => AI1EC_DEFAULT_THEME_PATH,
+			'theme_root' => AI1EC_DEFAULT_THEME_ROOT,
+			'theme_url'  => AI1EC_THEMES_URL . '/' . AI1EC_DEFAULT_THEME_NAME,
+			'stylesheet' => AI1EC_DEFAULT_THEME_NAME,
+			'legacy'     => false,
+		);
 		// Theme setting is undefined; default to Vortex.
 		if ( empty( $theme ) ) {
-			$theme  = array(
-				'theme_dir'  => AI1EC_DEFAULT_THEME_PATH,
-				'theme_root' => AI1EC_DEFAULT_THEME_ROOT,
-				'theme_url'  => AI1EC_THEMES_URL . '/' . AI1EC_DEFAULT_THEME_NAME,
-				'stylesheet' => AI1EC_DEFAULT_THEME_NAME,
-				'legacy'     => false,
-			);
+			$theme  = $default_theme;
 			$update = true;
 		}
 		// Legacy settings; in 1.x the active theme was stored as a bare string,
@@ -273,8 +273,8 @@ class Ai1ec_Front_Controller {
 				// It's missing; something is wrong with this theme. Reset theme to
 				// Vortex and warn the user accordingly.
 				$option->set( 'ai1ec_current_theme', $default_theme );
-
-				$notification = $this->_registry->get( 'notification.admin',
+				$notification = $this->_registry->get( 'notification.admin' );
+				$notification->store(
 					sprintf(
 						Ai1ec_I18n::__(
 							'Your active calendar theme could not be properly initialized. The default theme has been activated instead. Please visit %s and try reactivating your theme manually.'
@@ -392,6 +392,26 @@ class Ai1ec_Front_Controller {
 		$dispatcher->register_filter(
 			'robots_txt',
 			array( 'robots.helper', 'rules' ),
+			10,
+			2
+		);
+
+		$dispatcher->register_filter(
+			'ai1ec_dbi_debug',
+			array( 'http.request', 'debug_filter' )
+		);
+		
+		// editing a child instance
+		if ( basename( $_SERVER['SCRIPT_NAME'] ) === 'post.php' ) {
+			$dispatcher->register_action( 
+				'admin_action_editpost', 
+				array( 'model.event.parent', 'admin_init_post' ) 
+			);
+		}
+		// post row action for parent/child 
+		$dispatcher->register_action(
+			'post_row_actions',
+			array( 'model.event.parent', 'post_row_actions' ),
 			10,
 			2
 		);
@@ -558,10 +578,12 @@ class Ai1ec_Front_Controller {
 				'plugin_action_links_' . AI1EC_PLUGIN_BASENAME,
 				array( 'view.admin.nav', 'plugin_action_links' )
 			);
-			$dispatcher->register_action(
-				'admin_init',
-				array( 'robots.helper', 'install' )
-			);
+			if ( $this->_registry->get( 'robots.helper' )->pre_check() ) {
+				$dispatcher->register_action(
+					'admin_init',
+					array( 'robots.helper', 'install' )
+				);
+			}
 			$dispatcher->register_action(
 				'wp_ajax_ai1ec_rescan_cache',
 				array( 'twig.cache', 'rescan' )

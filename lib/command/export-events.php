@@ -38,7 +38,7 @@ class Ai1ec_Command_Export_Events extends Ai1ec_Command {
 		if ( $params['action'] === self::EXPORT_METHOD &&
  			$params['controller'] === self::EXPORT_CONTROLLER ) {
 			$params['tag_ids'] = Ai1ec_Request_Parser::get_param(
-				'ai1ec_cat_ids',
+				'ai1ec_tag_ids',
 				false
 			);
 			$params['cat_ids'] = Ai1ec_Request_Parser::get_param(

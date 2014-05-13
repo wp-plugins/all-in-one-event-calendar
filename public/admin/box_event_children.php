@@ -20,8 +20,8 @@ if ( empty( $parent ) && empty( $children ) ) {
 	<div class="ai1ec-panel-body">
 	<?php if ( $parent ) : ?>
 	<?php _e( 'Edit parent:', AI1EC_PLUGIN_NAME ); ?>
-	<a href="<?php echo get_edit_post_link( $parent->post_id ); ?>"><?php
-	echo apply_filters( 'the_title', $parent->post->post_title, $parent->post_id );
+	<a href="<?php echo get_edit_post_link( $parent->get( 'post_id' ) ); ?>"><?php
+	echo apply_filters( 'the_title', $parent->get( 'post' )->post_title, $parent->get( 'post_id' ) );
 	?></a>
 	<?php else : /* children */ ?>
 	<h4><?php _e( 'Modified Events', AI1EC_PLUGIN_NAME ); ?></h4>
@@ -29,9 +29,9 @@ if ( empty( $parent ) && empty( $children ) ) {
 		<?php foreach ( $children as $child ) : ?>
 		<li>
 			<?php _e( 'Edit:', AI1EC_PLUGIN_NAME ); ?>
-			<a href="<?php echo get_edit_post_link( $child->post_id ); ?>"><?php
-			echo $child->post->post_title;
-			?></a>, <?php echo $child->get_timespan_html( 'long' ); ?>
+			<a href="<?php echo get_edit_post_link( $child->get( 'post_id' ) ); ?>"><?php
+			echo $child->get( 'post' )->post_title;
+			?></a>, <?php echo $registry->get( 'view.event.time' )->get_timespan_html( $child, 'long' ); ?>
 		</li>
 		<?php endforeach; ?>
 	</ul>

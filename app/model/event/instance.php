@@ -40,8 +40,8 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 		$where  = array( 'post_id' => $post_id );
 		$format = array( '%d' );
 		if ( null !== $instance_id ) {
-			$where['instance_id'] = $instance_id;
-			$format[]             = '%d';
+			$where['id'] = $instance_id;
+			$format[]    = '%d';
 		}
 		return $this->_dbi->delete( 'ai1ec_event_instances', $where, $format );
 	}

@@ -211,7 +211,11 @@ class Ai1ec_View_Add_New_Event extends Ai1ec_Base {
 		// This will store each of the accordion tabs' markup, and passed as an
 		// argument to the final view.
 		$boxes = array();
-
+		$parent_event_id = null;
+		if ( $event ) {
+			$parent_event_id = $this->_registry->get( 'model.event.parent' )
+				->event_parent( $event->get( 'post_id' ) );
+		}
 		// ===============================
 		// = Display event time and date =
 		// ===============================
@@ -230,6 +234,7 @@ class Ai1ec_View_Add_New_Event extends Ai1ec_Base {
 			'timezone_string'    => $timezone_string,
 			'timezone_name'      => $timezone_name,
 			'exdate'             => $exdate,
+			'parent_event_id'    => $parent_event_id,
 			'instance_id'        => $instance_id,
 		);
 
@@ -315,6 +320,30 @@ class Ai1ec_View_Add_New_Event extends Ai1ec_Base {
 
 		}
 
+		// ==========================
+		// = Parent/Child relations =
+		// ==========================
+		if ( $event ) {
+			$parent   = $this->_registry->get( 'model.event.parent' )
+				->get_parent_event( $event->get( 'post_id' ) );
+			if ( $parent ) {
+				try {
+					$parent = $this->_registry->get( 'model.event', $parent );
+				} catch ( Ai1ec_Event_Not_Found $exception ) { // ignore
+					$parent = null;
+				}
+			}
+			$children = $this->_registry->get( 'model.event.parent' )
+				->get_child_event_objects( $event->get( 'post_id' ) );
+			$args = compact( 'parent', 'children' );
+			$args['registry'] = $this->_registry;
+			
+			$boxes[] = $theme_loader->get_file(
+				'box_event_children.php',
+				$args,
+				true
+			)->get_content();
+		}
 		// Display the final view of the meta box.
 		$args = array(
 			'boxes'          => $boxes,
@@ -343,6 +372,5 @@ class Ai1ec_View_Add_New_Event extends Ai1ec_Base {
 		}
 		return $input;
 	}
-
 
 }

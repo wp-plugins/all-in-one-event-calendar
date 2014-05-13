@@ -22,11 +22,6 @@ class Ai1ec_Html_Element_Calendar_Page_Selector
 	protected $_pages    = array();
 
 	/**
-	 * @var int ID of page currently selected, NULL if none.
-	 */
-	protected $_selected = null;
-
-	/**
 	 * Set attributes for element.
 	 *
 	 * Currently recognized attributes:
@@ -64,17 +59,25 @@ class Ai1ec_Html_Element_Calendar_Page_Selector
 	 * @return string HTML snippet.
 	 */
 	protected function _get_page_view_link() {
-		if ( empty( $this->_selected ) ) {
+		if ( empty( $this->_args['value'] ) ) {
 			return '';
 		}
-		$post = get_post( $this->_selected );
-		if ( empty( $post ) ) {
+		$post = get_post( $this->_args['value'] );
+		if ( empty( $post->ID ) ) {
 			return '';
 		}
-		return '<p><a target="_blank" href="' . get_permalink( $post->ID ) . '">
-			View "' . $post->title . '"
-			<i class="ai1ec-fa ai1ec-fa-arrow-right"></i>
-		</a></p>';
+		$args = array(
+			'view'  => Ai1ec_I18n::__( 'View' ),
+			'link'  => get_permalink( $post->ID ),
+			'title' => apply_filters(
+				'the_title',
+				$post->post_title,
+				$post->ID
+			),
+		);
+		return $this->_registry->get( 'theme.loader' )
+			->get_file( 'setting/calendar-page-selector.twig', $args, true )
+			->get_content();
 	}
 
 	/**

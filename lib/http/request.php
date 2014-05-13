@@ -23,6 +23,22 @@ class Ai1ec_Http_Request {
 	}
 
 	/**
+	 * Callback for debug-checking filters. Changes debug to false for AJAX req.
+	 *
+	 * @wp_hook ai1ec_dbi_debug
+	 *
+	 * @param bool $do_debug Current debug value.
+	 *
+	 * @return bool Optionally modified `$do_debug`.
+	 */
+	public function debug_filter( $do_debug ) {
+		if ( $this->is_ajax() ) {
+			$do_debug = false;
+		}
+		return $do_debug;
+	}
+
+	/**
 	 * Check if we are processing AJAX request.
 	 *
 	 * @return bool True if it's an AJAX request.
@@ -65,9 +81,11 @@ class Ai1ec_Http_Request {
 
 		if (
 			$settings->get( 'disable_gzip_compression' ) ||
-			isset( $_SERVER['HTTP_ACCEPT_ENCODING'] ) &&
-			'identity' === $_SERVER['HTTP_ACCEPT_ENCODING'] ||
-			! extension_loaded( 'zlib' )
+			(
+				isset( $_SERVER['HTTP_ACCEPT_ENCODING'] ) &&
+				'identity' === $_SERVER['HTTP_ACCEPT_ENCODING'] ||
+				! extension_loaded( 'zlib' )
+			)
 		) {
 			return false;
 		}

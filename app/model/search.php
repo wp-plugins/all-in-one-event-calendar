@@ -40,7 +40,7 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 		if ( $instance_id < 1 ) {
 			$instance_id = false;
 		}
-		return new Ai1ec_Event( $post_id, $instance_id );
+		return $this->_registry->get( 'model.event', $post_id, $instance_id );
 	}
 
 	/**

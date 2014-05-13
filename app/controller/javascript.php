@@ -484,7 +484,12 @@ class Ai1ec_Javascript_Controller {
 				'type' => 'text/javascript'
 			)
 			);
-			$http_encoder->encode();
+			$compression_level = null;
+			if ( $this->_registry->get( 'model.settings' )->get( 'disable_gzip_compression' ) ) {
+				// set the compression level to 0 to disable it.
+				$compression_level = 0;
+			}
+			$http_encoder->encode( $compression_level );
 			$http_encoder->sendAll();
 		}
 		Ai1ec_Http_Response_Helper::stop( 0 );

@@ -10,14 +10,37 @@
 		<h2>
 			<?php _e( 'Timely’s All-in-One Event Calendar is a<br />revolutionary new way to find and share events.', AI1EC_PLUGIN_NAME ); ?>
 		</h2>
-		<div class="ai1ec-support-placeholder">
-			<a class="ai1ec-btn ai1ec-btn-primary ai1ec-btn-lg" target="_blank" href="http://time.ly/add-ons/?utm_source=dashboard&amp;utm_medium=button&amp;utm_campaign=addons"><?php _e( 'Get Add-ons', AI1EC_PLUGIN_NAME ); ?></a>
-			<a class="ai1ec-btn ai1ec-btn-primary ai1ec-btn-lg" target="_blank" href="http://time.ly/support/?utm_source=dashboard&amp;utm_medium=button&amp;utm_campaign=support"><?php _e( 'Support', AI1EC_PLUGIN_NAME ); ?></a>
-			<a class="ai1ec-btn ai1ec-btn-primary ai1ec-btn-lg" target="_blank" href="http://time.ly/calendar/?utm_source=dashboard&amp;utm_medium=button&amp;utm_campaign=events"><?php _e( 'Time.ly Events', AI1EC_PLUGIN_NAME ); ?></a>
+		<div class="ai1ec-support-buttons ai1ec-row">
+			<div class="ai1ec-col-lg-4" id="ai1ec-addons-col">
+				<a class="ai1ec-btn ai1ec-btn-info ai1ec-btn-block ai1ec-btn-lg"
+					target="_blank"
+					href="http://time.ly/add-ons/?utm_source=dashboard&amp;utm_medium=button&amp;utm_campaign=addons">
+					<i class="ai1ec-fa ai1ec-fa-magic ai1ec-fa-fw"></i>
+					<?php _e( 'Get Add-ons', AI1EC_PLUGIN_NAME ); ?>
+				</a>
+			</div>
+			<div class="ai1ec-col-lg-4" id="ai1ec-support-col">
+				<a class="ai1ec-btn ai1ec-btn-primary ai1ec-btn-block ai1ec-btn-lg"
+					target="_blank"
+					href="http://time.ly/support/?utm_source=dashboard&amp;utm_medium=button&amp;utm_campaign=support">
+					<i class="ai1ec-fa ai1ec-fa-comments ai1ec-fa-fw"></i>
+					<?php _e( 'Support', AI1EC_PLUGIN_NAME ); ?>
+				</a>
+			</div>
+			<div class="ai1ec-col-lg-4" id="ai1ec-events-col">
+				<a class="ai1ec-btn ai1ec-btn-primary ai1ec-btn-block ai1ec-btn-lg"
+					target="_blank"
+					href="http://time.ly/calendar/?utm_source=dashboard&amp;utm_medium=button&amp;utm_campaign=events">
+					<i class="ai1ec-fa ai1ec-fa-calendar ai1ec-fa-fw"></i>
+					<?php _e( 'Timely Events', AI1EC_PLUGIN_NAME ); ?>
+				</a>
+			</div>
 		</div>
 	</div>
 	<div class="ai1ec-news">
-		<h2><?php _e( 'Timely News', AI1EC_PLUGIN_NAME ); ?>
+		<h2>
+			<i class="ai1ec-fa ai1ec-fa-bullhorn"></i>
+			<?php _e( 'Timely News', AI1EC_PLUGIN_NAME ); ?>
 			<small>
 				<a href="http://time.ly/blog?utm_source=dashboard&nbsp;utm_medium=blog&nbsp;utm_term=ai1ec-pro&nbsp;utm_content=1.11.4&nbsp;utm_campaign=news"
 					target="_blank">
@@ -28,29 +51,37 @@
 		</h2>
 		<div>
 		<?php if ( count( $news ) > 0 ) : ?>
-			<?php foreach ( $news as $n ) : ?>
+			<?php foreach ( $news as $n ) :
+				$ga_args = array(
+					'utm_source'   => 'dashboard',
+					'utm_medium'   => 'blog',
+					'utm_campaign' => 'news',
+					'utm_term'     => urlencode(
+						strtolower( substr( $n->get_title(), 0, 40 ) )
+					),
+				);
+				$href = esc_attr( add_query_arg( $ga_args, $n->get_permalink() ) );
+				$desc = preg_replace( '/\s+?(\S+)?$/', '', $n->get_description() );
+				$desc = wp_trim_words(
+					$desc,
+					40,
+					' <a href="' . $href . '" target="_blank">[&hellip;]</a>'
+				);
+				?>
 				<article>
 					<header>
-						<strong><a href="<?php
-							$ga_args   = array(
-								'utm_source'   => 'dashboard',
-								'utm_medium'   => 'blog',
-								'utm_campaign' => 'news',
-								'utm_term'     => urlencode(
-									strtolower( substr( $n->get_title(), 0, 40 ) )
-								),
-							);
-							echo add_query_arg( $ga_args, $n->get_permalink() );
-						?>" target="_blank"><?php echo $n->get_title() ?></a></strong>
+						<h4>
+							<a href="<?php echo $href; ?>" target="_blank">
+								<?php echo $n->get_title(); ?>
+							</a>
+						</h4>
 					</header>
-					<div>
-						<?php echo preg_replace( '/\s+?(\S+)?$/', '', $n->get_description() ); ?>
-					</div>
+					<p><?php echo $desc; ?></p>
 				</article>
-			<?php endforeach ?>
+			<?php endforeach; ?>
 		<?php else : ?>
 			<p><em>No news available.</em></p>
-		<?php endif ?>
+		<?php endif; ?>
 		</div>
 	</div>
 
