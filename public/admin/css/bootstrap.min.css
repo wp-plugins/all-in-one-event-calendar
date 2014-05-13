@@ -3073,8 +3073,8 @@ fieldset[disabled] .timely .ai1ec-btn-success.ai1ec-active {
 }
 .timely .ai1ec-btn-info {
   color: #ffffff;
-  background-color: #5bc0de;
-  border-color: #46b8da;
+  background-color: #f48121;
+  border-color: #f0730c;
 }
 .timely .ai1ec-btn-info:hover,
 .timely .ai1ec-btn-info:focus,
@@ -3082,8 +3082,8 @@ fieldset[disabled] .timely .ai1ec-btn-success.ai1ec-active {
 .timely .ai1ec-btn-info.ai1ec-active,
 .ai1ec-open .ai1ec-dropdown-toggle.timely .ai1ec-btn-info {
   color: #ffffff;
-  background-color: #39b3d7;
-  border-color: #269abc;
+  background-color: #e16c0b;
+  border-color: #b55709;
 }
 .timely .ai1ec-btn-info:active,
 .timely .ai1ec-btn-info.ai1ec-active,
@@ -3105,11 +3105,11 @@ fieldset[disabled] .timely .ai1ec-btn-info:active,
 .timely .ai1ec-btn-info.ai1ec-disabled.ai1ec-active,
 .timely .ai1ec-btn-info[disabled].ai1ec-active,
 fieldset[disabled] .timely .ai1ec-btn-info.ai1ec-active {
-  background-color: #5bc0de;
-  border-color: #46b8da;
+  background-color: #f48121;
+  border-color: #f0730c;
 }
 .timely .ai1ec-btn-info .ai1ec-badge {
-  color: #5bc0de;
+  color: #f48121;
   background-color: #fff;
 }
 .timely .ai1ec-btn-link {
@@ -4223,11 +4223,11 @@ textarea.ai1ec-input-group-sm > .ai1ec-input-group-btn > .ai1ec-btn {
   background-color: #449d44;
 }
 .ai1ec-label-info {
-  background-color: #5bc0de;
+  background-color: #f48121;
 }
 .ai1ec-label-info[href]:hover,
 .ai1ec-label-info[href]:focus {
-  background-color: #31b0d5;
+  background-color: #d7680b;
 }
 .ai1ec-label-warning {
   background-color: #f0ad4e;

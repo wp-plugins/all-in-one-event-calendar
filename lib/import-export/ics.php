@@ -892,28 +892,25 @@ class Ai1ec_Ics_Import_Export_Engine
 		// We must also match the exact starting time
 		$exception_dates = $event->get( 'exception_dates' );
 		if ( ! empty( $exception_dates ) ) {
-			$params    = array( 'VALUE' => 'DATE' );
-			$use_dates = array();
+			$params    = array(
+				'VALUE' => 'DATE-TIME',
+				'TZID'  => $tz,
+			);
+			$dt_suffix = $event->get( 'start' )->format( '\THis' );
 			foreach (
 				explode( ',', $exception_dates )
 				as $exdate
 			) {
-				$use_dates[] = $this->format_exception_date( $exdate );
+				$exdate = $this->_registry->get( 'date.time', $exdate )
+					->format( 'Ymd' );
+				$e->setProperty(
+					'exdate',
+					array( $exdate . $dt_suffix ),
+					$params
+				);
 			}
-			$e->setProperty( 'exdate', $use_dates, $params );
 		}
 		return $calendar;
-	}
-
-	/**
-	 * Format exdate for export.
-	 *
-	 * @param string $exdate Previously written exdate.
-	 *
-	 * @return string Value to use when exporting.
-	 */
-	public function format_exception_date( $exdate ) {
-		return substr( $exdate, 0, 8 );
 	}
 
 	/**

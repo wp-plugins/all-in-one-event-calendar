@@ -129,6 +129,36 @@ class Ai1ec_Router extends Ai1ec_Base {
 	}
 
 	/**
+	 * Properly capitalize encoded URL sequence.
+	 *
+	 * @param string $url Original URL to use.
+	 *
+	 * @return string Modified URL.
+	 */
+	protected function _fix_encoded_uri( $url ) {
+		$particles = preg_split(
+			'|(%[a-f0-9]{2})|',
+			$url,
+			-1,
+			PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY
+		);
+		$state  = false;
+		$output = '';
+		foreach ( $particles as $particle ) {
+			if ( '%' === $particle ) {
+				$state = true;
+			} else {
+				if ( ! $state && '%' === $particle{0} ) {
+					$particle = strtoupper( $particle );
+				}
+				$state = false;
+			}
+			$output .= $particle;
+		}
+		return $output;
+	}
+
+	/**
 	 * Register rewrite rule to enable work with pretty URIs
 	 */
 	public function register_rewrite( $rewrite_to ) {
@@ -142,12 +172,14 @@ class Ai1ec_Router extends Ai1ec_Base {
 		if ( false !== strpos( $base, '?' ) ) {
 			return $this;
 		}
+		$base       = $this->_fix_encoded_uri( $base );
 		$base       = '(?:.+/)?' . $base;
 		$named_args = str_replace(
 			'[:DS:]',
 			preg_quote( Ai1ec_Uri::DIRECTION_SEPARATOR ),
 			'[a-z][a-z0-9\-_[:DS:]\/]*[:DS:][a-z0-9\-_[:DS:]\/]'
 		);
+
 		$regexp     = $base . '(\/' . $named_args . ')';
 		$clean_base = trim( $this->_calendar_base, '/' );
 		$clean_site = trim( $this->get_site_url(), '/' );

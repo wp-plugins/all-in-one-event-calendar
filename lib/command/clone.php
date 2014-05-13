@@ -176,7 +176,8 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 			$post->post_title,
 			$edit_event_url
 		);
-		$notification   = $this->_registry->get( 'notification.admin', $message );
+		$notification   = $this->_registry->get( 'notification.admin' );
+		$notification->store( $message );
 		$this->_duplicate_post_copy_post_taxonomies( $new_post_id, $post );
 		$this->_duplicate_post_copy_attachments(     $new_post_id, $post );
 		$this->_duplicate_post_copy_post_meta_info(  $new_post_id, $post );

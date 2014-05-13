@@ -15,9 +15,20 @@
 
 /* Support box */
 
-.ai1ec-support-placeholder {
+.ai1ec-support-buttons {
 	text-align: center;
 	margin: 20px 0;
+}
+.timely .ai1ec-support-buttons .ai1ec-btn-block {
+	margin-bottom: 5px;
+}
+@media ( min-width: 1200px ) {
+	#ai1ec-addons-col {
+		padding-right: 0;
+	}
+	#ai1ec-events-col {
+		padding-left: 0;
+	}
 }
 #ai1ec-support {
 	background: #f9f9f9;
@@ -38,8 +49,10 @@
 }
 #ai1ec-support .timely-logo a {
 	background: url(../img/timely-logo.png) no-repeat center center;
+	-webkit-background-size: 250px auto;
+	background-size: 250px auto;
 	display: block;
-	height: 140px;
+	height: 109px;
 }
 #ai1ec-support .timely-intro {
 	text-align: center;
@@ -96,7 +109,6 @@
 }
 
 #ai1ec-support .ai1ec-news h2 small {
-	font-family: sans-serif;
 	font-size: 0.8em;
 	margin-left: 0.3em;
 }
@@ -108,12 +120,6 @@
 #ai1ec-support .ai1ec-news article:first-child {
 	border-top: 1px solid #e0e0e0;
 	padding-top: 5px;
-}
-#ai1ec-support .ai1ec-news article div {
-	font-size: 0.9em;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 }
 
 /* General settings */

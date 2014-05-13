@@ -84,9 +84,9 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 					$import_export = $this->_registry->get( 'controller.import-export' );
 					$args = array();
 					$args['feed'] = $feed;
-					$args['comments_enabled'] = 'open';
+					$args['comment_status'] = 'open';
 					if ( isset( $feed->comments_enabled ) && $feed->comments_enabled < 1 ) {
-						$comment_status = 'closed';
+						$args['comment_status'] = 'closed';
 					}
 
 					$args['do_show_map'] = 0;

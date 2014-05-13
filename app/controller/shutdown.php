@@ -69,6 +69,12 @@ class Ai1ec_Shutdown_Controller {
 		foreach ( $this->_restorables as $name => $object ) {
 			unset( $object, $this->_restorables[$name] );
 		}
+		if ( AI1EC_DEBUG ) {
+			// __destruct is called twice if facebook extension is installed
+			// still can't find the reason, this fixes it but prevent other plugins
+			// __destruct() so let's just use it in dev until we fix this.
+			exit();
+		}
 	}
 
 	/**

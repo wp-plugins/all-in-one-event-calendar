@@ -12,6 +12,18 @@
 class Ai1ec_Robots_Helper extends Ai1ec_Base {
 
 	/**
+	 * Activation status.
+	 *
+	 * @return bool Whereas activation must be triggered.
+	 */
+	public function pre_check() {
+		if ( defined( 'FS_METHOD' ) && 'direct' === FS_METHOD ) {
+			return true;
+		}
+		return false; // disable until FS is properly resolved
+	}
+
+	/**
 	 * Install robotx.txt into current Wordpress instance
 	 *
 	 * @return void

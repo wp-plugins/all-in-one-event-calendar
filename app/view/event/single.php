@@ -69,9 +69,10 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 			'hide_featured_image'     => $settings->get( 'hide_featured_image' ),
 			'extra_buttons'           => $extra_buttons
 		);
+
 		if (
 			! empty( $args['recurrence'] ) &&
-			! $event->get( 'instance_id' ) &&
+			$event->get( 'instance_id' ) &&
 			current_user_can( 'edit_ai1ec_events' )
 		) {
 			$args['edit_instance_url'] = admin_url(

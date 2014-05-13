@@ -17,13 +17,10 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 	public function do_execute() {
 		$settings = $this->_registry->get( 'model.settings' );
 		$options  = $settings->get_options();
-		// if either tag or categories are set, process the setting.
-		if (
-			isset( $_POST['default_tags'] ) || 
+		$_POST['default_tags_categories'] = (
+			isset( $_POST['default_tags'] ) ||
 			isset( $_POST['default_categories'] )
-		) {
-			$_POST['default_tags_categories'] = true;
-		}
+		);
 		$_POST['enabled_views'] = true;
 		foreach ( $options as $name => $data ) {
 			$value = null;

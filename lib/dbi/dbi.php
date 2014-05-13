@@ -55,7 +55,11 @@ class Ai1ec_Dbi {
 		$this->_registry->get( 'controller.shutdown' )->register(
 			array( $this, 'shutdown' )
 		);
-		$this->auto_debug();
+		add_action(
+			'ai1ec_loaded',
+			array( $this, 'check_debug' ),
+			PHP_INT_MAX
+		);
 		$this->set_timezone();
 	}
 
@@ -78,19 +82,19 @@ class Ai1ec_Dbi {
 	}
 
 	/**
-	 * Automatically change debug flag.
+	 * Only attempt to enable debug after all add-ons are loaded.
+	 *
+	 * @wp_hook ai1ec_loaded
+	 *
+	 * @uses apply_filters ai1ec_dbi_debug
 	 *
 	 * @return void
 	 */
-	public function auto_debug() {
-		if (
-			AI1EC_DEBUG &&
-			! $this->_registry->get( 'http.request' )->is_ajax()
-		) {
-			$this->_log_enabled = true;
-		} else {
-			$this->disable_debug();
-		}
+	public function check_debug() {
+		$this->_log_enabled = apply_filters(
+			'ai1ec_dbi_debug',
+			( false !== AI1EC_DEBUG )
+		);
 	}
 
 	/**
@@ -377,7 +381,6 @@ class Ai1ec_Dbi {
 	 * @return void
 	 */
 	public function shutdown() {
-		$this->auto_debug();
 		if ( ! $this->_log_enabled ) {
 			return false;
 		}

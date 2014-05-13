@@ -56,6 +56,9 @@ class Ai1ec_Event_Entity extends Ai1ec_Base {
 		if ( 'registry' === $name ) {
 			return $this; // short-circuit: protection mean.
 		}
+		if ( 'timezone_name' === $name && empty( $value ) ) {
+			return $this; // protection against invalid TZ values.
+		}
 		$field = '_' . $name;
 		if ( isset( $time_fields[$name] ) ) {
 			// object of Ai1ec_Date_Time type is now handled in it itself
@@ -68,7 +71,7 @@ class Ai1ec_Event_Entity extends Ai1ec_Base {
 		} else {
 			$this->{$field} = $value;
 		}
-		if ( 'timezone_name' === $name && ! empty( $value ) ) {
+		if ( 'timezone_name' === $name ) {
 			$this->_start->set_timezone( $value );
 			$this->_end  ->set_timezone( $value );
 		}

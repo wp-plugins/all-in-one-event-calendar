@@ -35,6 +35,7 @@
 {% if stacked %}</div><div class="ai1ec-col-sm-9">{% endif %}
 
 <div class="ai1ec-tab-content {{ content_class }}">
+	{{ pre_tabs_markup | raw}}
 	{% for id, data in tabs %}
 		<div class="ai1ec-tab-pane" id="ai1ec-{{ id }}">
 			{% for element in data.elements %}
