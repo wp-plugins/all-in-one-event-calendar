@@ -53,7 +53,7 @@
 											<span class="ai1ec-event-title">
 												{{ event.get_runtime( 'filtered_title' ) | raw }}
 											</span>
-											{% if event.is_allday %}
+											{% if not event.is_allday %}
 												<span class="ai1ec-event-time">
 													{{ event.get_runtime( 'short_start_time' ) }}
 												</span>

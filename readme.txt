@@ -1,11 +1,11 @@
 === All-in-One Event Calendar ===
-Contributors: hubrik, vtowel, yani.iliev, nicolapeluchetti, jbutkus
+Contributors: hubrik, vtowel, yani.iliev, nicolapeluchetti, jbutkus, lpawlik, bangelov
 Tags: calendar, events, ics, ics feed, wordpress ical importer, google
 calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WorPress at least: 3.5
-Tested up to: 3.9
-Stable tag: 2.0.6
+Tested up to: 3.9.1
+Stable tag: 2.0.8
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -171,6 +171,39 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.0.8 =
+* Fixed issue where it was impossible to edit some of the events;
+* Fixed issue where it was impossible to trash custom post types in
+some cases;
+* Fixed issue where it was impossible to edit some recurrent events;
+
+= Version 2.0.7 =
+* Restored option to disable GZIP compression;
+* Fixed issue where it was impossible to clear default tags/categories
+selection;
+* Fixed issue where Agenda widget wasn't displaying start time;
+* Fixed issue where tags/categories were incorrectly processed for ICS
+exported events;
+* Fixed issue where comments weren't properly disabled on imported ICS
+feeds;
+* Fixed issue where database upgrade was failing when some database
+tables were empty;
+* Fixed issue where exclude dates were not correctly exported for
+Google Calendar;
+* Fixed issue where timezones weren't properly converted for some old
+events;
+* Fixed issue where shortcode for a day view was incorrectly defined;
+* Fixed issue where HTML characters appeared in categories/tags names;
+* Fixed issue where it was impossible to edit single event instance
+(entire set was edited instead);
+* Fixed calendar navigation when page slug has UTF-8 values
+(non-English characters) in it;
+* Fixed issue where category colour wasn't properly displayed in all
+calendar views;
+* Fixed issue where Postbox elements open/close functionality was
+broken;
+* Adjusted http://time.ly information panel in Settings page;
 
 = Version 2.0.6 =
 * Initial public release of 2.0 on http://WordPress.org repository;

@@ -1,3 +1,25 @@
+/* Event details meta box arrow and handle fix */
+
+.js #ai1ec_event .handlediv:before {
+	content: '\f142';
+	right: 12px;
+	font: 400 20px/1 dashicons;
+	speak: none;
+	display: inline-block;
+	padding: 8px 10px;
+	top: 0;
+	position: relative;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-decoration: none!important;
+}
+.js #ai1ec_event.closed .handlediv:before {
+	content: '\f140';
+}
+.js #ai1ec_event .hndle {
+	cursor: default;
+}
+
 /* General form attributes */
 
 /* Add/edit event form hidden by default to that DOM can be rearranged without

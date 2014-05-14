@@ -39,6 +39,11 @@ class Ai1ec_Command_Resolver {
 	) {
 		$this->add_command(
 			$registry->get(
+				'command.disable-gzip', $request
+			)
+		);
+		$this->add_command(
+			$registry->get(
 				'command.export-events', $request
 			)
 		);

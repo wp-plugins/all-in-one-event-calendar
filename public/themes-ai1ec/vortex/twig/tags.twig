@@ -23,7 +23,7 @@
 					{% endif %}
 					{{ data_type | raw }}
 					href="{{ term.href | e('html_attr') }}">
-					{{ term.name }}
+					{{ term.name | raw }}
 				</a>
 			</span>
 		{% endfor %}

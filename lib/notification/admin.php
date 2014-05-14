@@ -48,16 +48,9 @@ class Ai1ec_Notification_Admin extends Ai1ec_Notification {
 	 * @return Ai1ec_Notification_Admin
 	 */
 	public function __construct(
-		Ai1ec_Registry_Object $registry,
-		$message          = null,
-		$class            = 'updated',
-		$importance       = 0,
-		array $recipients = array( self::RCPT_ADMIN )
+		Ai1ec_Registry_Object $registry
 	) {
 		$this->_registry = $registry;
-		if ( $message ) {
-			$this->store( $message, $class, $importance, $recipients );
-		}
 	}
 
 	/**

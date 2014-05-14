@@ -85,7 +85,7 @@ class Ai1ec_Css_Frontend extends Ai1ec_Base {
 		) {
 			// compress data if possible
 			$compatibility_ob = $this->_registry->get( 'compatibility.ob' );
-			if ( Ai1ec_Http_Response_Helper::client_use_gzip() ) {
+			if ( $this->_registry->get( 'http.request' )->client_use_gzip() ) {
 				$compatibility_ob->start( 'ob_gzhandler' );
 				header( 'Content-Encoding: gzip' );
 			} else {

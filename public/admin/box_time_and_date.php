@@ -80,7 +80,13 @@
 							value="<?php echo $end->format_to_javascript(); ?>">
 					</td>
 				</tr>
-				<tr>
+				<?php
+				$recurrence_attr = '';
+				if ( $parent_event_id || $instance_id ) :
+					$recurrence_attr = ' class="ai1ec-hide"';
+				endif;
+				?>
+				<tr<?php echo $recurrence_attr; ?>>
 					<td>
 						<input type="checkbox" name="ai1ec_repeat" id="ai1ec_repeat"
 								value="1"
@@ -98,7 +104,7 @@
 						</div>
 					</td>
 				</tr>
-				<tr>
+				<tr<?php echo $recurrence_attr; ?>>
 					<td>
 						<input type="checkbox" name="ai1ec_exclude" id="ai1ec_exclude"
 								value="1"
@@ -120,7 +126,7 @@
 						</span>
 					</td>
 				</tr>
-				<tr>
+				<tr<?php echo $recurrence_attr; ?>>
 					<td>
 						<label for="ai1ec_exdate_calendar_icon" id="ai1ec_exclude_date_label">
 							<?php _e( 'Exclude dates', AI1EC_PLUGIN_NAME ); ?>:

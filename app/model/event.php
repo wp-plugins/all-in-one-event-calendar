@@ -192,7 +192,7 @@ class Ai1ec_Event extends Ai1ec_Base {
 						   "  IF( aei.start IS NOT NULL, aei.end,   e.end )   as end ";
 
 			$instance = (int)$instance;
-			$this->instance_id = $instance;
+			$this->set( 'instance_id', $instance );
 			$left_join = 	'LEFT JOIN ' . $dbi->get_table_name( 'ai1ec_event_instances' ) .
 				' aei ON aei.id = ' . $instance . ' AND e.post_id = aei.post_id ';
 		} else {

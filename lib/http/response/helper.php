@@ -43,38 +43,6 @@ class Ai1ec_Http_Response_Helper {
 	}
 
 	/**
-	 * Check if client accepts gzip and we should compress content
-	 *
-	 * Plugin settings, client preferences and server capabilities are
-	 * checked to make sure we should use gzip for output compression.
-	 *
-	 * @uses Ai1ec_Settings::get_instance To early instantiate object
-	 *
-	 * @return bool True when gzip should be used
-	 */
-	static public function client_use_gzip() {
-		if (
-			isset( $_SERVER['HTTP_ACCEPT_ENCODING'] ) &&
-			'identity' === $_SERVER['HTTP_ACCEPT_ENCODING'] ||
-			! extension_loaded( 'zlib' )
-		) {
-			return false;
-		}
-		$zlib_output_handler = ini_get( 'zlib.output_handler' );
-		if (
-			in_array( 'ob_gzhandler', ob_list_handlers() ) ||
-			in_array(
-				strtolower( ini_get( 'zlib.output_compression' ) ),
-				array( '1', 'on' )
-			) ||
-			! empty( $zlib_output_handler )
-		) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
 	 * ai1ec_utf8 function
 	 *
 	 * Encode value as safe UTF8 - discarding unrecognized characters.

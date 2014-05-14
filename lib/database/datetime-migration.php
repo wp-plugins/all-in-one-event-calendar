@@ -301,7 +301,7 @@ class Ai1ecdm_Datetime_Migration {
 		}
 		$sql_query = 'ALTER TABLE `' . $table . '` ' .
 			implode( ', ', $column_particles );
-		return $this->_dbi->query( $sql_query );
+		return ( false !== $this->_dbi->query( $sql_query ) );
 	}
 
 	/**
@@ -347,7 +347,7 @@ class Ai1ecdm_Datetime_Migration {
 		}
 		$sql_query = 'ALTER TABLE `' . $table . '` ' .
 			implode( ', ', $snippets );
-		return $this->_dbi->query( $sql_query );
+		return ( false !== $this->_dbi->query( $sql_query ) );
 	}
 
 	/**
@@ -388,7 +388,7 @@ class Ai1ecdm_Datetime_Migration {
 	 */
 	public function drop( $table ) {
 		$sql_query = 'DROP TABLE IF EXISTS ' . $table;
-		return false !== $this->_dbi->query( $sql_query );
+		return ( false !== $this->_dbi->query( $sql_query ) );
 	}
 
 	/**

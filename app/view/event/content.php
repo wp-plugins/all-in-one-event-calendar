@@ -118,7 +118,7 @@ class Ai1ec_View_Event_Content extends Ai1ec_Base {
 			$href = $href->generate_href();
 		}
 		$text    = esc_attr( Ai1ec_I18n::__( 'Back to Calendar' ) );
-		$tooltip = esc_attr( Ai1ec_I18n::__( 'Go back to event calendar' ) );
+		$tooltip = esc_attr( Ai1ec_I18n::__( 'View all events' ) );
 		$html    = <<<HTML
 <a class="ai1ec-calendar-link ai1ec-btn ai1ec-btn-default ai1ec-btn-sm
 		ai1ec-tooltip-trigger $class"
@@ -126,7 +126,7 @@ class Ai1ec_View_Event_Content extends Ai1ec_Base {
 	$data_type
 	data-placement="left"
 	title="$tooltip">
-	<i class="ai1ec-fa ai1ec-fa-arrow-left ai1ec-fa-fw"></i>
+	<i class="ai1ec-fa ai1ec-fa-calendar ai1ec-fa-fw"></i>
 	<span class="ai1ec-hidden-xs">$text</span>
 </a>
 HTML;

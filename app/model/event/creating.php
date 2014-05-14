@@ -192,4 +192,46 @@ class Ai1ec_Event_Creating extends Ai1ec_Base {
 		return $event;
 	}
 
+	/**
+	 * _create_duplicate_post method
+	 *
+	 * Create copy of event by calling {@uses wp_insert_post} function.
+	 * Using 'post_parent' to add hierarchy.
+	 *
+	 * @param array $data Event instance data to copy
+	 *
+	 * @return int|bool New post ID or false on failure
+	 **/
+	public function create_duplicate_post() {
+		if ( ! isset( $_POST['post_ID'] ) ) {
+			return false;
+		}
+		$clean_fields = array(
+			'ai1ec_repeat'      => NULL,
+			'ai1ec_rrule'       => '',
+			'ai1ec_exrule'      => '',
+			'ai1ec_exdate'      => '',
+			'post_ID'           => NULL,
+			'post_name'         => NULL,
+			'ai1ec_instance_id' => NULL,
+		);
+		$old_post_id = $_POST['post_ID'];
+		$instance_id = $_POST['ai1ec_instance_id'];
+		foreach ( $clean_fields as $field => $to_value ) {
+			if ( NULL === $to_value ) {
+				unset( $_POST[$field] );
+			} else {
+				$_POST[$field] = $to_value;
+			}
+		}
+		$_POST   = _wp_translate_postdata( false, $_POST );
+		$_POST['post_parent'] = $old_post_id;
+		$post_id = wp_insert_post( $_POST );
+		$this->_registry->get( 'model.event.parent' )->event_parent(
+			$post_id,
+			$old_post_id,
+			$instance_id
+		);
+		return $post_id;
+	}
 }
