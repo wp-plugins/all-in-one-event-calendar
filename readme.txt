@@ -5,7 +5,7 @@ calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WorPress at least: 3.5
 Tested up to: 3.9.1
-Stable tag: 2.0.7
+Stable tag: 2.0.8
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -171,6 +171,12 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.0.8 =
+* Fixed issue where it was impossible to edit some of the events;
+* Fixed issue where it was impossible to trash custom post types in
+some cases;
+* Fixed issue where it was impossible to edit some recurrent events;
 
 = Version 2.0.7 =
 * Restored option to disable GZIP compression;

@@ -101,7 +101,7 @@ class Ai1ec_View_Add_New_Event extends Ai1ec_Base {
 					get_the_ID(),
 					$instance_id
 				);
-			} catch ( Ai1ec_Event_Not_Found $excpt ) {
+			} catch ( Ai1ec_Event_Not_Found_Exception $excpt ) {
 				$ai1ec_localization_helper = $this->_registry
 					->get( 'p28n.wpml' );
 				$translatable_id = $ai1ec_localization_helper
@@ -329,7 +329,7 @@ class Ai1ec_View_Add_New_Event extends Ai1ec_Base {
 			if ( $parent ) {
 				try {
 					$parent = $this->_registry->get( 'model.event', $parent );
-				} catch ( Ai1ec_Event_Not_Found $exception ) { // ignore
+				} catch ( Ai1ec_Event_Not_Found_Exception $exception ) { // ignore
 					$parent = null;
 				}
 			}

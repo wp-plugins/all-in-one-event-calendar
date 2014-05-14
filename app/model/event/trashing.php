@@ -36,7 +36,7 @@ class Ai1ec_Event_Trashing extends Ai1ec_Base {
 					$function( $child->get( 'post_id' ) );
 				}
 			}
-		} catch ( Ai1ec_Event_Not_Found $exception ) {
+		} catch ( Ai1ec_Event_Not_Found_Exception $exception ) {
 			// ignore - not an event
 		}
 	}

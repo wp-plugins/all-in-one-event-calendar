@@ -104,7 +104,7 @@ class Ai1ec_Event_Parent extends Ai1ec_Base {
 				) {
 					$objects[$child_id] = $instance;
 				}
-			} catch ( Ai1ec_Event_Not_Found $exception ) {
+			} catch ( Ai1ec_Event_Not_Found_Exception $exception ) {
 				// ignore
 			}
 		}
