@@ -313,7 +313,7 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 			$exact_date = $this->_registry->get(
 				'date.time',
 				$date,
-				$this->_registry->get( 'model.option' )->get( 'timezone_string' )
+				'sys.default'
 			)->format_to_gmt();
 		}
 		return $exact_date;

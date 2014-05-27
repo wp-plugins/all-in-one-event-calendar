@@ -225,7 +225,9 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 	public function get_category_avatar_url( Ai1ec_Event $event, &$size = null ) {
 		$db =  $this->_registry->get( 'dbi.dbi' );
 
-		$terms = get_the_terms( $event->get( 'post_id' ), 'events_categories' );
+		$terms = $this->_registry->get( 'model.taxonomy' )->get_post_categories(
+			$event->get( 'post_id' )
+		);
 		if ( empty( $terms ) ) {
 			return null;
 		}
@@ -255,12 +257,10 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 		asort( $term_depths );
 
 		$url = '';
-		$sql_query = 'SELECT term_image FROM ' .
-			$db->get_table_name( 'ai1ec_event_category_meta' ) .
-			' WHERE term_id = ';
+		$model = $this->_registry->get( 'model.taxonomy' );
 		// Starting at deepest depth, find the first category that has an avatar.
 		foreach ( $term_depths as $term_id => $depth ) {
-			$term_image = $db->get_var( $sql_query . ((int)$term_id) );
+			$term_image = $model->get_category_image( $term_id );
 			if ( $term_image ) {
 				$url = $term_image;
 				break;

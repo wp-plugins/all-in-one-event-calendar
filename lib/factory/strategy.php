@@ -40,7 +40,7 @@ class Ai1ec_Factory_Strategy extends Ai1ec_Base {
 				$this->_registry->get( 'model.option' )
 			);
 		} else {
-			$engine = new Ai1ec_Cache_Strategy_Void();
+			$engine = $this->_registry->get( 'cache.strategy.void' );
 		}
 		return $engine;
 	}

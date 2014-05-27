@@ -549,13 +549,17 @@ JSC;
 		if( true === is_page( $this->_settings->get( 'calendar_page_id' ) ) ) {
 			$is_calendar_page = self::TRUE_PARAM;
 		}
-		$url = $this->_template_link_helper->get_site_url() . '?' .
+		$url = add_query_arg(
+			array(
 				// Add the page to load
-				self::LOAD_JS_PARAMETER . '=' . $page . '&' .
+				self::LOAD_JS_PARAMETER    => $page,
 				// If we are in the backend, we must load the common scripts
-				self::IS_BACKEND_PARAMETER . '=' . $load_backend_script . '&' .
+				self::IS_BACKEND_PARAMETER => $load_backend_script,
 				// If we are on the calendar page we must load the correct option
-				self::IS_CALENDAR_PAGE . '=' . $is_calendar_page;
+				self::IS_CALENDAR_PAGE     => $is_calendar_page,
+			),
+			trailingslashit( $this->_template_link_helper->get_site_url() )
+		);
 		if ( true === $backend ) {
 			$this->_scripts_helper->enqueue_script(
 					self::JS_HANDLE,

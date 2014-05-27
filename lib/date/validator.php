@@ -14,11 +14,10 @@ class Ai1ec_Validation_Utility {
 	/**
 	 * Check if the date supplied is valid. It validates $date in the format given
 	 * by $pattern, which matches one of the supported date patterns.
-	 * @see  Ai1ec_Time_Utility::get_date_patterns()
 	 *
 	 * @param  string  $date    Date string to validate
 	 * @param  string  $pattern Key of date pattern (@see
-	 *                          Ai1ec_Time_Utility::get_date_patterns()) to
+	 *                          self::get_date_patterns()) to
 	 *                          match date string against
 	 * @return boolean
 	 */
@@ -33,11 +32,10 @@ class Ai1ec_Validation_Utility {
 	/**
 	 * Check if the date supplied is valid. It validates date in the format given
 	 * by $pattern, which matches one of the supported date patterns.
-	 * @see  Ai1ec_Time_Utility::get_date_patterns()
 	 *
 	 * @param string $date    Date string to parse
 	 * @param string $pattern Key of date pattern (@see
-	 *                        Ai1ec_Time_Utility::get_date_patterns()) to
+	 *                        self::get_date_patterns()) to
 	 *                        match date string against
 	 * @return array|boolean An array with the parsed date or false if the date
 	 *                       is not valid.

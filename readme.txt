@@ -5,7 +5,7 @@ calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WorPress at least: 3.5
 Tested up to: 3.9.1
-Stable tag: 2.0.8
+Stable tag: 2.0.9
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -171,6 +171,40 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.0.9 =
+* Improved plugin performance by reducing the number of database
+queries made during average front-end page load by at least 30%
+(optimized WordPress data retrieval patterns);
+* Fixed issue where special characters (like quotes) were escaped when
+used in Settings;
+* Fixed issue where monthly view popover displayed time one minute
+early;
+* Improved CSS loading performance by making option auto-loadable;
+* Fixed issue where folder conflict (vendor/{Twig,twig}) was causing
+problems on some systems;
+* Fixed issue where using a manual timezone caused a conflict when
+navigating to particular date;
+* Fixed issue where all events were displaying as the same duration on
+a Single Day View and Week View;
+* Fixed issue where it was impossible to deactivate multiple plugins;
+* Fixed issue where an error was raised when no cache providers where
+available on some systems;
+* Fixed issue where Upload image button in Front End Events form was
+unresponsive;
+* Fixed issue where CSS files were not properly included on some
+systems;
+* Fixed compatibility with WPML;
+* Fixed issue where ICS feeds were not automatically updating at the
+set intervals;
+* Fixed instructions for child themes creation found in Gamma theme
+files;
+* Fixed issue where some servers mistakenly reported cache directory
+as writable causing the plugin to be disabled;
+* Restored notification to finish plugin configuration after
+installation;
+* Fixed issue where datepicker on the frontend was rendered
+incorrectly with some themes;
 
 = Version 2.0.8 =
 * Fixed issue where it was impossible to edit some of the events;

@@ -60,11 +60,10 @@ class Ai1ec_Event extends Ai1ec_Base {
 	 *
 	 * @return string
 	 */
-	public function get_runtime( $property ) {
-
+	public function get_runtime( $property, $default = '' ) {
 		return isset( $this->_runtime_props[$property] ) ?
 			$this->_runtime_props[$property] :
-			'';
+			$default;
 	}
 
 	/**
@@ -459,10 +458,11 @@ class Ai1ec_Event extends Ai1ec_Base {
 	 * @return number
 	 */
 	public function get_duration() {
-		static $duration;
+		$duration = $this->get_runtime( 'duration', null );
 		if ( null === $duration ) {
 			$duration = $this->get( 'end' )->format() -
 				$this->get( 'start' )->format();
+			$this->set_runtime( 'duration', $duration );
 		}
 		return $duration;
 	}

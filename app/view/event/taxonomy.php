@@ -12,22 +12,24 @@
 class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 
 	/**
+	 * @var Ai1ec_Taxonomy Taxonomy abstraction layer.
+	 */
+	protected $_taxonomy_model = null;
+
+	/**
 	 * Style attribute for event category
 	 */
 	public function get_color_style( Ai1ec_Event $event ) {
 		static $color_styles = array();
-		$type                = $event->is_allday() || $event->is_multiday();
-		$id                  = $event->get( 'post_id' );
-		$categories          = wp_get_post_terms(
-			$id,
-			'events_categories'
+		$categories = $this->_taxonomy_model->get_post_categories(
+			$event->get( 'post_id' )
 		);
-
 		// No specific styling for events not in categories.
-		if ( empty( $categories ) ) {
+		if ( ! $categories ) {
 			return '';
 		}
 
+		$type = $event->is_allday() || $event->is_multiday();
 		// If not yet cached, fetch and save style.
 		if ( ! isset( $color_styles[$categories[0]->term_id][$type] ) ) {
 			$color_styles[$categories[0]->term_id][$type] =
@@ -52,8 +54,7 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 		$term_id,
 		$allday = false
 	) {
-		$taxonomy = $this->_registry->get( 'model.taxonomy' );
-		$color = $taxonomy->get_category_color( $term_id );
+		$color = $this->_taxonomy_model->get_category_color( $term_id );
 		if ( ! is_null( $color ) && ! empty( $color ) ) {
 			if ( $allday )
 				return 'background-color: ' . $color . ';';
@@ -70,11 +71,14 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 		static $category_colors = array();
 		$id = $event->get( 'post_id' );
 		if ( ! isset( $category_colors[$id] ) ) {
-			$categories = wp_get_post_terms(
-				$id,
-				'events_categories'
-			);
-			$category_colors[$id] = $this->get_event_category_colors( $categories );
+			$categories           = $this->_taxonomy_model
+				->get_post_categories( $id );
+			$category_colors[$id] = '';
+			if ( false !== $categories ) {
+				$category_colors[$id] = $this->get_event_category_colors(
+					$categories
+				);
+			}
 		}
 		return $category_colors[$id];
 	}
@@ -123,7 +127,7 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 	 *
 	 * @return string
 	 */
-	public function get_event_category_colors( $cats ) {
+	public function get_event_category_colors( array $cats ) {
 		$sqrs = '';
 		foreach ( $cats as $cat ) {
 			$tmp = $this->get_category_color_square( $cat->term_id );
@@ -139,18 +143,16 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 	 */
 	public function get_category_bg_color( Ai1ec_Event $event ) {
 		$category_bg_color = null;
-		$categories = wp_get_post_terms(
-			$event->get( 'post_id' ),
-			'events_categories'
+		$categories        = $this->_taxonomy_model->get_post_categories(
+			$event->get( 'post_id' )
 		);
-		if ( $categories && ! empty( $categories ) ) {
+		if ( false !== $categories ) {
 			$category_bg_color = $this
 				->get_event_category_bg_color(
-				$categories[0]->term_id,
-				$event->is_allday() || $event->is_multiday()
-			);
+					$categories[0]->term_id,
+					$event->is_allday() || $event->is_multiday()
+				);
 		}
-
 		return $category_bg_color;
 	}
 
@@ -159,18 +161,16 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 	 */
 	public function get_category_text_color( Ai1ec_Event $event ) {
 		$category_text_color = null;
-		$categories = wp_get_post_terms(
-			$event->get( 'post_id' ),
-			'events_categories'
+		$categories          = $this->_taxonomy_model->get_post_categories(
+			$event->get( 'post_id' )
 		);
-		if ( $categories && ! empty( $categories ) ) {
+		if ( false !== $categories ) {
 			$category_text_color = $this
-			->get_event_category_text_color(
-				$categories[0]->term_id,
-				$event->is_allday() || $event->is_multiday()
-			);
+				->get_event_category_text_color(
+					$categories[0]->term_id,
+					$event->is_allday() || $event->is_multiday()
+				);
 		}
-
 		return $category_text_color;
 	}
 
@@ -185,10 +185,10 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 	 **/
 	public function get_event_category_text_color( $term_id ) {
 		$taxonomy = $this->_registry->get( 'model.taxonomy' );
-		$color = $taxonomy->get_category_color(
+		$color    = $taxonomy->get_category_color(
 			$term_id
 		);
-		if( ! is_null( $color ) && ! empty( $color ) ) {
+		if ( ! empty( $color ) ) {
 			return 'style="color: ' . $color . ';"';
 		}
 		return '';
@@ -205,14 +205,15 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 	 **/
 	public function get_event_category_bg_color( $term_id ) {
 		$taxonomy = $this->_registry->get( 'model.taxonomy' );
-		$color = $taxonomy->get_category_color(
+		$color    = $taxonomy->get_category_color(
 			$term_id
 		);
-		if ( ! is_null( $color ) && ! empty( $color ) ) {
+		if ( ! empty( $color ) ) {
 			return 'style="background-color: ' . $color . ';"';
 		}
 		return '';
 	}
+
 	/**
 	 * Categories as HTML, either as blocks or inline.
 	 *
@@ -221,10 +222,12 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 	 *
 	 * @return string String of HTML for category blocks.
 	 */
-	public function get_categories_html( Ai1ec_Event $event, $format = 'blocks' ) {
-		$categories = wp_get_post_terms(
-			$event->get( 'post_id' ),
-			'events_categories'
+	public function get_categories_html(
+		Ai1ec_Event $event,
+		$format = 'blocks'
+	) {
+		$categories = $this->_taxonomy_model->get_post_categories(
+			$event->get( 'post_id' )
 		);
 		foreach ( $categories as &$category ) {
 			$href = $this->_registry->get(
@@ -232,8 +235,7 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 				array( 'cat_ids' => $category->term_id )
 			);
 
-			$class = $data_type = '';
-			$title = '';
+			$class = $data_type = $title = '';
 			if ( $category->description ) {
 				$title = 'title="' .
 					esc_attr( $category->description ) . '" ';
@@ -263,7 +265,8 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 				) . ' ';
 			} else {
 				$html .=
-				'<i ' . $color_style . 'class="ai1ec-fa ai1ec-fa-folder-open"></i>';
+				'<i ' . $color_style .
+					'class="ai1ec-fa ai1ec-fa-folder-open"></i>';
 			}
 
 			$html .= esc_html( $category->name ) . '</a>';
@@ -276,10 +279,12 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 	 * Tags as HTML
 	 */
 	public function get_tags_html( Ai1ec_Event $event ) {
-		$tags = wp_get_post_terms(
-			$event->get( 'post_id' ),
-			'events_tags'
+		$tags = $this->_taxonomy_model->get_post_tags(
+			$event->get( 'post_id' )
 		);
+		if ( ! $tags ) {
+			$tags = array();
+		}
 		foreach ( $tags as &$tag ) {
 			$href = $this->_registry->get(
 				'html.element.href',
@@ -292,11 +297,17 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 				$title = 'title="' . esc_attr( $tag->description ) . '" ';
 			}
 			$tag = '<a ' . $data_type . ' class="ai1ec-tag ' . $class .
-			' ai1ec-term-id-' . $tag->term_id . '" ' . $title .
-			'href="' . $href->generate_href() . '">' .
-			'<i class="ai1ec-fa ai1ec-fa-tag"></i>' . esc_html( $tag->name ) . '</a>';
+				' ai1ec-term-id-' . $tag->term_id . '" ' . $title .
+				'href="' . $href->generate_href() . '">' .
+				'<i class="ai1ec-fa ai1ec-fa-tag"></i>' .
+				esc_html( $tag->name ) . '</a>';
 		}
 		return implode( ' ', $tags );
+	}
+
+	public function __construct( Ai1ec_Registry_Object $registry ) {
+		parent::__construct( $registry );
+		$this->_taxonomy_model = $this->_registry->get( 'model.taxonomy' );
 	}
 
 }

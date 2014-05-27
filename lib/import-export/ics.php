@@ -13,6 +13,11 @@ class Ai1ec_Ics_Import_Export_Engine
 	extends Ai1ec_Base
 	implements Ai1ec_Import_Export_Engine {
 
+	/**
+	 * @var Ai1ec_Taxonomy
+	 */
+	protected $_taxonomy_model = null;
+
 	/* (non-PHPdoc)
 	 * @see Ai1ec_Import_Export_Engine::import()
 	 */
@@ -59,6 +64,12 @@ class Ai1ec_Ics_Import_Export_Engine
 			iCalUtilityFunctions::createTimezone( $c, $tz, $tz_xprops );
 		}
 
+		$this->_taxonomy_model = $this->_registry->get( 'model.taxonomy' );
+		$post_ids = array();
+		foreach ( $arguments['events'] as $event ) {
+			$post_ids[] = $event->get( 'post_id' );
+		}
+		$this->_taxonomy_model->update_meta( $post_ids );
 		foreach ( $arguments['events'] as $event ) {
 			$c =$this->_insert_event_in_calendar( $event, $c, $export = true );
 		}
@@ -288,7 +299,8 @@ class Ai1ec_Ics_Import_Export_Engine
 					if ( empty( $exd ) ) {
 						continue;
 					}
-					$exdate_array[] = trim( end( explode( ':', $exd ) ) );
+					$exploded = explode( ':', $exd );
+					$exdate_array[] = trim( end( $exploded ) );
 				}
 			}
 			// This is the local string.
@@ -731,7 +743,9 @@ class Ai1ec_Ics_Import_Export_Engine
 		$categories = array();
 		$language   = get_bloginfo( 'language' );
 		foreach (
-			wp_get_post_terms( $event->get( 'post_id' ), 'events_categories' )
+			$this->_taxonomy_model->get_post_categories(
+				$event->get( 'post_id' )
+			)
 			as $cat
 		) {
 			$categories[] = $cat->name;
@@ -743,7 +757,7 @@ class Ai1ec_Ics_Import_Export_Engine
 		);
 		$tags = array();
 		foreach (
-			wp_get_post_terms( $event->get( 'post_id' ), 'events_tags' )
+			$this->_taxonomy_model->get_post_tags( $event->get( 'post_id' ) )
 			as $tag
 		) {
 			$tags[] = $tag->name;

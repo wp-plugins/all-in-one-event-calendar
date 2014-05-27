@@ -23,11 +23,9 @@ class Ai1ec_View_Event_Color extends Ai1ec_Base {
 				'rgba'  => 'get_event_category_rgba_color',
 				'faded' => 'get_event_category_faded_color',
 			);
-			$categories = wp_get_post_terms(
-				$event->get( 'post_id' ),
-				'events_categories'
-			);
-			if ( $categories && ! empty( $categories ) ) {
+			$categories = $this->_registry->get( 'model.taxonomy' )
+				->get_post_categories( $event->get( 'post_id' ) );
+			if ( ! empty( $categories ) ) {
 				if (
 					! isset( $categories_cache[$type][$categories[0]->term_id] )
 				) {

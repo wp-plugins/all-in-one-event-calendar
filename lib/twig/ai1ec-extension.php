@@ -235,7 +235,10 @@ class Ai1ec_Twig_Ai1ec_Extension extends Twig_Extension {
 	 *
 	 * @return string Rendered HTML timespan block.
 	 */
-	public function timespan( Ai1ec_Event $event, $start_date_display = 'long' ) {
+	public function timespan(
+		Ai1ec_Event $event,
+		$start_date_display = 'long'
+	) {
 		return $this->_registry->get( 'view.event.time' )
 			->get_timespan_html( $event, $start_date_display );
 	}

@@ -149,8 +149,14 @@ abstract class Ai1ec_Base_Extension_Controller {
 		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return;
 		}
-		$plugin   = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-		check_admin_referer( "deactivate-plugin_{$plugin}" );
+		$plugin        = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+		$referer       = 'deactivate-plugin_' . $plugin;
+		$wp_list_table = _get_list_table( 'WP_Plugins_List_Table' );
+		$action        = $wp_list_table->current_action();
+		if ( 'deactivate-selected' === $action ) {
+			$referer = 'bulk-plugins';
+		}
+		check_admin_referer( $referer );
 		$settings = $this->_registry->get( 'model.settings' );
 		foreach ( $this->_settings as $name => $params ) {
 			$settings->hide_option( $name );

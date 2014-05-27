@@ -11,6 +11,37 @@
 class Ai1ec_Taxonomy extends Ai1ec_Base {
 
 	/**
+	 * @var array Map of taxonomy values.
+	 */
+	protected $_taxonomy_map = array(
+		'events_categories' => array(),
+		'events_tags'       => array(),
+	);
+
+	/**
+	 * Callback to pre-populate taxonomies before processing.
+	 *
+	 * @param array $post_ids List of Post IDs to inspect.
+	 *
+	 * @return void
+	 */
+	public function update_meta( array $post_ids ) {
+		foreach ( $post_ids as $post_id ) {
+			$post_id = (int)$post_id;
+			$this->_taxonomy_map['events_categories'][$post_id] = array();
+			$this->_taxonomy_map['events_tags'][$post_id] = array();
+		}
+		$terms = wp_get_object_terms(
+			$post_ids,
+			array( 'events_categories', 'events_tags' ),
+			array( 'fields' => 'all_with_object_id' )
+		);
+		foreach ( $terms as $term ) {
+			$this->_taxonomy_map[$term->taxonomy][$term->object_id][] = $term;
+		}
+	}
+
+	/**
 	 * Re-fetch category entries map from database.
 	 *
 	 * @return array Map of category entries.
@@ -32,6 +63,48 @@ class Ai1ec_Taxonomy extends Ai1ec_Base {
 			$category_map[(int)$row->term_id] = compact( 'image', 'color' );
 		}
 		return $category_map;
+	}
+
+	/**
+	 * Get taxonomy values for specified post.
+	 *
+	 * @param int    $post_id  Actual Post ID to check.
+	 * @param string $taxonomy Name of taxonomy to retrieve values for.
+	 *
+	 * @return array List of terms (stdClass'es) associated with post.
+	 */
+	public function get_post_taxonomy( $post_id, $taxonomy ) {
+		$post_id = (int)$post_id;
+		if ( ! isset( $this->_taxonomy_map[$taxonomy][$post_id] ) ) {
+			$definition = wp_get_post_terms( $post_id, $taxonomy );
+			if ( empty( $definition ) ) {
+				$definition = array();
+			}
+			$this->_taxonomy_map[$taxonomy][$post_id] = $definition;
+		}
+		return $this->_taxonomy_map[$taxonomy][$post_id];
+	}
+
+	/**
+	 * Get post (event) categories taxonomy.
+	 *
+	 * @param int $post_id Checked post ID.
+	 *
+	 * @return array List of categories (stdClass'es) associated with event.
+	 */
+	public function get_post_categories( $post_id ) {
+		return $this->get_post_taxonomy( $post_id, 'events_categories' );
+	}
+
+	/**
+	 * Get post (event) tags taxonomy.
+	 *
+	 * @param int $post_id Checked post ID.
+	 *
+	 * @return array List of tags (stdClass'es) associated with event.
+	 */
+	public function get_post_tags( $post_id ) {
+		return $this->get_post_taxonomy( $post_id, 'events_tags' );
 	}
 
 	/**

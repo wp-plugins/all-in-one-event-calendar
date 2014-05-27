@@ -2,13 +2,13 @@
 # This file is distributed under the same license as the All-in-One Event Calendar by Time.ly package.
 msgid ""
 msgstr ""
-"Project-Id-Version: All-in-One Event Calendar by Time.ly 2.0.8\n"
+"Project-Id-Version: All-in-One Event Calendar by Time.ly 2.0.9\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/all-in-one-event-calendar\n"
-"POT-Creation-Date: 2014-05-14 11:14:47+00:00\n"
+"POT-Creation-Date: 2014-05-27 15:47:26+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2014-05-14 14:14+0300\n"
+"PO-Revision-Date: 2014-05-27 18:47+0300\n"
 "Last-Translator: Timely <support@time.ly>\n"
 "Language-Team:\n"
 
@@ -39,7 +39,7 @@ msgstr ""
 msgid "Calendar Themes"
 msgstr "Calendar Themes"
 
-#: app/controller/front.php:808
+#: app/controller/front.php:817
 msgid ""
 "Your database is found to be corrupt. Likely previous update has failed. "
 "Please restore All-in-One Event Calendar tables from a backup and retry."
@@ -776,7 +776,7 @@ msgstr ""
 msgid "Edit this occurrence (%s)"
 msgstr "Edit this occurrence (%s)"
 
-#: app/view/event/taxonomy.php:113
+#: app/view/event/taxonomy.php:117
 msgid "Category image"
 msgstr "Category image"
 
@@ -822,11 +822,15 @@ msgstr "all-day"
 msgid ", and "
 msgstr ", and "
 
-#: lib/calendar-feed/ics.php:33
+#: lib/calendar-feed/ics.php:38
 msgid "ICS"
 msgstr "ICS"
 
-#: lib/calendar-feed/ics.php:107
+#: lib/calendar-feed/ics.php:69
+msgid "Another import process in progress. Please try again later."
+msgstr "Another import process in progress. Please try again later."
+
+#: lib/calendar-feed/ics.php:150
 msgid ""
 "We couldn't find a valid transport to fetch the calendar data.\n"
 "\t\t\t\t\tYou should set allow_url_fopen in php.ini as suggested in\n"
@@ -838,47 +842,47 @@ msgstr ""
 "\t\t\t\t\t<a href='http://forums.hostdime.com/showthread.php?8620-PHP-"
 "allow_url_fopen' target='_blank' >this</a> article"
 
-#: lib/calendar-feed/ics.php:119
+#: lib/calendar-feed/ics.php:162
 msgid "No events were found"
 msgstr "No events were found"
 
-#: lib/calendar-feed/ics.php:128
+#: lib/calendar-feed/ics.php:171
 msgid "Imported %s event"
 msgid_plural "Imported %s events"
 msgstr[0] "Imported %s event"
 msgstr[1] "Imported %s events"
 
-#: lib/calendar-feed/ics.php:134 lib/calendar-feed/ics.php:562
+#: lib/calendar-feed/ics.php:177 lib/calendar-feed/ics.php:598
 msgid "Invalid ICS feed ID"
 msgstr "Invalid ICS feed ID"
 
-#: lib/calendar-feed/ics.php:285
+#: lib/calendar-feed/ics.php:321
 msgid "Categories (optional)"
 msgstr "Categories (optional)"
 
-#: lib/calendar-feed/ics.php:302
+#: lib/calendar-feed/ics.php:338
 msgid ""
 "Do you want to keep the events imported from the calendar or remove them?"
 msgstr ""
 "Do you want to keep the events imported from the calendar or remove them?"
 
-#: lib/calendar-feed/ics.php:308
+#: lib/calendar-feed/ics.php:344
 msgid "Removing ICS Feed"
 msgstr "Removing ICS Feed"
 
-#: lib/calendar-feed/ics.php:311
+#: lib/calendar-feed/ics.php:347
 msgid "Keep Events"
 msgstr "Keep Events"
 
-#: lib/calendar-feed/ics.php:314
+#: lib/calendar-feed/ics.php:350
 msgid "Remove Events"
 msgstr "Remove Events"
 
-#: lib/calendar-feed/ics.php:554
+#: lib/calendar-feed/ics.php:590
 msgid "Deleted %d events"
 msgstr "Deleted %d events"
 
-#: lib/calendar-feed/ics.php:589
+#: lib/calendar-feed/ics.php:625
 msgid "Feed deleted"
 msgstr "Feed deleted"
 
@@ -917,7 +921,7 @@ msgstr ""
 "<p>The event <strong>%s</strong> was cloned succesfully. <a href=\"%s\">Edit "
 "cloned event</a></p>"
 
-#: lib/css/frontend.php:169
+#: lib/css/frontend.php:171
 msgid ""
 "The LESS file compiled correctly but there was an error while saving the "
 "generated CSS to persistence."
@@ -925,7 +929,7 @@ msgstr ""
 "The LESS file compiled correctly but there was an error while saving the "
 "generated CSS to persistence."
 
-#: lib/css/frontend.php:175
+#: lib/css/frontend.php:177
 msgid ""
 "<p><strong>There was an error while compiling CSS.</strong> The message "
 "returned was: <em>%s</em></p>"
@@ -933,7 +937,7 @@ msgstr ""
 "<p><strong>There was an error while compiling CSS.</strong> The message "
 "returned was: <em>%s</em></p>"
 
-#: lib/css/frontend.php:203
+#: lib/css/frontend.php:205
 msgid ""
 "Theme options were successfully reset to their default values. <a "
 "href='%s'>Visit site</a>"
@@ -941,7 +945,7 @@ msgstr ""
 "Theme options were successfully reset to their default values. <a "
 "href='%s'>Visit site</a>"
 
-#: lib/css/frontend.php:210
+#: lib/css/frontend.php:212
 msgid "Theme options were updated successfully. <a href='%s'>Visit site</a>"
 msgstr "Theme options were updated successfully. <a href='%s'>Visit site</a>"
 
@@ -982,6 +986,26 @@ msgstr ""
 #: lib/date/timezone.php:421
 msgid "Selected timezone \"UTC%+d\" will be treated as %s."
 msgstr "Selected timezone \"UTC%+d\" will be treated as %s."
+
+#: lib/environment/check.php:40
+msgid "Select an option in the <strong>Calendar page</strong> dropdown list."
+msgstr "Select an option in the <strong>Calendar page</strong> dropdown list."
+
+#: lib/environment/check.php:53
+msgid ""
+"The plugin is installed, but has not been configured. <a href=\"%s\">Click "
+"here to set it up now &raquo;</a>"
+msgstr ""
+"The plugin is installed, but has not been configured. <a href=\"%s\">Click "
+"here to set it up now &raquo;</a>"
+
+#: lib/environment/check.php:63
+msgid ""
+"The plugin is installed, but has not been configured. Please log in as an "
+"Administrator to set it up."
+msgstr ""
+"The plugin is installed, but has not been configured. Please log in as an "
+"Administrator to set it up."
 
 #: lib/exception/handler.php:260
 msgid "All In One Event Calendar has been disabled due to an error:"
@@ -2097,9 +2121,9 @@ msgstr "Today background"
 msgid "All-in-One Event Calendar by Time.ly"
 msgstr "All-in-One Event Calendar by Time.ly"
 
-#. #-#-#-#-#  all-in-one-event-calendar.pot (All-in-One Event Calendar by Time.ly 2.0.8)  #-#-#-#-#
+#. #-#-#-#-#  all-in-one-event-calendar.pot (All-in-One Event Calendar by Time.ly 2.0.9)  #-#-#-#-#
 #. Plugin URI of the plugin/theme
-#. #-#-#-#-#  all-in-one-event-calendar.pot (All-in-One Event Calendar by Time.ly 2.0.8)  #-#-#-#-#
+#. #-#-#-#-#  all-in-one-event-calendar.pot (All-in-One Event Calendar by Time.ly 2.0.9)  #-#-#-#-#
 #. Author URI of the plugin/theme
 msgid "http://time.ly/"
 msgstr "http://time.ly/"

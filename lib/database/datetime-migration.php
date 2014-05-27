@@ -216,6 +216,7 @@ class Ai1ecdm_Datetime_Migration {
 			if (
 				! (
 					$this->drop_indices( $table, $name )
+					&& $this->out_of_bounds_fix( $table, $name )
 					&& $this->add_columns( $name, $columns )
 					&& $this->transform_dates( $name, $columns )
 					&& $this->replace_columns( $name, $columns )
@@ -431,6 +432,28 @@ class Ai1ecdm_Datetime_Migration {
 	 */
 	public function get_tables() {
 		return $this->_tables;
+	}
+
+	/**
+	 * Delete events dated before or at `1970-01-01 00:00:00`.
+	 *
+	 * @param string $table Original table.
+	 * @param string $name  Temporary table to replay changes onto.
+	 *
+	 * @return bool Success.
+	 */
+	public function out_of_bounds_fix( $table, $name ) {
+		static $instances = null;
+		if ( null === $instances ) {
+			$instances = $this->_dbi->get_table_name( 'ai1ec_event_instances' );
+		}
+		if ( $instances !== $table ) {
+			return true;
+		}
+		$query = 'DELETE FROM `' .
+			$this->_dbi->get_table_name( $name ) .
+			'` WHERE `start` <= \'1970-01-01 00:00:00\'';
+		return ( false !== $this->_dbi->query( $query ) );
 	}
 
 	/**

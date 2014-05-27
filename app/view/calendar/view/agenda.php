@@ -43,6 +43,7 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 			),
 			$view_args['time_limit']
 		);
+		$this->_update_meta( $results['events'] );
 		$dates = $this->get_agenda_like_date_array(
 			$results['events'],
 			$view_args['request']

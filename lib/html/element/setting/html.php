@@ -26,4 +26,15 @@ class Ai1ec_Html_Setting_Html extends Ai1ec_Html_Element_Settings {
 		return parent::render( $file->get_content() );
 	}
 
+	/*
+	 * Get embedding arguments
+	 *
+	 * @return array
+	 */
+	protected function get_embedding_args() {
+		return array(
+			'viewing_events_shortcodes' => apply_filters( 'ai1ec_viewing_events_shortcodes', null ),
+		);
+	}
+
 }

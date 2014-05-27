@@ -400,7 +400,6 @@ class Ai1ec_Front_Controller {
 			'ai1ec_dbi_debug',
 			array( 'http.request', 'debug_filter' )
 		);
-		
 		// editing a child instance
 		if ( basename( $_SERVER['SCRIPT_NAME'] ) === 'post.php' ) {
 			$dispatcher->register_action( 
@@ -446,6 +445,12 @@ class Ai1ec_Front_Controller {
 		$dispatcher->register_action(
 			'widgets_init',
 			array( 'view.calendar.widget', 'register_widget' )
+		);
+
+		// register ICS cron action
+		$dispatcher->register_action(
+			Ai1ecIcsConnectorPlugin::HOOK_NAME,
+			array( 'calendar-feed.ics', 'cron' )
 		);
 
 		if ( is_admin() ) {
@@ -587,6 +592,10 @@ class Ai1ec_Front_Controller {
 			$dispatcher->register_action(
 				'wp_ajax_ai1ec_rescan_cache',
 				array( 'twig.cache', 'rescan' )
+			);
+			$dispatcher->register_action(
+				'admin_init',
+				array( 'environment.check', 'run_checks' )
 			);
 		} else { // ! is_admin()
 			$dispatcher->register_shortcode(
@@ -750,8 +759,8 @@ class Ai1ec_Front_Controller {
 	protected function _initialize_registry( $ai1ec_loader ) {
 		global $ai1ec_registry;
 		$this->_registry = new Ai1ec_Registry_Object( $ai1ec_loader );
-		$ai1ec_registry = $this->_registry;
 		Ai1ec_Time_Utility::set_registry( $this->_registry );
+		$ai1ec_registry  = $this->_registry;
 	}
 
 	/**

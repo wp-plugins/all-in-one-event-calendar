@@ -109,7 +109,7 @@ class Ai1ec_Date_System extends Ai1ec_Base {
 	 *
 	 * @param int    $timestamp UNIX timestamp representing a date.
 	 * @param string $pattern   Key of date pattern (@see
-	 *                          Ai1ec_Time_Utility::get_date_patterns()) to
+	 *                          self::get_date_format_patter()) to
 	 *                          format date with
 	 *
 	 * @return string Formatted date string.
@@ -140,11 +140,11 @@ class Ai1ec_Date_System extends Ai1ec_Base {
 	/**
 	 * Returns a formatted date given a timestamp, based on the given date format.
 	 *
-	 * @see  Ai1ec_Time_Utility::get_date_patterns() for supported date formats.
+	 * @see  self::get_date_patterns() for supported date formats.
 	 *
 	 * @param  int $timestamp    UNIX timestamp representing a date (in GMT)
 	 * @param  string $pattern   Key of date pattern (@see
-	 *                           Ai1ec_Time_Utility::get_date_patterns()) to
+	 *                           self::get_date_format_patter()) to
 	 *                           format date with
 	 * @return string            Formatted date string
 	 */

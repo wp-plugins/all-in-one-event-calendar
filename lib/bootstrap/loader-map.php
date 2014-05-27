@@ -425,6 +425,13 @@
       'c' => 'Ai1ec_Engine_Not_Set_Exception',
       'i' => 'g',
     ),
+    'Ai1ec_Environment_Checks' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'environment' . DIRECTORY_SEPARATOR . 'check.php',
+      'c' => 'Ai1ec_Environment_Checks',
+      'i' => 'g',
+      'r' => 'y',
+    ),
     'Ai1ec_Error_Exception' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'exception' . DIRECTORY_SEPARATOR . 'error.php',
@@ -1513,18 +1520,6 @@
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'iCal' . DIRECTORY_SEPARATOR . 'block' . DIRECTORY_SEPARATOR . 'SG_iCal_VTimeZone.php',
       'c' => 'SG_iCal_VTimeZone',
-      'i' => 'g',
-    ),
-    'Twig.Autoloader' => 
-    array (
-      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'Twig' . DIRECTORY_SEPARATOR . 'Autoloader.php',
-      'c' => 'Twig_Autoloader',
-      'i' => 'g',
-    ),
-    'Twig_Autoloader' => 
-    array (
-      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'Twig' . DIRECTORY_SEPARATOR . 'Autoloader.php',
-      'c' => 'Twig_Autoloader',
       'i' => 'g',
     ),
     'Twig_Compiler' => 
@@ -2909,6 +2904,13 @@
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'edd' . DIRECTORY_SEPARATOR . 'EDD_SL_Plugin_Updater.php',
       'c' => 'EDD_SL_Plugin_Updater',
       'i' => 'g',
+    ),
+    'environment.check' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'environment' . DIRECTORY_SEPARATOR . 'check.php',
+      'c' => 'Ai1ec_Environment_Checks',
+      'i' => 'g',
+      'r' => 'y',
     ),
     'event.callback.abstract' => 
     array (

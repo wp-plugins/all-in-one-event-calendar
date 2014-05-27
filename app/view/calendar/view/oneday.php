@@ -210,6 +210,7 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 			$search_end,
 			$filter
 		);
+		$this->_update_meta( $day_events );
 		// Split up events on a per-day basis
 		$all_events = array();
 

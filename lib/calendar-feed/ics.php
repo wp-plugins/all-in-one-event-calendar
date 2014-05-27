@@ -29,6 +29,11 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 		'id' => 'ics',
 	);
 
+	/**
+	 * @var Ai1ec_Compatibility_Xguard Instance of execution guard.
+	 */
+	protected $_xguard   = null;
+
 	public function get_tab_title() {
 		return Ai1ec_I18n::__( 'ICS' );
 	}
@@ -39,6 +44,7 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 		$this->_install_schema();
 		// Install the CRON
 		$this->install_cron();
+		$this->_xguard = $registry->get( 'compatibility.xguard' );
 	}
 
 	/**
@@ -47,30 +53,65 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 	 * Imports the selected iCalendar feed
 	 *
 	 * @return void
-	 **/
+	 */
 	public function update_ics_feed( $feed_id = false ) {
-		$db = $this->_registry->get( 'dbi.dbi' );
 		$ajax = false;
 		// if no feed is provided, we are using ajax
-		if( ! $feed_id ) {
-			$ajax = true;
+		if ( ! $feed_id ) {
+			$ajax    = true;
 			$feed_id = (int) $_REQUEST['ics_id'];
 		}
+		$cron_name = $this->_import_lock_name( $feed_id );
+		$output    = array(
+			'data' => array(
+				'ics_id'  => $feed_id,
+				'error'   => true,
+				'message' => Ai1ec_I18n::__(
+					'Another import process in progress. Please try again later.'
+				),
+			),
+		);
+		// hold import lock for half an hour
+		if ( $this->_xguard->acquire( $cron_name, 1800 ) ) {
+			$output = $this->process_ics_feed_update( $ajax, $feed_id );
+		}
+		$this->_xguard->release( $cron_name );
+		if ( true === $ajax ) {
+			$render_json = $this->_registry->get(
+				'http.response.render.strategy.json'
+			);
+			return $render_json->render( $output );
+		}
+		return $output;
+	}
+
+	/**
+	 * Perform actual feed refresh.
+	 *
+	 * @param bool $ajax    True when handling AJAX feed.
+	 * @param int  $feed_id ID of feed to process.
+	 *
+	 * @return array Output to return to user.
+	 */
+	public function process_ics_feed_update( $ajax, $feed_id ) {
+		$db         = $this->_registry->get( 'dbi.dbi' );
 		$table_name = $db->get_table_name( 'ai1ec_event_feeds' );
-		$feed = $db->get_row(
+		$feed       = $db->get_row(
 			$db->prepare(
-				"SELECT * FROM $table_name WHERE feed_id = %d", $feed_id
+				'SELECT * FROM ' . $table_name . ' WHERE feed_id = %d', $feed_id
 			)
 		);
 		$output = array();
 		if ( $feed ) {
 			// flush the feed
 			$this->flush_ics_feed( false, $feed->feed_url );
-			$count = 0;
-			$message = false;
+			$count    = 0;
+			$message  = false;
 			// reimport the feed
-			$response = wp_remote_get( $feed->feed_url, array( 'sslverify' => false, 'timeout' => 120 ) );
-
+			$response = wp_remote_get(
+				$feed->feed_url,
+				array( 'sslverify' => false, 'timeout' => 120 )
+			);
 
 			if (
 				! is_wp_error( $response )             &&
@@ -81,9 +122,11 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 				! empty( $response['body'] )
 			) {
 				try {
-					$import_export = $this->_registry->get( 'controller.import-export' );
-					$args = array();
-					$args['feed'] = $feed;
+					$import_export = $this->_registry->get(
+						'controller.import-export'
+					);
+					$args                   = array();
+					$args['feed']           = $feed;
 					$args['comment_status'] = 'open';
 					if ( isset( $feed->comments_enabled ) && $feed->comments_enabled < 1 ) {
 						$args['comment_status'] = 'closed';
@@ -135,12 +178,7 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 			);
 		}
 		$output['data']['ics_id'] = $feed_id;
-		if( true === $ajax ) {
-			$render_json = $this->_registry->get(
-				'http.response.render.strategy.json'
-			);
-			$render_json->render( $output );
-		}
+		return $output;
 	}
 
 	/**
@@ -175,10 +213,6 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 			self::HOOK_NAME,
 			$this->_registry->get( 'model.settings' )->get( 'ics_cron_freq' ),
 			AI1EC_CRON_VERSION
-		);
-		$this->_registry->get( 'event.dispatcher' )->register_action(
-			self::HOOK_NAME,
-			array( 'calendar-feed.ics', 'cron' )
 		);
 	}
 
@@ -235,20 +269,22 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 		$post_type = $this->_registry->get( 'post.custom-type' );
 		$post_type->register();
 
-		// ====================
-		// = Select all feeds =
-		// ====================
-		$table_name = $db->get_table_name( 'ai1ec_event_feeds' );
-		$sql = "SELECT * FROM {$table_name}";
-		$feeds = $db->get_results( $sql );
+		// =======================
+		// = Select all feed IDs =
+		// =======================
+		$sql        = 'SELECT `feed_id` FROM ' .
+			$db->get_table_name( 'ai1ec_event_feeds' );
+		$feeds      = $db->get_col( $sql );
 
 		// ===============================
 		// = go over each iCalendar feed =
 		// ===============================
-		foreach ( $feeds as $feed ) {
+		foreach ( $feeds as $feed_id ) {
 			// update the feed
-			$this->update_ics_feed( $feed->feed_id );
+			$this->update_ics_feed( $feed_id );
 		}
+		// Release lock
+		$xguard->release( $guard_name );
 	}
 
 	/**
@@ -499,16 +535,16 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 	 * Delete feeds and events
 	 */
 	public function delete_feeds_and_events() {
-		$remove_events = $_POST['remove_events'] === 'true' ? TRUE : FALSE;
+		$remove_events = $_POST['remove_events'] === 'true' ? true : false;
 		$ics_id = isset( $_POST['ics_id'] ) ? (int) $_REQUEST['ics_id'] : 0;
 		if ( $remove_events ) {
-			$output = $this->flush_ics_feed( TRUE, FALSE );
-			if ( $output['error'] === FALSE ) {
-				$this->delete_ics_feed( FALSE, $ics_id );
+			$output = $this->flush_ics_feed( true, false );
+			if ( $output['error'] === false ) {
+				$this->delete_ics_feed( false, $ics_id );
 			}
 			echo json_encode( $output );
 		} else {
-			$this->delete_ics_feed( TRUE, $ics_id );
+			$this->delete_ics_feed( true, $ics_id );
 		}
 		exit();
 	}
@@ -592,6 +628,17 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 		if ( $ajax ) {
 			echo json_encode( $output );
 		}
+	}
+
+	/**
+	 * Get name to use for import locking via xguard.
+	 *
+	 * @param int $feed_id ID of feed being imported.
+	 *
+	 * @return string Name to use in xguard.
+	 */
+	protected function _import_lock_name( $feed_id ) {
+		return 'ics_import_' . (int)$feed_id;
 	}
 
 }

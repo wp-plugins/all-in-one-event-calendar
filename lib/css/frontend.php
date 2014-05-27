@@ -121,8 +121,10 @@ class Ai1ec_Css_Frontend extends Ai1ec_Base {
 	public function get_css_url() {
 		$time = $this->db_adapter->get( self::QUERY_STRING_PARAM );
 		$template_helper = $this->_registry->get( 'template.link.helper' );
-		return $template_helper->get_site_url() . "/?" . self::QUERY_STRING_PARAM .
-			"=$time";
+		return add_query_arg(
+			array( self::QUERY_STRING_PARAM => $time, ),
+			trailingslashit( $template_helper->get_site_url() )
+		);
 	}
 
 	/**
@@ -136,7 +138,7 @@ class Ai1ec_Css_Frontend extends Ai1ec_Base {
 			$preview = "&preview=1&nocache={$now}&ai1ec_stylesheet=" . $_GET['ai1ec_stylesheet'];
 		}
 		$url = $this->get_css_url() . $preview;
-		wp_enqueue_style( 'ai1ec_style', $url );
+		wp_enqueue_style( 'ai1ec_style', $url, array(), AI1EC_VERSION );
 	}
 
 	/**
@@ -259,7 +261,8 @@ class Ai1ec_Css_Frontend extends Ai1ec_Base {
 	private function save_less_parse_time() {
 		$this->db_adapter->set(
 			self::QUERY_STRING_PARAM,
-			$this->_registry->get( 'date.system' )->current_time()
+			$this->_registry->get( 'date.system' )->current_time(),
+			true
 		);
 	}
 }

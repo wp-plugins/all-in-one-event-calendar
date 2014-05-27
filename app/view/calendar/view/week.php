@@ -206,6 +206,7 @@ class Ai1ec_Calendar_View_Week  extends Ai1ec_Calendar_View_Abstract {
 			$filter,
 			true
 		);
+		$this->_update_meta( $week_events );
 		// Split up events on a per-day basis
 		$all_events = array();
 		$this->_days_cache = $this->_registry->get( 'cache.memory' );

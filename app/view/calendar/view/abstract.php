@@ -131,6 +131,25 @@ abstract class Ai1ec_Calendar_View_Abstract extends Ai1ec_Base {
 	}
 
 	/**
+	 * Update metadata for retrieved events.
+	 *
+	 * This speeds up further meta data requests.
+	 *
+	 * @param array $events List of events retrieved.
+	 *
+	 * @return void
+	 */
+	protected function _update_meta( array $events ) {
+		$post_ids = array();
+		foreach ( $events as $event ) {
+			$post_ids[] = (int)$event->get( 'post_id' );
+		}
+		update_meta_cache( 'post', $post_ids );
+		$this->_registry->get( 'model.taxonomy' )
+			->update_meta( $post_ids );
+	}
+
+	/**
 	 * Get the navigation html
 	 *
 	 * @param bool $no_navigation

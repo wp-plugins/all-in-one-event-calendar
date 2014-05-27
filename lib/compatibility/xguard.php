@@ -76,7 +76,11 @@ class Ai1ec_Compatibility_Xguard extends Ai1ec_Base {
 	 * @return bool Not expected to fail.
 	 */
 	public function release( $name ) {
-		return true;
+		return false !== $this->_registry->get( 'dbi.dbi' )->delete(
+			'options',
+			array( 'option_name' => $this->safe_name( $name ) ),
+			array( '%s' )
+		);
 	}
 
 	/**
