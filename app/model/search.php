@@ -387,6 +387,35 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 	}
 
 	/**
+	 * Get event by UID. Uid must be unique.
+	 * 
+	 * @param string $uid
+	 */
+	public function get_matching_event_by_uid_and_url( $uid, $url ) {
+		$dbi        = $this->_registry->get( 'dbi.dbi' );
+		$table_name = $dbi->get_table_name( 'ai1ec_events' );
+		$query      = 'SELECT `post_id` FROM ' . $table_name . '
+						WHERE
+						ical_uid = %s AND
+						ical_feed_url = %s';
+		return $dbi->get_var( $dbi->prepare( $query, array( $uid, $url ) ) );
+	}
+
+	/**
+	 * Get event ids for the passed feed url
+	 * 
+	 * @param string $feed_url
+	 */
+	public function get_event_ids_for_feed( $feed_url ) {
+		$dbi        = $this->_registry->get( 'dbi.dbi' );
+		$table_name = $dbi->get_table_name( 'ai1ec_events' );
+		$query      = 'SELECT `post_id` FROM ' . $table_name . '
+						WHERE
+						ical_feed_url = %s';
+		return $dbi->get_col( $dbi->prepare( $query, array( $feed_url ) ) );
+	}
+
+	/**
 	 * Check if given event must be treated as all-day event.
 	 *
 	 * Event instances that span 24 hours are treated as all-day.
