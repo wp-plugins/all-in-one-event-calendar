@@ -179,6 +179,7 @@ class Ai1ec_Event_Creating extends Ai1ec_Base {
 		$event->set( 'show_coordinates', $show_coordinates );
 		$event->set( 'longitude',        trim( $longitude ) );
 		$event->set( 'latitude',         trim( $latitude ) );
+		$event->set( 'ical_uid',         $event->get_uid() );
 
 		// let other extensions save their fields.
 		do_action( 'ai1ec_save_post', $event );

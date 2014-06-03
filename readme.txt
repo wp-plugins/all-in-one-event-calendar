@@ -5,7 +5,7 @@ calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WorPress at least: 3.5
 Tested up to: 3.9.1
-Stable tag: 2.0.9
+Stable tag: 2.0.10
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -171,6 +171,25 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.0.10 =
+* Improved "Subscribe" to calendar button;
+* Modified subscription options, removing some elements from content
+when subscribing in products that do not support rich formatting;
+* Restored option to choose week/day view start/end times;
+* Restored borders to Agenda View;
+* Moved translations from Twig files to ensure GlotPress captures all
+translation strings;
+* Fixed issue where past dates (like 1922-05-05) selected in the
+frontend form datepicker caused Core to deactivate;
+* Fixed issue where older versions of WordPress did not show all Event
+menu items (add/edit);
+* Improved UID usage - events are now first recognized by UID thus
+avoiding overwriting of events previously imported from some feed;
+* Fixed issue where ICS import was failing on systems where use of
+undeclared variable caused processing to stop;
+* During update unused legacy themes will now be removed where
+possible;
 
 = Version 2.0.9 =
 * Improved plugin performance by reducing the number of database

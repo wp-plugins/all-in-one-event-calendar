@@ -392,18 +392,25 @@ class Ai1ec_Event extends Ai1ec_Base {
 	}
 
 	/**
-	 * Return UID to use according to ICS rules.
+	 * Get UID to be used for current event.
 	 *
-	 * @return string UID event identifier.
+	 * The generated format is cached in static variable within this function
+	 * to re-use when generating UIDs for different entries.
 	 *
-	 * @staticvar string $_blog_url Base URL of blog, used as part of UID.
+	 * @return string Generated UID.
+	 *
+	 * @staticvar string $format Cached format.
 	 */
 	public function get_uid() {
-		static $_blog_url = NULL;
-		if ( NULL === $_blog_url ) {
-			$_blog_url = bloginfo( 'url' );
+		static $format = null;
+		if ( null === $format ) {
+			$site_url = parse_url( get_site_url() );
+			$format   = 'ai1ec-%d@' . $site_url['host'];
+			if ( isset( $site_url['path'] ) ) {
+				$format .= $site_url['path'];
+			}
 		}
-		return $this->get( 'post_id' ) . '@' . $_blog_url;
+		return sprintf( $format, $this->get( 'post_id' ) );
 	}
 
 	/**

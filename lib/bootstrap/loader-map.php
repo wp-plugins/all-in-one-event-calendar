@@ -418,6 +418,7 @@
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'notification' . DIRECTORY_SEPARATOR . 'email.php',
       'c' => 'Ai1ec_Email_Notification',
       'i' => 'n',
+      'r' => 'y',
     ),
     'Ai1ec_Engine_Not_Set_Exception' => 
     array (
@@ -932,6 +933,7 @@
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'notification' . DIRECTORY_SEPARATOR . 'abstract.php',
       'c' => 'Ai1ec_Notification',
       'i' => 'g',
+      'r' => 'y',
     ),
     'Ai1ec_Notification_Admin' => 
     array (
@@ -1330,6 +1332,12 @@
       'c' => 'Ai1ec_View_Calendar_Shortcode',
       'i' => 'g',
       'r' => 'y',
+    ),
+    'Ai1ec_View_Calendar_SubscribeButton' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'calendar' . DIRECTORY_SEPARATOR . 'subscribe-button.php',
+      'c' => 'Ai1ec_View_Calendar_SubscribeButton',
+      'i' => 'g',
     ),
     'Ai1ec_View_Calendar_Taxonomy' => 
     array (
@@ -3595,6 +3603,7 @@
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'notification' . DIRECTORY_SEPARATOR . 'abstract.php',
       'c' => 'Ai1ec_Notification',
       'i' => 'g',
+      'r' => 'y',
     ),
     'notification.admin' => 
     array (
@@ -3608,6 +3617,7 @@
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'notification' . DIRECTORY_SEPARATOR . 'email.php',
       'c' => 'Ai1ec_Email_Notification',
       'i' => 'n',
+      'r' => 'y',
     ),
     'p28n.i18n' => 
     array (
@@ -4878,6 +4888,12 @@
       'c' => 'Ai1ec_View_Calendar_Shortcode',
       'i' => 'g',
       'r' => 'y',
+    ),
+    'view.calendar.subscribe-button' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'calendar' . DIRECTORY_SEPARATOR . 'subscribe-button.php',
+      'c' => 'Ai1ec_View_Calendar_SubscribeButton',
+      'i' => 'g',
     ),
     'view.calendar.taxonomy' => 
     array (
