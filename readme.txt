@@ -5,7 +5,7 @@ calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WorPress at least: 3.5
 Tested up to: 3.9.1
-Stable tag: 2.0.10
+Stable tag: 2.0.11
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -171,6 +171,10 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.0.11 =
+* Fixed issue where incorrectly recognized unique identifiers (UIDs)
+from ICS feeds caused the creation of duplicate events.
 
 = Version 2.0.10 =
 * Improved "Subscribe" to calendar button;

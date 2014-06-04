@@ -387,18 +387,30 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 	}
 
 	/**
-	 * Get event by UID. Uid must be unique.
-	 * 
-	 * @param string $uid
+	 * Get event by UID. UID must be unique.
+	 *
+	 * NOTICE: deletes events with that UID if they have different URLs.
+	 *
+	 * @param string $uid UID from feed.
+	 * @param string $uid Feed URL.
+	 *
+	 * @return int|null Matching Event ID or NULL if none found.
 	 */
 	public function get_matching_event_by_uid_and_url( $uid, $url ) {
+		if ( ! isset( $uid{1} ) ) {
+			return null;
+		}
 		$dbi        = $this->_registry->get( 'dbi.dbi' );
 		$table_name = $dbi->get_table_name( 'ai1ec_events' );
-		$query      = 'SELECT `post_id` FROM ' . $table_name . '
-						WHERE
-						ical_uid = %s AND
-						ical_feed_url = %s';
-		return $dbi->get_var( $dbi->prepare( $query, array( $uid, $url ) ) );
+		$argv       = array( $uid, $url );
+		// fix issue where invalid feed URLs were assigned
+		$delete     = 'DELETE FROM `'. $table_name . '` WHERE `ical_uid` = %s' .
+			' AND `ical_feed_url` != %s';
+		$dbi->query( $dbi->prepare( $delete, $argv ) );
+		// retrieve actual feed ID if any
+		$select = 'SELECT `post_id` FROM `' . $table_name .
+			'` WHERE `ical_uid` = %s';
+		return $dbi->get_var( $dbi->prepare( $select, $argv ) );
 	}
 
 	/**
