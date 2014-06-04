@@ -410,6 +410,32 @@ class Ai1ec_Settings extends Ai1ec_App {
 				),
 				'default'  => 10,
 			),
+			'week_view_starts_at' => array(
+				'type' => 'int',
+				'renderer' => array(
+					'class'     => 'input',
+					'tab'       => 'viewing-events',
+					'item'      => 'viewing-events',
+					'label'     => Ai1ec_I18n::__( 'Week/Day view starts at' ),
+					'type'      => 'append',
+					'append'    => 'hrs',
+					'validator' => 'numeric',
+				),
+				'default'  => 8,
+			),
+			'week_view_ends_at' => array(
+				'type' => 'int',
+				'renderer' => array(
+					'class'     => 'input',
+					'tab'       => 'viewing-events',
+					'item'      => 'viewing-events',
+					'label'     => Ai1ec_I18n::__( 'Week/Day view ends at' ),
+					'type'      => 'append',
+					'append'    => 'hrs',
+					'validator' => 'numeric',
+				),
+				'default'  => 24,
+			),
 			'month_word_wrap' => array(
 				'type'     => 'bool',
 				'renderer' => array(

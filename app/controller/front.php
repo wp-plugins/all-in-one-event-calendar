@@ -261,13 +261,14 @@ class Ai1ec_Front_Controller {
 			$legacy      = ! in_array( $theme_name, $core_themes );
 
 			if ( $legacy ) {
-				$root = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . AI1EC_THEMES_FOLDER;
-				$url  = WP_CONTENT_URL . '/' . AI1EC_THEMES_FOLDER . '/' . $theme_name;
+				$root = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . AI1EC_THEME_FOLDER;
+				$url  = WP_CONTENT_URL . '/' . AI1EC_THEME_FOLDER . '/' . $theme_name;
 			} else {
 				$root = AI1EC_DEFAULT_THEME_ROOT;
 				$url  = AI1EC_THEMES_URL . '/' . $theme_name;
 			}
-
+			// if it's from 1.x, move folders to avoid confusion
+			$this->_registry->get( 'theme.search' )->move_themes_to_backup( $core_themes );
 			// Ensure existence of theme directory.
 			if ( ! is_dir( $root . DIRECTORY_SEPARATOR . $theme_name ) ) {
 				// It's missing; something is wrong with this theme. Reset theme to
@@ -300,7 +301,7 @@ class Ai1ec_Front_Controller {
 		// public beta release.
 		else if ( ! isset( $theme['theme_url'] ) ) {
 			if ( $theme['legacy'] ) {
-				$theme['theme_url'] = WP_CONTENT_URL . '/' . AI1EC_THEMES_FOLDER . '/' .
+				$theme['theme_url'] = WP_CONTENT_URL . '/' . AI1EC_THEME_FOLDER . '/' .
 					$theme['stylesheet'];
 			} else {
 				$theme['theme_url'] = AI1EC_THEMES_URL . '/' . $theme['stylesheet'];
@@ -458,6 +459,11 @@ class Ai1ec_Front_Controller {
 			$dispatcher->register_action(
 				'wp_ajax_ai1ec_get_repeat_box',
 				array( 'view.admin.get-repeat-box', 'get_repeat_box' )
+			);
+			// add dismissable notice handler
+			$dispatcher->register_action(
+				'wp_ajax_ai1ec_dismiss_notice',
+				array( 'notification.admin', 'dismiss_notice' )
 			);
 			// save rrurle and convert it to text
 			$dispatcher->register_action(
