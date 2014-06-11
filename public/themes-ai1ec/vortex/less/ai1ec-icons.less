@@ -1,37 +1,18 @@
 @timely-font-path: @fontdir_default;
 
 @font-face {
-	font-family: 'Timely Icons';
-	src:url('@{timely-font-path}/timely-icons.eot');
-	src:url('@{timely-font-path}/timely-icons.eot?#iefix') format('embedded-opentype'),
-		url('@{timely-font-path}/timely-icons.svg#Timely-Icons') format('svg'),
-		url('@{timely-font-path}/timely-icons.woff') format('woff'),
-		url('@{timely-font-path}/timely-icons.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
-}
-
-@font-face {
 	font-family: 'Timely Logo Icon';
-	src:url('@{timely-font-path}/timely-sub-icons.eot');
-	src:url('@{timely-font-path}/timely-sub-icons.eot?#iefix') format('embedded-opentype'),
-		url('@{timely-font-path}/timely-sub-icons.svg#Timely-Icons') format('svg'),
-		url('@{timely-font-path}/timely-sub-icons.woff') format('woff'),
-		url('@{timely-font-path}/timely-sub-icons.ttf') format('truetype');
+	src:url('@{timely-font-path}/ai1ec-icons.eot');
+	src:url('@{timely-font-path}/ai1ec-icons.eot?#iefix') format('embedded-opentype'),
+		url('@{timely-font-path}/ai1ec-icons.svg#Timely-Icons') format('svg'),
+		url('@{timely-font-path}/ai1ec-icons.woff') format('woff'),
+		url('@{timely-font-path}/ai1ec-icons.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
 
 /* Use the following CSS code if you want to have a class per icon */
-[class^="timely-icon-"]:before, [class*=" timely-icon-"]:before {
-	display: inline-block;
-	font-family: 'Timely Icons';
-	font-style: normal;
-	font-weight: normal;
-	speak: none;
-	vertical-align: baseline;
-}
-[class^="timely-sub-icon-"]:before, [class*=" timely-sub-icon-"]:before {
+[class^="ai1ec-icon-"]:before, [class*=" ai1ec-icon-"]:before {
 	display: inline-block;
 	font-family: 'Timely Logo Icon';
 	font-style: normal;
@@ -39,22 +20,40 @@
 	speak: none;
 	vertical-align: baseline;
 }
-.timely-sub-icon-calendar:before {
+.ai1ec-icon-agenda:before {
+	content: "\e603";
+}
+.ai1ec-icon-oneday:before {
+	content: "\e604";
+}
+.ai1ec-icon-month:before {
+	content: "\e602";
+}
+.ai1ec-icon-week:before {
+	content: "\e605";
+}
+.ai1ec-icon-posterboard:before {
+	content: "\e600";
+}
+.ai1ec-icon-stream:before {
+	content: "\e601";
+}
+.ai1ec-icon-calendar:before {
 	content: "\f073";
 }
-.timely-sub-icon-rss:before {
+.ai1ec-icon-rss:before {
 	content: "\f09e";
 }
-.timely-sub-icon-google:before {
+.ai1ec-icon-google:before {
 	content: "\f0d5";
 }
-.timely-sub-icon-apple:before {
+.ai1ec-icon-apple:before {
 	content: "\f179";
 }
-.timely-sub-icon-windows:before {
+.ai1ec-icon-windows:before {
 	content: "\f17a";
 }
-.timely-sub-icon-timely:before {
+.ai1ec-icon-timely:before {
 	content: "\21";
 }
 .timely-icon-timely-logomark:before {

@@ -403,12 +403,12 @@ class Ai1ec_Front_Controller {
 		);
 		// editing a child instance
 		if ( basename( $_SERVER['SCRIPT_NAME'] ) === 'post.php' ) {
-			$dispatcher->register_action( 
-				'admin_action_editpost', 
-				array( 'model.event.parent', 'admin_init_post' ) 
+			$dispatcher->register_action(
+				'admin_action_editpost',
+				array( 'model.event.parent', 'admin_init_post' )
 			);
 		}
-		// post row action for parent/child 
+		// post row action for parent/child
 		$dispatcher->register_action(
 			'post_row_actions',
 			array( 'model.event.parent', 'post_row_actions' ),
@@ -612,9 +612,13 @@ class Ai1ec_Front_Controller {
 				'after_setup_theme',
 				array( 'theme.loader', 'execute_theme_functions' )
 			);
+			$dispatcher->register_action(
+				'the_post',
+				array( 'post.content', 'check_content' ),
+				PHP_INT_MAX
+			);
 		}
 	}
-
 	/**
 	 * Outputs menu icon between head tags
 	 */

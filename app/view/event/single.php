@@ -50,6 +50,8 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 			nl2br( $location->get_location( $event ) ),
 			$event
 		);
+		// objects are passed by reference so an action is ok 
+		do_action( 'ai1ec_single_event_page_before_render', $event );
 
 		$args = array(
 			'event'                   => $event,

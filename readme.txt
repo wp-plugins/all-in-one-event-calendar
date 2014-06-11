@@ -5,7 +5,7 @@ calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WorPress at least: 3.5
 Tested up to: 3.9.1
-Stable tag: 2.0.11
+Stable tag: 2.0.12
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -171,6 +171,18 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.0.12 =
+* Fixed ICS import issue where feed meta information was duplicated
+across feeds;
+* Restored timezones selector to Settings page (visible when none is
+chosen);
+* Improved compatibility with 3rd party themes (Compasso);
+* Improved contact information import/export via ICS feeds;
+* Improved CSS files generation to reduce use of `!important`
+declaration on custom rules;
+* Restored filters `active` state (displaying tags/categories filters
+as active when selected);
 
 = Version 2.0.11 =
 * Fixed issue where incorrectly recognized unique identifiers (UIDs)

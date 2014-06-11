@@ -22,7 +22,7 @@ class Ai1ec_Ics_Import_Export_Engine
 	 * @see Ai1ec_Import_Export_Engine::import()
 	 */
 	public function import( array $arguments ) {
-		$cal = $this->_registry->get('vcalendar');
+		$cal = $this->_registry->get( 'vcalendar' );
 		if ( $cal->parse( $arguments['source'] ) ) {
 			$count = 0;
 			try {
@@ -201,7 +201,6 @@ class Ai1ec_Ics_Import_Export_Engine
 			}
 			$tags = $e->getProperty( "X-TAGS", false, true );
 
-
 			$imported_tags = array();
 			// If the user chose to preserve taxonomies during import, add tags.
 			if( $tags && $feed->keep_tags_categories ) {
@@ -268,7 +267,6 @@ class Ai1ec_Ics_Import_Export_Engine
 				$rdate = explode( ':', $rdate );
 				$rdate = trim( end( $rdate ) );
 			}
-
 
 			// ===================
 			// = Exception dates =

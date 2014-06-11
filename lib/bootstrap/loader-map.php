@@ -967,6 +967,13 @@
       'c' => 'Ai1ec_Persistence_Context',
       'i' => 'Ai1ec_Factory_Strategy.create_persistence_context',
     ),
+    'Ai1ec_Post_Content_Check' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'post' . DIRECTORY_SEPARATOR . 'content.php',
+      'c' => 'Ai1ec_Post_Content_Check',
+      'i' => 'g',
+      'r' => 'y',
+    ),
     'Ai1ec_Post_Custom_Type' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'post' . DIRECTORY_SEPARATOR . 'custom-type.php',
@@ -3643,6 +3650,13 @@
       'c' => 'Ai1ec_Frequency_Utility',
       'i' => 'n',
     ),
+    'post.content' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'post' . DIRECTORY_SEPARATOR . 'content.php',
+      'c' => 'Ai1ec_Post_Content_Check',
+      'i' => 'g',
+      'r' => 'y',
+    ),
     'post.custom-type' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'post' . DIRECTORY_SEPARATOR . 'custom-type.php',
@@ -4791,7 +4805,7 @@
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'iCal' . DIRECTORY_SEPARATOR . 'iCalcreator-2.20' . DIRECTORY_SEPARATOR . 'iCalcreator.class.php',
       'c' => 'vcalendar',
-      'i' => 'g',
+      'i' => 'n',
     ),
     'vevent' => 
     array (
