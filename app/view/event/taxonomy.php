@@ -256,7 +256,7 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 			}
 
 			$html .= '<a ' . $data_type . ' class="' . $class .
-			' ai1ec-term-id-' . $category->term_id . '" ' .
+			' ai1ec-term-id-' . $category->term_id . ' category" ' .
 			$title . $color_style . 'href="' . $href->generate_href() . '">';
 
 			if ( $format === 'blocks' ) {
@@ -269,7 +269,9 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 					'class="ai1ec-fa ai1ec-fa-folder-open"></i>';
 			}
 
-			$html .= esc_html( $category->name ) . '</a>';
+			$html .= '<span class="value">' .
+				esc_html( $category->name ) .
+			'</span></a>';
 			$category = $html;
 		}
 		return implode( ' ', $categories );

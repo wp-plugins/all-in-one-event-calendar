@@ -52,7 +52,7 @@ class Ai1ec_Post_Custom_Type extends Ai1ec_Base {
 			$page_base = get_page_uri( $settings->get( 'calendar_page_id' ) );
 		}
 
-		$rewrite     = array( 'slug' => Ai1ec_I18n::__( 'ai1ec_event' ) );
+		$rewrite     = array( 'slug' => Ai1ec_I18n::__( 'event' ) );
 		$has_archive = true;
 		if (
 			$settings->get( 'calendar_base_url_for_permalinks' ) &&

@@ -58,7 +58,8 @@ class Ai1ec_Less_Lessphp extends Ai1ec_Base {
 		$default_theme_url = AI1EC_DEFAULT_THEME_URL
 	) {
 		parent::__construct( $registry );
-		$this->lessc = $this->_registry->get( 'lessc' );;
+		$this->lessc = $this->_registry->get( 'lessc' );
+		$this->lessc->setFormatter( 'compressed' );
 		$this->default_theme_url = $this->sanitize_default_theme_url( $default_theme_url );
 		$this->parsed_css = '';
 		$this->files = array(
@@ -88,11 +89,12 @@ class Ai1ec_Less_Lessphp extends Ai1ec_Base {
 	 * Parse all the less files resolving the dependencies.
 	 *
 	 * @param array $variables
+	 * @param bool  $compile_core If set to true, it forces compilation of core CSS only, suitable for shipping.
 	 * @throws Ai1ec_File_Not_Found_Exception|Exception
 	 * @throws Exception
 	 * @return string
 	 */
-	public function parse_less_files( array $variables = null ) {
+	public function parse_less_files( array $variables = null, $compile_core = false ) {
 		// If no variables are passed, initialize from DB, config file, and
 		// extension injections in one call.
 		if ( empty( $variables ) ) {
@@ -100,21 +102,30 @@ class Ai1ec_Less_Lessphp extends Ai1ec_Base {
 		}
 		// convert the variables to key / value
 		$variables   = $this->convert_less_variables_for_parsing( $variables );
-		// Inject additional constants from extensions.
-		$variables   = apply_filters( 'ai1ec_less_constants', $variables );
+		// Inject additional constants from extensions if not compiling core only.
+		if ( false === $compile_core ) {
+			
+			$variables   = apply_filters( 'ai1ec_less_constants', $variables );
+		}
+		
 
 		// Load the static variables defined in the theme's variables.less file.
 		$this->load_static_theme_variables();
 		$loader      = $this->_registry->get( 'theme.loader' );
-
-		// Allow extensions to add their own LESS files.
-		$this->files = apply_filters( 'ai1ec_less_files', $this->files );
-		$this->files[] = 'override.less';
+		//Allow extensions to add their own LESS files if not compiling core.
+		if ( false === $compile_core ) {
+			$this->files = apply_filters( 'ai1ec_less_files', $this->files );
+			$this->files[] = 'override.less';
+		}
 
 		// Find out the active theme URL.
 		$option      = $this->_registry->get( 'model.option' );
 		$theme       = $option->get( 'ai1ec_current_theme' );
-
+		// Get default theme for core compilation
+		if ( true === $compile_core ) {
+			$theme = $this->_registry->get( 'controller.front' )
+				->get_default_theme();
+		}
 		$this->lessc->addImportDir(
 			$theme['theme_dir'] . DIRECTORY_SEPARATOR . 'less'
 		);
@@ -151,7 +162,12 @@ class Ai1ec_Less_Lessphp extends Ai1ec_Base {
 		$variables['fontdir_default'] = '~"' . $this->default_theme_url . 'font"';
 		$variables['imgdir'] = '~"' . $theme['theme_url'] . '/img"';
 		$variables['imgdir_default'] = '~"' . $this->default_theme_url . 'img"';
-
+		if ( true === $compile_core ) {
+			$variables['fontdir'] = '~"../font"';
+			$variables['fontdir_default'] = '~"../font"';
+			$variables['imgdir'] = '~"../img"';
+			$variables['imgdir_default'] = '~"../img"';
+		}
 		try {
 			$this->parsed_css = $this->lessc->parse(
 				$this->unparsed_variable_file,
@@ -195,7 +211,7 @@ class Ai1ec_Less_Lessphp extends Ai1ec_Base {
 
 		if ( $option->get( 'ai1ec_invalidate_css_cache' ) ) {
 			$css_controller = $this->_registry->get( 'css.frontend' );
-			$css_controller->invalidate_cache( null, false );
+			$css_controller->invalidate_cache( null, true );
 			$option->delete( 'ai1ec_invalidate_css_cache' );
 		}
 	}

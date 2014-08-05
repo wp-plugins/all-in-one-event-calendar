@@ -44,18 +44,20 @@ class Ai1ec_Router extends Ai1ec_Base {
 	 * @return boolean
 	 */
 	public function is_at_least_one_filter_set_in_request( array $view_args ) {
-		if( null === $this->at_least_one_filter_set_in_request ) {
+		if ( null === $this->at_least_one_filter_set_in_request ) {
 			$filter_set = false;
 			$ai1ec_settings = $this->_registry->get( 'model.settings' );
 			// check if something in the filters is set
 			foreach ( Ai1ec_Cookie_Utility::$types as $type ) {
-				if( ! empty( $view_args[$type] ) ) {
+				if ( ! empty( $view_args[$type] ) ) {
 					$filter_set = true;
 					break;
 				}
 			}
 			// check if the default view is set
-			if( $ai1ec_settings->get( 'default_calendar_view' ) !== $view_args['action'] ) {
+			$mode = wp_is_mobile() ? '_mobile' : '';
+			$setting = 'default_calendar_view' . $mode;
+			if ( $ai1ec_settings->get( $setting ) !== $view_args['action'] ) {
 				$filter_set = true;
 			}
 			$this->at_least_one_filter_set_in_request = $filter_set;

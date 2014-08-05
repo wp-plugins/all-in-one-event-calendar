@@ -22,6 +22,7 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 			isset( $_POST['default_categories'] )
 		);
 		$_POST['enabled_views'] = true;
+		do_action( 'ai1ec_before_save_settings', $_POST );
 		foreach ( $options as $name => $data ) {
 			$value = null;
 			if ( isset( $_POST[$name] ) ) {
@@ -51,11 +52,27 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 							break;
 						case 'array':
 							$method = '_handle_saving_' . $name;
-							$value  = $this->$method();
+							$value  = null;
+							if ( method_exists( $this, $method ) ) {
+								$value = $this->$method();
+							}
+							$value = apply_filters(
+								'ai1ec' . $method,
+								$value,
+								$_REQUEST
+							);
 							break;
 						case 'mixed':
 							$method = '_handle_saving_' . $name;
-							$value  = $this->$method( $_POST[$name] );
+							$value  = null;
+							if ( method_exists( $this, $method ) ) {
+								$value = $this->$method( $_POST[$name] );
+							}
+							$value = apply_filters(
+								'ai1ec' . $method,
+								$value,
+								$_REQUEST
+							);
 							break;
 						case 'wp_option': // set the corresponding WP option
 							$this->_registry->get( 'model.option' )
@@ -97,6 +114,11 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 		foreach ( $enabled_views as $view => &$options ) {
 			$options['enabled'] = isset( $_POST['view_' . $view . '_enabled'] );
 			$options['default'] = $_POST['default_calendar_view'] === $view;
+			$options['enabled_mobile'] =
+				isset( $_POST['view_' . $view . '_enabled_mobile'] );
+			$options['default_mobile'] =
+				isset( $_POST['default_calendar_view_mobile'] ) &&
+				$_POST['default_calendar_view_mobile'] === $view;
 		}
 		return $enabled_views;
 	}
@@ -141,5 +163,4 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 			return (int)$calendar_page;
 		}
 	}
-
 }

@@ -69,7 +69,7 @@ class Ai1ec_Command_Change_Theme extends Ai1ec_Command {
 		if (
 			isset( $_GET['ai1ec_action'] ) &&
 			$_GET['ai1ec_action'] === 'activate_theme' &&
-			current_user_can( 'switch_themes' ) &&
+			current_user_can( 'switch_ai1ec_themes' ) &&
 			is_dir( $_GET['ai1ec_theme_dir'] ) &&
 			is_dir( $_GET['ai1ec_theme_root'] )
 		) {

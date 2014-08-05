@@ -29,11 +29,14 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 
 		// Get events, then classify into date array
 		$per_page_setting = $type . '_events_per_page';
-		$search = $this->_registry->get( 'model.search' );
-		$settings = $this->_registry->get( 'model.settings' );
+		$search           = $this->_registry->get( 'model.search' );
+		$settings         = $this->_registry->get( 'model.settings' );
+		$events_limit     = is_numeric( $view_args['events_limit'] )
+			? $view_args['events_limit']
+			: $settings->get( $per_page_setting );
 		$results = $search->get_events_relative_to(
 			$timestamp,
-			$settings->get( $per_page_setting ),
+			$events_limit,
 			$view_args['page_offset'],
 			array(
 				'post_ids' => $view_args['post_ids'],
@@ -49,17 +52,40 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 			$view_args['request']
 		);
 
-		// Create pagination links.
-		$pagination_links = '';
-		$loader  = $this->_registry->get( 'theme.loader' );
-		if( ! $view_args['no_navigation'] ) {
-			$pagination_links =
-			$this->_get_agenda_like_pagination_links(
+		// Generate title of view based on date range month & year.
+		$range_start       = $results['date_first'] ? $results['date_first'] : $this->_registry->get( 'date.time', $timestamp );
+		$range_end         = $results['date_last']  ? $results['date_last'] : $this->_registry->get( 'date.time', $timestamp );
+		$range_start       = $this->_registry->get( 'date.time', $range_start );
+		$range_end         = $this->_registry->get( 'date.time', $range_end );
+		$start_year        = $range_start->format_i18n( 'Y' );
+		$end_year          = $range_end->format_i18n( 'Y' );
+		$start_month       = $range_start->format_i18n( 'F' );
+		$start_month_short = $range_start->format_i18n( 'M' );
+		$end_month         = $range_end->format_i18n( 'F' );
+		$end_month_short   = $range_end->format_i18n( 'M' );
+		if ( $start_year === $end_year && $start_month === $end_month ) {
+			$title = "$start_month $start_year";
+			$title_short = "$start_month_short $start_year";
+		} elseif ( $start_year === $end_year ) {
+			$title = "$start_month – $end_month $end_year";
+			$title_short = "$start_month_short – $end_month_short $end_year";
+		} else {
+			$title = "$start_month $start_year – $end_month $end_year";
+			$title_short = "$start_month_short $start_year – $end_month_short $end_year";
+		}
+
+		// Create navigation bar if requested.
+		$navigation = '';
+		$loader = $this->_registry->get( 'theme.loader' );
+		if ( ! $view_args['no_navigation'] ) {
+			$pagination_links = $this->_get_agenda_like_pagination_links(
 				$view_args,
 				$results['prev'],
 				$results['next'],
 				$results['date_first'],
-				$results['date_last']
+				$results['date_last'],
+				$title,
+				$title_short
 			);
 
 			$pagination_links = $loader->get_file(
@@ -70,39 +96,40 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 				),
 				false
 			)->get_content();
+
+			// Get HTML for navigation bar.
+			$nav_args = array(
+				'no_navigation'    => $view_args['no_navigation'],
+				'pagination_links' => $pagination_links,
+				'views_dropdown'   => $view_args['views_dropdown'],
+			);
+			// Add extra buttons to Agenda view's nav bar if events were returned.
+			if ( $type === 'agenda' && $dates ) {
+				$button_args = array(
+					'text_collapse_all' => __( 'Collapse All', AI1EC_PLUGIN_NAME ),
+					'text_expand_all'   => __( 'Expand All', AI1EC_PLUGIN_NAME ),
+				);
+				$nav_args['after_pagination'] = $loader
+					->get_file( 'agenda-buttons.twig', $button_args, false )
+					->get_content();
+			}
+			$navigation = $this->_get_navigation( $nav_args );
 		}
-		// Generate title of view based on date range month & year.
-		$range_start = $results['date_first'] ? $results['date_first'] : $this->_registry->get( 'date.time', $timestamp );
-		$range_end   = $results['date_last']  ? $results['date_last'] : $this->_registry->get( 'date.time', $timestamp );
-		$range_start = $this->_registry->get( 'date.time', $range_start );
-		$range_end   = $this->_registry->get( 'date.time', $range_end );
-		$start_year  = $range_start->format_i18n( 'Y' );
-		$end_year    = $range_end->format_i18n( 'Y' );
-		$start_month = $range_start->format_i18n( 'F' );
-		$end_month   = $range_end->format_i18n( 'F' );
-		if ( $start_year === $end_year && $start_month === $end_month ) {
-			$title_date_range = "$start_month $start_year";
-		} elseif ( $start_year === $end_year ) {
-			$title_date_range = "$start_month – $end_month $end_year";
-		} else {
-			$title_date_range = "$start_month $start_year – $end_month $end_year";
-		}
+
 		$is_ticket_button_enabled = apply_filters( 'ai1ec_' . $type . '_ticket_button', false );
 		$args = array(
-			'title'                     => $title_date_range,
+			'title'                     => $title,
 			'dates'                     => $dates,
 			'type'                      => $type,
 			'show_year_in_agenda_dates' => $settings->get( 'show_year_in_agenda_dates' ),
 			'expanded'                  => $settings->get( 'agenda_events_expanded' ),
 			'show_location_in_title'    => $settings->get( 'show_location_in_title' ),
 			'page_offset'               => $view_args['page_offset'],
-			'pagination_links'          => $pagination_links,
+			'navigation'                => $navigation,
 			'post_ids'                  => join( ',', $view_args['post_ids'] ),
 			'data_type'                 => $view_args['data_type'],
 			'data_type_events'          => '',
 			'is_ticket_button_enabled'  => $is_ticket_button_enabled,
-			'text_collapse_all'         => __( 'Collapse All', AI1EC_PLUGIN_NAME ),
-			'text_expand_all'           => __( 'Expand All', AI1EC_PLUGIN_NAME ),
 			'text_upcoming_events'      => __( 'There are no upcoming events to display at this time.', AI1EC_PLUGIN_NAME ),
 			'text_edit'                 => __( 'Edit', AI1EC_PLUGIN_NAME ),
 			'text_read_more'            => __( 'Read more', AI1EC_PLUGIN_NAME ),
@@ -110,23 +137,9 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 			'text_tags'                 => __( 'Tags:', AI1EC_PLUGIN_NAME ),
 			'text_venue_separator'      => __( '@ %s', AI1EC_PLUGIN_NAME ),
 		);
-		if( $settings->get( 'ajaxify_events_in_web_widget' ) ) {
+		if ( $settings->get( 'ajaxify_events_in_web_widget' ) ) {
 			$args['data_type_events'] = $view_args['data_type'];
 		}
-		// Add extra buttons to Agenda view if events were returned.
-		if ( $type === 'agenda' && $dates ) {
-			$args['before_pagination'] =
-				$loader->get_file( 'agenda-buttons.twig', $args, false )->get_content();
-		}
-		$navigation = '';
-		if ( true !== $view_args['no_navigation'] ) {
-			$navigation = $loader->get_file(
-				'navigation.twig',
-				$args,
-				false
-			)->get_content();
-		}
-		$args['navigation'] = $navigation;
 
 		// Allow child views to modify arguments passed to template.
 		$args = $this->get_extra_template_arguments( $args );
@@ -209,7 +222,7 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 			$dates[$timestamp]['href'] = $href_for_date;
 		}
 		// Flag today
-		$today = $this->_registry->get( 'date.time' )
+		$today = $this->_registry->get( 'date.time', 'now', 'sys.default' )
 			->set_time( 0, 0, 0 )
 			->format();
 		if ( isset( $dates[$today] ) ) {
@@ -229,19 +242,25 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 	 *
 	 * @param array $args Current request arguments
 	 *
-	 * @param bool  $prev   Whether there are more events before the current page
-	 * @param bool  $next   Whether there are more events after the current page
+	 * @param bool     $prev         Whether there are more events before
+	 *                               the current page
+	 * @param bool     $next         Whether there are more events after
+	 *                               the current page
 	 * @param int|null $date_first
 	 * @param int|null $date_last
+	 * @param string   $title        Title to display in datepicker button
+	 * @param string   $title_short  Short month names.
 	 *
 	 * @return array      Array of links
 	 */
 	protected function _get_agenda_like_pagination_links(
 		$args,
-		$prev = false,
-		$next = false,
-		$date_first = null,
-		$date_last  = null
+		$prev        = false,
+		$next        = false,
+		$date_first  = null,
+		$date_last   = null,
+		$title       = '',
+		$title_short = ''
 	) {
 
 		$links = array();
@@ -268,7 +287,9 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 		$factory = $this->_registry->get( 'factory.html' );
 		$links[] = $factory->create_datepicker_link(
 			$args,
-			$date_first->format_to_gmt()
+			$date_first->format_to_gmt(),
+			$title,
+			$title_short
 		);
 
 		$args['page_offset'] = 1;

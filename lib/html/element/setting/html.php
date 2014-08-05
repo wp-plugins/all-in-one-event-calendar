@@ -61,6 +61,7 @@ class Ai1ec_Html_Setting_Html extends Ai1ec_Html_Element_Settings {
 			'text_filter_tag_id_comma'      => __( 'Filter by event tag IDs (separate IDs by comma):', AI1EC_PLUGIN_NAME ),
 			'text_filter_post_id'           => __( 'Filter by post ID:', AI1EC_PLUGIN_NAME ),
 			'text_filter_post_id_comma'     => __( 'Filter by post IDs (separate IDs by comma):', AI1EC_PLUGIN_NAME ),
+			'text_events_limit'             => __( 'Limit number of events per page:', AI1EC_PLUGIN_NAME ),
 			'text_warning'                  => __( 'Warning:', AI1EC_PLUGIN_NAME ),
 			'text_single_calendar'          => __( 'It is currently not supported to embed more than one calendar in the same page. Do not attempt to embed the calendar via shortcode in a page that already displays the calendar.', AI1EC_PLUGIN_NAME ),
 		);

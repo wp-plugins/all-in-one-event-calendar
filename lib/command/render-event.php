@@ -55,6 +55,17 @@ class Ai1ec_Command_Render_Event extends Ai1ec_Command_Render_Calendar {
 		}
 		$css = $this->_registry->get( 'css.frontend' )->add_link_to_html_for_frontend();
 		$js = $this->_registry->get( 'controller.javascript' )->load_frontend_js( false );
+		if ( 'html' !== $this->_request_type ) {
+			return array(
+				'data'     => array( 
+					'html' => $event_page->get_full_article( $event )
+				),
+				'callback' => Ai1ec_Request_Parser::get_param(
+					'callback',
+					null
+				),
+			);
+		}
 		$to_return = array(
 			'data'     => $event_page->get_content( $event ),
 			'is_event' => true,

@@ -110,6 +110,7 @@ class Ai1ec_View_Theme_Options extends Ai1ec_View_Admin_Abstract {
 				'?controller=front&action=ai1ec_save_theme_options&plugin=' . AI1EC_PLUGIN_NAME
 		);
 
+		$frontend = $this->_registry->get( 'css.frontend' );
 
 		$loader = $this->_registry->get( 'theme.loader' );
 

@@ -20,7 +20,7 @@ class Ai1ec_Html_Setting_Input extends Ai1ec_Html_Element_Settings {
 		$type   = $this->_args['renderer']['type'];
 		$date   = $append = false;
 		$class  = '';
-
+		$input_type = 'text';
 		switch ( $type ) {
 			case 'date':
 				$date = true;
@@ -28,6 +28,10 @@ class Ai1ec_Html_Setting_Input extends Ai1ec_Html_Element_Settings {
 
 			case 'append':
 				$append = true;
+				break;
+
+			case 'email':
+				$input_type = 'email';
 				break;
 		}
 
@@ -48,6 +52,7 @@ class Ai1ec_Html_Setting_Input extends Ai1ec_Html_Element_Settings {
 			'id'         => $this->_args['id'],
 			'label'      => $this->_args['renderer']['label'],
 			'input_args' => $input_args,
+			'input_type' => $input_type,
 			'value'      => $this->_args['value'],
 		);
 		if ( isset( $this->_args['renderer']['status'] ) ) {

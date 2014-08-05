@@ -124,7 +124,7 @@ class Ai1ec_Ics_Import_Export_Engine
 		$comment_status = isset( $args['comment_status'] ) ? $args['comment_status'] : 'open';
 		$do_show_map    = isset( $args['do_show_map'] ) ? $args['do_show_map'] : 0;
 		$count = 0;
-		$events_in_db   = $args['events_in_db'];
+		$events_in_db   = isset( $args['events_in_db'] ) ? $args['events_in_db'] : 0;
 		$v->sort();
 		// Reverse the sort order, so that RECURRENCE-IDs are listed before the
 		// defining recurrence events, and therefore take precedence during
@@ -137,6 +137,7 @@ class Ai1ec_Ics_Import_Export_Engine
 		// Fetch default timezone in case individual properties don't define it
 		$timezone = $v->getProperty( 'X-WR-TIMEZONE' );
 		$timezone = (string)$timezone[1];
+		$messages = array();
 		// go over each event
 		while ( $e = $v->getComponent( 'vevent' ) ) {
 			// Event data array.
@@ -441,6 +442,12 @@ class Ai1ec_Ics_Import_Export_Engine
 			// Create event object.
 			$event = $this->_registry->get( 'model.event', $data );
 
+			// Instant Event
+			$is_instant = $e->getProperty( 'X-INSTANT-EVENT' );
+			if ( $is_instant ) {
+				$event->set_no_end_time();
+			}
+
 			$recurrence = $event->get( 'recurrence_rules' );
 			$search = $this->_registry->get( 'model.search' );
 			// first let's check by UID
@@ -463,7 +470,8 @@ class Ai1ec_Ics_Import_Export_Engine
 				// =================================================
 				// = Event was not found, so store it and the post =
 				// =================================================
-				$event->save();
+					$event->save();
+					$count++;
 			} else {
 				// ======================================================
 				// = Event was found, let's store the new event details =
@@ -481,17 +489,18 @@ class Ai1ec_Ics_Import_Export_Engine
 					$event->set( 'post_id', $matching_event_id );
 					$event->set( 'post',    $post );
 					$event->save( true );
+					$count++;
 				}
 
 			}
 			// if the event was already present , unset it from the array so it's not deleted
 			unset( $events_in_db[$event->get( 'post_id' )] );
-			$count++;
 		}
 
 		return array(
-			'count'            =>$count,
+			'count'            => $count,
 			'events_to_delete' => $events_in_db,
+			'messages'         => $messages,
 		);
 	}
 
@@ -804,6 +813,15 @@ class Ai1ec_Ics_Import_Export_Engine
 				$this->_sanitize_value(
 					$event->get_nonloggable_url( $event->get( 'ticket_url' ) )
 				)
+			);
+		}
+		// =================
+		// = Instant Event =
+		// =================
+		if ( $event->is_instant() ) {
+			$e->setProperty(
+				'X-INSTANT-EVENT',
+				$this->_sanitize_value( $event->is_instant() )
 			);
 		}
 

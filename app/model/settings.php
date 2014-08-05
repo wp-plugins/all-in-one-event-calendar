@@ -45,9 +45,11 @@ class Ai1ec_Settings extends Ai1ec_App {
 		$value,
 		$type,
 		$renderer,
-		$version = '2.0a'
+		$version = '2.0.0'
 	) {
-		if (
+		if ( 'deprecated' === $type ) {
+			unset( $this->_options[$option] );
+		} else if (
 			! isset( $this->_options[$option] ) ||
 			! isset( $this->_options[$option]['version'] ) ||
 			(string)$this->_options[$option]['version'] !== (string)$version
@@ -264,6 +266,7 @@ class Ai1ec_Settings extends Ai1ec_App {
 				$test_version = $values['calendar_page_id']['version'];
 			}
 		}
+		$upgrade = false;
 		if ( // process meta updates changes
 			empty( $values ) || (
 				false !== $test_version &&
@@ -272,14 +275,28 @@ class Ai1ec_Settings extends Ai1ec_App {
 		) {
 			$this->_register_standard_values();
 			$this->_change_update_status( true );
+			$upgrade = true;
 		} else if ( $values instanceof Ai1ec_Settings ) { // process legacy
 			$this->_register_standard_values();
 			$this->_parse_legacy( $values );
 			$this->_change_update_status( true );
+			$upgrade = true;
+		}
+		if ( true === $upgrade ) {
+			$this->_perform_upgrade_actions();
 		}
 		$this->_registry->get( 'controller.shutdown' )->register(
 			array( $this, 'shutdown' )
 		);
+	}
+
+	/**
+	 * Do things needed on every plugin upgrade.
+	 */
+	protected function _perform_upgrade_actions() {
+		add_action( 'init', 'flush_rewrite_rules' );
+		$this->_registry->get( 'model.option' )
+			->set( 'ai1ec_invalidate_css_cache', true );
 	}
 
 	/**
@@ -349,24 +366,32 @@ class Ai1ec_Settings extends Ai1ec_App {
 				),
 				'default'  => array(
 					'agenda' => array(
-						'enabled' => true,
-						'default' => true,
-						'longname' => Ai1ec_I18n::__( 'Agenda' ),
+						'enabled'        => true,
+						'default'        => true,
+						'enabled_mobile' => true,
+						'default_mobile' => true,
+						'longname'       => Ai1ec_I18n::__( 'Agenda' ),
 					),
 					'oneday' => array(
-						'enabled' => true,
-						'default' => false,
-						'longname' => Ai1ec_I18n::__( 'Day' ),
+						'enabled'        => true,
+						'default'        => false,
+						'enabled_mobile' => true,
+						'default_mobile' => false,
+						'longname'       => Ai1ec_I18n::__( 'Day' ),
 					),
 					'month' => array(
-						'enabled' => true,
-						'default' => false,
-						'longname' => Ai1ec_I18n::__( 'Month' ),
+						'enabled'        => true,
+						'default'        => false,
+						'enabled_mobile' => true,
+						'default_mobile' => false,
+						'longname'       => Ai1ec_I18n::__( 'Month' ),
 					),
 					'week' => array(
-						'enabled' => true,
-						'default' => false,
-						'longname' => Ai1ec_I18n::__( 'Week' ),
+						'enabled'        => true,
+						'default'        => false,
+						'enabled_mobile' => true,
+						'default_mobile' => false,
+						'longname'       => Ai1ec_I18n::__( 'Week' ),
 					),
 				),
 			),
@@ -553,6 +578,76 @@ class Ai1ec_Settings extends Ai1ec_App {
 				),
 				'default'  => false,
 			),
+			'affix_filter_menu' => array(
+				'type' => 'bool',
+				'renderer' => array(
+					'class' => 'checkbox',
+					'tab'   => 'viewing-events',
+					'item'  => 'viewing-events',
+					'label' => Ai1ec_I18n::__(
+						' <strong>Affix filter menu</strong> to top of window when it scrolls out of view'
+					),
+				),
+				'default'  => false,
+			),
+			'affix_vertical_offset_md' => array(
+				'type' => 'int',
+				'renderer' => array(
+					'class'     => 'input',
+					'tab'       => 'viewing-events',
+					'item'      => 'viewing-events',
+					'label'     => Ai1ec_I18n::__( 'Offset affixed filter bar vertically by' ),
+					'type'      => 'append',
+					'append'    => 'pixels',
+					'validator' => 'numeric',
+				),
+				'default'  => 0,
+			),
+			'affix_vertical_offset_lg' => array(
+				'type' => 'int',
+				'renderer' => array(
+					'class'     => 'input',
+					'tab'       => 'viewing-events',
+					'item'      => 'viewing-events',
+					'label'     =>
+						'<i class="ai1ec-fa ai1ec-fa-lg ai1ec-fa-fw ai1ec-fa-desktop"></i> ' .
+						Ai1ec_I18n::__( 'Wide screens only (≥ 1200px)' ),
+					'type'      => 'append',
+					'append'    => 'pixels',
+					'validator' => 'numeric',
+				),
+				'default'  => 0,
+			),
+			'affix_vertical_offset_sm' => array(
+				'type' => 'int',
+				'renderer' => array(
+					'class'     => 'input',
+					'tab'       => 'viewing-events',
+					'item'      => 'viewing-events',
+					'label'     =>
+						'<i class="ai1ec-fa ai1ec-fa-lg ai1ec-fa-fw ai1ec-fa-tablet"></i> ' .
+						Ai1ec_I18n::__( 'Tablets only (< 980px)' ),
+					'type'      => 'append',
+					'append'    => 'pixels',
+					'validator' => 'numeric',
+				),
+				'default'  => 0,
+			),
+			'affix_vertical_offset_xs' => array(
+				'type' => 'int',
+				'renderer' => array(
+					'class'     => 'input',
+					'tab'       => 'viewing-events',
+					'item'      => 'viewing-events',
+					'label'     =>
+						'<i class="ai1ec-fa ai1ec-fa-lg ai1ec-fa-fw ai1ec-fa-mobile"></i> ' .
+						Ai1ec_I18n::__( 'Phones only (< 768px)' ),
+					'type'      => 'append',
+					'append'    => 'pixels',
+					'validator' => 'numeric',
+				),
+				'default'  => 0,
+			),
 			'hide_featured_image' => array(
 				'type' => 'bool',
 				'renderer' => array(
@@ -567,15 +662,6 @@ class Ai1ec_Settings extends Ai1ec_App {
 					),
 				),
 				'default'  => false,
-			),
-			'embedding' => array(
-				'type' => 'html',
-				'renderer' => array(
-					'class' => 'html',
-					'tab'   => 'viewing-events',
-					'item'  => 'embedded-views',
-				),
-				'default'  => null,
 			),
 			'input_date_format' => array(
 				'type' => 'string',
@@ -640,14 +726,8 @@ class Ai1ec_Settings extends Ai1ec_App {
 				'default'  => false,
 			),
 			'show_publish_button' => array(
-				'type' => 'bool',
-				'renderer' => array(
-					'class' => 'checkbox',
-					'tab'   => 'editing-events',
-					'label' => Ai1ec_I18n::__(
-						'Display <strong>Publish</strong> at bottom of Edit Event form'
-					)
-				),
+				'type'     => 'deprecated',
+				'renderer' => null,
 				'default'  => false,
 			),
 			'show_create_event_button' => array(
@@ -663,6 +743,15 @@ class Ai1ec_Settings extends Ai1ec_App {
 					),
 				),
 				'default'  => false,
+			),
+			'embedding' => array(
+				'type' => 'html',
+				'renderer' => array(
+					'class' => 'html',
+					'tab'   => 'advanced',
+					'item'  => 'embedded-views',
+				),
+				'default'  => null,
 			),
 			'calendar_css_selector' => array(
 				'type' => 'string',
@@ -710,7 +799,22 @@ class Ai1ec_Settings extends Ai1ec_App {
 						'Disable <strong>gzip</strong> compression.'
 					),
 					'help'  => Ai1ec_I18n::__(
-						'Use this option if calendar is non-responsive. <a href="http://support.time.ly/disable-gzip-compression/">Read more</a> about the issue.'
+						'Use this option if calendar is unresponsive. <a href="http://support.time.ly/disable-gzip-compression/">Read more</a> about the issue. (From version 2.1 onwards, gzip is disabled by default for maximum compatibility.)'
+					),
+				),
+				'default'  => true,
+			),
+			'render_css_as_link' => array(
+				'type' => 'bool',
+				'renderer' => array(
+					'class' => 'checkbox',
+					'tab'   => 'advanced',
+					'item'  => 'advanced',
+					'label' => Ai1ec_I18n::__(
+						'<strong>Link CSS</strong> in <code>&lt;head&gt;</code> section when file cache is unavailable.'
+					),
+					'help'  => Ai1ec_I18n::__(
+						'Use this option if file cache is unavailable and you would prefer to serve CSS as a link rather than have it output inline.'
 					),
 				),
 				'default'  => false,

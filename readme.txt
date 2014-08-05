@@ -5,7 +5,7 @@ calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WorPress at least: 3.5
 Tested up to: 3.9.1
-Stable tag: 2.0.12
+Stable tag: 2.1.1
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -142,7 +142,7 @@ http://vimeo.com/55904173
 
 == Frequently Asked Questions ==
 
-[**See the FAQ on our Support Page »**](http://support.time.ly/faq/)
+[**Learn more with our detailed documentation »**](http://time.ly/support/)
 
 = Shortcodes =
 
@@ -171,6 +171,47 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.1.1 =
+* Added ability to select mobile specific default views
+* Improved filter bar layout for mobile rendering
+* Improved CSS load times by using cached CSS file when possible
+* Changed single event alias from /ai1ec_event to /event
+* Allow multiple calendars on a single page
+* Allow developers to modify values before they are passed to templates
+* Improved CSS compiling decreasing page load times
+* When file cache is not available CSS is stored in database and output in
+  <style> tag directly for  increased performance and to mitigate potential
+  security risks
+* Introduced use of microformats for improved SEO
+* Improved error handling on ICS feeds page (more extensive reporting,
+  clear message on allowed URL formats)
+* Improved exclude dates selector widget and exclude dates overview in
+  Dashboard
+* Improved information displayed when links for tags/categories are
+  clicked
+* Removed duplication of Publish button
+* Allow the filter menu to be affixed to the window
+* Allow time zone selection during event creation
+* Improved display of robots.txt field in Settings as well as
+  robots.txt handling
+* Fixed import/export of events with no end time or date
+* Fixed todays date marking in Agenda-like views
+* Fixed expand map link
+* Removed urls from print view
+* Restored address autocomplete region biasing function
+* Fixed fatal error preventing CSS compilation
+* Fixed section 508 compatibility
+* Improved security by preventing XSRF on forms and links where
+  applicable
+
+= Version 2.0.13 =
+* Fixed week view where events spanning multiple days were incorrectly
+rendered;
+* Changed default single event URI to `/event` and make it possible to
+translate them (translation string - 'event')
+* Updated screenshots for base themes;
+* Fixed month view popup location;
 
 = Version 2.0.12 =
 * Fixed ICS import issue where feed meta information was duplicated

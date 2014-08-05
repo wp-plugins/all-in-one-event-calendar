@@ -94,12 +94,15 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 			return true;
 		}
 
+		// other actions need the nonce to be verified
+
 		// duplicate single post
 		if (
 			isset( $_REQUEST['action'] ) &&
 			$_REQUEST['action'] === 'duplicate_post_save_as_new_post' &&
 			! empty( $_REQUEST['post'] )
 		) {
+			check_admin_referer( 'ai1ec_clone_'. $_REQUEST['post'] );
 
 			$this->_posts[] = array(
 				'status' => '',
@@ -114,6 +117,7 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 			$_REQUEST['action'] === 'duplicate_post_save_as_new_post_draft' &&
 			! empty( $_REQUEST['post'] )
 		) {
+			check_admin_referer( 'ai1ec_clone_'. $_REQUEST['post'] );
 			$this->_posts[] = array(
 				'status' => 'draft',
 				'post'   => get_post( $_REQUEST['post'] )
@@ -131,16 +135,18 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 	 */
 	public function set_render_strategy( Ai1ec_Request_Parser $request ) {
 		if ( true === $this->_redirect ) {
-			$this->_render_strategy = $this->_registry->get( 'http.response.render.strategy.redirect' );
+			$this->_render_strategy = $this->_registry
+				->get( 'http.response.render.strategy.redirect' );
 		} else {
-			$this->_render_strategy = $this->_registry->get( 'http.response.render.strategy.void' );
+			$this->_render_strategy = $this->_registry
+				->get( 'http.response.render.strategy.void' );
 		}
 	}
 
 	/**
 	 * Create a duplicate from a posts' instance
 	 */
-	public function duplicate_post_create_duplicate( $post , $status = '' ) {
+	public function duplicate_post_create_duplicate( $post, $status = '' ) {
 		$post            = get_post( $post );
 		$new_post_author = $this->_duplicate_post_get_current_user();
 		$new_post_status = $status;
@@ -156,7 +162,7 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 			'pinged'         => $post->pinged,
 			'post_author'    => $new_post_author->ID,
 			'post_content'   => $post->post_content,
-			'post_date'      => $post->post_date ,
+			'post_date'      => $post->post_date,
 			'post_date_gmt'  => get_gmt_from_date( $post->post_date  ),
 			'post_excerpt'   => $post->post_excerpt,
 			'post_parent'    => $post->post_parent,
@@ -184,9 +190,14 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 
 		if ( $this->_registry->get( 'acl.aco' )->is_our_post_type( $post ) ) {
 			try {
-				$old_event          = $this->_registry->get( 'model.event', $post->ID );
-				$old_event->set( 'post_id', $new_post_id );
-				$old_event->set( 'post',    null );
+				$old_event = $this->_registry->get( 'model.event', $post->ID );
+				$old_event->set( 'post_id',         $new_post_id );
+				$old_event->set( 'post',            null );
+				$old_event->set( 'ical_feed_url',   null );
+				$old_event->set( 'ical_source_url', null );
+				$old_event->set( 'ical_organizer',  null );
+				$old_event->set( 'ical_contact',    null );
+				$old_event->set( 'ical_uid',        null );
 				$old_event->save();
 			} catch ( Ai1ec_Event_Not_Found_Exception $exception ) {
 				/* ignore */
@@ -224,7 +235,7 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 	/**
 	 * Copy the meta information of a post to another post
 	 */
-	protected function _duplicate_post_copy_post_meta_info( $new_id , $post ) {
+	protected function _duplicate_post_copy_post_meta_info( $new_id, $post ) {
 		$post_meta_keys = get_post_custom_keys( $post->ID );
 		if ( empty( $post_meta_keys ) ) return;
 		//$meta_blacklist = explode(",",get_option('duplicate_post_blacklist'));
@@ -245,16 +256,23 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 	 * Copy the attachments
 	 * It simply copies the table entries, actual file won't be duplicated
 	 */
-	protected function _duplicate_post_copy_attachments( $new_id , $post ) {
+	protected function _duplicate_post_copy_attachments( $new_id, $post ) {
 		//if (get_option('duplicate_post_copyattachments') == 0) return;
 
 		// get old attachments
-		$attachments = get_posts( array( 'post_type' => 'attachment' , 'numberposts' => -1 , 'post_status' => null , 'post_parent' => $post->ID ) );
+		$attachments = get_posts(
+			array(
+				'post_type'   => 'attachment',
+				'numberposts' => -1,
+				'post_status' => null,
+				'post_parent' => $post->ID,
+			)
+		);
 		// clone old attachments
 		foreach ( $attachments as $att ) {
 			$new_att_author = $this->_duplicate_post_get_current_user();
 
-			$new_att = array (
+			$new_att = array(
 				'menu_order'     => $att->menu_order,
 				'comment_status' => $att->comment_status,
 				'guid'           => $att->guid,
@@ -262,7 +280,7 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 				'pinged'         => $att->pinged,
 				'post_author'    => $new_att_author->ID,
 				'post_content'   => $att->post_content,
-				'post_date'      => $att->post_date ,
+				'post_date'      => $att->post_date,
 				'post_date_gmt'  => get_gmt_from_date( $att->post_date ),
 				'post_excerpt'   => $att->post_excerpt,
 				'post_mime_type' => $att->post_mime_type,
@@ -273,13 +291,19 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 				),
 				'post_title'     => $att->post_title,
 				'post_type'      => $att->post_type,
-				'to_ping'        => $att->to_ping
+				'to_ping'        => $att->to_ping,
 			);
 
 			$new_att_id = wp_insert_post( $new_att );
 
 			// get and apply a unique slug
-			$att_name = wp_unique_post_slug( $att->post_name , $new_att_id , $att->post_status , $att->post_type , $new_id );
+			$att_name = wp_unique_post_slug(
+				$att->post_name,
+				$new_att_id,
+				$att->post_status,
+				$att->post_type,
+				$new_id
+			);
 			$new_att = array();
 			$new_att['ID']        = $new_att_id;
 			$new_att['post_name'] = $att_name;
@@ -293,7 +317,7 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 	/**
 	 * Copy the taxonomies of a post to another post
 	 */
-	protected function _duplicate_post_copy_post_taxonomies( $new_id , $post ) {
+	protected function _duplicate_post_copy_post_taxonomies( $new_id, $post ) {
 		$db = $this->_registry->get( 'dbi.dbi' );
 		if ( $db->are_terms_set() ) {
 			// Clear default category (added by wp_insert_post)
@@ -304,9 +328,13 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 			$taxonomies_blacklist = array();
 			$taxonomies = array_diff( $post_taxonomies , $taxonomies_blacklist );
 			foreach ( $taxonomies as $taxonomy ) {
-				$post_terms = wp_get_object_terms( $post->ID , $taxonomy , array( 'orderby' => 'term_order' ) );
+				$post_terms = wp_get_object_terms(
+					$post->ID ,
+					$taxonomy ,
+					array( 'orderby' => 'term_order' )
+				);
 				$terms = array();
-				for ( $i=0; $i<count( $post_terms ); $i++ ) {
+				for ( $i = 0; $i < count( $post_terms ); $i++ ) {
 					$terms[] = $post_terms[ $i ]->slug;
 				}
 				wp_set_object_terms( $new_id , $terms , $taxonomy );

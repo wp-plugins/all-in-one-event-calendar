@@ -3,7 +3,7 @@
 /**
  * Wrapper for all the output buffer calls (ob_*)
  */
-class Ai1ec_Compatibility_OutputBuffer {
+class Ai1ec_Compatibility_OutputBuffer extends Ai1ec_Base {
 
 	/**
 	 * Wrap the ob_end_flush() method:
@@ -62,6 +62,24 @@ class Ai1ec_Compatibility_OutputBuffer {
 			}
 		}
 		return ob_start( $output_callback, $chunk_size, $flags );
+	}
+
+	/**
+	 * Gzip the content if possible.
+	 * 
+	 * @param string $string
+	 */
+	public function gzip_if_possible( $string ) {
+		$gzip = $this->_registry->get( 'http.request' )->client_use_gzip();
+		// only use output buffering for gzip.
+		if ( $gzip ) {
+			$this->start( 'ob_gzhandler' );
+			header( 'Content-Encoding: gzip' );
+		}
+		echo $string;
+		if ( $gzip ) {
+			$this->end_flush();
+		}
 	}
 
 	/**

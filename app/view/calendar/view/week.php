@@ -52,15 +52,13 @@ class Ai1ec_Calendar_View_Week  extends Ai1ec_Calendar_View_Abstract {
 			)
 		);
 
-		// Create pagination links.
-		$pagination_links = $this->_get_pagination( $args );
-
-
-		// Translators: "%s" below represents the week's start date.
+		// Create pagination links.	(Translators: '%s' = week's start date.)
 		$title = sprintf(
 			__( 'Week of %s', AI1EC_PLUGIN_NAME ),
 			$local_date->format_i18n( 'F j' )
 		);
+		$pagination_links = $this->_get_pagination( $args, $title );
+
 		$time_format = $this->_registry->get( 'model.option' )
 			->get( 'time_format', Ai1ec_I18n::__( 'g a' ) );
 
@@ -77,8 +75,10 @@ class Ai1ec_Calendar_View_Week  extends Ai1ec_Calendar_View_Abstract {
 				break;
 			}
 		}
+
 		$is_ticket_button_enabled = apply_filters( 'ai1ec_week_ticket_button', false );
 		$show_reveal_button       = apply_filters( 'ai1ec_week_reveal_button', false );
+
 		$view_args = array(
 			'title'                    => $title,
 			'type'                     => 'week',
@@ -87,7 +87,6 @@ class Ai1ec_Calendar_View_Week  extends Ai1ec_Calendar_View_Abstract {
 			'now_top'                  => $now,
 			'now_text'                 => $now_text,
 			'show_now'                 => $show_now,
-			'pagination_links'         => $pagination_links,
 			'post_ids'                 => join( ',', $args['post_ids'] ),
 			'time_format'              => $time_format,
 			'done_allday_label'        => false,
@@ -101,11 +100,18 @@ class Ai1ec_Calendar_View_Week  extends Ai1ec_Calendar_View_Abstract {
 			'text_now_label'           => __( 'Now:', AI1EC_PLUGIN_NAME ),
 			'text_venue_separator'     => __( '@ %s', AI1EC_PLUGIN_NAME ),
 		);
-		if( $settings->get( 'ajaxify_events_in_web_widget' ) ) {
+		if ( $settings->get( 'ajaxify_events_in_web_widget' ) ) {
 			$view_args['data_type_events'] = $args['data_type'];
 		}
+
 		// Add navigation if requested.
-		$view_args['navigation'] = $this->_get_navigation( $args['no_navigation'], $view_args );
+		$view_args['navigation'] = $this->_get_navigation(
+			array(
+				'no_navigation'    => $args['no_navigation'],
+				'pagination_links' => $pagination_links,
+				'views_dropdown'   => $args['views_dropdown'],
+			)
+		);
 
 		return $this->_get_view( $view_args );
 	}
@@ -118,11 +124,12 @@ class Ai1ec_Calendar_View_Week  extends Ai1ec_Calendar_View_Abstract {
 	 * ['enabled'], CSS class ['class'], text ['text'] and value to assign to
 	 * link's href ['href'].
 	 *
-	 * @param array $args	Current request arguments
+	 * @param array  $args  Current request arguments
+	 * @param string $title Title to display in datepicker button
 	 *
 	 * @return array      Array of links
 	 */
-	protected function get_week_pagination_links( $args ) {
+	protected function get_week_pagination_links( $args, $title ) {
 		$links = array();
 
 		$orig_date = $args['exact_date'];
@@ -151,7 +158,8 @@ class Ai1ec_Calendar_View_Week  extends Ai1ec_Calendar_View_Abstract {
 		$factory = $this->_registry->get( 'factory.html' );
 		$links[] = $factory->create_datepicker_link(
 			$args,
-			$args['exact_date']
+			$args['exact_date'],
+			$title
 		);
 
 		// =============

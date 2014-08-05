@@ -87,7 +87,7 @@
 	.ai1ec-btn-toolbar & {
 		margin-bottom: 6px;
 		&.ai1ec-btn-group-xs {
-			margin-top: 3px;
+			margin-top: 6px;
 		}
 	}
 	> .ai1ec-btn-primary {
@@ -99,10 +99,6 @@
 	> .ai1ec-dropdown-menu,
 	> .ai1ec-popover {
 		font-size: @font-size-base; // redeclare as part 2 of font-size inline-block hack
-	}
-	&.ai1ec-pull-right + &.ai1ec-pull-right {
-		margin-left: 0;
-		margin-right: 5px;
 	}
 	// Reset fonts for other sizes
 	> .ai1ec-btn-xs {
@@ -300,13 +296,17 @@ input.ai1ec-timepicker[readonly] {
 	@datepicker-font-size: @font-size-base * 0.85;
 	font-size: @datepicker-font-size;
 	padding: @datepicker-font-size * 0.5;
-	&.ai1ec-right-aligned:before {
-		left: auto;
-		right: 6px;
-	}
-	&.ai1ec-right-aligned:after {
-		left: auto;
-		right: 7px;
+	margin-left: 5px;
+	&.ai1ec-right-aligned {
+		margin-left: 0;
+		&:before {
+			left: auto;
+			right: 6px;
+		}
+		&:after {
+			left: auto;
+			right: 7px;
+		}
 	}
 	table {
 		th,

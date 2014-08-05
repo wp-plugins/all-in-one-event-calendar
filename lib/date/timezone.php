@@ -464,25 +464,27 @@ class Ai1ec_Date_Timezone extends Ai1ec_Base {
 	 * 
 	 * @return array
 	 */
-	public function get_timezones() {
+	public function get_timezones( $only_zones = false ) {
 		$zones = DateTimeZone::listIdentifiers();
 		if (
 			empty( $zones )
 		) {
 			return array();
 		}
-		$manual =  __( 'Manual Offset', AI1EC_PLUGIN_NAME );
-		$options = array();
-		$options[$manual][] = array(
-			'text'  => __( 'Choose your timezone', AI1EC_PLUGIN_NAME ),
-			'value' => '',
-			'args'  => array(
-				'selected' => 'selected'
-			)
-		);
+		if ( ! $only_zones ) {
+			$manual =  __( 'Manual Offset', AI1EC_PLUGIN_NAME );
+			$options = array();
+			$options[$manual][] = array(
+				'text'  => __( 'Choose your timezone', AI1EC_PLUGIN_NAME ),
+				'value' => '',
+				'args'  => array(
+					'selected' => 'selected'
+				)
+			);
+		}
 		foreach ( $zones as $zone ) {
 			$exploded_zone = explode( '/', $zone );
-			if ( ! isset( $exploded_zone[1] ) ) {
+			if ( ! isset( $exploded_zone[1] ) && ! $only_zones ) {
 				$exploded_zone[1] = $exploded_zone[0];
 				$exploded_zone[0] = $manual;
 			}

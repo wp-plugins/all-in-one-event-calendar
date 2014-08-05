@@ -56,9 +56,9 @@ class Ai1ec_Calendar_View_Month  extends Ai1ec_Calendar_View_Abstract {
 			$days_events
 		);
 		// Create pagination links.
-		$pagination_links = $this->_get_pagination( $args );
-
 		$title = $local_date->format_i18n( 'F Y' );
+		$pagination_links = $this->_get_pagination( $args, $title );
+
 		$is_ticket_button_enabled = apply_filters(
 			'ai1ec_month_ticket_button',
 			false
@@ -71,7 +71,6 @@ class Ai1ec_Calendar_View_Month  extends Ai1ec_Calendar_View_Abstract {
 			'cell_array'               => $cell_array,
 			'show_location_in_title'   => $settings->get( 'show_location_in_title' ),
 			'month_word_wrap'          => $settings->get( 'month_word_wrap' ),
-			'pagination_links'         => $pagination_links,
 			'post_ids'                 => join( ',', $args['post_ids'] ),
 			'data_type'                => $args['data_type'],
 			'data_type_events'         => '',
@@ -83,7 +82,13 @@ class Ai1ec_Calendar_View_Month  extends Ai1ec_Calendar_View_Abstract {
 		}
 
 		// Add navigation if requested.
-		$view_args['navigation'] = $this->_get_navigation( $args['no_navigation'], $view_args );
+		$view_args['navigation'] = $this->_get_navigation(
+			array(
+				'no_navigation'    => $args['no_navigation'],
+				'pagination_links' => $pagination_links,
+				'views_dropdown'   => $args['views_dropdown'],
+			)
+		);
 
 		return $this->_get_view( $view_args );
 	}
@@ -96,11 +101,12 @@ class Ai1ec_Calendar_View_Month  extends Ai1ec_Calendar_View_Abstract {
 	 * ['enabled'], CSS class ['class'], text ['text'] and value to assign to
 	 * link's href ['href'].
 	 *
-	 * @param array $args	Current request arguments
+	 * @param array  $args  Current request arguments
+	 * @param string $title Title to display in datepicker button
 	 *
 	 * @return array      Array of links
 	 */
-	function get_month_pagination_links( $args ) {
+	function get_month_pagination_links( $args, $title ) {
 		$links = array();
 
 		$local_date = $this->_registry
@@ -164,7 +170,8 @@ class Ai1ec_Calendar_View_Month  extends Ai1ec_Calendar_View_Abstract {
 		$factory = $this->_registry->get( 'factory.html' );
 		$links[] = $factory->create_datepicker_link(
 			$args,
-			$args['exact_date']
+			$args['exact_date'],
+			$title
 		);
 
 		// ==============
