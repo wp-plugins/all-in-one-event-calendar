@@ -120,27 +120,20 @@ class Ai1ec_View_Event_Location extends Ai1ec_Base {
 	}
 
 	/**
-	 * get_gmap_url function
-	 *
 	 * Returns the URL to the Google Map for the given event object.
 	 *
 	 * @param Ai1ec_Event $event  The event object to display a map for
 	 *
 	 * @return string
-	 **/
+	 */
 	public function get_gmap_url( Ai1ec_Event $event ) {
-		$loc = $this->_registry->get( 'p28n.wpml' );
+		$lang     = $this->_registry->get( 'p28n.wpml' )->get_language();
 		$location = $this->get_latlng( $event );
-		if ( $location ) {
-			$location .= $event->get( 'venue' ) ? '' : ' (' . $event->get( 'venue' ) . ')';
-		} else {
-			// Otherwise use the address
+		if ( ! $location ) {
 			$location = $event->get( 'address' );
 		}
-
-		$lang = $loc->get_language();
-
-		return 'https://www.google.com/maps?f=q&hl=' . $lang .
-		'&source=embed&q=' . urlencode( $location );
+		return 'https://www.google.com/maps?f=q&hl=' . urlencode( $lang ) .
+			'&source=embed&q=' . urlencode( $location );
 	}
+
 }

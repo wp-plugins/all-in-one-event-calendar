@@ -9,6 +9,7 @@ libs/frontend_utils.js
 external_libs/bootstrap/tab.js
 libs/utils.js
 domReady.js
+external_libs/bootstrap/affix.js
 scripts/common_scripts/frontend/common_event_handlers.js
 external_libs/bootstrap/tooltip.js
 external_libs/bootstrap/popover.js
@@ -52,6 +53,7 @@ external_libs/bootstrap_datepicker.js
 external_libs/bootstrap/alert.js
 external_libs/jquery_cookie.js
 scripts/calendar/load_views.js
+scripts/calendar/calendar-affix.js
 external_libs/bootstrap/transition.js
 external_libs/bootstrap/modal.js
 scripts/calendar.js
@@ -132,6 +134,7 @@ external_libs/bootstrap/transition.js
 external_libs/bootstrap/collapse.js
 external_libs/bootstrap/modal.js
 external_libs/bootstrap/alert.js
+external_libs/select2.js
 scripts/add_new_event.js
 pages/add_new_event.js
 
@@ -184,6 +187,7 @@ pages/less_variables_editing.js
 pages/common_frontend.js
 ----------------
 domReady.js
+external_libs/bootstrap/affix.js
 scripts/common_scripts/frontend/common_event_handlers.js
 external_libs/modernizr.js
 external_libs/bootstrap/tooltip.js
@@ -203,6 +207,7 @@ libs/frontend_utils.js
 external_libs/bootstrap/tab.js
 libs/utils.js
 domReady.js
+external_libs/bootstrap/affix.js
 scripts/common_scripts/frontend/common_event_handlers.js
 external_libs/bootstrap/tooltip.js
 external_libs/bootstrap/popover.js
@@ -246,6 +251,7 @@ external_libs/bootstrap_datepicker.js
 external_libs/bootstrap/alert.js
 external_libs/jquery_cookie.js
 scripts/calendar/load_views.js
+scripts/calendar/calendar-affix.js
 external_libs/bootstrap/transition.js
 external_libs/bootstrap/modal.js
 scripts/calendar.js
@@ -253,6 +259,7 @@ scripts/calendar.js
 scripts/common_scripts/frontend/common_frontend.js
 ----------------
 domReady.js
+external_libs/bootstrap/affix.js
 scripts/common_scripts/frontend/common_event_handlers.js
 external_libs/modernizr.js
 external_libs/bootstrap/tooltip.js

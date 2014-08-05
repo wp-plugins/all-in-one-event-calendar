@@ -50,7 +50,7 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 	// = Plugin Version =
 	// ==================
 	if ( ! defined( 'AI1EC_VERSION' ) ) {
-		define( 'AI1EC_VERSION', '2.0.13' );
+		define( 'AI1EC_VERSION', '2.1.0.10.rc4' );
 	}
 
 	// ================
@@ -138,6 +138,16 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 			'AI1EC_CACHE_PATH',
 			AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' .
 			DIRECTORY_SEPARATOR
+		);
+	}
+
+	// ==============
+	// = CACHE URL =
+	// ==============
+	if ( ! defined( 'AI1EC_CACHE_URL' ) ) {
+		define(
+		'AI1EC_CACHE_URL',
+		AI1EC_URL . '/cache/'
 		);
 	}
 
@@ -448,6 +458,10 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 	// every second refresh needs to take fresh copy of everything.
 	if ( ! defined( 'AI1EC_CACHE' ) ) {
 		define( 'AI1EC_CACHE', true );
+	}
+	
+	if ( ! defined( 'AI1EC_DISABLE_FILE_CACHE' ) ) {
+		define( 'AI1EC_DISABLE_FILE_CACHE', false );
 	}
 
 	// A value identifying that cache is not available.

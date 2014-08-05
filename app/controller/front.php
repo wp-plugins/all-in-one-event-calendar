@@ -32,6 +32,11 @@ class Ai1ec_Front_Controller {
 	protected $_request;
 
 	/**
+	 * @var array
+	 */
+	protected $_default_theme;
+
+	/**
 	 * Initialize the controller.
 	 *
 	 * @param Ai1ec_Loader $ai1ec_loader Instance of Ai1EC classes loader
@@ -39,6 +44,14 @@ class Ai1ec_Front_Controller {
 	 * @return void
 	 */
 	public function initialize( $ai1ec_loader ) {
+		// Initialize default theme.
+		$this->_default_theme = array(
+			'theme_dir'  => AI1EC_DEFAULT_THEME_PATH,
+			'theme_root' => AI1EC_DEFAULT_THEME_ROOT,
+			'theme_url'  => AI1EC_THEMES_URL . '/' . AI1EC_DEFAULT_THEME_NAME,
+			'stylesheet' => AI1EC_DEFAULT_THEME_NAME,
+			'legacy'     => false,
+		);
 		ai1ec_start();
 		$this->_init( $ai1ec_loader );
 		$this->_compile_themes();
@@ -49,6 +62,15 @@ class Ai1ec_Front_Controller {
 			->register( 'ai1ec_stop' );
 		add_action( 'plugins_loaded', array( $this, 'register_extensions' ), 1 );
 		add_action( 'init', array( $lessphp, 'invalidate_css_cache_if_requested' ) );
+	}
+
+	/**
+	 * Let other objects access default theme
+	 * 
+	 * @return array
+	 */
+	public function get_default_theme() {
+		return $this->_default_theme;
 	}
 
 	/**
@@ -241,16 +263,9 @@ class Ai1ec_Front_Controller {
 		$option = $this->_registry->get( 'model.option' );
 		$theme  = $option->get( 'ai1ec_current_theme', array() );
 		$update = false;
-		$default_theme  = array(
-			'theme_dir'  => AI1EC_DEFAULT_THEME_PATH,
-			'theme_root' => AI1EC_DEFAULT_THEME_ROOT,
-			'theme_url'  => AI1EC_THEMES_URL . '/' . AI1EC_DEFAULT_THEME_NAME,
-			'stylesheet' => AI1EC_DEFAULT_THEME_NAME,
-			'legacy'     => false,
-		);
 		// Theme setting is undefined; default to Vortex.
 		if ( empty( $theme ) ) {
-			$theme  = $default_theme;
+			$theme  = $this->_default_theme;
 			$update = true;
 		}
 		// Legacy settings; in 1.x the active theme was stored as a bare string,
@@ -273,7 +288,7 @@ class Ai1ec_Front_Controller {
 			if ( ! is_dir( $root . DIRECTORY_SEPARATOR . $theme_name ) ) {
 				// It's missing; something is wrong with this theme. Reset theme to
 				// Vortex and warn the user accordingly.
-				$option->set( 'ai1ec_current_theme', $default_theme );
+				$option->set( 'ai1ec_current_theme', $this->_default_theme );
 				$notification = $this->_registry->get( 'notification.admin' );
 				$notification->store(
 					sprintf(
@@ -401,6 +416,10 @@ class Ai1ec_Front_Controller {
 			'ai1ec_dbi_debug',
 			array( 'http.request', 'debug_filter' )
 		);
+		$dispatcher->register_filter(
+			'ai1ec_dbi_debug',
+			array( 'compatibility.cli', 'disable_db_debug' )
+		);
 		// editing a child instance
 		if ( basename( $_SERVER['SCRIPT_NAME'] ) === 'post.php' ) {
 			$dispatcher->register_action(
@@ -415,7 +434,6 @@ class Ai1ec_Front_Controller {
 			10,
 			2
 		);
-
 		// Category colors
 		$dispatcher->register_action(
 			'events_categories_add_form_fields',
@@ -555,6 +573,10 @@ class Ai1ec_Front_Controller {
 				array( 'view.admin.add-new-event', 'event_meta_box_container' )
 			);
 			$dispatcher->register_action(
+				'edit_form_after_title',
+				array( 'view.admin.add-new-event', 'event_inline_alert' )
+			);
+			$dispatcher->register_action(
 				'save_post',
 				array( 'model.event.creating', 'save_post' ),
 				10,
@@ -589,12 +611,6 @@ class Ai1ec_Front_Controller {
 				'plugin_action_links_' . AI1EC_PLUGIN_BASENAME,
 				array( 'view.admin.nav', 'plugin_action_links' )
 			);
-			if ( $this->_registry->get( 'robots.helper' )->pre_check() ) {
-				$dispatcher->register_action(
-					'admin_init',
-					array( 'robots.helper', 'install' )
-				);
-			}
 			$dispatcher->register_action(
 				'wp_ajax_ai1ec_rescan_cache',
 				array( 'twig.cache', 'rescan' )
@@ -616,6 +632,10 @@ class Ai1ec_Front_Controller {
 				'the_post',
 				array( 'post.content', 'check_content' ),
 				PHP_INT_MAX
+			);
+			$dispatcher->register_action(
+				'send_headers',
+				array( 'request.redirect', 'handle_categories_and_tags' )
 			);
 		}
 	}

@@ -47,20 +47,10 @@
 							id="ai1ec_start-date-input">
 						<input type="text" class="ai1ec-time-input ai1ec-form-control"
 							id="ai1ec_start-time-input">
-						<?php if ( $timezone_string ) : ?>
-							<small>
-								<?php printf(
-									__( '(Time zone: %s)', AI1EC_PLUGIN_NAME ),
-									'<abbr title="' . $timezone .
-										'" class="ai1ec-tooltip-toggle">' . $timezone_string .
-										'</abbr>'
-								); ?>
-							</small>
-						<?php endif; ?>
 						<input type="hidden"
 							name="ai1ec_start_time"
 							id="ai1ec_start-time"
-							value="<?php echo $start->format_to_javascript(); ?>">
+							value="<?php echo $start->format_to_javascript( true ); ?>">
 					</td>
 				</tr>
 				<tr>
@@ -77,7 +67,28 @@
 						<input type="hidden"
 							name="ai1ec_end_time"
 							id="ai1ec_end-time"
-							value="<?php echo $end->format_to_javascript(); ?>">
+							value="<?php echo $end->format_to_javascript( true ); ?>">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label for="ai1ec_end-date-input">
+							<?php _e( 'Time zone', AI1EC_PLUGIN_NAME ); ?>:
+						</label>
+					</td>
+					<td>
+						<select name="ai1ec_timezone_name" id="timezone-select">
+							<option value=""><?php _e( 'Choose your time zone', AI1EC_PLUGIN_NAME ); ?></option>
+						<?php foreach ( $timezones_list as $group => $timezones ) : ?>
+							<optgroup label="<?php echo $group;?>">
+						<?php
+							foreach ( $timezones as $timezone ) : ?>
+								<option value="<?php echo $timezone['value'];?>" 
+									<?php echo $timezone['value'] == $timezone_string ? 'selected' : '';?>><?php echo $timezone['text'];?></option>
+							<?php endforeach; ?>
+							</optgroup>
+						<?php endforeach; ?>
+						</select>
 					</td>
 				</tr>
 				<?php
@@ -135,8 +146,7 @@
 					<td>
 						<div id="datepicker-widget">
 							<div id="widgetField">
-								<span></span>
-								<a href="#"><?php _e( 'Select date range', AI1EC_PLUGIN_NAME ); ?></a>
+								<a href="javascript:void(0)" id="ai1ec_exclude-dates-input" data-placeholder="<?php _e( 'Choose dates', AI1EC_PLUGIN_NAME ); ?>"></a>
 							</div>
 							<div id="widgetCalendar"></div>
 						</div>

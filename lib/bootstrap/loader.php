@@ -217,10 +217,14 @@ class Ai1ec_Loader {
 		$this->_paths = array_merge( $this->_paths, $names );
 		spl_autoload_register( array( $this, 'load' ) );
 		foreach ( $names as $classname => &$data ) {
-			$class = new ReflectionClass( $data['c'] );
-			$data['i'] = $this->_get_instantiator( $class );
-			if ( $this->_inject_registry( $class ) ) {
-				$data['r'] = 'y';
+			try {
+				$class = new ReflectionClass( $data['c'] );
+				$data['i'] = $this->_get_instantiator( $class );
+				if ( $this->_inject_registry( $class ) ) {
+					$data['r'] = 'y';
+				}
+			} catch ( ReflectionException $excpt ) { // unreachable class
+				$data['i'] = self::NEWINST;
 			}
 		}
 		return $names;

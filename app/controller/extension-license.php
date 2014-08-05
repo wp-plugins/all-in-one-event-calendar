@@ -73,7 +73,7 @@ abstract class Ai1ec_Base_License_Controller extends Ai1ec_Base_Extension_Contro
 		$old_licence = $old_options[$this->_licence]['value'];
 		$new_licence = $new_options[$this->_licence]['value'];
 		$status      = $old_options[$this->_licence_status]['value'];
-		if ( 'inactive' === $status || $new_licence !== $old_licence ) {
+		if ( $new_licence !== $old_licence ) {
 			$license = trim( $new_licence );
 			// data to send in our API request
 			$api_params = array(

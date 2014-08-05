@@ -10,6 +10,11 @@
  * @subpackage AI1EC.Command
  */
 class Ai1ec_Command_Render_Calendar extends Ai1ec_Command {
+	
+	/**
+	 * @var string
+	 */
+	protected $_request_type;
 
 	/* (non-PHPdoc)
 	 * @see Ai1ec_Command::is_this_to_execute()
@@ -46,6 +51,7 @@ class Ai1ec_Command_Render_Calendar extends Ai1ec_Command {
 		if ( empty( $type ) ) {
 			$type = 'html';
 		}
+		$this->_request_type = $type;
 		$this->_render_strategy = $this->_registry->get(
 			'http.response.render.strategy.' . $type
 		);

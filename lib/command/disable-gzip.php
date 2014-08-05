@@ -15,6 +15,7 @@ class Ai1ec_Command_Disable_Gzip extends Ai1ec_Command {
 	 */
 	public function is_this_to_execute() {
 		if ( isset( $_GET['ai1ec_disable_gzip_compression'] ) ) {
+			check_admin_referer( 'ai1ec_disable_gzip_compression' );
 			return true;
 		}
 		return false;

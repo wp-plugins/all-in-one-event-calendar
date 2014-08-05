@@ -4,6 +4,7 @@
 		href="#ai1ec-event-contact-box">
 		<i class="ai1ec-fa ai1ec-fa-phone ai1ec-fa-fw"></i>
 		<?php _e( 'Organizer contact info', AI1EC_PLUGIN_NAME ); ?>
+		<i class="ai1ec-fa ai1ec-fa-warning ai1ec-fa-fw ai1ec-hidden"></i>
 	</a>
 </div>
 <div id="ai1ec-event-contact-box" class="ai1ec-panel-collapse ai1ec-collapse">

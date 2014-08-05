@@ -36,13 +36,34 @@
 		margin: 0 !important;
 		padding: 0 !important;
 	}
-	.ai1ec-btn-group {
-		margin: 8px 0 8px 3px;
-	}
 	.timely & .ai1ec-nav-pills > li > a {
 		border-radius: 0;
 	}
+	// Affixed toolbar.
+	&.ai1ec-affix {
+		z-index: @zindex-navbar-fixed;
+		top: 0;
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+		.ai1ec-transition( border-radius 0.3s );
+		.ai1ec-transition( box-shadow 0.4s );
+		.ai1ec-box-shadow( 0 3px 12px rgba( 0, 0, 0, 0.2 ) );
+		.ai1ec-views-dropdown {
+			margin-bottom: 4px;
+			clear: both;
+		}
+		.ai1ec-clearfix {
+			padding-top: 8px;
+		}
+	}
 }
+// Hidden elements to detect current window mode.
+#ai1ec-bs-modes {
+	width: 0;
+	height: 0;
+	overflow: hidden;
+}
+
 // Trigger display of dropdown menus on hover on desktop devices only.
 .no-touch .ai1ec-calendar-toolbar .ai1ec-dropdown:hover > .ai1ec-dropdown-menu {
 	display: block;
@@ -50,17 +71,15 @@
 
 // Views dropdown.
 .ai1ec-views-dropdown {
-	.ai1ec-dropdown-menu a {
-		line-height: 20px;
+	margin-left: 5px;
+	// Icons
+	i {
+		font-size: 1.9em;
+		line-height: 0.75em;
+		vertical-align: -37%;
 	}
-	a img {
-		border: 0 !important;
-		padding: 0 !important;
-		margin: -4px 0 !important;
-		float: none !important;
-		position: static !important;
-		vertical-align: middle;
-		background: none !important;
+	.ai1ec-dropdown-menu {
+		min-width: 0;
 	}
 }
 
@@ -106,60 +125,32 @@
 	}
 }
 
-// Minical navigation.
-.ai1ec-minical-trigger {
-	padding-left: 6px;
-	padding-right: 6px;
-}
-.ai1ec-icon-datepicker {
-	.ai1ec-opacity( 0.75 );
-	filter: none\9; // IE8 renders semi-opaque PNGs terribly
-	display: inline-block;
-	height: 18px;
-	width: 18px;
-}
-
-// Titles.
-h2.ai1ec-calendar-title {
-	color: @calendar-title-color !important;
-	float: left;
-	font-size: @font-size-base * 1.25 !important;
-	line-height: 18px !important;
-	margin: 8px 8px 6px 0 !important;
-	text-transform: uppercase;
-}
-
-// Overhead Nav Buttons
+// Overhead nav buttons.
 .ai1ec-pagination {
-	margin-left: 5px;
 	> .ai1ec-btn {
-		font-size: @font-size-base * 0.85 !important;
-		padding: 4px 9px;
 		text-transform: uppercase;
-		> i {
-			font-size: 12px;
-			line-height: 16px;
-		}
-		&.ai1ec-prev-month,
-		&.ai1ec-next-month,
-		&.ai1ec-prev-year,
-		&.ai1ec-next-year {
-			> i {
-				font-size: 13px;
-			}
-		}
-		&.ai1ec-prev-month,
-		&.ai1ec-next-month {
-			min-width: 36px;
-		}
-		&.ai1ec-prev-year,
-		&.ai1ec-next-year {
-			min-width: 40px;
-		}
 	}
-	.ai1ec-icon-datepicker {
-		vertical-align: top;
-		margin: -2px -1px 0 !important;
+}
+.ai1ec-calendar-title,
+.ai1ec-calendar-title-short {
+	font-size: @font-size-base;
+	line-height: 1em;
+}
+.ai1ec-calendar-title-short {
+	display: none;
+}
+@media screen and ( max-width: @screen-xs-max ) {
+	.ai1ec-calendar-title {
+		display: none;
+	}
+	.ai1ec-calendar-title-short {
+		display: inline;
+	}
+}
+.ai1ec-minical-trigger {
+	font-weight: bold !important;
+	i {
+		vertical-align: baseline;
 	}
 }
 
@@ -167,13 +158,6 @@ h2.ai1ec-calendar-title {
 #ai1ec-print-button i {
 	font-size: 14px;
 	margin-top: -2px;
-}
-
-// Dropdown icons
-.ai1ec-views-dropdown i {
-	font-size: 1.9em;
-	line-height: 0.75em;
-	vertical-align: -50%;
 }
 
 // Month, week, day tables.
@@ -784,6 +768,9 @@ table.ai1ec-oneday-view-original {
 	.ai1ec-agenda-view {
 		.ai1ec-date-title {
 			border-color: #cacaca;
+			&:after {
+				display: none;
+			}
 		}
 		.ai1ec-event-summary .ai1ec-event-title {
 			display: inline;

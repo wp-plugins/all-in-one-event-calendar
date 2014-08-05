@@ -46,6 +46,7 @@ class Ai1ec_Twig_Ai1ec_Extension extends Twig_Extension {
 			new Twig_SimpleFilter( 'truncate',          array( $this, 'truncate' ) ),
 			new Twig_SimpleFilter( 'timespan',          array( $this, 'timespan' ) ),
 			new Twig_SimpleFilter( 'avatar',            array( $this, 'avatar' ) ),
+			new Twig_SimpleFilter( 'avatar_url',        array( $this, 'avatar_url' ) ),
 			new Twig_SimpleFilter( 'hour_to_datetime',  array( $this, 'hour_to_datetime' ) ),
 			new Twig_SimpleFilter( 'weekday',           array( $this, 'weekday' ) ),
 			new Twig_SimpleFilter( 'day',               array( $this, 'day' ) ),
@@ -96,6 +97,27 @@ class Ai1ec_Twig_Ai1ec_Extension extends Twig_Extension {
 				$fallback_order,
 				$classes,
 				$wrap_permalink
+			);
+	}
+
+	/**
+	 * Get URL for avatar.
+	 *
+	 * Accepts an ordered array of named avatar $fallbacks.
+	 * @param   Ai1ec_Event $event          The event to get the avatar for.
+	 * @param   array|null  $fallback_order Order of fallback in searching for
+	 *                                      images, or null to use default.
+	 *
+	 * @return  string                   URL if image is found.
+	 */
+	public function avatar_url(
+		Ai1ec_Event $event,
+		$fallback_order = null
+	) {
+		return $this->_registry->get( 'view.event.avatar' )
+			->get_event_avatar_url(
+				$event,
+				$fallback_order
 			);
 	}
 

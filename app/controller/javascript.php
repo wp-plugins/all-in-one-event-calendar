@@ -193,7 +193,7 @@ class Ai1ec_Javascript_Controller {
 		}
 
 		// Create the config object for Require.js.
-		$require_config = $this->_create_require_js_config_object();
+		$require_config = $this->create_require_js_config_object();
 
 		// Load Require.js script.
 		$require = file_get_contents( $js_path . 'require.js' );
@@ -375,6 +375,7 @@ class Ai1ec_Javascript_Controller {
 			->get( 'gmt_offset' );
 
 		$data            = array(
+			'calendar_feeds_nonce'           => wp_create_nonce( 'ai1ec_ics_feed_nonce'),
 			// ICS feed error messages
 			'duplicate_feed_message'         => esc_html(
 				Ai1ec_I18n::__( 'This feed is already being imported.' )
@@ -406,8 +407,14 @@ class Ai1ec_Javascript_Controller {
 			'error_message_not_entered_long' => Ai1ec_I18n::__(
 				'When the "Input coordinates" checkbox is checked, "Longitude" is a required field.'
 			),
-			'url_not_valid'                  => Ai1ec_I18n::__(
-				'The URL you have entered seems to be invalid. Please remember that URLs must start with either "http://" or "https://".'
+			'ai1ec_contact_url_not_valid'         => Ai1ec_I18n::__(
+				'The URL you have entered in the <b>Organizer Contact Info</b> &gt; <b>External URL</b> seems to be invalid.'
+			),
+			'ai1ec_ticket_url_not_valid'           => Ai1ec_I18n::__(
+				'The URL you have entered in the <b>Event Cost and Tickets</b> &gt; <b>Buy Tickets URL</b> seems to be invalid.'
+			),
+			'general_url_not_valid'          => Ai1ec_I18n::__(
+				'Please remember that URLs must start with either "http://" or "https://".'
 			),
 			'language'                       => $this->_registry->get( 'p28n.wpml' )->get_lang(),
 			'ajax_url'                       => $ajax_url,
@@ -426,8 +433,14 @@ class Ai1ec_Javascript_Controller {
 			'blog_timezone'                  => $blog_timezone,
 			'show_tracking_popup'            =>
 				current_user_can( 'manage_options' ) && $settings->get( 'show_tracking_popup' ),
+			'affix_filter_menu'              => $settings->get( 'affix_filter_menu' ),
+			'affix_vertical_offset_md'       => $settings->get( 'affix_vertical_offset_md' ),
+			'affix_vertical_offset_lg'       => $settings->get( 'affix_vertical_offset_lg' ),
+			'affix_vertical_offset_sm'       => $settings->get( 'affix_vertical_offset_sm' ),
+			'affix_vertical_offset_xs'       => $settings->get( 'affix_vertical_offset_xs' ),
+			'region'                         => ( $settings->get( 'geo_region_biasing' ) ) ? $locale->get_region() : '',
 		);
-		return $data;
+		return apply_filters( 'ai1ec_js_translations', $data );
 	}
 
 	/**
@@ -502,7 +515,7 @@ class Ai1ec_Javascript_Controller {
 	 *
 	 * @return string
 	 */
-	private function _create_require_js_config_object() {
+	public function create_require_js_config_object() {
 		$js_url    = AI1EC_ADMIN_THEME_JS_URL;
 		$version   = AI1EC_VERSION;
 		$namespace = self::REQUIRE_NAMESPACE;
