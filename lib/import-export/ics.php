@@ -272,30 +272,38 @@ class Ai1ec_Ics_Import_Export_Engine
 			// ===================
 			// = Exception dates =
 			// ===================
-			$exdate_array = array();
+			$exdate = '';
 			if ( $exdates = $e->createExdate() ){
 				// We may have two formats:
 				// one exdate with many dates ot more EXDATE rules
-				$exdates = explode( "EXDATE", $exdates );
+				$exdates = explode( 'EXDATE', $exdates );
 				foreach ( $exdates as $exd ) {
 					if ( empty( $exd ) ) {
 						continue;
 					}
-					$exploded = explode( ':', $exd );
-					$exdate_array[] = trim( end( $exploded ) );
+					$exploded       = explode( ':', $exd );
+					$excpt_timezone = $timezone;
+					$excpt_date     = null;
+					foreach ( $exploded as $particle ) {
+						if ( ';TZID=' === substr( $particle, 0, 5 ) ) {
+							$excpt_timezone = substr( $particle, 5 );
+						} else {
+							$excpt_date = trim( $particle );
+						}
+					}
+					$ex_dt = $this->_registry->get(
+						'date.time',
+						$excpt_date,
+						$excpt_timezone
+					);
+					if ( $ex_dt ) {
+						if ( isset( $exdate{0} ) ) {
+							$exdate .= ',';
+						}
+						$exdate .= $ex_dt->format( 'Ymd\THis', $excpt_timezone );
+					}
 				}
 			}
-			// This is the local string.
-			$exdate_loc = implode( ',', $exdate_array );
-			$gmt_exdates = array();
-			// Now we convert the string to gmt. I must do it here
-			// because EXDATE:date1,date2,date3 must be parsed
-			if( ! empty( $exdate_loc ) ) {
-				foreach ( explode( ',', $exdate_loc ) as $date ) {
-					$gmt_exdates[] = substr( (string)$date, 0, 8 );
-				}
-			}
-			$exdate = implode( ',', $gmt_exdates );
 
 			// ========================
 			// = Latitude & longitude =
@@ -953,8 +961,10 @@ class Ai1ec_Ics_Import_Export_Engine
 				explode( ',', $exception_dates )
 				as $exdate
 			) {
+				// date-time string in EXDATES is formatted as 'Ymd\THis\Z', that
+				// means - in UTC timezone, thus we use `format_to_gmt` here.
 				$exdate = $this->_registry->get( 'date.time', $exdate )
-					->format( 'Ymd' );
+					->format_to_gmt( 'Ymd' );
 				$e->setProperty(
 					'exdate',
 					array( $exdate . $dt_suffix ),
