@@ -9,7 +9,7 @@
  * @subpackage AI1EC.View
  */
 class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
-	
+
 	/**
 	 * Generate replacement content for [ai1ec] shortcode.
 	 *
@@ -22,13 +22,6 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 	 * @return string Replacement for shortcode entry
 	 */
 	public function shortcode( $atts, $content = '', $tag = 'ai1ec' ) {
-		static $call_count = 0;
-
-		++$call_count;
-		if ( $call_count > 1 ) { // not implemented
-			return false; // so far process only first request
-		}
-
 		$settings_view   = $this->_registry->get( 'model.settings-view' );
 		$view_names_list = array_keys( $settings_view->get_all() );
 		$default_view    = $settings_view->get_default();
@@ -38,8 +31,10 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 			$view_names[$view_name] = true;
 		}
 
-		$view       = $default_view;
-		$categories = $tags = $post_ids = array();
+		$view         = $default_view;
+		$categories   = $tags = $post_ids = array();
+		$events_limit = null;
+
 		if ( isset( $atts['view'] ) ) {
 			if ( 'ly' === substr( $atts['view'], -2 ) ) {
 				$atts['view'] = substr( $atts['view'], 0, -2 );
@@ -51,11 +46,12 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 		}
 
 		$mappings = array(
-			'cat_name' => 'categories',
-			'cat_id'   => 'categories',
-			'tag_name' => 'tags',
-			'tag_id'   => 'tags',
-			'post_id'  => 'post_ids',
+			'cat_name'     => 'categories',
+			'cat_id'       => 'categories',
+			'tag_name'     => 'tags',
+			'tag_id'       => 'tags',
+			'post_id'      => 'post_ids',
+			'events_limit' => 'events_limit',
 		);
 		foreach ( $mappings as $att_name => $type ) {
 			if ( ! isset( $atts[$att_name] ) ) {
@@ -103,6 +99,11 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 			'action'         => $view,
 			'request_type'   => 'jsonp',
 			'shortcode'      => 'true',
+			'events_limit'   => ( null !== $events_limit )
+			// definition above casts values as array, so we take first element,
+			// as there won't be others
+				? $events_limit[0]
+				: null,
 		);
 		if ( isset( $atts['exact_date'] ) ) {
 			$query['exact_date'] = $atts['exact_date'];

@@ -21,6 +21,8 @@ class Ai1ec_Html_Element_Enabled_Views
 			'label'        => $this->_args['renderer']['label'],
 			'text_enabled' => __( 'Enabled', AI1EC_PLUGIN_NAME ),
 			'text_default' => __( 'Default', AI1EC_PLUGIN_NAME ),
+			'text_desktop' => __( 'Desktop', AI1EC_PLUGIN_NAME ),
+			'text_mobile'  => __( 'Mobile', AI1EC_PLUGIN_NAME ),
 		);
 		$loader = $this->_registry->get( 'theme.loader' );
 		return $loader->get_file( 'setting/enabled-views.twig', $args, true )
@@ -38,6 +40,17 @@ class Ai1ec_Html_Element_Enabled_Views
 			$view['default'] = $view['default'] ?
 				'checked="checked"' :
 				'';
+			// Use mobile settings if available, else fall back to desktop settings.
+			$view['enabled_mobile'] = isset( $view['enabled_mobile'] ) ?
+				( $view['enabled_mobile'] ?
+					'checked="checked"' :
+					'' ) :
+				$view['enabled'];
+			$view['default_mobile'] = isset( $view['default_mobile'] ) ?
+				( $view['default_mobile'] ?
+					'checked="checked"' :
+					'' ) :
+				$view['default'];
 		}
 	}
 }

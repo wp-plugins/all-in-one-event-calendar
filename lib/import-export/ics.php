@@ -124,7 +124,7 @@ class Ai1ec_Ics_Import_Export_Engine
 		$comment_status = isset( $args['comment_status'] ) ? $args['comment_status'] : 'open';
 		$do_show_map    = isset( $args['do_show_map'] ) ? $args['do_show_map'] : 0;
 		$count = 0;
-		$events_in_db   = $args['events_in_db'];
+		$events_in_db   = isset( $args['events_in_db'] ) ? $args['events_in_db'] : 0;
 		$v->sort();
 		// Reverse the sort order, so that RECURRENCE-IDs are listed before the
 		// defining recurrence events, and therefore take precedence during
@@ -137,6 +137,7 @@ class Ai1ec_Ics_Import_Export_Engine
 		// Fetch default timezone in case individual properties don't define it
 		$timezone = $v->getProperty( 'X-WR-TIMEZONE' );
 		$timezone = (string)$timezone[1];
+		$messages = array();
 		// go over each event
 		while ( $e = $v->getComponent( 'vevent' ) ) {
 			// Event data array.
@@ -271,30 +272,38 @@ class Ai1ec_Ics_Import_Export_Engine
 			// ===================
 			// = Exception dates =
 			// ===================
-			$exdate_array = array();
+			$exdate = '';
 			if ( $exdates = $e->createExdate() ){
 				// We may have two formats:
 				// one exdate with many dates ot more EXDATE rules
-				$exdates = explode( "EXDATE", $exdates );
+				$exdates = explode( 'EXDATE', $exdates );
 				foreach ( $exdates as $exd ) {
 					if ( empty( $exd ) ) {
 						continue;
 					}
-					$exploded = explode( ':', $exd );
-					$exdate_array[] = trim( end( $exploded ) );
+					$exploded       = explode( ':', $exd );
+					$excpt_timezone = $timezone;
+					$excpt_date     = null;
+					foreach ( $exploded as $particle ) {
+						if ( ';TZID=' === substr( $particle, 0, 5 ) ) {
+							$excpt_timezone = substr( $particle, 5 );
+						} else {
+							$excpt_date = trim( $particle );
+						}
+					}
+					$ex_dt = $this->_registry->get(
+						'date.time',
+						$excpt_date,
+						$excpt_timezone
+					);
+					if ( $ex_dt ) {
+						if ( isset( $exdate{0} ) ) {
+							$exdate .= ',';
+						}
+						$exdate .= $ex_dt->format( 'Ymd\THis', $excpt_timezone );
+					}
 				}
 			}
-			// This is the local string.
-			$exdate_loc = implode( ',', $exdate_array );
-			$gmt_exdates = array();
-			// Now we convert the string to gmt. I must do it here
-			// because EXDATE:date1,date2,date3 must be parsed
-			if( ! empty( $exdate_loc ) ) {
-				foreach ( explode( ',', $exdate_loc ) as $date ) {
-					$gmt_exdates[] = substr( (string)$date, 0, 8 );
-				}
-			}
-			$exdate = implode( ',', $gmt_exdates );
 
 			// ========================
 			// = Latitude & longitude =
@@ -441,6 +450,12 @@ class Ai1ec_Ics_Import_Export_Engine
 			// Create event object.
 			$event = $this->_registry->get( 'model.event', $data );
 
+			// Instant Event
+			$is_instant = $e->getProperty( 'X-INSTANT-EVENT' );
+			if ( $is_instant ) {
+				$event->set_no_end_time();
+			}
+
 			$recurrence = $event->get( 'recurrence_rules' );
 			$search = $this->_registry->get( 'model.search' );
 			// first let's check by UID
@@ -463,7 +478,8 @@ class Ai1ec_Ics_Import_Export_Engine
 				// =================================================
 				// = Event was not found, so store it and the post =
 				// =================================================
-				$event->save();
+					$event->save();
+					$count++;
 			} else {
 				// ======================================================
 				// = Event was found, let's store the new event details =
@@ -481,17 +497,18 @@ class Ai1ec_Ics_Import_Export_Engine
 					$event->set( 'post_id', $matching_event_id );
 					$event->set( 'post',    $post );
 					$event->save( true );
+					$count++;
 				}
 
 			}
 			// if the event was already present , unset it from the array so it's not deleted
 			unset( $events_in_db[$event->get( 'post_id' )] );
-			$count++;
 		}
 
 		return array(
-			'count'            =>$count,
+			'count'            => $count,
 			'events_to_delete' => $events_in_db,
+			'messages'         => $messages,
 		);
 	}
 
@@ -806,6 +823,15 @@ class Ai1ec_Ics_Import_Export_Engine
 				)
 			);
 		}
+		// =================
+		// = Instant Event =
+		// =================
+		if ( $event->is_instant() ) {
+			$e->setProperty(
+				'X-INSTANT-EVENT',
+				$this->_sanitize_value( $event->is_instant() )
+			);
+		}
 
 		// ====================================
 		// = Contact name, phone, e-mail, URL =
@@ -935,8 +961,10 @@ class Ai1ec_Ics_Import_Export_Engine
 				explode( ',', $exception_dates )
 				as $exdate
 			) {
+				// date-time string in EXDATES is formatted as 'Ymd\THis\Z', that
+				// means - in UTC timezone, thus we use `format_to_gmt` here.
 				$exdate = $this->_registry->get( 'date.time', $exdate )
-					->format( 'Ymd' );
+					->format_to_gmt( 'Ymd' );
 				$e->setProperty(
 					'exdate',
 					array( $exdate . $dt_suffix ),

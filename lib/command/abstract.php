@@ -68,10 +68,10 @@ abstract class Ai1ec_Command {
 	 * @return void
 	 */
 	public function execute() {
-		// get the data from the concrete implementation
-		$data = $this->do_execute();
 		// Set the render strategy
 		$this->set_render_strategy( $this->_request );
+		// get the data from the concrete implementation
+		$data = $this->do_execute();
 		// render it.
 		$this->_render_strategy->render( $data );
 	}

@@ -150,7 +150,8 @@
 
 #show_front_end_create_form,
 #allow_anonymous_submissions,
-#allow_anonymous_uploads {
+#allow_anonymous_uploads,
+#publish_anonymous_submissions {
 	margin-left: 17px;
 }
 .ai1ec-recaptcha-settings label {

@@ -83,6 +83,11 @@ class Ai1ec_Clone_Renderer_Helper extends Ai1ec_Base {
 			return;
 		}
 	
-		return apply_filters( 'duplicate_post_get_clone_post_link', admin_url( "admin.php". $action ), $post->ID , $context );
+		return apply_filters( 
+			'duplicate_post_get_clone_post_link', 
+			wp_nonce_url( admin_url( "admin.php". $action ), 'ai1ec_clone_' . $post->ID ), 
+			$post->ID, 
+			$context
+		);
 	}
 }

@@ -36,10 +36,13 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 		// Are we loading a shortcode?
 		$shortcode  = $request->get( 'shortcode' );
 
+		// Get args for the current view; required to generate HTML for views
+		// dropdown list, categories, tags, subscribe buttons, and of course the
+		// view itself.
 		$view_args  = $this->get_view_args_for_view( $request );
 
 		try {
-			$action     = $this->_registry->get( 'model.settings-view' )
+			$action   = $this->_registry->get( 'model.settings-view' )
 				->get_configured( $view_args['action'] );
 		} catch ( Ai1ec_Settings_Exception $exception ) {
 			// short-circuit and return error message
@@ -51,27 +54,15 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 		}
 		$type       = $request->get( 'request_type' );
 
+		// Add view-specific args to the current view args.
 		$exact_date = $this->get_exact_date( $request );
 		$view_obj   = $this->_registry->get(
 			'view.calendar.view.' . $action,
 			$request
 		);
 		$view_args  = $view_obj->get_extra_arguments( $view_args, $exact_date );
-		$view       = $view_obj->get_content( $view_args );
-		$args       = array(
-			'view'              => $view,
-			'version'           => AI1EC_VERSION,
-			'subscribe_buttons' => '',
-		);
-		$taxonomy   = $this->_registry->get( 'view.calendar.taxonomy' );
-		$categories = $taxonomy->get_html_for_categories(
-			$view_args
-		);
 
-		$tags = $taxonomy->get_html_for_tags(
-			$view_args,
-			true
-		);
+		// Get HTML for views dropdown list.
 		$dropdown_args = $view_args;
 		if (
 			isset( $dropdown_args['time_limit'] ) &&
@@ -81,16 +72,33 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 		}
 		$views_dropdown =
 			$this->get_html_for_views_dropdown( $dropdown_args, $view_obj );
+		// Add views dropdown markup to view args.
+		$view_args['views_dropdown'] = $views_dropdown;
+
+		// Get HTML for categories and for tags
+		$taxonomy   = $this->_registry->get( 'view.calendar.taxonomy' );
+		$categories = $taxonomy->get_html_for_categories(
+			$view_args
+		);
+		$tags       = $taxonomy->get_html_for_tags(
+			$view_args,
+			true
+		);
+
+		// Get HTML for subscribe buttons.
 		$subscribe_buttons =
 			$this->get_html_for_subscribe_buttons( $view_args );
+		// Get HTML for view itself.
+		$view       = $view_obj->get_content( $view_args );
 
 		if (
 			( $view_args['no_navigation'] || $type !== 'html' ) &&
 			'true' !== $shortcode
 		) {
-			$args_for_filter = $view_args;
 			$router = $this->_registry->get( 'routing.router' );
-			$are_filters_set = $router->is_at_least_one_filter_set_in_request( $view_args );
+			$are_filters_set = $router->is_at_least_one_filter_set_in_request(
+				$view_args
+			);
 			// send data both for json and jsonp as shortcodes are jsonp
 			return array(
 				'html'               => $view,
@@ -155,7 +163,6 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 			$calendar = $loader->get_file( 'calendar.twig', $calendar_args, false );
 			return $calendar->get_content();
 		}
-
 	}
 
 	/**
@@ -222,12 +229,17 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 		$available_views = array();
 		$enabled_views   = (array)$settings->get( 'enabled_views', array() );
 		$view_names      = array();
+		$mode            = wp_is_mobile() ? '_mobile' : '';
 		foreach ( $enabled_views as $key => $val ) {
 			$view_names[$key] = $val['longname'];
-			$view_enabled = 'view_' . $key . '_enabled';
+			// Find out if view is enabled in requested mode (mobile or desktop). If
+			// no mode-specific setting is available, fall back to desktop setting.
+			$view_enabled = isset( $enabled_views[$key]['enabled' . $mode] ) ?
+				$enabled_views[$key]['enabled' . $mode] :
+				$enabled_views[$key]['enabled'];
 			$values = array();
 			$options = $view_args;
-			if ( $enabled_views[$key]['enabled'] === true ) {
+			if ( $view_enabled ) {
 				if ( $view instanceof Ai1ec_Calendar_View_Agenda ) {
 					if (
 						isset( $options['exact_date'] ) &&
@@ -366,6 +378,7 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 			'auth_ids',
 			'cat_ids',
 			'tag_ids',
+			'events_limit',
 		) );
 
 		$add_defaults = array(

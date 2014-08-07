@@ -14,11 +14,14 @@ class Ai1ec_Cache_Strategy_File extends Ai1ec_Cache_Strategy {
 	/**
 	 * @var string
 	 */
-	private $cache_dir;
+	private $_cache_dir;
+	
+	private $_cache_url;
 
-	public function __construct( Ai1ec_Registry_Object $registry, $cache_dir ) {
+	public function __construct( Ai1ec_Registry_Object $registry, array $cache_dir ) {
 		parent::__construct( $registry );
-		$this->cache_dir = $cache_dir;
+		$this->_cache_dir = $cache_dir['path'];
+		$this->_cache_url = $cache_dir['url'];
 	}
 
 	/**
@@ -28,13 +31,13 @@ class Ai1ec_Cache_Strategy_File extends Ai1ec_Cache_Strategy {
 	 */
 	public function get_data( $file ) {
 		$file = $this->_safe_file_name( $file );
-		if ( ! file_exists( $this->cache_dir . $file ) ) {
+		if ( ! file_exists( $this->_cache_dir . $file ) ) {
 			throw new Ai1ec_Cache_Not_Set_Exception(
 				'File \'' . $file . '\' does not exist'
 			);
 		}
 		return maybe_unserialize(
-			file_get_contents( $this->cache_dir . $file )
+			file_get_contents( $this->_cache_dir . $file )
 		);
 	}
 
@@ -44,17 +47,22 @@ class Ai1ec_Cache_Strategy_File extends Ai1ec_Cache_Strategy {
 	 *
 	 */
 	public function write_data( $filename, $value ) {
-		$filename = $this->_safe_file_name( $filename );
+		$filename = $this->_safe_file_name( $filename ) . '.css';
 		$value    = maybe_serialize( $value );
+
 		$result = $this->_registry->get( 'filesystem.checker' )->put_contents(
-			$this->cache_dir . $filename,
+			$this->_cache_dir . $filename,
 			$value
 		);
 		if ( false === $result ) {
 			$message = 'An error occured while saving data to \'' .
-				$this->cache_dir . $filename . '\'';
+				$this->_cache_dir . $filename . '\'';
 			throw new Ai1ec_Cache_Write_Exception( $message );
 		}
+		return array( 
+			'path' => $this->_cache_dir . $filename,
+			'url'  => $this->_cache_url . $filename,
+		);
 	}
 
 	/**
@@ -66,8 +74,8 @@ class Ai1ec_Cache_Strategy_File extends Ai1ec_Cache_Strategy {
 		// twice without never rendering the CSS
 		$filename = $this->_safe_file_name( $filename );
 		if (
-			file_exists( $this->cache_dir . $filename ) &&
-			false === unlink( $this->cache_dir . $filename )
+			file_exists( $this->_cache_dir . $filename ) &&
+			false === unlink( $this->_cache_dir . $filename )
 		) {
 			return false;
 		}
@@ -79,14 +87,14 @@ class Ai1ec_Cache_Strategy_File extends Ai1ec_Cache_Strategy {
 	 * @see Ai1ec_Write_Data_To_Cache::delete_matching()
 	 */
 	public function delete_matching( $pattern ) {
-		$dirhandle = opendir( $this->cache_dir );
+		$dirhandle = opendir( $this->_cache_dir );
 		if ( false === $dirhandle ) {
 			return 0;
 		}
 		$count = 0;
 		while ( false !== ( $entry = readdir( $dirhandle ) ) ) {
 			if ( '.' !== $entry{0} && false !== strpos( $entry, $pattern ) ) {
-				if ( unlink( $this->cache_dir . $entry ) ) {
+				if ( unlink( $this->_cache_dir . $entry ) ) {
 					++$count;
 				}
 			}

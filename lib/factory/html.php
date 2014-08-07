@@ -67,10 +67,12 @@ class Ai1ec_Factory_Html extends Ai1ec_Base {
 	 *
 	 * @param array           $args         Populated args for the view
 	 * @param int|string|null $initial_date The datepicker's initially set date
+	 * @param string          $title        Title to display in datepicker button
+	 * @param string          $title_short  Short names in title
 	 * @return Ai1ec_Generic_Html_Tag
 	 */
 	public function create_datepicker_link(
-		array $args, $initial_date = null
+		array $args, $initial_date = null, $title = '', $title_short = ''
 	) {
 		$settings    = $this->_registry->get( 'model.settings' );
 		$date_system = $this->_registry->get( 'date.system' );
@@ -119,10 +121,12 @@ class Ai1ec_Factory_Html extends Ai1ec_Base {
 		$file = $loader->get_file( 'date-icon.png' );
 
 		$args = array(
-			'attributes' => $attributes,
-			'data_type'  => $args['data_type'],
-			'icon_url'   => $file->get_url(),
-			'text_date'  => __( 'Choose a date using calendar', AI1EC_PLUGIN_NAME ),
+			'attributes'  => $attributes,
+			'data_type'   => $args['data_type'],
+			'icon_url'    => $file->get_url(),
+			'text_date'   => __( 'Choose a date using calendar', AI1EC_PLUGIN_NAME ),
+			'title'       => $title,
+			'title_short' => $title_short,
 		);
 
 		return $loader->get_file( 'datepicker_link.twig', $args );

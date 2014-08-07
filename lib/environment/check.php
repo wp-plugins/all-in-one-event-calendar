@@ -19,7 +19,7 @@ class Ai1ec_Environment_Checks extends Ai1ec_Base {
 	public function run_checks() {
 		$role         = get_role( 'administrator' );
 		$current_user = get_userdata( get_current_user_id() );
-		if ( 
+		if (
 			! is_object( $role ) ||
 			! is_object( $current_user ) ||
 			! $role->has_cap( 'manage_ai1ec_options' ) ||
@@ -80,6 +80,19 @@ class Ai1ec_Environment_Checks extends Ai1ec_Base {
 				array( Ai1ec_Notification_Admin::RCPT_ADMIN )
 			);
 		}
+		global $wp_rewrite;
+		$option  = $this->_registry->get( 'model.option' );
+		$rewrite = $option->get( 'ai1ec_force_flush_rewrite_rules' );
+		if (
+			! $rewrite ||
+			! is_object( $wp_rewrite ) ||
+			! isset( $wp_rewrite->rules ) ||
+			0 === count( $wp_rewrite->rules )
+		) {
+			return;
+		}
+		$this->_registry->get( 'rewrite.helper' )->flush_rewrite_rules();
+		$option->set( 'ai1ec_force_flush_rewrite_rules', false );
 	}
 
 }

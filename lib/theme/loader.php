@@ -12,6 +12,11 @@
 class Ai1ec_Theme_Loader {
 
 	/**
+	 * @const string Prefix for theme arguments filter name.
+	 */
+	const ARGS_FILTER_PREFIX = 'ai1ec_theme_args_';
+
+	/**
 	 * @var array contains the admin and theme paths.
 	 */
 	protected $_paths = array(
@@ -244,6 +249,11 @@ class Ai1ec_Theme_Loader {
 				break;
 
 			case 'php':
+				$args = apply_filters(
+					self::ARGS_FILTER_PREFIX . $filename,
+					$args,
+					$is_admin
+				);
 				if ( null === $paths ) {
 					$paths = $is_admin ? $this->_paths['admin'] : $this->_paths['theme'];
 					$paths = array_keys( $paths ); // Values (URLs) not used for PHP
@@ -258,6 +268,11 @@ class Ai1ec_Theme_Loader {
 				break;
 
 			case 'twig':
+				$args = apply_filters(
+					self::ARGS_FILTER_PREFIX . $filename,
+					$args,
+					$is_admin
+				);
 				if ( null === $paths ) {
 					$paths = $is_admin ? $this->_paths['admin'] : $this->_paths['theme'];
 					$paths = array_keys( $paths ); // Values (URLs) not used for Twig
@@ -347,18 +362,18 @@ class Ai1ec_Theme_Loader {
 		$paths = array_keys( $paths ); // Values (URLs) not used for Twig
 		return $this->_get_twig_instance( $paths, $is_admin );
 	}
-	
+
 	/**
 	 * Get cache dir for Twig.
-	 * 
+	 *
 	 * @param bool $rescan Set to true to force rescan
-	 * 
+	 *
 	 * @return string|bool Cache directory or false
 	 */
 	public function get_cache_dir( $rescan = false ) {
 		$settings         = $this->_registry->get( 'model.settings' );
 		$ai1ec_twig_cache = $settings->get( 'twig_cache' );
-		if ( 
+		if (
 			! empty( $ai1ec_twig_cache ) &&
 			false === $rescan
 		) {
@@ -366,29 +381,17 @@ class Ai1ec_Theme_Loader {
 				? false
 				: $ai1ec_twig_cache;
 		}
-		$path       = false;
-		$scan_dirs  = array( AI1EC_TWIG_CACHE_PATH );
-		$upload_dir = wp_upload_dir();
-		if (
-			(
-				! isset( $upload_dir['error'] ) ||
-				! $upload_dir['error']
-			) &&
-			! is_wp_error( $upload_dir ) 
-		) {
-			$scan_dirs[] = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . 'ai1ec_twig';
+		$path          = false;
+		$scan_dirs     = array( AI1EC_TWIG_CACHE_PATH );
+		$filesystem    = $this->_registry->get( 'filesystem.checker' );
+		$upload_folder = $filesystem->get_ai1ec_static_dir_if_available();
+		if ( '' !== $upload_folder ) {
+			$scan_dirs[] = $upload_folder;
 		}
-
 		foreach ( $scan_dirs as $dir ) {
-			if (
-				(
-					is_dir( $dir ) ||
-					mkdir( $dir, 0755, true )
-				) &&
-				is_writable( $dir )
-			) {
-					$path = $dir;
-					break;
+			if ( $this->_is_dir_writable( $dir ) ) {
+				$path = $dir;
+				break;
 			}
 		}
 
@@ -428,7 +431,7 @@ class Ai1ec_Theme_Loader {
 				}
 			}
 
-			$loader = new Twig_Loader_Filesystem( $loader_path );
+			$loader = new Ai1ec_Twig_Loader_Filesystem( $loader_path );
 			unset( $loader_path );
 			// TODO: Add cache support.
 			$environment = array(
@@ -449,11 +452,11 @@ class Ai1ec_Theme_Loader {
 			);
 
 			$ai1ec_twig_environment = new Ai1ec_Twig_Environment(
-					$loader, 
-					$environment 
+					$loader,
+					$environment
 				);
 			$ai1ec_twig_environment->set_registry( $this->_registry );
-			
+
 			$this->_twig[$instance] = $ai1ec_twig_environment;
 			if ( apply_filters( 'ai1ec_twig_add_debug', AI1EC_DEBUG ) ) {
 				$this->_twig[$instance]->addExtension( new Twig_Extension_Debug() );
@@ -479,4 +482,32 @@ class Ai1ec_Theme_Loader {
 			include( $functions );
 		}
 	}
+
+	/**
+	 * Safe checking for directory writeability.
+	 *
+	 * @param string $dir Path of likely directory.
+	 *
+	 * @return bool Writeability.
+	 */
+	private function _is_dir_writable( $dir ) {
+		$stack = array(
+			dirname( dirname( $dir ) ),
+			dirname( $dir ),
+			$dir,
+		);
+		foreach ( $stack as $element ) {
+			if ( is_dir( $element )  ) {
+				continue;
+			}
+			if ( ! is_writable( dirname( $element ) ) ) {
+				return false;
+			}
+			if ( ! mkdir( $dir, 0755, true ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 }

@@ -50,6 +50,15 @@ class Ai1ec_Persistence_Context {
 	}
 
 	/**
+	 * Are we using file cache?
+	 * 
+	 * @return boolean
+	 */
+	public function is_file_cache() {
+		return $this->cache_strategy instanceof Ai1ec_Cache_Strategy_File;
+	}
+
+	/**
 	 * write_data_to_persistence method
 	 *
 	 * Write data to persistance layer. If that fails - false is returned.
@@ -62,18 +71,16 @@ class Ai1ec_Persistence_Context {
 	 * @return boll Success
 	 */
 	public function write_data_to_persistence( $data ) {
-		$success = true;
+		$return = true;
 		try {
-			if ( ! $this->cache_strategy->write_data(
-					$this->key_for_persistance,
-					$data
-			) ) {
-				$success = false;
-			}
+			$return = $this->cache_strategy->write_data(
+				$this->key_for_persistance,
+				$data
+			);
 		} catch ( Ai1ec_Cache_Write_Exception $e ) {
-			$success = false;
+			$return = false;
 		}
-		return $success;
+		return $return;
 	}
 
 	/**

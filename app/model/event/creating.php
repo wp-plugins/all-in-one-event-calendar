@@ -133,7 +133,13 @@ class Ai1ec_Event_Creating extends Ai1ec_Base {
 			$is_new = true;
 			$event  =  $this->_registry->get( 'model.event' );
 		}
+		$formatted_timezone = $this->_registry->get( 'date.timezone' )
+				->get_name( $timezone_name );
+		if ( empty( $timezone_name ) || ! $formatted_timezone ) {
+			$timezone_name = 'sys.default';
+		}
 
+		unset( $formatted_timezone );
 		$start_time_entry = $this->_registry
 			->get( 'date.time', $start_time, $timezone_name );
 		$end_time_entry   = $this->_registry

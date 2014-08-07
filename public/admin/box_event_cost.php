@@ -4,6 +4,7 @@
 		href="#ai1ec-event-cost-box">
 		<i class="ai1ec-fa ai1ec-fa-shopping-cart ai1ec-fa-fw"></i>
 		<?php _e( 'Event cost and Tickets', AI1EC_PLUGIN_NAME ); ?>
+		<i class="ai1ec-fa ai1ec-fa-warning ai1ec-fa-fw ai1ec-hidden"></i>
 	</a>
 </div>
 <div id="ai1ec-event-cost-box" class="ai1ec-panel-collapse ai1ec-collapse">

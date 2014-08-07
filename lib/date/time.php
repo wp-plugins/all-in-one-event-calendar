@@ -27,6 +27,11 @@ class Ai1ec_Date_Time {
 	protected $_preferred_timezone = null;
 
 	/**
+	 * @var bool Set to true when `no value` is set.
+	 */
+	protected $_is_empty = false;
+
+	/**
 	 * Initialize local date entity.
 	 *
 	 * @param Ai1ec_Registry_Object $registry Objects registry instance.
@@ -66,6 +71,9 @@ class Ai1ec_Date_Time {
 	 * @throws Ai1ec_Date_Timezone_Exception If timezone is not recognized.
 	 */
 	public function format( $format = 'U', $timezone = null ) {
+		if ( $this->_is_empty ) {
+			return null;
+		}
 		if ( 'U' === $format ) { // performance cut
 			return $this->_date_time->format( 'U' );
 		}
@@ -107,10 +115,15 @@ class Ai1ec_Date_Time {
 	/**
 	 * Create JavaScript ready date/time information string.
 	 *
+	 * @param bool $event_timezone Set to true to format in event timezone.
+	 *
 	 * @return string JavaScript date/time string.
 	 */
-	public function format_to_javascript() {
-		return $this->format( 'Y-m-d\TH:i:s' );
+	public function format_to_javascript( $event_timezone = false ) {
+		$event_timezone = ( $event_timezone )
+			? $this->get_timezone()
+			: null;
+		return $this->format( 'Y-m-d\TH:i:s', $event_timezone );
 	}
 
 	/**
@@ -202,6 +215,10 @@ class Ai1ec_Date_Time {
 	 * @return int Number of seconds between two dates.
 	 */
 	public function diff_sec( Ai1ec_Date_Time $comparable, $timezone = null ) {
+		// NOTICE: `$this->_is_empty` is not touched here intentionally
+		// because there is no meaningful difference to `empty` value.
+		// It is left to be handled at upper level - you are not likely to
+		// reach situation where you compare something against empty value.
 		if ( version_compare( PHP_VERSION, '5.3.0' ) < 0 ) {
 			$difference = $this->_date_time->format( 'U' ) -
 				$comparable->_date_time->format( 'U' );
@@ -230,6 +247,7 @@ class Ai1ec_Date_Time {
 	 */
 	public function set_date( $year, $month, $day ) {
 		$this->_date_time->setDate( $year, $month, $day );
+		$this->_is_empty = false;
 		return $this;
 	}
 
@@ -244,6 +262,7 @@ class Ai1ec_Date_Time {
 	 */
 	public function set_time( $hour, $minute = 0, $second = 0 ) {
 		$this->_date_time->setTime( $hour, $minute, $second );
+		$this->_is_empty = false;
 		return $this;
 	}
 
@@ -255,6 +274,8 @@ class Ai1ec_Date_Time {
 	 * @return Ai1ec_Date_Time Instance of self for chaining.
 	 */
 	public function adjust_day( $quantifier ) {
+		// NOTICE: `$this->_is_empty` is not touched here, because if you
+		// start adjusting value it's likely not empty by then.
 		$this->adjust( $quantifier, 'day' );
 		return $this;
 	}
@@ -285,6 +306,7 @@ class Ai1ec_Date_Time {
 	 */
 	public function set_date_time( $time = 'now', $timezone = 'UTC' ) {
 		if ( $time instanceof self ) {
+			$this->_is_empty           = $time->_is_empty;
 			$this->_date_time          = clone $time->_date_time;
 			$this->_preferred_timezone = $time->_preferred_timezone;
 			if ( 'UTC' !== $timezone && $timezone ) {
@@ -296,11 +318,12 @@ class Ai1ec_Date_Time {
 		$date_time_tz = $this->_registry->get( 'date.timezone' )
 				->get( $timezone );
 		$reset_tz     = false;
-		if (
-			$time > 0 &&
-			( ! isset( $time{8} ) || 'T' !== $time{8} ) // '20001231T001559Z'
-			&& ( $time >> 10 ) > 2
-		) {
+		$this->_is_empty = false;
+		if ( null === $time ) {
+			$this->_is_empty = true;
+			$time            = '@' . ~PHP_INT_MAX;
+			$reset_tz        = true;
+		} else if ( $this->is_timestamp( $time ) ) {
 			$time     = '@' . $time; // treat as UNIX timestamp
 			$reset_tz = true; // store intended TZ
 		}
@@ -310,6 +333,29 @@ class Ai1ec_Date_Time {
 			$this->set_timezone( $date_time_tz );
 		}
 		return $this;
+	}
+
+	/**
+	 * Check if value should be treated as a UNIX timestamp.
+	 *
+	 * @param string $time Provided time value.
+	 *
+	 * @return bool True if seems like UNIX timestamp.
+	 */
+	public function is_timestamp( $time ) {
+		// '20001231T001559Z'
+		if ( isset( $time{8} ) && 'T' === $time{8} ) {
+			return false;
+		}
+		if ( (string)(int)$time !== (string)$time ) {
+			return false;
+		}
+		// 1000..2459 are treated as hours, 2460..9999 - as years
+		if ( $time > 999 && $time < 2460 ) {
+			return false;
+		}
+		return true;
+
 	}
 
 	/**
@@ -351,4 +397,14 @@ class Ai1ec_Date_Time {
 		$this->_date_time->modify( $modifier );
 		return $this;
 	}
+
+	/**
+	 * Explicitly check if value (date) is empty.
+	 *
+	 * @return bool Emptiness
+	 */
+	public function is_empty() {
+		return $this->_is_empty;
+	}
+
 }

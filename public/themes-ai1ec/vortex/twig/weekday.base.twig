@@ -6,7 +6,7 @@
 	<thead>
 		<tr>
 			{% for date, day in cell_array %}
-				<th class="ai1ec-weekday
+				<th scope="col" class="ai1ec-weekday
 					{% if day.today is not empty %}ai1ec-today{% endif %}">
 
 					{# Display Reveal button in last cell only #}
@@ -170,4 +170,4 @@
 	</tbody>
 </table>
 
-<div class="ai1ec-pull-right">{{ pagination_links | raw }}</div>
+<div class="ai1ec-pull-left">{{ pagination_links | raw }}</div>

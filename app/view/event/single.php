@@ -118,5 +118,29 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 		return $loader->get_file( 'event-single-footer.twig', $args, false )
 			->get_content();
 	}
+	
+	/**
+	 * Render the full article for the event
+	 * 
+	 * @param Ai1ec_Event $event
+	 */
+	public function get_full_article( Ai1ec_Event $event ) {
+		$title   = apply_filters(
+			'the_title',
+			$event->get( 'post' )->post_title,
+			$event->get( 'post_id' )
+		);
+		$content = $this->get_content( $event ) . wpautop(
+			apply_filters( 
+				'the_content', 
+				$event->get( 'post' )->post_content 
+			)
+		);
+		$args = compact( 'title', 'content' );
+		$loader = $this->_registry->get( 'theme.loader' );
+		return $loader->get_file( 'event-single-full.twig', $args, false )
+			->get_content();
+		
+	}
 
 }

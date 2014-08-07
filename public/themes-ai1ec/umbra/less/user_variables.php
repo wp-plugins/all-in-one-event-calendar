@@ -156,12 +156,6 @@ return array(
 		"tab" => "forms",
 		"type" => "color",
 	),
-	"calendarTitle" => array(
-		"value"  => "#6a6a6a",
-		"description" => __( "Calendar title", AI1EC_PLUGIN_NAME ),
-		"tab" => "calendar",
-		"type" => "color",
-	),
 	"todayColor" => array(
 		"value"  => "#002743",
 		"description" => __( "Today color", AI1EC_PLUGIN_NAME ),

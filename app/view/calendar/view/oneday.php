@@ -49,21 +49,20 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 			)
 		);
 		// Create pagination links.
-		$pagination_links = $this->_get_pagination( $args );
-
-		$title    = $local_date->format_i18n(
+		$title            = $local_date->format_i18n(
 			$this->_registry->get( 'model.option' )
 				->get( 'date_format', 'l, M j, Y' )
 		);
+		$pagination_links = $this->_get_pagination( $args, $title );
 
 		// Calculate today marker's position.
-		$now      = $date_system->current_time();
-		$midnight = $this->_registry->get( 'date.time', $now )
+		$now              = $date_system->current_time();
+		$midnight         = $this->_registry->get( 'date.time', $now )
 			->set_time( 0, 0, 0 );
-		$now      = $this->_registry->get( 'date.time', $now );
-		$now_text = $this->_registry->get( 'view.event.time' )
+		$now              = $this->_registry->get( 'date.time', $now );
+		$now_text         = $this->_registry->get( 'view.event.time' )
 			->get_short_time( $now );
-		$now      = $now->diff_sec( $midnight );
+		$now              = $now->diff_sec( $midnight );
 
 		$is_ticket_button_enabled = apply_filters( 'ai1ec_oneday_ticket_button', false );
 		$show_reveal_button       = apply_filters( 'ai1ec_oneday_reveal_button', false );
@@ -78,7 +77,6 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 			'show_location_in_title'   => $settings->get( 'show_location_in_title' ),
 			'now_top'                  => $now,
 			'now_text'                 => $now_text,
-			'pagination_links'         => $pagination_links,
 			'time_format'              => $time_format,
 			'done_allday_label'        => false,// legacy
 			'done_grid'                => false,// legacy
@@ -91,11 +89,18 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 			'text_now_label'           => __( 'Now:', AI1EC_PLUGIN_NAME ),
 			'text_venue_separator'     => __( '@ %s', AI1EC_PLUGIN_NAME ),
 		);
+		if ( $settings->get( 'ajaxify_events_in_web_widget' ) ) {
+			$view_args['data_type_events'] = $args['data_type'];
+		}
 
 		// Add navigation if requested.
-		$view_args['pagination_links'] = $pagination_links;
-		// Add navigation if requested.
-		$view_args['navigation'] = $this->_get_navigation( $args['no_navigation'], $view_args );
+		$view_args['navigation'] = $this->_get_navigation(
+			array(
+				'no_navigation'    => $args['no_navigation'],
+				'pagination_links' => $pagination_links,
+				'views_dropdown'   => $args['views_dropdown'],
+			)
+		);
 
 		return $this->_get_view( $view_args );
 	}
@@ -107,11 +112,12 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 	 * ['enabled'], CSS class ['class'], text ['text'] and value to assign to
 	 * link's href ['href'].
 	 *
-	 * @param array $args Current request arguments.
+	 * @param array  $args  Current request arguments.
+	 * @param string $title Title to display in datepicker button
 	 *
 	 * @return array Array of links.
 	 */
-	function get_oneday_pagination_links( $args ) {
+	function get_oneday_pagination_links( $args, $title ) {
 		$links = array();
 		$orig_date = $args['exact_date'];
 
@@ -138,7 +144,8 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 		$factory = $this->_registry->get( 'factory.html' );
 		$links[] = $factory->create_datepicker_link(
 			$args,
-			$args['exact_date']
+			$args['exact_date'],
+			$title
 		);
 
 		// ============
