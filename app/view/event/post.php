@@ -62,7 +62,7 @@ class Ai1ec_View_Event_Post extends Ai1ec_Base {
 
 		return $messages;
 	}
-	
+
 	/**
 	 * Generates an excerpt from the given content string.
 	 *
@@ -75,16 +75,19 @@ class Ai1ec_View_Event_Post extends Ai1ec_Base {
 	 */
 	public function trim_excerpt( Ai1ec_Event $event, $length = 35, $more = '[...]' ) {
 		$raw_excerpt    = $event->get( 'post' )->post_content;
-	
+
 		$text           = preg_replace(
 			'#<\s*script[^>]*>.+<\s*/\s*script\s*>#x',
 			'',
-			apply_filters( 'the_content', $event->get( 'post' )->post_content )
+			apply_filters(
+				'the_excerpt',
+				$event->get( 'post' )->post_content
+			)
 		);
 		$text           = strip_shortcodes( $text );
 		$text           = str_replace( ']]>', ']]&gt;', $text );
 		$text           = strip_tags( $text );
-	
+
 		$excerpt_length = apply_filters( 'excerpt_length', $length );
 		$excerpt_more   = apply_filters( 'excerpt_more', $more );
 		$words          = preg_split(

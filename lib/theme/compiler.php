@@ -124,7 +124,7 @@ class Ai1ec_Theme_Compiler extends Ai1ec_Base {
 		$environment['debug']       = false;
 		$environment['cache']       = AI1EC_TWIG_CACHE_PATH;
 		$environment['auto_reload'] = true;
-		if ( ! $this->_check_dir( $environment['cache'] ) ) {
+		if ( ! $this->clean_and_check_dir( $environment['cache'] ) ) {
 			throw new Ai1ec_Bootstrap_Exception(
 				'Failed to create cache directory: ' . $environment['cache']
 			);
@@ -142,19 +142,27 @@ class Ai1ec_Theme_Compiler extends Ai1ec_Base {
 	 *
 	 * @return bool Validity.
 	 */
-	protected function _check_dir( $cache_dir ) {
-		$parent    = dirname( realpath( $cache_dir ) );
-		$gitignore = null;
-		$gitfile   = $parent . DIRECTORY_SEPARATOR . '.gitignore';
-		if ( is_file( $gitfile ) ) {
-			$gitignore = file_get_contents( $gitfile );
+	public function clean_and_check_dir( $cache_dir ) {
+		$parent			 = dirname( realpath( $cache_dir ) );
+		$restore_files	 = glob( $parent . DIRECTORY_SEPARATOR . '*.css' );
+		if ( false === $restore_files ) {
+			$restore_files = array();
+		}
+		$restore_files[] = $parent . DIRECTORY_SEPARATOR . '.gitignore';
+		if ( count( $restore_files ) > 0 ) {
+			$restore_files = array_flip( $restore_files );
+			foreach ( $restore_files as $file => $ignored_number ) {
+				$restore_files[$file] = file_get_contents( $file );
+			}
 		}
 		if ( ! $this->_prune_dir( $parent ) ) {
 			return false;
 		}
-		if ( mkdir( $cache_dir, 0755, true ) ) {
-			if ( null !== $gitignore ) {
-				file_put_contents( $gitfile, $gitignore );
+		if ( mkdir( $cache_dir, 0754, true ) ) {
+			if ( count( $restore_files ) > 0 ) {
+				foreach ( $restore_files as $file => $contents ) {
+					file_put_contents( $file, $contents );
+				}
 			}
 			return true;
 		}

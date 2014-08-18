@@ -97,7 +97,7 @@
 		class="ai1ec-btn ai1ec-btn-primary ai1ec-btn-lg"
 		data-loading-text="<?php echo esc_attr(
 			'<i class="ai1ec-fa ai1ec-fa-spinner ai1ec-fa-fw ai1ec-fa-spin"></i> ' .
-			__( 'Please wait…', AI1EC_PLUGIN_NAME ) ); ?>">
+			__( 'Please wait&#8230;', AI1EC_PLUGIN_NAME ) ); ?>">
 		<i class="ai1ec-fa ai1ec-fa-check ai1ec-fa-fw"></i>
 		<?php _e( 'Apply', AI1EC_PLUGIN_NAME ); ?>
 	</button>

@@ -231,7 +231,10 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 		$view_names      = array();
 		$mode            = wp_is_mobile() ? '_mobile' : '';
 		foreach ( $enabled_views as $key => $val ) {
-			$view_names[$key] = $val['longname'];
+			$view_names[$key] = translate_nooped_plural(
+				$val['longname'],
+				1
+			);
 			// Find out if view is enabled in requested mode (mobile or desktop). If
 			// no mode-specific setting is available, fall back to desktop setting.
 			$view_enabled = isset( $enabled_views[$key]['enabled' . $mode] ) ?
@@ -255,7 +258,10 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 				unset( $options['week_offset'] );
 				unset( $options['oneday_offset'] );
 				$options['action'] = $key;
-				$values['desc'] = $val['longname'];
+				$values['desc'] = translate_nooped_plural(
+					$val['longname'],
+					1
+				);
 				$href = $this->_registry->get( 'html.element.href', $options );
 				$values['href'] = $href->generate_href();
 				$available_views[$key] = $values;

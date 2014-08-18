@@ -84,8 +84,11 @@ class Ai1ec_View_Event_Content extends Ai1ec_Base {
 					'#<\s*script[^>]*>.+<\s*/\s*script\s*>#x',
 					'',
 					apply_filters(
-						'the_content',
-						$event->get( 'post' )->post_content
+						'ai1ec_the_content',
+						apply_filters(
+							'the_content',
+							$event->get( 'post' )->post_content
+						)
 					)
 				)
 			)

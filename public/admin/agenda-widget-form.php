@@ -23,7 +23,7 @@
 </p>
 
 <p class="ai1ec-limit-by-container">
-	Limit to:
+	<?php _e( 'Limit to:', AI1EC_PLUGIN_NAME ); ?>
 	<br />
 	<!-- Limit by Category -->
 	<input id="<?php echo $limit_by_cat['id'] ?>" class="ai1ec-limit-by-cat" name="<?php echo $limit_by_cat['name'] ?>" type="checkbox" value="1" <?php if( $limit_by_cat['value'] ) echo 'checked="checked"' ?> />

@@ -224,7 +224,8 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 
 		$day_start_ts = $loc_start_time->format();
 		$day_end_ts   = $loc_end_time->format();
-
+		$this->_registry->get( 'controller.content-filter' )
+			->clear_the_content_filters();
 		foreach ( $day_events as $evt ) {
 			list( $evt_start, $evt_end ) = $this->
 				_get_view_specific_timestamps( $evt );
@@ -255,6 +256,8 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 			}
 
 		}
+		$this->_registry->get( 'controller.content-filter' )
+			->restore_the_content_filters();
 
 		// This will store the returned array
 		$days = array();

@@ -222,6 +222,8 @@ class Ai1ec_Calendar_View_Week  extends Ai1ec_Calendar_View_Abstract {
 		// Split up events on a per-day basis
 		$all_events = array();
 		$this->_days_cache = $this->_registry->get( 'cache.memory' );
+		$this->_registry->get( 'controller.content-filter' )
+			->clear_the_content_filters();
 		foreach ( $week_events as $evt ) {
 			list( $evt_start, $evt_end ) = $this->
 				_get_view_specific_timestamps( $evt );
@@ -268,7 +270,8 @@ class Ai1ec_Calendar_View_Week  extends Ai1ec_Calendar_View_Abstract {
 				}
 			}
 		}
-
+		$this->_registry->get( 'controller.content-filter' )
+			->restore_the_content_filters();
 		// This will store the returned array
 		$days = array();
 		$now  = $this->_registry->get(

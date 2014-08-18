@@ -26,7 +26,7 @@ class Ai1ec_Render_Strategy_Html extends Ai1ec_Http_Response_Render_Strategy {
 			// Filter event post content, in single- and multi-post views
 			add_filter( 'the_content', array( $this, 'event_content' ), PHP_INT_MAX - 1 );
 			add_filter( 'the_title',   array( $this, 'event_title' ), PHP_INT_MAX - 1, 3 );
-			add_filter( 'post_class',  array( $this, 'post_class' ), PHP_INT_MAX - 1 );
+			add_filter( 'post_class',  array( $this, 'post_class' ), PHP_INT_MAX - 1, 3 );
 			return;
 		}
 		// Replace page content - make sure it happens at (almost) the very end of
@@ -71,7 +71,7 @@ class Ai1ec_Render_Strategy_Html extends Ai1ec_Http_Response_Render_Strategy {
 
 		// if we have modified the content, we return the modified version.
 		$to_return = $this->_html .
-			'<div class="description">' . $content . '</div>';
+			'<div class="p-description">' . $content . '</div>';
 		if ( isset( $this->_html_footer ) ) {
 			$to_return .= $this->_html_footer;
 		}
@@ -94,9 +94,10 @@ class Ai1ec_Render_Strategy_Html extends Ai1ec_Http_Response_Render_Strategy {
 	public function event_title( $title, $post_id, $is_view = false ) {
 		if (
 			false === $is_view &&
-			true  === $this->_registry->get( 'acl.aco' )->is_our_post_type()
+			true  === $this->_registry->get( 'acl.aco' )
+				->is_our_post_type( $post_id )
 		) {
-			$title =  '<span class="summary">' . $title . '</span>';
+			$title = '<span class="p-summary">' . $title . '</span>';
 		}
 		return $title;
 	}
@@ -104,13 +105,21 @@ class Ai1ec_Render_Strategy_Html extends Ai1ec_Http_Response_Render_Strategy {
 	/**
 	 * Add vevent class to post
 	 *
-	 * @param array $classes
+	 * @param array  $classes
+	 * @param string $class   A comma-separated list of additional classes added
+	 *                        to the post.
+	 * @param int    $post_id The post ID.
+	 *
 	 * @return array
 	 */
-	public function post_class( $classes ) {
-		if ( true === $this->_registry->get( 'acl.aco' )->is_our_post_type() ) {
-			$classes[] = 'vevent';
+	public function post_class( $classes, $class, $post_id ) {
+		if (
+			true === $this->_registry->get( 'acl.aco' )
+				->is_our_post_type( $post_id )
+		) {
+			$classes[] = 'h-event';
 		}
 		return $classes;
 	}
+
 }

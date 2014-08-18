@@ -18,7 +18,7 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 
 	const ICS_OPTION_DB_VERSION = 'ai1ec_ics_db_version';
 
-	const ICS_DB_VERSION        = 106;
+	const ICS_DB_VERSION        = 107;
 
 	/**
 	 * @var array
@@ -153,9 +153,11 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 					$result = $import_export->import_events( 'ics', $args );
 					$count  = $result['count'];
 					// we must flip again the array to iterate over it
-					$events_to_delete = array_flip( $result['events_to_delete'] );
-					foreach ( $events_to_delete as $event_id ) {
-						wp_delete_post( $event_id, true );
+					if ( 0 == $feed->keep_old_events ) {
+						$events_to_delete = array_flip( $result['events_to_delete'] );
+						foreach ( $events_to_delete as $event_id ) {
+							wp_delete_post( $event_id, true );
+						}
 					}
 				} catch ( Ai1ec_Parse_Exception $e ) {
 					$message = "The provided feed didn't return valid ics data";
@@ -264,6 +266,7 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 					comments_enabled tinyint(1) NOT NULL DEFAULT '1',
 					map_display_enabled tinyint(1) NOT NULL DEFAULT '0',
 					keep_tags_categories tinyint(1) NOT NULL DEFAULT '0',
+					keep_old_events tinyint(1) NOT NULL DEFAULT '0',
 					PRIMARY KEY  (feed_id),
 					UNIQUE KEY feed (feed_url)
 					) CHARACTER SET utf8;";
@@ -414,6 +417,7 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 				'comments_enabled',
 				'map_display_enabled',
 				'keep_tags_categories',
+				'keep_old_events',
 			)
 		);
 
@@ -450,6 +454,9 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 				),
 				'keep_tags_categories' => (bool) intval(
 						$row->keep_tags_categories
+				),
+				'keep_old_events'      => (bool) intval(
+						$row->keep_old_events
 				),
 			);
 			$html .= $theme_loader->get_file( 'feed_row.php', $args, true )
@@ -508,7 +515,9 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 			'map_display_enabled'  => Ai1ec_Primitive_Int::db_bool(
 				$_REQUEST['map_display_enabled'] ),
 			'keep_tags_categories' => Ai1ec_Primitive_Int::db_bool(
-				$_REQUEST['keep_tags_categories'] )
+				$_REQUEST['keep_tags_categories'] ),
+			'keep_old_events' => Ai1ec_Primitive_Int::db_bool(
+				$_REQUEST['keep_old_events'] )
 		);
 		$entry = apply_filters( 'ai1ec_ics_feed_entry', $entry );
 		if ( is_wp_error( $entry ) ) {
@@ -522,7 +531,7 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 			return $json_strategy->render( array( 'data' => $output ) );
 		}
 
-		$format     = array( '%s', '%s', '%s', '%d', '%d', '%d' );
+		$format     = array( '%s', '%s', '%s', '%d', '%d', '%d', '%d' );
 		$res        = $db->insert( $table_name, $entry, $format );
 		$feed_id    = $db->get_insert_id();
 		$categories = array();
@@ -552,6 +561,9 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 			'events'               => 0,
 			'keep_tags_categories' => (bool) intval(
 				$_REQUEST['keep_tags_categories']
+			),
+			'keep_old_events' => (bool) intval(
+				$_REQUEST['keep_old_events']
 			)
 		);
 		$loader = $this->_registry->get( 'theme.loader' );
