@@ -1,7 +1,7 @@
 <?php if( ! validate_current_theme() ) : ?>
 	<div id="message1" class="updated">
 		<p>
-			<?php _e('The active theme is broken.  Reverting to the default theme.'); ?>
+			<?php _e( 'The active theme is broken.  Reverting to the default theme.', AI1EC_PLUGIN_NAME ); ?>
 		</p>
 	</div>
 <?php elseif( isset( $_GET['activated'] ) ) :
@@ -25,7 +25,7 @@
 	<?php } elseif( isset( $_GET['deleted'] ) ) : ?>
 			<div id="message3" class="updated">
 				<p>
-					<?php _e('Theme deleted.') ?>
+					<?php _e( 'Theme deleted.', AI1EC_PLUGIN_NAME ) ?>
 				</p>
 			</div>
 	<?php endif; ?>

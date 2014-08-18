@@ -116,6 +116,7 @@ class Ai1ec_Factory_Html extends Ai1ec_Base {
 			'data-date-weekstart' => $settings->get( 'week_start_day' ),
 			'href' => '#',
 			'data-href' => $data_href->generate_href(),
+			'data-lang' => str_replace( '_', '-', get_locale() ),
 		);
 		$loader = $this->_registry->get( 'theme.loader' );
 		$file = $loader->get_file( 'date-icon.png' );

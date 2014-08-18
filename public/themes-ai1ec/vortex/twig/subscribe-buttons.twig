@@ -1,23 +1,28 @@
-<div class="ai1ec-subscribe-container ai1ec-btn-group ai1ec-pull-left">
+<div class="ai1ec-subscribe-container ai1ec-btn-group ai1ec-pull-left
+		ai1ec-tooltip-trigger" data-placement="left" title="{{ text.tooltip }}">
 	<button
 		type="button"
 		class="ai1ec-btn ai1ec-btn-default ai1ec-btn-sm ai1ec-dropdown-toggle
 			ai1ec-subscribe {{ button_classes }}"
-		data-toggle="ai1ec-dropdown">
+			data-toggle="ai1ec-dropdown">
 		<i class="ai1ec-fa ai1ec-icon-rss ai1ec-fa-lg ai1ec-fa-fw"></i>
-		{% if subscribe_label is not empty %}
-			{{ subscribe_label }}
-		{% else %}
-			{% if is_filtered %}
-				{{ text_filtered }}
+		<span class="ai1ec-hidden-xs">
+			<span class="ai1ec-hidden-xs">
+			{% if subscribe_label is not empty %}
+				{{ subscribe_label }}
 			{% else %}
-				{{ text_subscribe }}
+				{% if is_filtered %}
+					{{ text_filtered }}
+				{% else %}
+					{{ text_subscribe }}
+				{% endif %}
 			{% endif %}
-		{% endif %}
-		<span class="ai1ec-caret"></span>
+			</span>
+			<span class="ai1ec-caret"></span>
+		</span>
 	</button>
 	{% set url = export_url | replace( {"webcal://": "http://"} ) ~ url_args %}
-	<ul class="ai1ec-dropdown-menu" role="menu">
+	<ul class="ai1ec-dropdown-menu ai1ec-pull-right" role="menu">
 		<li>
 			<a class="ai1ec-tooltip-trigger ai1ec-tooltip-auto"
 			   target="_blank"

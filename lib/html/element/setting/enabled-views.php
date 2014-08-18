@@ -51,6 +51,10 @@ class Ai1ec_Html_Element_Enabled_Views
 					'checked="checked"' :
 					'' ) :
 				$view['default'];
+			$view['longname']       = translate_nooped_plural(
+				$view['longname'],
+				1
+			);
 		}
 	}
 }

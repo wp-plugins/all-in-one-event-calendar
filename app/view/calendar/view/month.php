@@ -398,7 +398,8 @@ class Ai1ec_Calendar_View_Month  extends Ai1ec_Calendar_View_Abstract {
 		$start_time = $start_time->format();
 		$end_time   = $end_time->format();
 		$this->_update_meta( $month_events );
-
+		$this->_registry->get( 'controller.content-filter' )
+			->clear_the_content_filters();
 		foreach ( $month_events as $event ) {
 			$event_start = $event->get( 'start' )->format();
 			$event_end   = $event->get( 'end' )->format();
@@ -438,7 +439,8 @@ class Ai1ec_Calendar_View_Month  extends Ai1ec_Calendar_View_Abstract {
 			$this->_add_runtime_properties( $event );
 			$days_events[$day][$priority][] = $event;
 		}
-
+		$this->_registry->get( 'controller.content-filter' )
+			->restore_the_content_filters();
 		for ( $day = 1; $day <= $last_day; $day++ ) {
 			$days_events[$day] = array_merge(
 				$days_events[$day]['multi'],

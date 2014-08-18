@@ -12,6 +12,11 @@
 class Ai1ec_Theme_Loader {
 
 	/**
+	 * @const string Name of option which forces theme clean-up if set to true.
+	 */
+    const OPTION_FORCE_CLEAN = 'ai1ec_clean_twig_cache';
+
+	/**
 	 * @const string Prefix for theme arguments filter name.
 	 */
 	const ARGS_FILTER_PREFIX = 'ai1ec_theme_args_';
@@ -400,13 +405,26 @@ class Ai1ec_Theme_Loader {
 			false === $path ? AI1EC_CACHE_UNAVAILABLE : $path
 		);
 		if ( false === $path ) {
-			$message = Ai1ec_I18n::__(
-				'We detected that your cache directory (%s) is not writable. This will make your calendar slow. Please contact your web host or server administrator to make it writable by the web server.'
-			);
-			$message = sprintf( $message, AI1EC_TWIG_CACHE_PATH );
-			$this->_registry->get( 'notification.admin' )->store( $message, 'error', 1 );
+			/* @TODO: move this to Settings -> Advanced -> Cache and provide a nice message */
 		}
 		return $path;
+	}
+
+	/**
+	 * After upgrade clean cache if it's not default.
+	 *
+	 * @return void Method doesn't return
+	 */
+	public function clean_cache_on_upgrade() {
+		$model_option = $this->_registry->get( 'model.option' );
+		if ( $model_option->get( self::OPTION_FORCE_CLEAN, false ) ) {
+			$cache = realpath( $this->get_cache_dir() );
+			if ( 0 !== strcmp( $cache, realpath( AI1EC_TWIG_CACHE_PATH ) ) ) {
+				$this->_registry->get( 'theme.compiler' )
+					->clean_and_check_dir( $cache );
+			}
+			$model_option->set( self::OPTION_FORCE_CLEAN, false );
+		}
 	}
 
 	/**

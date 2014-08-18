@@ -70,6 +70,8 @@ class Ai1ec_Ics_Import_Export_Engine
 			$post_ids[] = $event->get( 'post_id' );
 		}
 		$this->_taxonomy_model->update_meta( $post_ids );
+		$this->_registry->get( 'controller.content-filter' )
+			->clear_the_content_filters();
 		foreach ( $arguments['events'] as $event ) {
 			$c = $this->_insert_event_in_calendar(
 				$event,
@@ -78,6 +80,8 @@ class Ai1ec_Ics_Import_Export_Engine
 				$params
 			);
 		}
+		$this->_registry->get( 'controller.content-filter' )
+			->restore_the_content_filters();
 		$str = ltrim( $c->createCalendar() );
 		return $str;
 	}
@@ -276,17 +280,18 @@ class Ai1ec_Ics_Import_Export_Engine
 			if ( $exdates = $e->createExdate() ){
 				// We may have two formats:
 				// one exdate with many dates ot more EXDATE rules
-				$exdates = explode( 'EXDATE', $exdates );
+				$exdates      = explode( 'EXDATE', $exdates );
+				$def_timezone = $this->_get_import_timezone( $timezone );
 				foreach ( $exdates as $exd ) {
 					if ( empty( $exd ) ) {
 						continue;
 					}
 					$exploded       = explode( ':', $exd );
-					$excpt_timezone = $timezone;
+					$excpt_timezone = $def_timezone;
 					$excpt_date     = null;
 					foreach ( $exploded as $particle ) {
-						if ( ';TZID=' === substr( $particle, 0, 5 ) ) {
-							$excpt_timezone = substr( $particle, 5 );
+						if ( ';TZID=' === substr( $particle, 0, 6 ) ) {
+							$excpt_timezone = substr( $particle, 6 );
 						} else {
 							$excpt_date = trim( $particle );
 						}
@@ -540,6 +545,22 @@ class Ai1ec_Ics_Import_Export_Engine
 	}
 
 	/**
+	 * Parse importable feed timezone to sensible value.
+	 *
+	 * @param string $def_timezone Timezone value from feed.
+	 *
+	 * @return string Valid timezone name to use.
+	 */
+	protected function _get_import_timezone( $def_timezone ) {
+		$parser   = $this->_registry->get( 'date.timezone' );
+		$timezone = $parser->get_name( $def_timezone );
+		if ( false === $timezone ) {
+			return 'sys.default';
+		}
+		return $timezone;
+	}
+
+	/**
 	 * time_array_to_timestamp function
 	 *
 	 * Converts time array to time string.
@@ -643,7 +664,13 @@ class Ai1ec_Ics_Import_Export_Engine
 				)
 			)
 		);
-		$content = apply_filters( 'the_content', $event->get( 'post' )->post_content );
+		$content = apply_filters(
+			'ai1ec_the_content',
+			apply_filters(
+				'the_content',
+				$event->get( 'post' )->post_content
+			)
+		);
 		$content = str_replace(']]>', ']]&gt;', $content);
 		$content = html_entity_decode( $content, ENT_QUOTES, 'UTF-8' );
 		// Prepend featured image if available.

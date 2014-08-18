@@ -191,6 +191,8 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 		$dates    = array();
 		$time     = $this->_registry->get( 'date.system' );
 		$settings = $this->_registry->get( 'model.settings' );
+		$this->_registry->get( 'controller.content-filter' )
+			->clear_the_content_filters();
 		// Classify each event into a date/allday category
 		foreach ( $events as $event ) {
 			$start_time    = $this->_registry
@@ -221,6 +223,8 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 			$dates[$timestamp]['events'][$category][] = $event;
 			$dates[$timestamp]['href'] = $href_for_date;
 		}
+		$this->_registry->get( 'controller.content-filter' )
+			->restore_the_content_filters();
 		// Flag today
 		$today = $this->_registry->get( 'date.time', 'now', 'sys.default' )
 			->set_time( 0, 0, 0 )

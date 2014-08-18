@@ -44,33 +44,37 @@ class Ai1ec_View_Event_Ticket {
 	 * Contact info as HTML
 	 */
 	public function get_contact_html( Ai1ec_Event $event ) {
-		$contact = '<div class="vcard">';
+		$contact      = '<div class="h-card">';
+		$has_contents = false;
 		if ( $event->get( 'contact_name' ) ) {
-			$contact .=
-			'<div class="ai1ec-contact-name fn">' .
+			$contact     .=
+			'<div class="ai1ec-contact-name p-name">' .
 			'<i class="ai1ec-fa ai1ec-fa-fw ai1ec-fa-user"></i> ' .
 			esc_html( $event->get( 'contact_name' ) ) .
 			'</div> ';
+			$has_contents = true;
 		}
 		if ( $event->get( 'contact_phone' ) ) {
-			$contact .=
-			'<div class="ai1ec-contact-phone tel">' .
+			$contact     .=
+			'<div class="ai1ec-contact-phone p-tel">' .
 			'<i class="ai1ec-fa ai1ec-fa-fw ai1ec-fa-phone"></i> ' .
 			esc_html( $event->get( 'contact_phone' ) ) .
 			'</div> ';
+			$has_contents = true;
 		}
 		if ( $event->get( 'contact_email' ) ) {
-			$contact .=
+			$contact     .=
 			'<div class="ai1ec-contact-email">' .
-			'<a class="email" href="mailto:' .
+			'<a class="u-email" href="mailto:' .
 			esc_attr( $event->get( 'contact_email' ) ) . '">' .
 			'<i class="ai1ec-fa ai1ec-fa-fw ai1ec-fa-envelope-o"></i> ' .
 			__( 'Email', AI1EC_PLUGIN_NAME ) . '</a></div> ';
+			$has_contents = true;
 		}
 		if ( $event->get( 'contact_url' ) ) {
-			$contact .=
+			$contact     .=
 			'<div class="ai1ec-contact-url">' .
-			'<a class="url" target="_blank" href="' .
+			'<a class="u-url" target="_blank" href="' .
 			esc_attr( $event->get( 'contact_url' ) ) .
 			'"><i class="ai1ec-fa ai1ec-fa-fw ai1ec-fa-link"></i> ' .
 			apply_filters(
@@ -78,8 +82,9 @@ class Ai1ec_View_Event_Ticket {
 				__( 'Event website', AI1EC_PLUGIN_NAME )
 			) .
 			' <i class="ai1ec-fa ai1ec-fa-external-link"></i></a></div>';
+			$has_contents = true;
 		}
 		$contact .= '</div>';
-		return $contact;
+		return $has_contents ? $contact : '';
 	}
 }

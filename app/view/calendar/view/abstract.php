@@ -220,7 +220,13 @@ abstract class Ai1ec_Calendar_View_Abstract extends Ai1ec_Base {
 
 		$event->set_runtime(
 			'filtered_content',
-			apply_filters( 'the_content', $event->get( 'post' )->post_content )
+			apply_filters(
+				'ai1ec_the_content',
+				apply_filters(
+					'the_content',
+					$event->get( 'post' )->post_content
+				)
+			)
 		);
 
 		$taxonomy = $this->_registry->get( 'view.event.taxonomy' );

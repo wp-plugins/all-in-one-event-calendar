@@ -72,23 +72,7 @@ class Ai1ec_Css_Frontend extends Ai1ec_Base {
 			true
 		);
 		if ( ! $this->persistance_context->is_file_cache() ) {
-			foreach ( $this->_cache_paths as $cache_path ) {
-				$this->_folders_not_writable[] = $cache_path['path'];
-			}
-			$this->_registry->get( 'notification.admin' )
-				->store(
-					sprintf(
-						__(
-							'Cache directories, <code>%s</code>, are not writable. Your calendar will perform more slowly until you make this directory writable by the web server.',
-							AI1EC_PLUGIN_NAME
-						),
-						implode( '</code><code>', $this->_folders_not_writable )
-					),
-					'error',
-					2,
-					array( Ai1ec_Notification_Admin::RCPT_ADMIN ),
-					true
-				);
+			 /* @TODO: move this to Settings -> Advanced -> Cache */
 		}
 		$this->lessphp_controller  = $this->_registry->get( 'less.lessphp' );
 		$this->db_adapter          = $this->_registry->get( 'model.option' );

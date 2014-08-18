@@ -324,14 +324,10 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 		}
 		$date_first = $this->_registry->get( 'date.time', $date_first );
 		$date_last  = $this->_registry->get( 'date.time', $date_last );
+		// jus show next/prev links, in case no event found is shown.
+		$next = true;
+		$prev = true;
 
-		$next = false;
-		$prev = false;
-		// if there are enough events to display a page, presume that there might be more.
-		if ( count( $events ) === $limit ) {
-			$next = true;
-			$prev = true;
-		}
 		return array(
 			'events'     => $events,
 			'prev'       => $prev,

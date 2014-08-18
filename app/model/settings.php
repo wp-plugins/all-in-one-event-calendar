@@ -274,6 +274,7 @@ class Ai1ec_Settings extends Ai1ec_App {
 			)
 		) {
 			$this->_register_standard_values();
+			$this->_update_name_translations();
 			$this->_change_update_status( true );
 			$upgrade = true;
 		} else if ( $values instanceof Ai1ec_Settings ) { // process legacy
@@ -294,10 +295,10 @@ class Ai1ec_Settings extends Ai1ec_App {
 	 * Do things needed on every plugin upgrade.
 	 */
 	protected function _perform_upgrade_actions() {
-		$this->_registry->get( 'model.option' )
-			->set( 'ai1ec_force_flush_rewrite_rules', true, true );
-		$this->_registry->get( 'model.option' )
-			->set( 'ai1ec_invalidate_css_cache', true, true );
+        $option = $this->_registry->get( 'model.option' );
+		$option->set( 'ai1ec_force_flush_rewrite_rules',      true, true );
+		$option->set( 'ai1ec_invalidate_css_cache',           true, true );
+		$option->set( Ai1ec_Theme_Loader::OPTION_FORCE_CLEAN, true, true );
 	}
 
 	/**
@@ -371,28 +372,44 @@ class Ai1ec_Settings extends Ai1ec_App {
 						'default'        => true,
 						'enabled_mobile' => true,
 						'default_mobile' => true,
-						'longname'       => Ai1ec_I18n::__( 'Agenda' ),
+						'longname'       => _n_noop(
+							'Agenda',
+							'Agenda',
+							AI1EC_PLUGIN_NAME
+						),
 					),
 					'oneday' => array(
 						'enabled'        => true,
 						'default'        => false,
 						'enabled_mobile' => true,
 						'default_mobile' => false,
-						'longname'       => Ai1ec_I18n::__( 'Day' ),
+						'longname'       => _n_noop(
+							'Day',
+							'Day',
+							AI1EC_PLUGIN_NAME
+						),
 					),
 					'month' => array(
 						'enabled'        => true,
 						'default'        => false,
 						'enabled_mobile' => true,
 						'default_mobile' => false,
-						'longname'       => Ai1ec_I18n::__( 'Month' ),
+						'longname'       => _n_noop(
+							'Month',
+							'Month',
+							AI1EC_PLUGIN_NAME
+						),
 					),
 					'week' => array(
 						'enabled'        => true,
 						'default'        => false,
 						'enabled_mobile' => true,
 						'default_mobile' => false,
-						'longname'       => Ai1ec_I18n::__( 'Week' ),
+						'longname'       => _n_noop(
+							'Week',
+							'Week',
+							AI1EC_PLUGIN_NAME
+						),
 					),
 				),
 			),
@@ -649,6 +666,18 @@ class Ai1ec_Settings extends Ai1ec_App {
 				),
 				'default'  => 0,
 			),
+			'strict_compatibility_content_filtering' => array(
+				'type' => 'bool',
+				'renderer' => array(
+					'class' => 'checkbox',
+					'tab'   => 'viewing-events',
+					'item'  => 'viewing-events',
+					'label' => Ai1ec_I18n::__(
+						'Strict compatibility content filtering'
+					),
+				),
+				'default'  => false,
+			),
 			'hide_featured_image' => array(
 				'type' => 'bool',
 				'renderer' => array(
@@ -848,7 +877,7 @@ class Ai1ec_Settings extends Ai1ec_App {
 					'item'  => 'advanced',
 					'label' => sprintf(
 						Ai1ec_I18n::__(
-							'<strong>Publicize, promote, and share my events</strong> marked as public on the Timely network. (<a href="%s" target="_blank">Learn more »</a>)'
+							'<strong>Publicize, promote, and share my events</strong> marked as public on the Timely network. (<a href="%s" target="_blank">Learn more &#187;</a>)'
 						),
 						'http://time.ly/event-search-calendar'
 					),
@@ -900,6 +929,22 @@ class Ai1ec_Settings extends Ai1ec_App {
 				AI1EC_VERSION
 			);
 		}
+	}
+
+	/**
+	 * Update translated strings, after introduction of `_noop` functions.
+	 *
+	 * @return void
+	 */
+	protected function _update_name_translations() {
+		$translations = $this->_standard_options['enabled_views']['default'];
+		$current      = $this->get( 'enabled_views' );
+		foreach ( $current as $key => $view ) {
+			if ( isset( $translations[$key] ) ) {
+				$current[$key]['longname'] = $translations[$key]['longname'];
+			}
+		}
+		$this->set( 'enabled_views', $current );
 	}
 
 	/**
