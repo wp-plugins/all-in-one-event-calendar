@@ -143,27 +143,11 @@ class Ai1ec_Theme_Compiler extends Ai1ec_Base {
 	 * @return bool Validity.
 	 */
 	public function clean_and_check_dir( $cache_dir ) {
-		$parent			 = dirname( realpath( $cache_dir ) );
-		$restore_files	 = glob( $parent . DIRECTORY_SEPARATOR . '*.css' );
-		if ( false === $restore_files ) {
-			$restore_files = array();
-		}
-		$restore_files[] = $parent . DIRECTORY_SEPARATOR . '.gitignore';
-		if ( count( $restore_files ) > 0 ) {
-			$restore_files = array_flip( $restore_files );
-			foreach ( $restore_files as $file => $ignored_number ) {
-				$restore_files[$file] = file_get_contents( $file );
-			}
-		}
+		$parent = realpath( $cache_dir );
 		if ( ! $this->_prune_dir( $parent ) ) {
 			return false;
 		}
 		if ( mkdir( $cache_dir, 0754, true ) ) {
-			if ( count( $restore_files ) > 0 ) {
-				foreach ( $restore_files as $file => $contents ) {
-					file_put_contents( $file, $contents );
-				}
-			}
 			return true;
 		}
 		return false;
@@ -185,7 +169,21 @@ class Ai1ec_Theme_Compiler extends Ai1ec_Base {
 			return false;
 		}
 		while ( false !== ( $file = readdir( $handle ) ) ) {
-			if ( '.' === $file || '..' === $file ) {
+			if ( '.' === $file{0} ) {
+				continue;
+			}
+			$basename = basename( $file, '.php' );
+			// continue deleting only if:
+			// - it's 60 characters length (filename w/o '.php')
+			// - OR it's 2 characters length (directory)
+			// - AND (with two above) it's hex encoded string
+			if (
+				! (
+					( isset( $basename{59} ) && ! isset( $basename{60} ) ) ||
+					( isset( $basename{1} )	 && ! isset( $basename{2}  ) ) &&
+					ctype_xdigit( $basename )
+				)
+			) {
 				continue;
 			}
 			$path = $cache_dir . DIRECTORY_SEPARATOR . $file;

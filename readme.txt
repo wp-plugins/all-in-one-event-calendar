@@ -5,7 +5,7 @@ calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WorPress at least: 3.5
 Tested up to: 3.9.1
-Stable tag: 2.1.3
+Stable tag: 2.1.4
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -171,6 +171,10 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.1.4 =
+* Improved context awareness of cache clean-up function to protect
+from accidentally removing files that do not belong to the plugin
 
 = Version 2.1.3 =
 * Added possibility to keep old events during ICS feeds update
