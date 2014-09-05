@@ -18,7 +18,7 @@ class __TwigTemplate_0637d929bcaa80c8f95cc2e341066aa553f8bc8d62a627a097e42516253
         // line 1
         if (((isset($context["show_add_your_calendar"]) ? $context["show_add_your_calendar"] : null) || (isset($context["show_post_your_event"]) ? $context["show_post_your_event"] : null))) {
             // line 2
-            echo "\t<div class=\"ai1ec-btn-group ai1ec-pull-right\">
+            echo "\t<div class=\"ai1ec-btn-group ai1ec-contribution-buttons\">
 \t\t";
             // line 3
             if ((isset($context["show_add_your_calendar"]) ? $context["show_add_your_calendar"] : null)) {

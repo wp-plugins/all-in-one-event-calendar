@@ -418,12 +418,12 @@ class Ai1ec_Theme_Loader {
 	public function clean_cache_on_upgrade() {
 		$model_option = $this->_registry->get( 'model.option' );
 		if ( $model_option->get( self::OPTION_FORCE_CLEAN, false ) ) {
+			$model_option->set( self::OPTION_FORCE_CLEAN, false );
 			$cache = realpath( $this->get_cache_dir() );
 			if ( 0 !== strcmp( $cache, realpath( AI1EC_TWIG_CACHE_PATH ) ) ) {
 				$this->_registry->get( 'theme.compiler' )
 					->clean_and_check_dir( $cache );
 			}
-			$model_option->set( self::OPTION_FORCE_CLEAN, false );
 		}
 	}
 
