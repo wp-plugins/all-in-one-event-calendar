@@ -24,9 +24,9 @@ class Ai1ec_Event extends Ai1ec_Base {
 	 *            [-1] - only `get` (for storage) operations require care.
 	 */
 	protected $_swizzable = array(
-		'contact_url'   => 0,
+		'contact_url'   => -1, // strip on save/import
 		'cost'          => 0,
-		'ticket_url'    => 0,
+		'ticket_url'    => -1, // strip on save/import
 		'start'         => -1,
 		'end'           => -1,
 		'timezone_name' => -1,
@@ -343,58 +343,40 @@ class Ai1ec_Event extends Ai1ec_Base {
 	}
 
 	/**
-	 * Convert URL to a loggable form
+	 * Twig method for retrieving avatar.
 	 *
-	 * @param string $url    URL to which access must be counted
-	 * @param string $intent Char definition: 'b' - buy, 'd' - details
+	 * @param  bool   $wrap_permalink Whether to wrap avatar in <a> element or not
 	 *
-	 * @return string Loggable URL form
-	 *
-	 * @staticvar array $options Defaut options to persist between instances.
+	 * @return string Avatar markup
 	 */
-	protected function _make_url_loggable( $url, $intent ) {
-		static $options = NULL;
-		$url = trim( $url );
-		if ( ! $url || ! filter_var( $url, FILTER_VALIDATE_URL ) ) {
-			return $url;
-		}
-		if ( ! isset( $options ) ) {
-			$options = array(
-				'l' => NULL,
-				'e' => ( false !== strpos( AI1EC_VERSION, 'pro' ) ) ? 'p' : 's',
-				'v' => (string)AI1EC_VERSION,
-				'i' => NULL,
-				'c' => NULL,
-				'o' => (string)get_site_url(),
+	public function getavatar( $wrap_permalink = true ) {
+		return $this->_registry->
+			get( 'view.event.avatar' )->get_event_avatar(
+				$this,
+				$this->_registry->get( 'view.calendar.fallbacks' )->get_all(),
+				'',
+				$wrap_permalink
 			);
-		}
-		$options['l'] = (string)$url;
-		$options['i'] = (string)$intent;
-		$options['c'] = (string)$this->get( 'cost' );
-		return AI1EC_REDIRECTION_SERVICE .
-			base64_encode( json_encode( $options ) );
 	}
 
 	/**
-	 * Make `Ticket URL` loggable
+	 * Returns whether Event has geo information.
 	 *
-	 * @param string $value Ticket URL stored in database
-	 *
-	 * @return bool Success
+	 * @return bool True or false.
 	 */
-	public function _handle_property_construct_ticket_url( $value ) {
-		return $this->_make_url_loggable( $value, 'b' );
-	}
-
-	/**
-	 * Make `Contact URL` loggable
-	 *
-	 * @param string $value Contact URL stored in database
-	 *
-	 * @return bool Success
-	 */
-	public function _handle_property_construct_contact_url( $value ) {
-		return $this->_make_url_loggable( $value, 'd' );
+	public function has_geoinformation() {
+		$latitude  = floatval( $this->get( 'latitude') );
+		$longitude = floatval( $this->get( 'longitude' ) );
+		return (
+			(
+				$latitude >= 0.000000000000001 ||
+				$latitude <= -0.000000000000001
+			) &&
+			(
+				$longitude >= 0.000000000000001 ||
+				$longitude <= -0.000000000000001
+			)
+		);
 	}
 
 	/**
@@ -521,6 +503,7 @@ class Ai1ec_Event extends Ai1ec_Base {
 	 * @return int            The post_id of the new or existing event.
 	 */
 	function save( $update = false ) {
+		do_action( 'ai1ec_pre_save_event', $this, $update );
 		if ( ! $update ) {
 			$response = apply_filters( 'ai1ec_event_save_new', $this );
 			if ( is_wp_error( $response ) ) {
@@ -540,7 +523,6 @@ class Ai1ec_Event extends Ai1ec_Base {
 			$this->set_no_end_time();
 		}
 		if ( $post_id ) {
-
 			$success = false;
 			if ( ! $update ) {
 				$success = $dbi->insert(

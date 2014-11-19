@@ -389,3 +389,10 @@
 	width: 172px;
 	margin: 0;
 }
+
+#ai1ec_event_banner > .inside > p {
+	margin-bottom: 0 !important;
+}
+.ai1ec-banner-image-frame .edit-attachment {
+	display: none !important;
+}

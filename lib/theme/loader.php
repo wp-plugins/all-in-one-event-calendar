@@ -234,10 +234,10 @@ class Ai1ec_Theme_Loader {
 		switch ( $ext ) {
 			case 'less':
 			case 'css':
-				$filename = substr( $filename, 0, $dot_position - 1);
-				$file     = $this->_registry->get(
+				$filename_base = substr( $filename, 0, $dot_position - 1);
+				$file          = $this->_registry->get(
 					'theme.file.less',
-					$filename,
+					$filename_base,
 					array_keys( $this->_paths['theme'] ) // Values (URLs) not used for CSS
 				);
 				break;
@@ -388,10 +388,12 @@ class Ai1ec_Theme_Loader {
 		}
 		$path          = false;
 		$scan_dirs     = array( AI1EC_TWIG_CACHE_PATH );
-		$filesystem    = $this->_registry->get( 'filesystem.checker' );
-		$upload_folder = $filesystem->get_ai1ec_static_dir_if_available();
-		if ( '' !== $upload_folder ) {
-			$scan_dirs[] = $upload_folder;
+		if ( apply_filters( 'ai1ec_check_static_dir', true ) ) {
+			$filesystem    = $this->_registry->get( 'filesystem.checker' );
+			$upload_folder = $filesystem->get_ai1ec_static_dir_if_available();
+			if ( '' !== $upload_folder ) {
+				$scan_dirs[] = $upload_folder;
+			}
 		}
 		foreach ( $scan_dirs as $dir ) {
 			if ( $this->_is_dir_writable( $dir ) ) {
@@ -416,6 +418,9 @@ class Ai1ec_Theme_Loader {
 	 * @return void Method doesn't return
 	 */
 	public function clean_cache_on_upgrade() {
+		if ( ! apply_filters( 'ai1ec_clean_cache_on_upgrade', true ) ) {
+			return;
+		}
 		$model_option = $this->_registry->get( 'model.option' );
 		if ( $model_option->get( self::OPTION_FORCE_CLEAN, false ) ) {
 			$model_option->set( self::OPTION_FORCE_CLEAN, false );
@@ -526,6 +531,36 @@ class Ai1ec_Theme_Loader {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Switch to the given calendar theme.
+	 *
+	 * @param  array $theme            The theme's settings array
+	 * @param  bool  $delete_variables If true, deletes user variables from DB.
+	 *                                 Else replaces them with config file.
+	 */
+	public function switch_theme( array $theme, $delete_variables = true ) {
+		$option = $this->_registry->get( 'model.option' );
+		$option->set(
+			'ai1ec_current_theme',
+			$theme
+		);
+		$lessphp = $this->_registry->get( 'less.lessphp' );
+		// If requested, delete theme variables from DB.
+		if ( $delete_variables ) {
+			$option->delete( Ai1ec_Less_Lessphp::DB_KEY_FOR_LESS_VARIABLES );
+		}
+		// Else replace them with those loaded from config file.
+		else {
+			$option->set(
+				Ai1ec_Less_Lessphp::DB_KEY_FOR_LESS_VARIABLES,
+				$lessphp->get_less_variable_data_from_config_file()
+			);
+		}
+		// Recompile CSS for new theme.
+		$css_controller = $this->_registry->get( 'css.frontend' );
+		$css_controller->invalidate_cache( null, false );
 	}
 
 }

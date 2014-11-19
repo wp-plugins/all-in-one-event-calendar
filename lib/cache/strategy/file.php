@@ -47,7 +47,7 @@ class Ai1ec_Cache_Strategy_File extends Ai1ec_Cache_Strategy {
 	 *
 	 */
 	public function write_data( $filename, $value ) {
-		$filename = $this->_safe_file_name( $filename ) . '.css';
+		$filename = $this->_safe_file_name( $filename );
 		$value    = maybe_serialize( $value );
 
 		$result = $this->_registry->get( 'filesystem.checker' )->put_contents(
@@ -104,6 +104,23 @@ class Ai1ec_Cache_Strategy_File extends Ai1ec_Cache_Strategy {
 	}
 
 	/**
+	 * Get the extension for the file if required
+	 * 
+	 * @param string $file
+	 * 
+	 * @return string
+	 */
+	protected function _get_extension_for_file( $file ) {
+		$extensions = array(
+			'ai1ec_parsed_css' => '.css'
+		);
+		if ( isset( $extensions[$file] ) ) {
+			return $extensions[$file];
+		}
+		return '';
+	}
+	
+	/**
 	 * _safe_file_name method
 	 *
 	 * Generate safe file name for any storage case.
@@ -113,9 +130,17 @@ class Ai1ec_Cache_Strategy_File extends Ai1ec_Cache_Strategy {
 	 * @return string Sanitized file name
 	 */
 	protected function _safe_file_name( $file ) {
-		static $prefix = NULL;
-		if ( NULL === $prefix ) {
-			$prefix = substr( md5( site_url() ), 0, 8 );
+		static $prefix = null;
+		$extension = $this->_get_extension_for_file( $file );
+		if ( null === $prefix ) {
+			// always include site_url when there is more than one
+			$pref_string = site_url();
+			if ( ! AI1EC_DEBUG ) {
+				// address multiple re-saves for a single version
+				// i.e. when theme settings are being edited
+				$pref_string .= mt_rand();
+			}
+			$prefix = substr( md5( $pref_string ), 0, 8 );
 		}
 		$length = strlen( $file );
 		if ( ! ctype_alnum( $file ) ) {
@@ -128,7 +153,7 @@ class Ai1ec_Cache_Strategy_File extends Ai1ec_Cache_Strategy {
 		if ( 0 !== strncmp( $file, $prefix, 8 ) ) {
 			$file = $prefix . '_' . $file;
 		}
-		return $file;
+		return $file . $extension;
 	}
 
 }

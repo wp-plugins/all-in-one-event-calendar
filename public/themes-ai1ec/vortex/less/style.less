@@ -87,7 +87,7 @@
 	.ai1ec-btn-toolbar & {
 		margin-bottom: 6px;
 		&.ai1ec-btn-group-xs {
-			margin-top: 6px;
+			margin-top: 5px;
 		}
 	}
 	> .ai1ec-btn-primary {
@@ -109,6 +109,11 @@
 	}
 	> .ai1ec-btn-lg {
 		font-size: @font-size-base + 2px;
+	}
+	// For HTML4 compatibility: Force natural button height in buttons that
+	// contain only an icon, by inserting a zero-width character:
+	> .ai1ec-btn:after {
+		content: '\180E';
 	}
 }
 .ai1ec-btn-primary {
@@ -740,6 +745,9 @@ input.ai1ec-timepicker[readonly] {
 		padding-right: 3px;
 	}
 }
+a.ai1ec-custom-filter {
+	.ai1ec-category;
+}
 .ai1ec-tag:hover,
 .ai1ec-active > .ai1ec-tag {
 	.ai1ec-listItemActive();
@@ -828,6 +836,9 @@ input.ai1ec-timepicker[readonly] {
 				@body-bg
 			);
 		}
+	}
+	.ai1ec-event-description img {
+		max-width: 100% !important;
 	}
 }
 

@@ -38,16 +38,18 @@ abstract class Ai1ec_Filter_Taxonomy extends Ai1ec_Filter_Int {
 	 * @return string Valid SQL snippet.
 	 */
 	public function get_join() {
-		$sql_query = '
-			LEFT JOIN `{{RELATIONSHIPS_TABLE}}` AS `{{RELATIONSHIP_ALIAS}}`
-			    ON ( `e` . `post_id` = `{{RELATIONSHIP_ALIAS}}` . `object_id` )
-			LEFT JOIN `{{TAXONOMY_TABLE}}` AS `{{TAXONOMY_ALIAS}}`
-			    ON (
-			        `{{RELATIONSHIP_ALIAS}}` . `term_taxonomy_id` =
-			            `{{TAXONOMY_ALIAS}}` . `term_taxonomy_id`
-			        AND `{{TAXONOMY_ALIAS}}` . taxonomy = {{TAXONOMY}}
-			    )
-		';
+		if ( empty( $this->_values ) ) {
+			return '';
+		}
+		$sql_query =
+			'LEFT JOIN `{{RELATIONSHIPS_TABLE}}` AS `{{RELATIONSHIP_ALIAS}}` ' .
+			    'ON ( `e` . `post_id` = `{{RELATIONSHIP_ALIAS}}` . `object_id` ) ' .
+			'LEFT JOIN `{{TAXONOMY_TABLE}}` AS `{{TAXONOMY_ALIAS}}` ' .
+			    'ON (' .
+			        '`{{RELATIONSHIP_ALIAS}}` . `term_taxonomy_id` = ' .
+			            '`{{TAXONOMY_ALIAS}}` . `term_taxonomy_id` ' .
+			        'AND `{{TAXONOMY_ALIAS}}` . taxonomy = {{TAXONOMY}} ' .
+			    ')';
 		return str_replace(
 			array(
 				'{{RELATIONSHIPS_TABLE}}',

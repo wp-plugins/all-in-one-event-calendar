@@ -147,7 +147,10 @@ class Ai1ec_Theme_Compiler extends Ai1ec_Base {
 		if ( ! $this->_prune_dir( $parent ) ) {
 			return false;
 		}
-		if ( mkdir( $cache_dir, 0754, true ) ) {
+		if (
+			is_dir( $cache_dir ) && chmod( $cache_dir, 0754 )
+			|| mkdir( $cache_dir, 0754, true )
+		) {
 			return true;
 		}
 		return false;
@@ -198,6 +201,9 @@ class Ai1ec_Theme_Compiler extends Ai1ec_Base {
 			}
 		}
 		closedir( $handle );
+		if ( is_file( $cache_dir . DIRECTORY_SEPARATOR . 'EMPTY' ) ) {
+			return true; // ignore, this directory is intentionally here
+		}
 		return rmdir( $cache_dir );
 	}
 

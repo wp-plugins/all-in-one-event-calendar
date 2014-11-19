@@ -214,6 +214,17 @@ class Ai1ec_Settings extends Ai1ec_App {
 		}
 	}
 
+
+	/**
+	 * Do things needed on every plugin upgrade.
+	 */
+	public function perform_upgrade_actions() {
+		$option = $this->_registry->get( 'model.option' );
+		$option->set( 'ai1ec_force_flush_rewrite_rules',      true, true );
+		$option->set( 'ai1ec_invalidate_css_cache',           true, true );
+		$option->set( Ai1ec_Theme_Loader::OPTION_FORCE_CLEAN, true, true );
+	}
+
 	/**
 	 * Hide an option by unsetting it's renderer
 	 *
@@ -284,21 +295,11 @@ class Ai1ec_Settings extends Ai1ec_App {
 			$upgrade = true;
 		}
 		if ( true === $upgrade ) {
-			$this->_perform_upgrade_actions();
+			$this->perform_upgrade_actions();
 		}
 		$this->_registry->get( 'controller.shutdown' )->register(
 			array( $this, 'shutdown' )
 		);
-	}
-
-	/**
-	 * Do things needed on every plugin upgrade.
-	 */
-	protected function _perform_upgrade_actions() {
-        $option = $this->_registry->get( 'model.option' );
-		$option->set( 'ai1ec_force_flush_rewrite_rules',      true, true );
-		$option->set( 'ai1ec_invalidate_css_cache',           true, true );
-		$option->set( Ai1ec_Theme_Loader::OPTION_FORCE_CLEAN, true, true );
 	}
 
 	/**
@@ -421,7 +422,6 @@ class Ai1ec_Settings extends Ai1ec_App {
 					'item'      => 'viewing-events',
 					'label'     => Ai1ec_I18n::__( 'Timezone' ),
 					'options'   => 'Ai1ec_Date_Timezone:get_timezones',
-					'condition' => 'Ai1ec_Date_Timezone:is_timezone_not_set',
 				),
 				'default'  => $this->_registry->get( 'model.option' )->get(
 					'timezone_string'
@@ -604,6 +604,9 @@ class Ai1ec_Settings extends Ai1ec_App {
 					'item'  => 'viewing-events',
 					'label' => Ai1ec_I18n::__(
 						' <strong>Affix filter menu</strong> to top of window when it scrolls out of view'
+					),
+					'help'  => Ai1ec_I18n::__(
+						'Only applies to first visible calendar found on the page.'
 					),
 				),
 				'default'  => false,

@@ -159,6 +159,16 @@ class Ai1ec_Date_Time {
 	}
 
 	/**
+	 * Returns timezone offset as human readable GMT string.
+	 *
+	 * @return string
+	 */
+	public function get_gmt_offset_as_text() {
+		$offset = $this->_date_time->getOffset() / 3600;
+		return 'GMT' . ( $offset > 0 ? '+' : '' ) . $offset;
+	}
+
+	/**
 	 * Set preferred timezone to use when format is called without any.
 	 *
 	 * @param DateTimeZone $timezone Preferred timezone instance.
@@ -255,7 +265,7 @@ class Ai1ec_Date_Time {
 	 * Adjust only time fragment of entity.
 	 *
 	 * @param int $hour   Hour of the time.
-	 * @param int $minute Minute of the time. 
+	 * @param int $minute Minute of the time.
 	 * @param int $second Second of the time.
 	 *
 	 * @return Ai1ec_Date_Time Instance of self for chaining.
@@ -383,8 +393,8 @@ class Ai1ec_Date_Time {
 	}
 
 	/**
-	 * Modifies the DateTime object 
-	 * 
+	 * Modifies the DateTime object
+	 *
 	 * @param int $quantifieruantifier
 	 * @param string $longname
 	 */

@@ -64,7 +64,6 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 	 * @param Ai1ec_Event $event          Event to generate instances for.
 	 * @param array       $event_instance First instance contents.
 	 * @param int         $_start         Timestamp of first occurence.
-	 * @param int         $tif            Timestamp of last occurence.
 	 * @param int         $duration       Event duration in seconds.
 	 * @param string      $timezone       Target timezone.
 	 *
@@ -74,7 +73,6 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 		Ai1ec_Event $event,
 		array $event_instance,
 		$_start,
-		$tif,
 		$duration,
 		$timezone
 	) {
@@ -85,14 +83,10 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 			'timestamp' => $_start,
 			'tz'        => $timezone,
 		);
-		$enddate = array(
-			'timestamp' => $tif,
-			'tz'        => $timezone,
-		);
 		$start			   = $event_instance['start'];
-		$wdate             = $startdate
+		$wdate             = $startdate = $enddate
 		                   = iCalUtilityFunctions::_timestamp2date( $startdate, 6 );
-		$enddate		   = iCalUtilityFunctions::_timestamp2date( $enddate, 6 );
+		$enddate['year']   = $enddate['year'] + 3;
 		$exclude_dates	   = array();
 		$recurrence_dates  = array();
 		if ( $event->get( 'exception_rules' ) ) {
@@ -118,6 +112,7 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 			->build_recurrence_rules_array(
 				$event->get( 'recurrence_rules' )
 			);
+
 		$recurrence_rules = iCalUtilityFunctions::_setRexrule( $recurrence_rules );
 		iCalUtilityFunctions::_recur2date(
 			$recurrence_dates,
@@ -126,9 +121,12 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 			$startdate,
 			$enddate
 		);
+
+		
 		$recurrence_dates = array_keys( $recurrence_dates );
 		// Add the instances
 		foreach ( $recurrence_dates as $date ) {
+
 			// The arrays are in the form timestamp => true so an isset call is what we need
 			if ( isset( $exclude_dates[$date] ) ) {
 				continue;
@@ -154,6 +152,7 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 				$evs[] = $event_instance;
 			}
 		}
+
 		return $evs;
 	}
 
@@ -173,9 +172,6 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
         );
         $duration = $event->get( 'end' )->diff_sec( $event->get( 'start' ) );
 
-        // Timestamp of today date + 3 years (94608000 seconds)
-        $tif = $this->_registry->get( 'date.system' )
-			->current_time( true ) + 94608000;
         // Always cache initial instance
         $evs[] = $e;
 
@@ -192,7 +188,6 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 					$event,
 					$e,
 					$_start,
-					$tif,
 					$duration,
 					$start_timezone
 				)
