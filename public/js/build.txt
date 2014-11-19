@@ -18,6 +18,10 @@ external_libs/bootstrap/dropdown.js
 scripts/common_scripts/frontend/common_frontend.js
 external_libs/select2.js
 libs/select2_multiselect_helper.js
+external_libs/twig.js
+agenda.js
+oneday.js
+month.js
 external_libs/jquery_history.js
 external_libs/jquery.tablescroller.js
 external_libs/jquery.scrollTo.js
@@ -216,6 +220,10 @@ external_libs/bootstrap/dropdown.js
 scripts/common_scripts/frontend/common_frontend.js
 external_libs/select2.js
 libs/select2_multiselect_helper.js
+external_libs/twig.js
+agenda.js
+oneday.js
+month.js
 external_libs/jquery_history.js
 external_libs/jquery.tablescroller.js
 external_libs/jquery.scrollTo.js
@@ -281,3 +289,15 @@ scripts/common_scripts/page_ready.js
 ----------------
 domReady.js
 scripts/common_scripts/page_ready.js
+
+scripts/widget-creator.js
+----------------
+domReady.js
+external_libs/bootstrap/tab.js
+libs/utils.js
+external_libs/jquery_cookie.js
+scripts/widget-creator.js
+
+external_libs/twig.js
+----------------
+external_libs/twig.js

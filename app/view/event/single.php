@@ -50,6 +50,29 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 			nl2br( $location->get_location( $event ) ),
 			$event
 		);
+		$timezone_info = array(
+			'show_timezone'       => false,
+			'text_timezone_title' => null,
+			'event_timezone'      => null,
+		);
+		$default_tz = $this->_registry->get( 'date.timezone' )
+			->get_default_timezone();
+		if ( $event->get( 'timezone_name' ) !== $default_tz ) {
+			$timezone_info = array(
+				'show_timezone'       => true,
+				'event_timezone'      => $event->get( 'start' )->get_gmt_offset_as_text(),
+				'text_timezone_title' => sprintf(
+					Ai1ec_I18n:: __(
+						'Event was created in the %s time zone'
+					),
+					$event->get( 'timezone_name' )
+				),
+			);
+		}
+
+		$banner_image_meta = get_post_meta( $event->get( 'post_id' ), 'ai1ec_banner_image' );
+		$banner_image = $banner_image_meta ? $banner_image_meta[0] : '';
+
 		// objects are passed by reference so an action is ok
 		do_action( 'ai1ec_single_event_page_before_render', $event );
 
@@ -82,6 +105,8 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 			'text_free'               => __( 'Free', AI1EC_PLUGIN_NAME ),
 			'text_categories'         => __( 'Categories', AI1EC_PLUGIN_NAME ),
 			'text_tags'               => __( 'Tags', AI1EC_PLUGIN_NAME ),
+			'timezone_info'           => $timezone_info,
+			'banner_image'            => $banner_image,
 		);
 
 		if (
@@ -125,12 +150,13 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 	 * @param Ai1ec_Event $event
 	 */
 	public function get_full_article( Ai1ec_Event $event ) {
-		$title   = apply_filters(
+		$title         = apply_filters(
 			'the_title',
 			$event->get( 'post' )->post_title,
 			$event->get( 'post_id' )
 		);
-		$content = $this->get_content( $event ) . wpautop(
+		$event_details = $this->get_content( $event );
+		$content       = wpautop(
 			apply_filters(
 				'ai1ec_the_content',
 				apply_filters(
@@ -139,11 +165,10 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 				)
 			)
 		);
-		$args = compact( 'title', 'content' );
+		$args = compact( 'title', 'event_details', 'content' );
 		$loader = $this->_registry->get( 'theme.loader' );
 		return $loader->get_file( 'event-single-full.twig', $args, false )
 			->get_content();
-
 	}
 
 }

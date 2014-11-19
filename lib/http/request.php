@@ -59,6 +59,9 @@ class Ai1ec_Http_Request {
 		) {
 			return true;
 		}
+		if ( isset( $_GET['ai1ec_js_widget'] ) ) {
+			return true;
+		}
 		if (
 			isset( $_GET['ai1ec_render_js'] ) ||
 			isset( $_GET['ai1ec_render_css'] )
@@ -146,7 +149,7 @@ class Ai1ec_Http_Request {
 			curl_setopt( $curl, CURLOPT_CAINFO, AI1EC_CA_ROOT_PEM );
 		}
 	}
-	
+
 	/**
 	 * Initialize time.ly certificate only for time.ly domain
 	 *
@@ -154,12 +157,41 @@ class Ai1ec_Http_Request {
 	 * @param string $url Current URL address.
 	 *
 	 * @return void Method does not return value
-	 */	
+	 */
 	public function init_certificate( $args, $url ) {
 		remove_action( 'http_api_curl', array( $this, 'curl_inject_certificate' ) );
 		if ( false !== stripos( $url, '//time.ly' ) ) {
 			add_action( 'http_api_curl', array( $this, 'curl_inject_certificate' ) );
 		}
 		return $args;
+	}
+
+	/**
+	 * Checks if is json required for frontend rendering.
+	 *
+	 * @param string $request_format Format.
+	 *
+	 * @return bool True or false.
+	 */
+	public function is_json_required( $request_format ) {
+		return
+			'json' === $request_format
+			&& AI1EC_USE_FRONTEND_RENDERING
+			&& $this->is_ajax();
+	}
+
+	/**
+	 * Returns current action for bulk operations.
+	 *
+	 * @return string|null Action or null when empty.
+	 */
+	public function get_current_action() {
+		if ( isset( $_REQUEST['action'] ) && -1 != $_REQUEST['action'] ) {
+			return $_REQUEST['action'];
+		}
+		if ( isset( $_REQUEST['action2'] ) && -1 != $_REQUEST['action2'] ) {
+			return $_REQUEST['action2'];
+		}
+		return null;
 	}
 }

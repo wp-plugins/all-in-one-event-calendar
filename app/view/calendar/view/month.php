@@ -9,7 +9,7 @@
 * @package    AI1EC
 * @subpackage AI1EC.View
 */
-class Ai1ec_Calendar_View_Month  extends Ai1ec_Calendar_View_Abstract {
+class Ai1ec_Calendar_View_Month extends Ai1ec_Calendar_View_Abstract {
 
 	/* (non-PHPdoc)
 	 * @see Ai1ec_Calendar_View_Abstract::get_name()
@@ -44,11 +44,15 @@ class Ai1ec_Calendar_View_Month  extends Ai1ec_Calendar_View_Abstract {
 
 		$days_events = $this->get_events_for_month(
 			$local_date,
-			array(
-				'cat_ids'  => $args['cat_ids'],
-				'tag_ids'  => $args['tag_ids'],
-				'post_ids' => $args['post_ids'],
-				'auth_ids' => $args['auth_ids'],
+			apply_filters(
+				'ai1ec_get_events_relative_to_filter',
+				array(
+					'cat_ids'  => $args['cat_ids'],
+					'tag_ids'  => $args['tag_ids'],
+					'post_ids' => $args['post_ids'],
+					'auth_ids' => $args['auth_ids'],
+				),
+				$view_args
 			)
 		);
 		$cell_array = $this->get_month_cell_array(
@@ -90,7 +94,12 @@ class Ai1ec_Calendar_View_Month  extends Ai1ec_Calendar_View_Abstract {
 			)
 		);
 
-		return $this->_get_view( $view_args );
+		return
+			$this->_registry->get( 'http.request' )->is_json_required(
+				$args['request_format']
+			)
+			? json_encode( $view_args )
+			: $this->_get_view( $view_args );
 	}
 
 	/**
@@ -325,6 +334,45 @@ class Ai1ec_Calendar_View_Month  extends Ai1ec_Calendar_View_Abstract {
 				$day,
 				$settings->get( 'input_date_format' )
 			);
+			$events = array();
+			foreach ( $days_events[$i] as $evt ){
+				$events[] = array(
+					'filtered_title'   => $evt->get_runtime( 'filtered_title' ),
+					'post_excerpt'     => $evt->get_runtime( 'post_excerpt' ),
+					'color_style'      => $evt->get_runtime( 'color_style' ),
+					'category_colors'  => $evt->get_runtime( 'category_colors' ),
+					'permalink'        => $evt->get_runtime( 'instance_permalink' ),
+					'ticket_url_label' => $evt->get_runtime( 'ticket_url_label' ),
+					'edit_post_link'   => $evt->get_runtime( 'edit_post_link' ),
+					'short_start_time' => $evt->get_runtime( 'short_start_time' ),
+					'multiday_end_day' => $evt->get_runtime( 'multiday_end_day' ),
+					'short_start_time' => $evt->get_runtime( 'short_start_time' ),
+					'instance_id'      => $evt->get( 'instance_id' ),
+					'post_id'          => $evt->get( 'post_id' ),
+					'is_allday'        => $evt->is_allday(),
+					'is_multiday'      => $evt->is_multiday(),
+					'venue'            => $evt->get( 'venue' ),
+					'ticket_url'       => $evt->get( 'ticket_url' ),
+					'start_truncated'  => $evt->get( 'start_truncated' ),
+					'end_truncated'    => $evt->get( 'end_truncated' ),
+					'popup_timespan'   => $this->_registry
+						->get( 'twig.ai1ec-extension')->timespan( $evt, 'short' ),
+					'avatar'           => $this->_registry
+						->get( 'twig.ai1ec-extension')->avatar(
+							$evt,
+							array(
+								'post_thumbnail',
+								'content_img',
+								'location_avatar',
+								'category_avatar',
+							),
+							'',
+							false ),
+				);
+			}
+			if ( AI1EC_THEME_COMPATIBILITY_FER ) {
+				$events = $days_events[$i];
+			}
 			$weeks[$week][] = array(
 				'date' => $i,
 				'date_link' => $this->_create_link_for_day_view( $exact_date ),
@@ -332,7 +380,8 @@ class Ai1ec_Calendar_View_Month  extends Ai1ec_Calendar_View_Abstract {
 					$timestamp->format( 'Y' ) == $today->format( 'Y' ) &&
 					$timestamp->format( 'm' ) == $today->format( 'm' ) &&
 					$i                        == $today->format( 'j' ),
-				'events' => $days_events[$i]
+				'events' => $events,
+
 			);
 			// If reached the end of the week, increment week
 			if( count( $weeks[$week] ) == 7 )

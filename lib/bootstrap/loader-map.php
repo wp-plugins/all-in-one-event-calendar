@@ -135,6 +135,13 @@
       'c' => 'Ai1ec_Cache_Write_Exception',
       'i' => 'g',
     ),
+    'Ai1ec_Calendar_Avatar_Fallbacks' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'calendar' . DIRECTORY_SEPARATOR . 'fallbacks.php',
+      'c' => 'Ai1ec_Calendar_Avatar_Fallbacks',
+      'i' => 'g',
+      'r' => 'y',
+    ),
     'Ai1ec_Calendar_Page' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'calendar' . DIRECTORY_SEPARATOR . 'page.php',
@@ -336,6 +343,13 @@
       'i' => 'g',
       'r' => 'y',
     ),
+    'Ai1ec_Controller_Javascript_Widget' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'controller' . DIRECTORY_SEPARATOR . 'javascript-widget.php',
+      'c' => 'Ai1ec_Controller_Javascript_Widget',
+      'i' => 'g',
+      'r' => 'y',
+    ),
     'Ai1ec_Cookie_Present_Dto' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'cookie' . DIRECTORY_SEPARATOR . 'dto.php',
@@ -455,6 +469,12 @@
       'i' => 'n',
       'r' => 'y',
     ),
+    'Ai1ec_Embeddable' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'embeddable.php',
+      'c' => 'Ai1ec_Embeddable',
+      'i' => 'g',
+    ),
     'Ai1ec_Engine_Not_Set_Exception' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'controller' . DIRECTORY_SEPARATOR . 'exception' . DIRECTORY_SEPARATOR . 'engine-not-set.php',
@@ -507,6 +527,13 @@
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'event' . DIRECTORY_SEPARATOR . 'callback' . DIRECTORY_SEPARATOR . 'shortcode.php',
       'c' => 'Ai1ec_Event_Callback_Shortcode',
       'i' => 'n',
+      'r' => 'y',
+    ),
+    'Ai1ec_Event_Compatibility' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . 'event-compatibility.php',
+      'c' => 'Ai1ec_Event_Compatibility',
+      'i' => 'Ai1ec_Factory_Event.create_event_instance',
       'r' => 'y',
     ),
     'Ai1ec_Event_Create_Exception' => 
@@ -575,6 +602,7 @@
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . 'event' . DIRECTORY_SEPARATOR . 'taxonomy.php',
       'c' => 'Ai1ec_Event_Taxonomy',
       'i' => 'n',
+      'r' => 'y',
     ),
     'Ai1ec_Event_Trashing' => 
     array (
@@ -969,6 +997,12 @@
       'i' => 'g',
       'r' => 'y',
     ),
+    'Ai1ec_News_Feed' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'news' . DIRECTORY_SEPARATOR . 'feed.php',
+      'c' => 'Ai1ec_News_Feed',
+      'i' => 'g',
+    ),
     'Ai1ec_Notification' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'notification' . DIRECTORY_SEPARATOR . 'abstract.php',
@@ -989,6 +1023,12 @@
       'c' => 'Ai1ec_Option',
       'i' => 'g',
       'r' => 'y',
+    ),
+    'Ai1ec_Outdated_Addon_Exception' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'environment' . DIRECTORY_SEPARATOR . 'exception' . DIRECTORY_SEPARATOR . 'addon.php',
+      'c' => 'Ai1ec_Outdated_Addon_Exception',
+      'i' => 'g',
     ),
     'Ai1ec_Parse_Exception' => 
     array (
@@ -1325,6 +1365,13 @@
       'i' => 'g',
       'r' => 'y',
     ),
+    'Ai1ec_View_Add_Ons' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'add-ons.php',
+      'c' => 'Ai1ec_View_Add_Ons',
+      'i' => 'g',
+      'r' => 'y',
+    ),
     'Ai1ec_View_Admin_Abstract' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'abstract.php',
@@ -1473,6 +1520,13 @@
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'theme-options.php',
       'c' => 'Ai1ec_View_Theme_Options',
+      'i' => 'g',
+      'r' => 'y',
+    ),
+    'Ai1ec_View_Widget_Creator' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'widget-creator.php',
+      'c' => 'Ai1ec_View_Widget_Creator',
       'i' => 'g',
       'r' => 'y',
     ),
@@ -2527,6 +2581,222 @@
       'c' => 'Twig_TokenStream',
       'i' => 'g',
     ),
+    '__TwigTemplate_04184c73b8c7ce7223d1dfe1e6f79fe17690e8b74969b07b58a06c2994a0d9e6' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '04' . DIRECTORY_SEPARATOR . '18' . DIRECTORY_SEPARATOR . '4c73b8c7ce7223d1dfe1e6f79fe17690e8b74969b07b58a06c2994a0d9e6.php',
+      'c' => '__TwigTemplate_04184c73b8c7ce7223d1dfe1e6f79fe17690e8b74969b07b58a06c2994a0d9e6',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_0637d929bcaa80c8f95cc2e341066aa553f8bc8d62a627a097e42516253258f7' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '06' . DIRECTORY_SEPARATOR . '37' . DIRECTORY_SEPARATOR . 'd929bcaa80c8f95cc2e341066aa553f8bc8d62a627a097e42516253258f7.php',
+      'c' => '__TwigTemplate_0637d929bcaa80c8f95cc2e341066aa553f8bc8d62a627a097e42516253258f7',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_08e44d5fc50332367b2d7e81902230ac0e7ea950ee003ec7a490752fc6534c00' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '08' . DIRECTORY_SEPARATOR . 'e4' . DIRECTORY_SEPARATOR . '4d5fc50332367b2d7e81902230ac0e7ea950ee003ec7a490752fc6534c00.php',
+      'c' => '__TwigTemplate_08e44d5fc50332367b2d7e81902230ac0e7ea950ee003ec7a490752fc6534c00',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_1f25bacc16e82305cef35f2d4954e3a58cf88f86b74ba3bdfdb3edd107c03a6d' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '1f' . DIRECTORY_SEPARATOR . '25' . DIRECTORY_SEPARATOR . 'bacc16e82305cef35f2d4954e3a58cf88f86b74ba3bdfdb3edd107c03a6d.php',
+      'c' => '__TwigTemplate_1f25bacc16e82305cef35f2d4954e3a58cf88f86b74ba3bdfdb3edd107c03a6d',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_21cfb7e0c7543e64053052e7d3df401f7fdde0a3873bf1f837c0be10edd95099' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '21' . DIRECTORY_SEPARATOR . 'cf' . DIRECTORY_SEPARATOR . 'b7e0c7543e64053052e7d3df401f7fdde0a3873bf1f837c0be10edd95099.php',
+      'c' => '__TwigTemplate_21cfb7e0c7543e64053052e7d3df401f7fdde0a3873bf1f837c0be10edd95099',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_25cf38a130b14648c0aca4ff6f257001cca5d546a903039bd078463facea12bd' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '25' . DIRECTORY_SEPARATOR . 'cf' . DIRECTORY_SEPARATOR . '38a130b14648c0aca4ff6f257001cca5d546a903039bd078463facea12bd.php',
+      'c' => '__TwigTemplate_25cf38a130b14648c0aca4ff6f257001cca5d546a903039bd078463facea12bd',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_26624a4f92c0d3894cd5eb735508b4c009471e957872345c3b56f7b41ef3ea7e' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '26' . DIRECTORY_SEPARATOR . '62' . DIRECTORY_SEPARATOR . '4a4f92c0d3894cd5eb735508b4c009471e957872345c3b56f7b41ef3ea7e.php',
+      'c' => '__TwigTemplate_26624a4f92c0d3894cd5eb735508b4c009471e957872345c3b56f7b41ef3ea7e',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_2715acf678c380d630c83d3a7e40c2555c0b4cb21a16d95a1cc06a601f043e45' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '27' . DIRECTORY_SEPARATOR . '15' . DIRECTORY_SEPARATOR . 'acf678c380d630c83d3a7e40c2555c0b4cb21a16d95a1cc06a601f043e45.php',
+      'c' => '__TwigTemplate_2715acf678c380d630c83d3a7e40c2555c0b4cb21a16d95a1cc06a601f043e45',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_329deb0ec180c4f8841124bdaf197b12ef9a98a20063c07a36cdeb9375af3c8e' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '32' . DIRECTORY_SEPARATOR . '9d' . DIRECTORY_SEPARATOR . 'eb0ec180c4f8841124bdaf197b12ef9a98a20063c07a36cdeb9375af3c8e.php',
+      'c' => '__TwigTemplate_329deb0ec180c4f8841124bdaf197b12ef9a98a20063c07a36cdeb9375af3c8e',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_33e16cf8aa9822e97c186ffb4cb4ca897e21f410bfd489328566d22b282224cc' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '33' . DIRECTORY_SEPARATOR . 'e1' . DIRECTORY_SEPARATOR . '6cf8aa9822e97c186ffb4cb4ca897e21f410bfd489328566d22b282224cc.php',
+      'c' => '__TwigTemplate_33e16cf8aa9822e97c186ffb4cb4ca897e21f410bfd489328566d22b282224cc',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_3714fa01bbe4d4ffa4f03a4cba6fb9acbd490824785b969c9e705534675c60f5' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '37' . DIRECTORY_SEPARATOR . '14' . DIRECTORY_SEPARATOR . 'fa01bbe4d4ffa4f03a4cba6fb9acbd490824785b969c9e705534675c60f5.php',
+      'c' => '__TwigTemplate_3714fa01bbe4d4ffa4f03a4cba6fb9acbd490824785b969c9e705534675c60f5',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_4932ea4178e92f66ddbdb1feb9ec1496773dcb031265fc870a3e981abc68ca2a' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '49' . DIRECTORY_SEPARATOR . '32' . DIRECTORY_SEPARATOR . 'ea4178e92f66ddbdb1feb9ec1496773dcb031265fc870a3e981abc68ca2a.php',
+      'c' => '__TwigTemplate_4932ea4178e92f66ddbdb1feb9ec1496773dcb031265fc870a3e981abc68ca2a',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104fc70e4' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '5c' . DIRECTORY_SEPARATOR . 'a1' . DIRECTORY_SEPARATOR . '499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104fc70e4.php',
+      'c' => '__TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104fc70e4',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_5dd773750481354d81ed8097491f321553b77d6cdc59276d9122a7dde91c0eb3' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '5d' . DIRECTORY_SEPARATOR . 'd7' . DIRECTORY_SEPARATOR . '73750481354d81ed8097491f321553b77d6cdc59276d9122a7dde91c0eb3.php',
+      'c' => '__TwigTemplate_5dd773750481354d81ed8097491f321553b77d6cdc59276d9122a7dde91c0eb3',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_748f9fcd9eaa89a1116c6d9eea0983a4cc663ce75faa449b2f4ab2f7d1e54092' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '74' . DIRECTORY_SEPARATOR . '8f' . DIRECTORY_SEPARATOR . '9fcd9eaa89a1116c6d9eea0983a4cc663ce75faa449b2f4ab2f7d1e54092.php',
+      'c' => '__TwigTemplate_748f9fcd9eaa89a1116c6d9eea0983a4cc663ce75faa449b2f4ab2f7d1e54092',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_783e57d2212e2837aee7813ecc844f345947f68d3edb57d31388f926a75264db' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '78' . DIRECTORY_SEPARATOR . '3e' . DIRECTORY_SEPARATOR . '57d2212e2837aee7813ecc844f345947f68d3edb57d31388f926a75264db.php',
+      'c' => '__TwigTemplate_783e57d2212e2837aee7813ecc844f345947f68d3edb57d31388f926a75264db',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_7a118b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a41145' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '7a' . DIRECTORY_SEPARATOR . '11' . DIRECTORY_SEPARATOR . '8b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a41145.php',
+      'c' => '__TwigTemplate_7a118b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a41145',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_82b0255fefe74fca92677a6a96c9e569117eabff494d93e0b5f6b38cdaaea0b0' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '82' . DIRECTORY_SEPARATOR . 'b0' . DIRECTORY_SEPARATOR . '255fefe74fca92677a6a96c9e569117eabff494d93e0b5f6b38cdaaea0b0.php',
+      'c' => '__TwigTemplate_82b0255fefe74fca92677a6a96c9e569117eabff494d93e0b5f6b38cdaaea0b0',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_862f5bd0aae3cdc2eb247965d6758532defae4940dfe30c68378e622f1d1148c' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '86' . DIRECTORY_SEPARATOR . '2f' . DIRECTORY_SEPARATOR . '5bd0aae3cdc2eb247965d6758532defae4940dfe30c68378e622f1d1148c.php',
+      'c' => '__TwigTemplate_862f5bd0aae3cdc2eb247965d6758532defae4940dfe30c68378e622f1d1148c',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_89d906e4eee3169b93edc33ec32aac5ff78e197d36969e2b8d0437bf2f0283a2' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '89' . DIRECTORY_SEPARATOR . 'd9' . DIRECTORY_SEPARATOR . '06e4eee3169b93edc33ec32aac5ff78e197d36969e2b8d0437bf2f0283a2.php',
+      'c' => '__TwigTemplate_89d906e4eee3169b93edc33ec32aac5ff78e197d36969e2b8d0437bf2f0283a2',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_8ab3a406d66e131df0ce2cd5f806db207bd6b5c7b1b0a7d4aea4080218183ebd' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '8a' . DIRECTORY_SEPARATOR . 'b3' . DIRECTORY_SEPARATOR . 'a406d66e131df0ce2cd5f806db207bd6b5c7b1b0a7d4aea4080218183ebd.php',
+      'c' => '__TwigTemplate_8ab3a406d66e131df0ce2cd5f806db207bd6b5c7b1b0a7d4aea4080218183ebd',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_943e432a0dcbd7fe60a569412aaad985e131799f5363073300d0a6cd788b4d71' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '94' . DIRECTORY_SEPARATOR . '3e' . DIRECTORY_SEPARATOR . '432a0dcbd7fe60a569412aaad985e131799f5363073300d0a6cd788b4d71.php',
+      'c' => '__TwigTemplate_943e432a0dcbd7fe60a569412aaad985e131799f5363073300d0a6cd788b4d71',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_95b0bc90e12b886869857ead6c28360f596d7226395498afb6afc90ae60143ca' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '95' . DIRECTORY_SEPARATOR . 'b0' . DIRECTORY_SEPARATOR . 'bc90e12b886869857ead6c28360f596d7226395498afb6afc90ae60143ca.php',
+      'c' => '__TwigTemplate_95b0bc90e12b886869857ead6c28360f596d7226395498afb6afc90ae60143ca',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_9c3c1820db174d7efba416743bbb9bf744e8454155f8129f69296092b49c45d3' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '9c' . DIRECTORY_SEPARATOR . '3c' . DIRECTORY_SEPARATOR . '1820db174d7efba416743bbb9bf744e8454155f8129f69296092b49c45d3.php',
+      'c' => '__TwigTemplate_9c3c1820db174d7efba416743bbb9bf744e8454155f8129f69296092b49c45d3',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_a54faca929c567a44d5e4e2e7cf06d45c14508bd3d07f5bdfb60a7ddce3ec07a' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'a5' . DIRECTORY_SEPARATOR . '4f' . DIRECTORY_SEPARATOR . 'aca929c567a44d5e4e2e7cf06d45c14508bd3d07f5bdfb60a7ddce3ec07a.php',
+      'c' => '__TwigTemplate_a54faca929c567a44d5e4e2e7cf06d45c14508bd3d07f5bdfb60a7ddce3ec07a',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_aa616d3f918f480e4f6f0dabdeee1324d87d759ec18352a21a1cfcee8802f528' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'aa' . DIRECTORY_SEPARATOR . '61' . DIRECTORY_SEPARATOR . '6d3f918f480e4f6f0dabdeee1324d87d759ec18352a21a1cfcee8802f528.php',
+      'c' => '__TwigTemplate_aa616d3f918f480e4f6f0dabdeee1324d87d759ec18352a21a1cfcee8802f528',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_aaf160acb65256cd5e7a75c653378172251a21509b15232d1e2afc9c3dc3e446' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'aa' . DIRECTORY_SEPARATOR . 'f1' . DIRECTORY_SEPARATOR . '60acb65256cd5e7a75c653378172251a21509b15232d1e2afc9c3dc3e446.php',
+      'c' => '__TwigTemplate_aaf160acb65256cd5e7a75c653378172251a21509b15232d1e2afc9c3dc3e446',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_b1af5b1cfc01f62c430dd9a064f9459384693440bf30e05d6a34dcdfa47540e4' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'b1' . DIRECTORY_SEPARATOR . 'af' . DIRECTORY_SEPARATOR . '5b1cfc01f62c430dd9a064f9459384693440bf30e05d6a34dcdfa47540e4.php',
+      'c' => '__TwigTemplate_b1af5b1cfc01f62c430dd9a064f9459384693440bf30e05d6a34dcdfa47540e4',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_b5633d95de14839f5641ad75e89a427aa6fdfc24b529c6a3f1d8e24779f6f79f' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'b5' . DIRECTORY_SEPARATOR . '63' . DIRECTORY_SEPARATOR . '3d95de14839f5641ad75e89a427aa6fdfc24b529c6a3f1d8e24779f6f79f.php',
+      'c' => '__TwigTemplate_b5633d95de14839f5641ad75e89a427aa6fdfc24b529c6a3f1d8e24779f6f79f',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_c1804f545c5b33b8114cc21fe6cb5c59952fa8c7d680d237c3ca4d3f63b96c1c' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'c1' . DIRECTORY_SEPARATOR . '80' . DIRECTORY_SEPARATOR . '4f545c5b33b8114cc21fe6cb5c59952fa8c7d680d237c3ca4d3f63b96c1c.php',
+      'c' => '__TwigTemplate_c1804f545c5b33b8114cc21fe6cb5c59952fa8c7d680d237c3ca4d3f63b96c1c',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_dc78b950182efb8f436b144938fb0dc48cf395d7daabe20293234dbcf2b26545' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'dc' . DIRECTORY_SEPARATOR . '78' . DIRECTORY_SEPARATOR . 'b950182efb8f436b144938fb0dc48cf395d7daabe20293234dbcf2b26545.php',
+      'c' => '__TwigTemplate_dc78b950182efb8f436b144938fb0dc48cf395d7daabe20293234dbcf2b26545',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_e2c54407992fc7f64fc763c8fa820f4d1ef92de870acc466bbd2209e5965d014' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'e2' . DIRECTORY_SEPARATOR . 'c5' . DIRECTORY_SEPARATOR . '4407992fc7f64fc763c8fa820f4d1ef92de870acc466bbd2209e5965d014.php',
+      'c' => '__TwigTemplate_e2c54407992fc7f64fc763c8fa820f4d1ef92de870acc466bbd2209e5965d014',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_e90fcb1f091e9b4127585185e68c26f1b9d6d847e0152d264f92b621d5ec2944' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'e9' . DIRECTORY_SEPARATOR . '0f' . DIRECTORY_SEPARATOR . 'cb1f091e9b4127585185e68c26f1b9d6d847e0152d264f92b621d5ec2944.php',
+      'c' => '__TwigTemplate_e90fcb1f091e9b4127585185e68c26f1b9d6d847e0152d264f92b621d5ec2944',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_f05703afef869c4fea0061567a42872d377423a41be579565d0cdf32260df05f' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'f0' . DIRECTORY_SEPARATOR . '57' . DIRECTORY_SEPARATOR . '03afef869c4fea0061567a42872d377423a41be579565d0cdf32260df05f.php',
+      'c' => '__TwigTemplate_f05703afef869c4fea0061567a42872d377423a41be579565d0cdf32260df05f',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_f927e9ebb965697e227fa8ba7991946a80bc34917fe8e437edbc0c4567956326' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'f9' . DIRECTORY_SEPARATOR . '27' . DIRECTORY_SEPARATOR . 'e9ebb965697e227fa8ba7991946a80bc34917fe8e437edbc0c4567956326.php',
+      'c' => '__TwigTemplate_f927e9ebb965697e227fa8ba7991946a80bc34917fe8e437edbc0c4567956326',
+      'i' => 'g',
+    ),
+    '__TwigTemplate_fe5fa372e0eb51f713beb664be0cf0c9c8c78572b1851c15eac685f6cd98c181' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'fe' . DIRECTORY_SEPARATOR . '5f' . DIRECTORY_SEPARATOR . 'a372e0eb51f713beb664be0cf0c9c8c78572b1851c15eac685f6cd98c181.php',
+      'c' => '__TwigTemplate_fe5fa372e0eb51f713beb664be0cf0c9c8c78572b1851c15eac685f6cd98c181',
+      'i' => 'g',
+    ),
     'acl.aco' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'acl' . DIRECTORY_SEPARATOR . 'aco.php',
@@ -2859,6 +3129,13 @@
       'i' => 'g',
       'r' => 'y',
     ),
+    'controller.javascript-widget' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'controller' . DIRECTORY_SEPARATOR . 'javascript-widget.php',
+      'c' => 'Ai1ec_Controller_Javascript_Widget',
+      'i' => 'g',
+      'r' => 'y',
+    ),
     'controller.shutdown' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'controller' . DIRECTORY_SEPARATOR . 'shutdown.php',
@@ -3015,6 +3292,12 @@
       'c' => 'Ai1ec_Environment_Checks',
       'i' => 'g',
       'r' => 'y',
+    ),
+    'environment.exception.addon' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'environment' . DIRECTORY_SEPARATOR . 'exception' . DIRECTORY_SEPARATOR . 'addon.php',
+      'c' => 'Ai1ec_Outdated_Addon_Exception',
+      'i' => 'g',
     ),
     'event.callback.abstract' => 
     array (
@@ -3524,6 +3807,13 @@
       'i' => 'Ai1ec_Factory_Event.create_event_instance',
       'r' => 'y',
     ),
+    'model.event-compatibility' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . 'event-compatibility.php',
+      'c' => 'Ai1ec_Event_Compatibility',
+      'i' => 'Ai1ec_Factory_Event.create_event_instance',
+      'r' => 'y',
+    ),
     'model.event.creating' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . 'event' . DIRECTORY_SEPARATOR . 'creating.php',
@@ -3582,6 +3872,7 @@
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . 'event' . DIRECTORY_SEPARATOR . 'taxonomy.php',
       'c' => 'Ai1ec_Event_Taxonomy',
       'i' => 'n',
+      'r' => 'y',
     ),
     'model.event.trashing' => 
     array (
@@ -3699,6 +3990,12 @@
       'c' => 'Ai1ec_Taxonomy',
       'i' => 'g',
       'r' => 'y',
+    ),
+    'news.feed' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'news' . DIRECTORY_SEPARATOR . 'feed.php',
+      'c' => 'Ai1ec_News_Feed',
+      'i' => 'g',
     ),
     'notification.abstract' => 
     array (
@@ -3921,6 +4218,150 @@
       'c' => 'Ai1ec_Theme_Search',
       'i' => 'g',
       'r' => 'y',
+    ),
+    'twig.04.18.4c73b8c7ce7223d1dfe1e6f79fe17690e8b74969b07b58a06c2994a0d9e6' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '04' . DIRECTORY_SEPARATOR . '18' . DIRECTORY_SEPARATOR . '4c73b8c7ce7223d1dfe1e6f79fe17690e8b74969b07b58a06c2994a0d9e6.php',
+      'c' => '__TwigTemplate_04184c73b8c7ce7223d1dfe1e6f79fe17690e8b74969b07b58a06c2994a0d9e6',
+      'i' => 'g',
+    ),
+    'twig.06.37.d929bcaa80c8f95cc2e341066aa553f8bc8d62a627a097e42516253258f7' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '06' . DIRECTORY_SEPARATOR . '37' . DIRECTORY_SEPARATOR . 'd929bcaa80c8f95cc2e341066aa553f8bc8d62a627a097e42516253258f7.php',
+      'c' => '__TwigTemplate_0637d929bcaa80c8f95cc2e341066aa553f8bc8d62a627a097e42516253258f7',
+      'i' => 'g',
+    ),
+    'twig.08.e4.4d5fc50332367b2d7e81902230ac0e7ea950ee003ec7a490752fc6534c00' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '08' . DIRECTORY_SEPARATOR . 'e4' . DIRECTORY_SEPARATOR . '4d5fc50332367b2d7e81902230ac0e7ea950ee003ec7a490752fc6534c00.php',
+      'c' => '__TwigTemplate_08e44d5fc50332367b2d7e81902230ac0e7ea950ee003ec7a490752fc6534c00',
+      'i' => 'g',
+    ),
+    'twig.1f.25.bacc16e82305cef35f2d4954e3a58cf88f86b74ba3bdfdb3edd107c03a6d' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '1f' . DIRECTORY_SEPARATOR . '25' . DIRECTORY_SEPARATOR . 'bacc16e82305cef35f2d4954e3a58cf88f86b74ba3bdfdb3edd107c03a6d.php',
+      'c' => '__TwigTemplate_1f25bacc16e82305cef35f2d4954e3a58cf88f86b74ba3bdfdb3edd107c03a6d',
+      'i' => 'g',
+    ),
+    'twig.21.cf.b7e0c7543e64053052e7d3df401f7fdde0a3873bf1f837c0be10edd95099' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '21' . DIRECTORY_SEPARATOR . 'cf' . DIRECTORY_SEPARATOR . 'b7e0c7543e64053052e7d3df401f7fdde0a3873bf1f837c0be10edd95099.php',
+      'c' => '__TwigTemplate_21cfb7e0c7543e64053052e7d3df401f7fdde0a3873bf1f837c0be10edd95099',
+      'i' => 'g',
+    ),
+    'twig.25.cf.38a130b14648c0aca4ff6f257001cca5d546a903039bd078463facea12bd' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '25' . DIRECTORY_SEPARATOR . 'cf' . DIRECTORY_SEPARATOR . '38a130b14648c0aca4ff6f257001cca5d546a903039bd078463facea12bd.php',
+      'c' => '__TwigTemplate_25cf38a130b14648c0aca4ff6f257001cca5d546a903039bd078463facea12bd',
+      'i' => 'g',
+    ),
+    'twig.26.62.4a4f92c0d3894cd5eb735508b4c009471e957872345c3b56f7b41ef3ea7e' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '26' . DIRECTORY_SEPARATOR . '62' . DIRECTORY_SEPARATOR . '4a4f92c0d3894cd5eb735508b4c009471e957872345c3b56f7b41ef3ea7e.php',
+      'c' => '__TwigTemplate_26624a4f92c0d3894cd5eb735508b4c009471e957872345c3b56f7b41ef3ea7e',
+      'i' => 'g',
+    ),
+    'twig.27.15.acf678c380d630c83d3a7e40c2555c0b4cb21a16d95a1cc06a601f043e45' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '27' . DIRECTORY_SEPARATOR . '15' . DIRECTORY_SEPARATOR . 'acf678c380d630c83d3a7e40c2555c0b4cb21a16d95a1cc06a601f043e45.php',
+      'c' => '__TwigTemplate_2715acf678c380d630c83d3a7e40c2555c0b4cb21a16d95a1cc06a601f043e45',
+      'i' => 'g',
+    ),
+    'twig.32.9d.eb0ec180c4f8841124bdaf197b12ef9a98a20063c07a36cdeb9375af3c8e' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '32' . DIRECTORY_SEPARATOR . '9d' . DIRECTORY_SEPARATOR . 'eb0ec180c4f8841124bdaf197b12ef9a98a20063c07a36cdeb9375af3c8e.php',
+      'c' => '__TwigTemplate_329deb0ec180c4f8841124bdaf197b12ef9a98a20063c07a36cdeb9375af3c8e',
+      'i' => 'g',
+    ),
+    'twig.33.e1.6cf8aa9822e97c186ffb4cb4ca897e21f410bfd489328566d22b282224cc' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '33' . DIRECTORY_SEPARATOR . 'e1' . DIRECTORY_SEPARATOR . '6cf8aa9822e97c186ffb4cb4ca897e21f410bfd489328566d22b282224cc.php',
+      'c' => '__TwigTemplate_33e16cf8aa9822e97c186ffb4cb4ca897e21f410bfd489328566d22b282224cc',
+      'i' => 'g',
+    ),
+    'twig.37.14.fa01bbe4d4ffa4f03a4cba6fb9acbd490824785b969c9e705534675c60f5' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '37' . DIRECTORY_SEPARATOR . '14' . DIRECTORY_SEPARATOR . 'fa01bbe4d4ffa4f03a4cba6fb9acbd490824785b969c9e705534675c60f5.php',
+      'c' => '__TwigTemplate_3714fa01bbe4d4ffa4f03a4cba6fb9acbd490824785b969c9e705534675c60f5',
+      'i' => 'g',
+    ),
+    'twig.49.32.ea4178e92f66ddbdb1feb9ec1496773dcb031265fc870a3e981abc68ca2a' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '49' . DIRECTORY_SEPARATOR . '32' . DIRECTORY_SEPARATOR . 'ea4178e92f66ddbdb1feb9ec1496773dcb031265fc870a3e981abc68ca2a.php',
+      'c' => '__TwigTemplate_4932ea4178e92f66ddbdb1feb9ec1496773dcb031265fc870a3e981abc68ca2a',
+      'i' => 'g',
+    ),
+    'twig.5c.a1.499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104fc70e4' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '5c' . DIRECTORY_SEPARATOR . 'a1' . DIRECTORY_SEPARATOR . '499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104fc70e4.php',
+      'c' => '__TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104fc70e4',
+      'i' => 'g',
+    ),
+    'twig.5d.d7.73750481354d81ed8097491f321553b77d6cdc59276d9122a7dde91c0eb3' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '5d' . DIRECTORY_SEPARATOR . 'd7' . DIRECTORY_SEPARATOR . '73750481354d81ed8097491f321553b77d6cdc59276d9122a7dde91c0eb3.php',
+      'c' => '__TwigTemplate_5dd773750481354d81ed8097491f321553b77d6cdc59276d9122a7dde91c0eb3',
+      'i' => 'g',
+    ),
+    'twig.74.8f.9fcd9eaa89a1116c6d9eea0983a4cc663ce75faa449b2f4ab2f7d1e54092' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '74' . DIRECTORY_SEPARATOR . '8f' . DIRECTORY_SEPARATOR . '9fcd9eaa89a1116c6d9eea0983a4cc663ce75faa449b2f4ab2f7d1e54092.php',
+      'c' => '__TwigTemplate_748f9fcd9eaa89a1116c6d9eea0983a4cc663ce75faa449b2f4ab2f7d1e54092',
+      'i' => 'g',
+    ),
+    'twig.78.3e.57d2212e2837aee7813ecc844f345947f68d3edb57d31388f926a75264db' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '78' . DIRECTORY_SEPARATOR . '3e' . DIRECTORY_SEPARATOR . '57d2212e2837aee7813ecc844f345947f68d3edb57d31388f926a75264db.php',
+      'c' => '__TwigTemplate_783e57d2212e2837aee7813ecc844f345947f68d3edb57d31388f926a75264db',
+      'i' => 'g',
+    ),
+    'twig.7a.11.8b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a41145' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '7a' . DIRECTORY_SEPARATOR . '11' . DIRECTORY_SEPARATOR . '8b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a41145.php',
+      'c' => '__TwigTemplate_7a118b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a41145',
+      'i' => 'g',
+    ),
+    'twig.82.b0.255fefe74fca92677a6a96c9e569117eabff494d93e0b5f6b38cdaaea0b0' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '82' . DIRECTORY_SEPARATOR . 'b0' . DIRECTORY_SEPARATOR . '255fefe74fca92677a6a96c9e569117eabff494d93e0b5f6b38cdaaea0b0.php',
+      'c' => '__TwigTemplate_82b0255fefe74fca92677a6a96c9e569117eabff494d93e0b5f6b38cdaaea0b0',
+      'i' => 'g',
+    ),
+    'twig.86.2f.5bd0aae3cdc2eb247965d6758532defae4940dfe30c68378e622f1d1148c' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '86' . DIRECTORY_SEPARATOR . '2f' . DIRECTORY_SEPARATOR . '5bd0aae3cdc2eb247965d6758532defae4940dfe30c68378e622f1d1148c.php',
+      'c' => '__TwigTemplate_862f5bd0aae3cdc2eb247965d6758532defae4940dfe30c68378e622f1d1148c',
+      'i' => 'g',
+    ),
+    'twig.89.d9.06e4eee3169b93edc33ec32aac5ff78e197d36969e2b8d0437bf2f0283a2' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '89' . DIRECTORY_SEPARATOR . 'd9' . DIRECTORY_SEPARATOR . '06e4eee3169b93edc33ec32aac5ff78e197d36969e2b8d0437bf2f0283a2.php',
+      'c' => '__TwigTemplate_89d906e4eee3169b93edc33ec32aac5ff78e197d36969e2b8d0437bf2f0283a2',
+      'i' => 'g',
+    ),
+    'twig.8a.b3.a406d66e131df0ce2cd5f806db207bd6b5c7b1b0a7d4aea4080218183ebd' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '8a' . DIRECTORY_SEPARATOR . 'b3' . DIRECTORY_SEPARATOR . 'a406d66e131df0ce2cd5f806db207bd6b5c7b1b0a7d4aea4080218183ebd.php',
+      'c' => '__TwigTemplate_8ab3a406d66e131df0ce2cd5f806db207bd6b5c7b1b0a7d4aea4080218183ebd',
+      'i' => 'g',
+    ),
+    'twig.94.3e.432a0dcbd7fe60a569412aaad985e131799f5363073300d0a6cd788b4d71' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '94' . DIRECTORY_SEPARATOR . '3e' . DIRECTORY_SEPARATOR . '432a0dcbd7fe60a569412aaad985e131799f5363073300d0a6cd788b4d71.php',
+      'c' => '__TwigTemplate_943e432a0dcbd7fe60a569412aaad985e131799f5363073300d0a6cd788b4d71',
+      'i' => 'g',
+    ),
+    'twig.95.b0.bc90e12b886869857ead6c28360f596d7226395498afb6afc90ae60143ca' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '95' . DIRECTORY_SEPARATOR . 'b0' . DIRECTORY_SEPARATOR . 'bc90e12b886869857ead6c28360f596d7226395498afb6afc90ae60143ca.php',
+      'c' => '__TwigTemplate_95b0bc90e12b886869857ead6c28360f596d7226395498afb6afc90ae60143ca',
+      'i' => 'g',
+    ),
+    'twig.9c.3c.1820db174d7efba416743bbb9bf744e8454155f8129f69296092b49c45d3' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . '9c' . DIRECTORY_SEPARATOR . '3c' . DIRECTORY_SEPARATOR . '1820db174d7efba416743bbb9bf744e8454155f8129f69296092b49c45d3.php',
+      'c' => '__TwigTemplate_9c3c1820db174d7efba416743bbb9bf744e8454155f8129f69296092b49c45d3',
+      'i' => 'g',
     ),
     'twig.Compiler' => 
     array (
@@ -4858,10 +5299,46 @@
       'c' => 'Twig_TokenStream',
       'i' => 'g',
     ),
+    'twig.a5.4f.aca929c567a44d5e4e2e7cf06d45c14508bd3d07f5bdfb60a7ddce3ec07a' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'a5' . DIRECTORY_SEPARATOR . '4f' . DIRECTORY_SEPARATOR . 'aca929c567a44d5e4e2e7cf06d45c14508bd3d07f5bdfb60a7ddce3ec07a.php',
+      'c' => '__TwigTemplate_a54faca929c567a44d5e4e2e7cf06d45c14508bd3d07f5bdfb60a7ddce3ec07a',
+      'i' => 'g',
+    ),
+    'twig.aa.61.6d3f918f480e4f6f0dabdeee1324d87d759ec18352a21a1cfcee8802f528' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'aa' . DIRECTORY_SEPARATOR . '61' . DIRECTORY_SEPARATOR . '6d3f918f480e4f6f0dabdeee1324d87d759ec18352a21a1cfcee8802f528.php',
+      'c' => '__TwigTemplate_aa616d3f918f480e4f6f0dabdeee1324d87d759ec18352a21a1cfcee8802f528',
+      'i' => 'g',
+    ),
+    'twig.aa.f1.60acb65256cd5e7a75c653378172251a21509b15232d1e2afc9c3dc3e446' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'aa' . DIRECTORY_SEPARATOR . 'f1' . DIRECTORY_SEPARATOR . '60acb65256cd5e7a75c653378172251a21509b15232d1e2afc9c3dc3e446.php',
+      'c' => '__TwigTemplate_aaf160acb65256cd5e7a75c653378172251a21509b15232d1e2afc9c3dc3e446',
+      'i' => 'g',
+    ),
     'twig.ai1ec-extension' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'ai1ec-extension.php',
       'c' => 'Ai1ec_Twig_Ai1ec_Extension',
+      'i' => 'g',
+    ),
+    'twig.b1.af.5b1cfc01f62c430dd9a064f9459384693440bf30e05d6a34dcdfa47540e4' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'b1' . DIRECTORY_SEPARATOR . 'af' . DIRECTORY_SEPARATOR . '5b1cfc01f62c430dd9a064f9459384693440bf30e05d6a34dcdfa47540e4.php',
+      'c' => '__TwigTemplate_b1af5b1cfc01f62c430dd9a064f9459384693440bf30e05d6a34dcdfa47540e4',
+      'i' => 'g',
+    ),
+    'twig.b5.63.3d95de14839f5641ad75e89a427aa6fdfc24b529c6a3f1d8e24779f6f79f' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'b5' . DIRECTORY_SEPARATOR . '63' . DIRECTORY_SEPARATOR . '3d95de14839f5641ad75e89a427aa6fdfc24b529c6a3f1d8e24779f6f79f.php',
+      'c' => '__TwigTemplate_b5633d95de14839f5641ad75e89a427aa6fdfc24b529c6a3f1d8e24779f6f79f',
+      'i' => 'g',
+    ),
+    'twig.c1.80.4f545c5b33b8114cc21fe6cb5c59952fa8c7d680d237c3ca4d3f63b96c1c' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'c1' . DIRECTORY_SEPARATOR . '80' . DIRECTORY_SEPARATOR . '4f545c5b33b8114cc21fe6cb5c59952fa8c7d680d237c3ca4d3f63b96c1c.php',
+      'c' => '__TwigTemplate_c1804f545c5b33b8114cc21fe6cb5c59952fa8c7d680d237c3ca4d3f63b96c1c',
       'i' => 'g',
     ),
     'twig.cache' => 
@@ -4871,10 +5348,46 @@
       'i' => 'g',
       'r' => 'y',
     ),
+    'twig.dc.78.b950182efb8f436b144938fb0dc48cf395d7daabe20293234dbcf2b26545' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'dc' . DIRECTORY_SEPARATOR . '78' . DIRECTORY_SEPARATOR . 'b950182efb8f436b144938fb0dc48cf395d7daabe20293234dbcf2b26545.php',
+      'c' => '__TwigTemplate_dc78b950182efb8f436b144938fb0dc48cf395d7daabe20293234dbcf2b26545',
+      'i' => 'g',
+    ),
+    'twig.e2.c5.4407992fc7f64fc763c8fa820f4d1ef92de870acc466bbd2209e5965d014' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'e2' . DIRECTORY_SEPARATOR . 'c5' . DIRECTORY_SEPARATOR . '4407992fc7f64fc763c8fa820f4d1ef92de870acc466bbd2209e5965d014.php',
+      'c' => '__TwigTemplate_e2c54407992fc7f64fc763c8fa820f4d1ef92de870acc466bbd2209e5965d014',
+      'i' => 'g',
+    ),
+    'twig.e9.0f.cb1f091e9b4127585185e68c26f1b9d6d847e0152d264f92b621d5ec2944' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'e9' . DIRECTORY_SEPARATOR . '0f' . DIRECTORY_SEPARATOR . 'cb1f091e9b4127585185e68c26f1b9d6d847e0152d264f92b621d5ec2944.php',
+      'c' => '__TwigTemplate_e90fcb1f091e9b4127585185e68c26f1b9d6d847e0152d264f92b621d5ec2944',
+      'i' => 'g',
+    ),
     'twig.environment' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'environment.php',
       'c' => 'Ai1ec_Twig_Environment',
+      'i' => 'g',
+    ),
+    'twig.f0.57.03afef869c4fea0061567a42872d377423a41be579565d0cdf32260df05f' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'f0' . DIRECTORY_SEPARATOR . '57' . DIRECTORY_SEPARATOR . '03afef869c4fea0061567a42872d377423a41be579565d0cdf32260df05f.php',
+      'c' => '__TwigTemplate_f05703afef869c4fea0061567a42872d377423a41be579565d0cdf32260df05f',
+      'i' => 'g',
+    ),
+    'twig.f9.27.e9ebb965697e227fa8ba7991946a80bc34917fe8e437edbc0c4567956326' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'f9' . DIRECTORY_SEPARATOR . '27' . DIRECTORY_SEPARATOR . 'e9ebb965697e227fa8ba7991946a80bc34917fe8e437edbc0c4567956326.php',
+      'c' => '__TwigTemplate_f927e9ebb965697e227fa8ba7991946a80bc34917fe8e437edbc0c4567956326',
+      'i' => 'g',
+    ),
+    'twig.fe.5f.a372e0eb51f713beb664be0cf0c9c8c78572b1851c15eac685f6cd98c181' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'fe' . DIRECTORY_SEPARATOR . '5f' . DIRECTORY_SEPARATOR . 'a372e0eb51f713beb664be0cf0c9c8c78572b1851c15eac685f6cd98c181.php',
+      'c' => '__TwigTemplate_fe5fa372e0eb51f713beb664be0cf0c9c8c78572b1851c15eac685f6cd98c181',
       'i' => 'g',
     ),
     'twig.loader' => 
@@ -4941,6 +5454,13 @@
       'i' => 'g',
       'r' => 'y',
     ),
+    'view.admin.add-ons' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'add-ons.php',
+      'c' => 'Ai1ec_View_Add_Ons',
+      'i' => 'g',
+      'r' => 'y',
+    ),
     'view.admin.all-events' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'all-events.php',
@@ -4994,6 +5514,20 @@
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'theme-switching.php',
       'c' => 'Ai1ec_View_Admin_Theme_Switching',
+      'i' => 'g',
+      'r' => 'y',
+    ),
+    'view.admin.widget-creator' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'widget-creator.php',
+      'c' => 'Ai1ec_View_Widget_Creator',
+      'i' => 'g',
+      'r' => 'y',
+    ),
+    'view.calendar.fallbacks' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'calendar' . DIRECTORY_SEPARATOR . 'fallbacks.php',
+      'c' => 'Ai1ec_Calendar_Avatar_Fallbacks',
       'i' => 'g',
       'r' => 'y',
     ),
@@ -5063,6 +5597,12 @@
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'calendar' . DIRECTORY_SEPARATOR . 'widget.php',
       'c' => 'Ai1ec_View_Admin_Widget',
+      'i' => 'g',
+    ),
+    'view.embeddable' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'embeddable.php',
+      'c' => 'Ai1ec_Embeddable',
       'i' => 'g',
     ),
     'view.event.avatar' => 

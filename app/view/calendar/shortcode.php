@@ -31,9 +31,9 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 			$view_names[$view_name] = true;
 		}
 
-		$view         = $default_view;
-		$categories   = $tags = $post_ids = array();
-		$events_limit = null;
+		$view               = $default_view;
+		$_events_categories = $_events_tags = $post_ids = array();
+		$events_limit       = null;
 
 		if ( isset( $atts['view'] ) ) {
 			if ( 'ly' === substr( $atts['view'], -2 ) ) {
@@ -46,13 +46,34 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 		}
 
 		$mappings = array(
-			'cat_name'     => 'categories',
-			'cat_id'       => 'categories',
-			'tag_name'     => 'tags',
-			'tag_id'       => 'tags',
+			'cat_name'     => 'events_categories',
+			'cat_id'       => 'events_categories',
+			'tag_name'     => 'events_tags',
+			'tag_id'       => 'events_tags',
 			'post_id'      => 'post_ids',
 			'events_limit' => 'events_limit',
 		);
+		$matches           = array();
+		$custom_taxonomies = array();
+		if ( ! empty( $atts ) ) {
+			foreach ( $atts as $att => $value ) {
+				if (
+				! preg_match( '/([a-z0-9\_]+)_(id|name)/', $att, $matches ) ||
+				isset( $mappings[$matches[1] . '_id'] )
+				) {
+					continue;
+				}
+				${'_' . $matches[1] . '_ids'} = array();
+				$custom_taxonomies[]    = $matches[1];
+			
+				if ( ! isset( $mappings[$matches[1] . '_id'] ) ) {
+					$mappings[$matches[1] . '_id']   = $matches[1];
+				}
+				if ( ! isset( $mappings[$matches[1] . '_name'] ) ) {
+					$mappings[$matches[1] . '_name'] = $matches[1];
+				}
+			}
+		}
 		foreach ( $mappings as $att_name => $type ) {
 			if ( ! isset( $atts[$att_name] ) ) {
 				continue;
@@ -71,7 +92,7 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 							$record = get_term_by(
 								$field,
 								$search_val,
-								'events_' . $type
+								$type
 							);
 							if ( false !== $record ) {
 								$argument = $record;
@@ -88,23 +109,32 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 							continue;
 						}
 					}
-					${$type}[] = $argument;
+					${'_' . $type}[] = $argument;
 				}
 			}
 		}
 		$query = array(
-			'ai1ec_cat_ids'	 => implode( ',', $categories ),
-			'ai1ec_tag_ids'	 => implode( ',', $tags ),
+			'ai1ec_cat_ids'	 => implode( ',', $_events_categories ),
+			'ai1ec_tag_ids'	 => implode( ',', $_events_tags ),
 			'ai1ec_post_ids' => implode( ',', $post_ids ),
 			'action'         => $view,
 			'request_type'   => 'jsonp',
-			'shortcode'      => 'true',
 			'events_limit'   => ( null !== $events_limit )
 			// definition above casts values as array, so we take first element,
 			// as there won't be others
 				? $events_limit[0]
 				: null,
 		);
+		// this is the opposite of how the SuperWidget works.
+		if ( ! isset( $atts['display_filters'] ) ) {
+			$query['display_filters'] = 'true';
+		} else {
+			$query['display_filters'] = $atts['display_filters'];
+		}
+
+		foreach ( $custom_taxonomies as $taxonomy ) {
+			$query['ai1ec_' . $taxonomy . '_ids'] = implode( ',', ${'_' . $taxonomy} );
+		}
 		if ( isset( $atts['exact_date'] ) ) {
 			$query['exact_date'] = $atts['exact_date'];
 		}
@@ -120,7 +150,8 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 						->add_link_to_html_for_frontend();
 		$js       = $this->_registry->get( 'controller.javascript' )
 						->load_frontend_js( true );
-		return $page_content;
+
+		return $page_content['html'];
 	}
 
 }

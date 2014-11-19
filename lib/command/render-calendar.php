@@ -10,7 +10,7 @@
  * @subpackage AI1EC.Command
  */
 class Ai1ec_Command_Render_Calendar extends Ai1ec_Command {
-	
+
 	/**
 	 * @var string
 	 */
@@ -47,14 +47,17 @@ class Ai1ec_Command_Render_Calendar extends Ai1ec_Command {
 	 * @see Ai1ec_Command::set_render_strategy()
 	 */
 	public function set_render_strategy( Ai1ec_Request_Parser $request ) {
-		$type = $request->get( 'request_type' );
-		if ( empty( $type ) ) {
-			$type = 'html';
+		try {
+			$this->_request_type    = $request->get( 'request_type' );
+			$this->_render_strategy = $this->_registry->get(
+				'http.response.render.strategy.' . $this->_request_type
+			);
+		} catch ( Ai1ec_Bootstrap_Exception $e ) {
+			$this->_request_type    = 'html';
+			$this->_render_strategy = $this->_registry->get(
+				'http.response.render.strategy.' . $this->_request_type
+			);
 		}
-		$this->_request_type = $type;
-		$this->_render_strategy = $this->_registry->get(
-			'http.response.render.strategy.' . $type
-		);
 	}
 
 	/* (non-PHPdoc)

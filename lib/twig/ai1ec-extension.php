@@ -33,6 +33,7 @@ class Ai1ec_Twig_Ai1ec_Extension extends Twig_Extension {
 			'screen_icon'    => new Twig_Function_Method( $this, 'screen_icon' ),
 			'wp_nonce_field' => new Twig_Function_Method( $this, 'wp_nonce_field' ),
 			'do_meta_boxes'  => new Twig_Function_Method( $this, 'do_meta_boxes' ),
+			'fb'             => new Twig_Function_Method( $this, 'fb' ),
 		);
 	}
 
@@ -100,6 +101,16 @@ class Ai1ec_Twig_Ai1ec_Extension extends Twig_Extension {
 			);
 	}
 
+	/**
+	 * Debug function to be used in twig templates with Firebug/FirePHP
+	 * 
+	 * @param mixed $object
+	 */
+	public function fb( $object ) {
+		if ( function_exists( 'fb' ) ) {
+			fb( $object );
+		}
+	}
 	/**
 	 * Get URL for avatar.
 	 *
