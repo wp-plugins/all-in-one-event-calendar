@@ -55,10 +55,30 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 
 		// Add view-specific args to the current view args.
 		$exact_date = $this->get_exact_date( $request );
-		$view_obj   = $this->_registry->get(
-			'view.calendar.view.' . $action,
-			$request
-		);
+		try {
+			$view_obj = $this->_registry->get(
+				'view.calendar.view.' . $action,
+				$request
+			);
+		} catch ( Ai1ec_Bootstrap_Exception $exc ) {
+			$this->_registry->get( 'notification.admin' )->store(
+				sprintf(
+						Ai1ec_I18n::__( 'Calendar was unable to initialize %s view and has reverted to Agenda view. Please check if you have installed the latest versions of calendar add-ons.' ),
+						ucfirst( $action )
+				),
+				'error',
+				0,
+				array( Ai1ec_Notification_Admin::RCPT_ADMIN ),
+				true
+			);
+			// don't disable calendar - just switch to agenda which should
+			// always exists
+			$action   = 'agenda';
+			$view_obj = $this->_registry->get(
+				'view.calendar.view.' . $action,
+				$request
+			);
+		}
 		$view_args  = $view_obj->get_extra_arguments( $view_args, $exact_date );
 
 		// Get HTML for views dropdown list.
@@ -99,7 +119,7 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 			( $view_args['no_navigation'] || $type !== 'html' ) &&
 			'jsonp' !== $type
 		) {
-			
+
 			// send data both for json and jsonp as shortcodes are jsonp
 			return array(
 				'html'               => $view,
@@ -119,7 +139,7 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 		} else {
 			$loader = $this->_registry->get( 'theme.loader' );
 			$empty  = $loader->get_file( 'empty.twig', array(), false );
-			
+
 			// option to show filters in the super widget
 			// Define new arguments for overall calendar view
 			$filter_args = array(
@@ -154,7 +174,7 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 				'view_args'                    => $view_args,
 				'request'                      => $request,
 			);
-			
+
 			$filter_menu   = $loader->get_file(
 				'filter-menu.twig',
 				$filter_args,

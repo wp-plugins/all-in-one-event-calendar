@@ -5,7 +5,7 @@ calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WordPress at least: 3.5
 Tested up to: 4.0
-Stable tag: 2.1.6
+Stable tag: 2.1.7
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -171,6 +171,21 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.1.7 =
+* Fixed issue where a stopping error may have been encountered when
+3rd party plugins do not properly use include_once family functions
+* Fixed issue where address autocomplete wasn't properly disabled
+* Fixed issue where clicking "Back to calendar" was redirecting to
+default calendar when a site had more than one calendar embedded via
+shortcode
+* Fixed issue where on some browsers and operating systems extra
+characters were being rendered on screen
+* Fixed issue where some 3rd party plugins were injecting non-readable
+data into the event excerpt view
+* Fixed issue where all-day view was not rendering correctly at all
+times
+* Improved print-view to use compact agenda view
 
 = Version 2.1.6 =
 * If an event's timezone is different from the site's it will now be

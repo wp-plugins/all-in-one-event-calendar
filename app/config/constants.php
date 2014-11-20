@@ -50,7 +50,7 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 	// = Plugin Version =
 	// ==================
 	if ( ! defined( 'AI1EC_VERSION' ) ) {
-		define( 'AI1EC_VERSION', '2.1.6' );
+		define( 'AI1EC_VERSION', '2.1.7' );
 	}
 
 	// ================
@@ -484,7 +484,7 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 
 	// Defines if backward (<= 2.1.5) theme compatibility is enabled or not.
 	if ( ! defined( 'AI1EC_THEME_COMPATIBILITY_FER' ) ) {
-		define( 'AI1EC_THEME_COMPATIBILITY_FER', false );
+		define( 'AI1EC_THEME_COMPATIBILITY_FER', true );
 	}
 
 }

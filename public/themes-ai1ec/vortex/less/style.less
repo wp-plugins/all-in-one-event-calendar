@@ -111,9 +111,10 @@
 		font-size: @font-size-base + 2px;
 	}
 	// For HTML4 compatibility: Force natural button height in buttons that
-	// contain only an icon, by inserting a zero-width character:
+	// contain only an icon, by inserting a narrow space character:
 	> .ai1ec-btn:after {
-		content: '\180E';
+		content: '\200A';
+		margin-right: -0.25em;
 	}
 }
 .ai1ec-btn-primary {

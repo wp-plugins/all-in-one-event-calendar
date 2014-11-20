@@ -42,10 +42,12 @@ class Ai1ec_News_Feed {
 	 * @return array List of feed entries.
 	 */
 	public function fetch_feed( $limit, $feed ) {
-		include_once(
-			ABSPATH . WPINC . DIRECTORY_SEPARATOR .'SimplePie'
-			. DIRECTORY_SEPARATOR .'File.php'
-		);
+		if ( ! class_exists( 'SimplePie_File' ) ) {
+			include_once(
+				ABSPATH . WPINC . DIRECTORY_SEPARATOR .'SimplePie'
+				. DIRECTORY_SEPARATOR .'File.php'
+			);
+		}
 		$result = array();
 		try {
 			$file = new SimplePie_File( $feed );
