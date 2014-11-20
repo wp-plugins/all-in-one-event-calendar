@@ -41,8 +41,11 @@ class Ai1ec_Command_Render_Event extends Ai1ec_Command_Render_Calendar {
 			get_the_ID(),
 			$instance
 		);
-		$event_page  = null;
-		$footer_html = '';
+		$timezone_name = $event->get( 'timezone_name' );
+		$event->get( 'start' )->set_preferred_timezone( $timezone_name );
+		$event->get( 'end'   )->set_preferred_timezone( $timezone_name );
+		$event_page    = null;
+		$footer_html   = '';
 		if( is_single() ) {
 			$event_page = $this->_registry->get( 'view.event.single' );
 			$footer_html = $event_page->get_footer( $event );
@@ -57,7 +60,7 @@ class Ai1ec_Command_Render_Event extends Ai1ec_Command_Render_Calendar {
 		$js = $this->_registry->get( 'controller.javascript' )->load_frontend_js( false );
 		if ( 'html' !== $this->_request_type ) {
 			return array(
-				'data'     => array( 
+				'data'     => array(
 					'html' => $event_page->get_full_article( $event )
 				),
 				'callback' => Ai1ec_Request_Parser::get_param(

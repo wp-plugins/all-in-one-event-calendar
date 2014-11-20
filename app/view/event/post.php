@@ -75,13 +75,16 @@ class Ai1ec_View_Event_Post extends Ai1ec_Base {
 	 */
 	public function trim_excerpt( Ai1ec_Event $event, $length = 35, $more = '[...]' ) {
 		$raw_excerpt    = $event->get( 'post' )->post_content;
+		if ( ! isset( $raw_excerpt{0} ) ) {
+			$raw_excerpt = '&nbsp;';
+		}
 
 		$text           = preg_replace(
 			'#<\s*script[^>]*>.+<\s*/\s*script\s*>#x',
 			'',
 			apply_filters(
 				'the_excerpt',
-				$event->get( 'post' )->post_content
+				$raw_excerpt
 			)
 		);
 		$text           = strip_shortcodes( $text );

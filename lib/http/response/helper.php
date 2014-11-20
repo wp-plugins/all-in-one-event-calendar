@@ -77,4 +77,21 @@ class Ai1ec_Http_Response_Helper {
 		}
 		return array_map( array( __CLASS__, 'utf8' ), $input );
 	}
+
+	/**
+	 * Removes the protocla from the url
+	 *
+	 * @param string $url
+	 *
+	 * @return string
+	 */
+	public static function remove_protocols( $url ) {
+		$disallowed = array( 'http:', 'https:' );
+		foreach ( $disallowed as $d ) {
+			if ( strpos( $url, $d ) === 0 ) {
+				return str_replace( $d, '', $url );
+			}
+		}
+		return $url;
+	}
 }

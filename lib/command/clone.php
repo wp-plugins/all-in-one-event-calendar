@@ -64,31 +64,18 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 	 * @return boolean
 	 */
 	public function is_this_to_execute() {
-		// duplicate all selected post by top dropdown
+		$current_action = $this->_registry->get(
+			'http.request'
+		)->get_current_action();
+
 		if (
-			isset( $_REQUEST['action'] ) &&
-			$_REQUEST['action'] === 'clone' &&
+			'clone' === $current_action &&
 			! empty( $_REQUEST['post'] )
 		) {
 			foreach ( $_REQUEST['post'] as $post_id ) {
 				$this->_posts[] = array(
-					'status' => 'new',
-					'post'   => get_post( $post_id )
-				);
-			}
-			return true;
-		}
-
-		// duplicate all selected post by bottom dropdown
-		if (
-			isset( $_REQUEST['action2'] ) &&
-			$_REQUEST['action2'] === 'clone' &&
-			! empty( $_REQUEST['post'] )
-		) {
-			foreach ( $_REQUEST['post'] as $post ) {
-				$this->_posts[] = array(
 					'status' => '',
-					'post'   => $post
+					'post'   => get_post( $post_id )
 				);
 			}
 			return true;
@@ -98,8 +85,7 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 
 		// duplicate single post
 		if (
-			isset( $_REQUEST['action'] ) &&
-			$_REQUEST['action'] === 'duplicate_post_save_as_new_post' &&
+			$current_action === 'duplicate_post_save_as_new_post' &&
 			! empty( $_REQUEST['post'] )
 		) {
 			check_admin_referer( 'ai1ec_clone_'. $_REQUEST['post'] );
@@ -113,8 +99,7 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 		}
 		// duplicate single post as draft
 		if (
-			isset( $_REQUEST['action'] ) &&
-			$_REQUEST['action'] === 'duplicate_post_save_as_new_post_draft' &&
+			$current_action === 'duplicate_post_save_as_new_post_draft' &&
 			! empty( $_REQUEST['post'] )
 		) {
 			check_admin_referer( 'ai1ec_clone_'. $_REQUEST['post'] );

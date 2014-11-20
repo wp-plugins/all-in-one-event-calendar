@@ -24,23 +24,13 @@ class Ai1ec_Command_Change_Theme extends Ai1ec_Command {
 			'',
 			$_GET['ai1ec_stylesheet']
 		);
-		update_option(
-			'ai1ec_current_theme',
-			array(
-				'theme_dir'  => realpath( $_GET['ai1ec_theme_dir'] ),
-				'theme_root' => realpath( $_GET['ai1ec_theme_root'] ),
-				'theme_url'  => $_GET['ai1ec_theme_url'],
-				'legacy'     => (bool)intval( $_GET['ai1ec_legacy'] ),
-				'stylesheet' => $stylesheet,
-			)
-		);
-		// Delete user variables from database so fresh ones are used by new theme.
-		$this->_registry->get( 'model.option' )->delete(
-			Ai1ec_Less_Lessphp::DB_KEY_FOR_LESS_VARIABLES
-		);
-		// Recompile CSS for new theme.
-		$css_controller = $this->_registry->get( 'css.frontend' );
-		$css_controller->invalidate_cache( null, false );
+		$this->_registry->get( 'theme.loader' )->switch_theme( array(
+			'theme_root' => realpath( $_GET['ai1ec_theme_root'] ),
+			'theme_dir'  => realpath( $_GET['ai1ec_theme_dir'] ),
+			'theme_url'  => $_GET['ai1ec_theme_url'],
+			'stylesheet' => $stylesheet,
+			'legacy'     => (bool)intval( $_GET['ai1ec_legacy'] )
+		) );
 
 		// Return user to themes list page with success message.
 		return array(
@@ -80,5 +70,4 @@ class Ai1ec_Command_Change_Theme extends Ai1ec_Command {
 		}
 		return false;
 	}
-
 }

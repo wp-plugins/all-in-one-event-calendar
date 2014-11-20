@@ -3,9 +3,9 @@ Contributors: hubrik, vtowel, yani.iliev, nicolapeluchetti, jbutkus, lpawlik, ba
 Tags: calendar, events, ics, ics feed, wordpress ical importer, google
 calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
-Requires WorPress at least: 3.5
+Requires WordPress at least: 3.5
 Tested up to: 4.0
-Stable tag: 2.1.5
+Stable tag: 2.1.7
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -21,7 +21,7 @@ with the rest of the world.
 
 Our calendar system combines a clean visual design, solid
 architectural patterns and a powerful set of features to create the
-most advanced calendar system available for WordPress. 
+most advanced calendar system available for WordPress.
 
 Download the free Core edition at [time.ly](http://time.ly/) and
 choose from 3 custom designed themes for your Calendar, or develop
@@ -34,7 +34,7 @@ and more.
 * Made plugin modular, allowing users to install extensions for
 required features.
 * Improved performance by delaying resources initialization until
-needed. 
+needed.
 * Implemented new theme layer using Twig
 (http://twig.sensiolabs.org/), which will allow the Calendar to render
 new views in JavaScript.
@@ -65,7 +65,7 @@ to underlying database.
 new filter types on demand.
 * Improved internationalization support with respect to WordPress and
 3rd party plugins behaviour.
-* Updated to Bootstrap 3 for better performance and responsiveness. 
+* Updated to Bootstrap 3 for better performance and responsiveness.
 * Moved Front End Event Submission, Superwidget, Platform Mode,
 Posterboard, Stream View, Agenda View, Facebook and Twitter to
 extensions. Please view their release notes for details.
@@ -172,6 +172,72 @@ http://vimeo.com/55904173
 
 == Changelog ==
 
+= Version 2.1.7 =
+* Fixed issue where a stopping error may have been encountered when
+3rd party plugins do not properly use include_once family functions
+* Fixed issue where address autocomplete wasn't properly disabled
+* Fixed issue where clicking "Back to calendar" was redirecting to
+default calendar when a site had more than one calendar embedded via
+shortcode
+* Fixed issue where on some browsers and operating systems extra
+characters were being rendered on screen
+* Fixed issue where some 3rd party plugins were injecting non-readable
+data into the event excerpt view
+* Fixed issue where all-day view was not rendering correctly at all
+times
+* Improved print-view to use compact agenda view
+
+= Version 2.1.6 =
+* If an event's timezone is different from the site's it will now be
+displayed on the event details page
+* Improved calendar view customization by allowing selection of fonts
+* Made CSS cached filename unique on every theme save to improve caching
+compatibility
+* Improved AJAX failure handling
+* Improved button layout on HTML4 sites
+* Improved the UI of the filter bar when empty
+* Improved CSS rendering in widgets, to avoid conflicts
+* Improved performance by re-compiling CSS afer changes require it
+* Made it possible to use area between filter bar and main calendar as a
+widget area with certain themes
+* Prevent potential issues with incompatible add-on versions by checking
+them during activation
+* Showing add-ons available for All-in-One Event Calendar in a
+dedicated page
+* Fixed issue with unescaped HTML in the widget title 
+* Fixed wording - using proper WordPress name wherever applicable 
+* Fixed issue with double-escaped HTML in Agenda view (strange
+characters in titles) 
+* Fixed invalid constant use which was causing some strings to be not
+translatable 
+* Fixed event title rendering in a widget 
+* Fixed span class appearing on all day events in the sidebar widget 
+* Fixed imported all day events appearing a month ahead in Month View 
+* Fixed an issue where base64 fonts caused errors with older versions of
+PHP 
+* Fixed an issue with ics feeds importing past events 
+* Fixed an issue where theme options need to be resaved after update 
+* Fixed an issue where font awesome icons were missing in Firefox 
+* Fixed a conflict with sortcodes and front end rendering 
+* Fixed an issue where an event missing a timezone caused a fatal error 
+* Fixed a styling issue with Select2 fields on the settings page 
+* Fixed an issue where the post your event button did not display on a
+calendar set with shortcode 
+* Fixed an issue where some calendars displayed extra space below
+Posterboard 
+* Fixed an issue where certain feeds would create double images 
+* Fixed a navigation issue with a calendar embedded by shortcode 
+* Fixed issue where Agenda View displaed multiple images 
+* Fixed an issue where clicking a link in js widgets did not open the
+modal 
+* Fixed issue where clearing filters changed spacing 
+* Fixed issue where clearing filters reset the calendar to default view 
+* Fixed issue where in some cases views would not change 
+* Fixed issue where featured images were missing from Streamview in
+Firefox 
+* Fixed issue where the timezone of events imported from Google was set
+to UTC
+
 = Version 2.1.5 =
 * Confirmed compatibility with WordPress 4.0 and added new Timely icon
 
@@ -183,7 +249,7 @@ from accidentally removing files that do not belong to the plugin
 * Added possibility to keep old events during ICS feeds update
 * Made subscribe dropdown button mobile friendly
 * Implemented microformats 2 improving SEO and reducing theme and plugin
-conflicts 
+conflicts
 * Improved compatibility with JetPack - sharing elements no longer
 appear on empty pop-over elements
 * Enabled translation of some previously untranslatable strings
@@ -934,7 +1000,7 @@ event
 
 = 2.0 =
 I you believe you are missing functionality, please visit our site and
-download the correspoding Add-on. 
+download the correspoding Add-on.
 
 = 1.0.3 =
 When upgrading to from below `1.0.3` you must reactivate the plugin.

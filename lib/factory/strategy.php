@@ -66,7 +66,7 @@ class Ai1ec_Factory_Strategy extends Ai1ec_Base {
 
 	/**
 	 * Get a writable directory if possible, falling back on wp_contet dir
-	 * 
+	 *
 	 * @param array $cache_dirs
 	 * @return boolean|string
 	 */
@@ -93,10 +93,17 @@ class Ai1ec_Factory_Strategy extends Ai1ec_Base {
 	protected function _is_cache_dir_writable( $directory ) {
 		static $cache_directories = array();
 		if ( ! isset( $cache_directories[$directory] ) ) {
-			$filesystem = $this->_registry->get( 'filesystem.checker' );
-			$cache_directories[$directory] = $filesystem->is_writable(
+			$cache_directories[$directory] = apply_filters(
+				'ai1ec_is_cache_dir_writable',
+				null,
 				$directory
 			);
+			if ( null === $cache_directories[$directory] ) {
+				$filesystem = $this->_registry->get( 'filesystem.checker' );
+				$cache_directories[$directory] = $filesystem->is_writable(
+					$directory
+				);
+			}
 		}
 		return $cache_directories[$directory];
 	}

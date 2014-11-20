@@ -88,6 +88,7 @@ class Ai1ec_Event_Creating extends Ai1ec_Base {
 		$show_coordinates = isset( $_POST['ai1ec_input_coordinates'] )? 1                                             : 0;
 		$longitude        = isset( $_POST['ai1ec_longitude'] )        ? $_POST['ai1ec_longitude']                     : '';
 		$latitude         = isset( $_POST['ai1ec_latitude'] )         ? $_POST['ai1ec_latitude']                      : '';
+		$banner_image     = isset( $_POST['ai1ec_banner_image'] )     ? $_POST['ai1ec_banner_image']                  : '';
 
 		$rrule  = NULL;
 		$exrule = NULL;
@@ -180,6 +181,8 @@ class Ai1ec_Event_Creating extends Ai1ec_Base {
 		$event->set( 'longitude',        trim( $longitude ) );
 		$event->set( 'latitude',         trim( $latitude ) );
 		$event->set( 'ical_uid',         $event->get_uid() );
+
+		update_post_meta( $post_id, 'ai1ec_banner_image', $banner_image );
 
 		// let other extensions save their fields.
 		do_action( 'ai1ec_save_post', $event );

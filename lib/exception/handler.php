@@ -256,7 +256,7 @@ class Ai1ec_Exception_Handler {
 		$errstr,
 		$errfile,
 		$errline,
-		$errcontext
+		$errcontext = array()
 	) {
 		// if the error is not in our plugin, let PHP handle things.
 		$position = strpos( $errfile, AI1EC_PLUGIN_NAME );
