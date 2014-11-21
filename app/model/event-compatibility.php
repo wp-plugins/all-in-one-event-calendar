@@ -59,4 +59,13 @@ class Ai1ec_Event_Compatibility extends Ai1ec_Event {
 	public function getis_allday() {
 		return $this->is_allday();
 	}
+
+	/**
+	 * Returns Event instance permalink for FER compatibility.
+	 *
+	 * @return string Event instance permalink.
+	 */
+	public function getpermalink() {
+		return $this->get_runtime( 'instance_permalink' );
+	}
 }
