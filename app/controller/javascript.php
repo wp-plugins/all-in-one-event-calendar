@@ -236,6 +236,7 @@ class Ai1ec_Javascript_Controller {
 			$page_to_load
 		);
 		$ext_js = '';
+
 		foreach ( $extension_files as $file ) {
 			$ext_js .= file_get_contents( $file );
 		}
@@ -248,6 +249,9 @@ class Ai1ec_Javascript_Controller {
 
 		$javascript = $require . $require_config . $translation_module .
 			$config . $jquery . $common_js . $ext_js . $page_js . $page_ready;
+		// add to blank spaces to fix issues with js
+		// being truncated onn some installs
+		$javascript .= '  ';
 		$this->_echo_javascript( $javascript );
 	}
 
@@ -420,6 +424,9 @@ class Ai1ec_Javascript_Controller {
 			),
 			'general_url_not_valid'          => Ai1ec_I18n::__(
 				'Please remember that URLs must start with either "http://" or "https://".'
+			),
+			'calendar_loading_event'          => Ai1ec_I18n::__(
+				'Loading&hellip;'
 			),
 			'language'                       => $this->_registry->get( 'p28n.wpml' )->get_lang(),
 			'ajax_url'                       => $ajax_url,

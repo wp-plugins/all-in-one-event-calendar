@@ -336,7 +336,7 @@ class Ai1ec_Calendar_View_Month extends Ai1ec_Calendar_View_Abstract {
 			);
 			$events = array();
 			foreach ( $days_events[$i] as $evt ){
-				$events[] = array(
+				$event_data = array(
 					'filtered_title'   => $evt->get_runtime( 'filtered_title' ),
 					'post_excerpt'     => $evt->get_runtime( 'post_excerpt' ),
 					'color_style'      => $evt->get_runtime( 'color_style' ),
@@ -369,9 +369,10 @@ class Ai1ec_Calendar_View_Month extends Ai1ec_Calendar_View_Abstract {
 							'',
 							false ),
 				);
-			}
-			if ( AI1EC_THEME_COMPATIBILITY_FER ) {
-				$events = $days_events[$i];
+				if ( AI1EC_THEME_COMPATIBILITY_FER ) {
+					$event_data = $evt;
+				}
+				$events[] = $event_data;
 			}
 			$weeks[$week][] = array(
 				'date' => $i,

@@ -575,9 +575,7 @@ class Ai1ec_Date_Timezone extends Ai1ec_Base {
 		}
 		$name = $this->get_name( $timezone );
 		if ( ! $name ) {
-			throw new Ai1ec_Date_Timezone_Exception(
-				'Unrecognized timezone \'' . $timezone . '\''
-			);
+			$name = $this->get_name( $this->get_default_timezone() );
 		}
 		$zone = $this->_cache->get( $name, null );
 		if ( null === $zone ) {

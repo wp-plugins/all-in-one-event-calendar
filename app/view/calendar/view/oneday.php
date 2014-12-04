@@ -317,7 +317,7 @@ class Ai1ec_Calendar_View_Oneday extends Ai1ec_Calendar_View_Abstract {
 					'venue'            => $evt->get( 'venue' ),
 					'ticket_url'       => $evt->get( 'ticket_url' ),
 					'start_truncated'  => $evt->get( 'start_truncated' ),
-					'end_truncated'  => $evt->get( 'end_truncated' ),
+					'end_truncated'    => $evt->get( 'end_truncated' ),
 					'popup_timespan'   => $this->_registry
 						->get( 'twig.ai1ec-extension')->timespan( $evt, 'short' ),
 					'avatar'           => $this->_registry

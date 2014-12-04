@@ -460,7 +460,7 @@ class Ai1ec_Theme_Loader {
 			$environment = array(
 				'cache'            => $this->get_cache_dir(),
 				'optimizations'    => -1,   // all
-				'auto_reload'      => false,
+				'auto_reload'      => true,
 			);
 			if ( AI1EC_DEBUG ) {
 				$environment += array(
@@ -468,6 +468,7 @@ class Ai1ec_Theme_Loader {
 				);
 				// auto_reload never worked well
 				$environment['cache'] = false;
+				unset( $environment['auto_reload'] );
 			}
 			$environment = apply_filters(
 				'ai1ec_twig_environment',

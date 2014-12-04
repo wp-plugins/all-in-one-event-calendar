@@ -33,7 +33,6 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 
 		$view               = $default_view;
 		$_events_categories = $_events_tags = $post_ids = array();
-		$events_limit       = null;
 
 		if ( isset( $atts['view'] ) ) {
 			if ( 'ly' === substr( $atts['view'], -2 ) ) {
@@ -74,6 +73,7 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 				}
 			}
 		}
+
 		foreach ( $mappings as $att_name => $type ) {
 			if ( ! isset( $atts[$att_name] ) ) {
 				continue;
@@ -113,16 +113,17 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 				}
 			}
 		}
+
 		$query = array(
 			'ai1ec_cat_ids'	 => implode( ',', $_events_categories ),
 			'ai1ec_tag_ids'	 => implode( ',', $_events_tags ),
 			'ai1ec_post_ids' => implode( ',', $post_ids ),
 			'action'         => $view,
 			'request_type'   => 'jsonp',
-			'events_limit'   => ( null !== $events_limit )
+			'events_limit'   => isset( $atts['events_limit'] )
 			// definition above casts values as array, so we take first element,
 			// as there won't be others
-				? $events_limit[0]
+				? (int) $atts['events_limit']
 				: null,
 		);
 		// this is the opposite of how the SuperWidget works.
@@ -146,10 +147,10 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 		$request->parse();
 		$page_content = $this->_registry->get( 'view.calendar.page' )
 			->get_content( $request );
-		$css      = $this->_registry->get( 'css.frontend' )
-						->add_link_to_html_for_frontend();
-		$js       = $this->_registry->get( 'controller.javascript' )
-						->load_frontend_js( true );
+		$this->_registry->get( 'css.frontend' )
+			->add_link_to_html_for_frontend();
+		$this->_registry->get( 'controller.javascript' )
+			->load_frontend_js( true );
 
 		return $page_content['html'];
 	}

@@ -7,6 +7,7 @@
 
 	<span class="ai1ec-popup-title">
 		<a href="{{ event.permalink | e('html_attr') }}"
+		   class="ai1ec-load-event"
 			>{{ event.filtered_title | truncate | raw }}</a>
 		{% if show_location_in_title and event.venue is not empty %}
 			<span class="ai1ec-event-location"
@@ -34,11 +35,13 @@
 		{% endif %}
 	</div>
 
-	<a class="ai1ec-load-event"
-		href="{{ event.permalink | e('html_attr') }}"
-		{{ data_type_events | raw }}>
-		{{ event.avatar | raw }}
-	</a>
+	{% if event.avatar_not_wrapped is not empty %}
+		<a class="ai1ec-load-event"
+			href="{{ event.permalink | e('html_attr') }}"
+			{{ data_type_events | raw }}>
+			{{ event.avatar_not_wrapped | raw }}
+		</a>
+	{% endif %}
 
 	{% if event.post_excerpt is not empty %}
 		<div class="ai1ec-popup-excerpt">{{ event.post_excerpt | raw }}</div>

@@ -88,6 +88,10 @@ abstract class Ai1ec_Embeddable extends WP_Widget {
 		$this->_id = $id_base;
 		parent::__construct( $id_base, $name, $widget_options, $control_options );
 		add_shortcode( $id_base, array( $this, 'shortcode' ) );
+		add_filter(
+			'ai1ec_content_remove_shortcode_' . $id_base,
+			array( $this, 'is_this_to_remove_from_event' )
+		);
 		$this->_registry = apply_filters( 'ai1ec_registry', false );
 		$this->register_javascript_widget( $id_base );
 		add_filter( 'ai1ec_js_translations', array( $this, 'add_js_translations' ) );
@@ -150,6 +154,15 @@ abstract class Ai1ec_Embeddable extends WP_Widget {
 		$defaults = $this->get_defaults();
 		$args = wp_parse_args( $args, $defaults );
 		return $this->get_content( $args, true );
+	}
+
+	/**
+	 * Returns whether this shortcode should be removed from event content.
+	 *
+	 * @return bool True.
+	 */
+	public function is_this_to_remove_from_event() {
+		return true;
 	}
 
 	/**

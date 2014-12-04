@@ -61,11 +61,39 @@ class Ai1ec_Event_Compatibility extends Ai1ec_Event {
 	}
 
 	/**
+	 * Twig is_multiday method.
+	 *
+	 * @return bool Value.
+	 */
+	public function getis_multiday() {
+		return $this->is_multiday();
+	}
+
+	/**
 	 * Returns Event instance permalink for FER compatibility.
 	 *
 	 * @return string Event instance permalink.
 	 */
 	public function getpermalink() {
 		return $this->get_runtime( 'instance_permalink' );
+	}
+
+	/**
+	 * Returns Event timespan for popup.
+	 *
+	 * @return string
+	 */
+	public function getpopup_timespan() {
+		return $this->_registry->get( 'twig.ai1ec-extension' )
+			->timespan( $this, 'short' );
+	}
+
+	/**
+	 * Returns Avatar not wrapped in <a> tag.
+	 *
+	 * @return string
+	 */
+	public function getavatar_not_wrapped() {
+		 return $this->getavatar( false );
 	}
 }

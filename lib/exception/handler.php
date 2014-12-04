@@ -196,7 +196,11 @@ class Ai1ec_Exception_Handler {
 			die();
 		}
 		// if it's something we handle, handle it
-		$backtrace = '<br><br>' . nl2br( $exception );
+		$backtrace = '';
+		$trace     = nl2br( $exception );
+		if ( ! empty( $trace ) ) {
+			$backtrace = '<br><br>' . $trace;
+		}
 		if ( $exception instanceof $this->_exception_class ) {
 			// check if it's a plugin instead of core
 			$disable_addon = $this->is_caused_by_addon( $exception );
@@ -204,14 +208,14 @@ class Ai1ec_Exception_Handler {
 				? $exception->get_html_message()
 				: $exception->getMessage();
 			$message .= $backtrace .
-				'<br><br>Request Uri: ' . $_SERVER['REQUEST_URI'];
+				'<br>Request Uri: ' . $_SERVER['REQUEST_URI'];
 			if ( null !== $disable_addon ) {
 				include_once ABSPATH . 'wp-admin/includes/plugin.php';
 				// deactivate the plugin. Fire handlers to hide options.
 				deactivate_plugins( $disable_addon );
 				global $ai1ec_registry;
 				$ai1ec_registry->get( 'notification.admin' )
-					->store( 
+					->store(
 						$this->get_disabled_line( $disable_addon ) . $message,
 						'error',
 						2,
@@ -395,8 +399,10 @@ class Ai1ec_Exception_Handler {
 			AI1EC_PLUGIN_NAME
 		);
 		$message = '<div class="message error">'.
-						'<h3>' . $label . '</h3>' .
-						'<p>' . $this->_message . '</p>';
+						'<strong>' . $label . '</strong>';
+		if ( ! empty( $this->_message ) ) {
+			$message .= '<p>' . $this->_message . '</p>';
+		}
 		$message .= sprintf(
 			__(
 				'<p>If you corrected the error and wish to try reactivating the plugin, <a href="%s">click here</a>.</p>',
@@ -431,16 +437,16 @@ class Ai1ec_Exception_Handler {
 	 * @param int $depth
 	 * @param int $i
 	 * @param array $objects
-	 * 
+	 *
 	 * @return string
 	 */
-	public function var_debug( 
-		$variable, 
-		$strlen = 400, 
-		$width = 25, 
-		$depth = 10, 
-		$i = 0, 
-		&$objects = array() 
+	public function var_debug(
+		$variable,
+		$strlen = 400,
+		$width = 25,
+		$depth = 10,
+		$i = 0,
+		&$objects = array()
 	) {
 		$search  = array( "\0", "\a", "\b", "\f", "\n", "\r", "\t", "\v" );
 		$replace = array( '\0', '\a', '\b', '\f', '\n', '\r', '\t', '\v' );
@@ -467,10 +473,10 @@ class Ai1ec_Exception_Handler {
 				break;
 			case 'string' :
 				$len = strlen( $variable );
-				$variable = str_replace( 
-					$search, 
-					$replace, 
-					substr( $variable, 0, $strlen ), 
+				$variable = str_replace(
+					$search,
+					$replace,
+					substr( $variable, 0, $strlen ),
 					$count );
 				$variable = substr( $variable, 0, $strlen );
 				if ( $len < $strlen ) {
@@ -496,7 +502,7 @@ class Ai1ec_Exception_Handler {
 							break;
 						}
 						$string .= "\n" . $spaces . "  [$key] => ";
-						$string .= $this->var_debug( 
+						$string .= $this->var_debug(
 							$variable[$key],
 							$strlen,
 							$width,

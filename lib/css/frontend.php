@@ -216,6 +216,26 @@ class Ai1ec_Css_Frontend extends Ai1ec_Base {
 		$update_persistence = false
 	) {
 		$notification = $this->_registry->get( 'notification.admin' );
+		if (
+			! $this->_registry->get(
+				'compatibility.memory'
+			)->check_available_memory( AI1EC_LESS_MIN_AVAIL_MEMORY )
+		) {
+			$message = sprintf(
+				Ai1ec_I18n::__(
+					'CSS compilation failed because you don\'t have enough free memory (a minimum of %s is needed). Your calendar will not render or function properly without CSS. Please read <a href="http://time.ly/document/user-guide/getting-started/pre-sale-questions/">this article</a> to learn how to increase your PHP memory limit.'
+				),
+				AI1EC_LESS_MIN_AVAIL_MEMORY
+			);
+			$notification->store(
+				$message,
+				'error',
+				1,
+				array( Ai1ec_Notification_Admin::RCPT_ADMIN ),
+				true
+			);
+			return;
+		}
 		try {
 			// Try to parse the css
 			$css = $this->lessphp_controller->parse_less_files( $variables );

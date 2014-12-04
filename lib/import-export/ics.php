@@ -152,6 +152,8 @@ class Ai1ec_Ics_Import_Export_Engine
 		$local_timezone = $this->_registry->get( 'date.timezone' )
 			->get_default_timezone();
 		$current_timestamp = $this->_registry->get( 'date.time' )->format_to_gmt();
+		// initialize empty custom exclusions structure
+		$exclusions        = array();
 		// go over each event
 		while ( $e = $v->getComponent( 'vevent' ) ) {
 			// Event data array.
@@ -309,6 +311,14 @@ class Ai1ec_Ics_Import_Export_Engine
 							$excpt_date = trim( $particle );
 						}
 					}
+					// Google sends YYYYMMDD for all-day excluded events
+					if (
+						$allday &&
+						8 === strlen( $excpt_date )
+					) {
+						$excpt_date    .= 'T000000Z';
+						$excpt_timezone = 'UTC';
+					}
 					$ex_dt = $this->_registry->get(
 						'date.time',
 						$excpt_date,
@@ -322,7 +332,17 @@ class Ai1ec_Ics_Import_Export_Engine
 					}
 				}
 			}
-
+			// Add custom exclusions if there any
+			$recurrence_id = $e->getProperty( 'recurrence-id' );
+			if (
+				false === $recurrence_id &&
+				! empty( $exclusions[$e->getProperty( 'uid' )] )
+			) {
+				if ( isset( $exdate{0} ) ) {
+					$exdate .= ',';
+				}
+				$exdate .= implode( ',', $exclusions[$e->getProperty( 'uid' )] );
+			}
 			// ========================
 			// = Latitude & longitude =
 			// ========================
@@ -444,7 +464,7 @@ class Ai1ec_Ics_Import_Export_Engine
 				'ical_source_url'   => $e->getProperty( 'url' ),
 				'ical_organizer'    => $organizer,
 				'ical_contact'      => $contact,
-				'ical_uid'          => $e->getProperty( 'uid' ),
+				'ical_uid'          => $this->_get_ical_uid( $e ),
 				'categories'        => array_keys( $imported_cat[Ai1ec_Event_Taxonomy::CATEGORIES] ),
 				'tags'              => array_keys( $imported_tags[Ai1ec_Event_Taxonomy::TAGS] ),
 				'feed'              => $feed,
@@ -462,6 +482,12 @@ class Ai1ec_Ics_Import_Export_Engine
 							)
 						),
 				),
+			);
+			// register any custom exclusions for given event
+			$exclusions = $this->_add_recurring_events_exclusions(
+				$e,
+				$exclusions,
+				$start
 			);
 
 			// Create event object.
@@ -1104,6 +1130,60 @@ class Ai1ec_Ics_Import_Export_Engine
 			}
 		}
 		return $imported_terms;
+	}
+
+	/**
+	 * Returns modified ical uid for google recurring edited events.
+	 *
+	 * @param vevent $e Vevent object.
+	 *
+	 * @return string ICAL uid.
+	 */
+	protected function _get_ical_uid( $e ) {
+		$ical_uid      = $e->getProperty( 'uid' );
+		$recurrence_id = $e->getProperty( 'recurrence-id' );
+		if ( false !== $recurrence_id ) {
+			$ical_uid = implode( '', array_values( $recurrence_id ) ) . '-' .
+				$ical_uid;
+		}
+
+		return $ical_uid;
+	}
+
+	/**
+	 * Returns modified exclusions structure for given event.
+	 *
+	 * @param vcalendar       $e          Vcalendar event object.
+	 * @param array           $exclusions Exclusions.
+	 * @param Ai1ec_Date_Time $start Date time object.
+	 *
+	 * @return array Modified exclusions structure.
+	 */
+	protected function _add_recurring_events_exclusions( $e, $exclusions, $start ) {
+		$recurrence_id = $e->getProperty( 'recurrence-id' );
+		if (
+			false === $recurrence_id ||
+			! isset( $recurrence_id['year'] ) ||
+			! isset( $recurrence_id['month'] ) ||
+			! isset( $recurrence_id['day'] )
+		) {
+			return $exclusions;
+		}
+		$year = $month = $day = $hour = $min = $sec = null;
+		extract( $recurrence_id, EXTR_IF_EXISTS );
+		$timezone = '';
+		$exdate   = $year . $month . $day;
+		if (
+			null === $hour ||
+			null === $min ||
+			null === $sec
+		) {
+			$hour = $min = $sec = '00';
+			$timezone = 'Z';
+		}
+		$exdate .= 'T' . $hour . $min . $sec . $timezone;
+		$exclusions[$e->getProperty( 'uid' )][] = $exdate;
+		return $exclusions;
 	}
 
 }

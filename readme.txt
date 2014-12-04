@@ -5,7 +5,7 @@ calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WordPress at least: 3.5
 Tested up to: 4.0.1
-Stable tag: 2.1.8
+Stable tag: 2.1.9
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -14,97 +14,28 @@ feeds.
 
 == Description ==
 
-Welcome to the [All-in-One Event Calendar Plugin](http://time.ly/),
-from [Timely](http://time.ly/). The All-in-One Event Calendar is a
-beautiful way to list your events in WordPress and easily share them
-with the rest of the world.
+The [All-in-One Event Calendar](http://time.ly/) from
+[Timely](http://time.ly/) is a beautiful way to list your events in
+WordPress and easily share them with the rest of the world. Our
+calendar system combines clean visual design with a powerful set of
+features to create the most advanced calendar system available for
+WordPress.
 
-Our calendar system combines a clean visual design, solid
-architectural patterns and a powerful set of features to create the
-most advanced calendar system available for WordPress.
+= Get Add-ons =
 
-Download the free Core edition at [time.ly](http://time.ly/) and
-choose from 3 custom designed themes for your Calendar, or develop
-your own! Additionally, you can install add-ons that give you
-Posterboard view, Facebook integration, inline Calendar Theme editing
-and more.
+Download add-ons at [time.ly](http://time.ly) to get more features,
+like [Extended Views](https://time.ly/downloads/extended-views/),
+[Frontend Submission
+form](https://time.ly/downloads/front-end-event-form/),
+[SuperWidget](https://time.ly/downloads/superwidget/),
+[Venues](https://time.ly/downloads/venues/), [Twitter
+integration](https://time.ly/downloads/twitter/) and
+[more](https://time.ly/wordpress-calendar-plugin/addons/).
 
-= New in version 2.0 =
+= Import and Export Events =
 
-* Made plugin modular, allowing users to install extensions for
-required features.
-* Improved performance by delaying resources initialization until
-needed.
-* Implemented new theme layer using Twig
-(http://twig.sensiolabs.org/), which will allow the Calendar to render
-new views in JavaScript.
-* Created time manipulation layer, which will allow editing of
-event's timezone, and also leverage system ability to track timezone
-definition changes when processing, or rendering of time entity comes
-into action.
-* Timezone information is stored with the event during event creation
-and/or import ensuring event is treated with respect to it's original
-timezone.
-* Implemented soft-deactivation feature to help prevent fatal errors
-which notifies user if an error occurs and makes plugin behave as if
-it was deactivated.
-* Allowing smooth interoperability with 3rd party cache plugins
-primarily by not providing another cache layer which would cripple
-behaviour of former ones.
-* Added thin compatibility layer which supports up-to date
-PHP/WordPress versions and provides support for older releases.
-* Created calendar feeds extension layer, which is meant to allow
-adding new types of feeds in addition to already existing ICS.
-* Created configuration abstraction layer, which is safe to use with
-3rd party caching plugins.
-* Fixed repeated cron additions, which was causing intensive database
-writes in some configurations.
-* Extended meta-data management layer to save from unnecessary calls
-to underlying database.
-* Implemented robust and extensible filtering layer allowing to create
-new filter types on demand.
-* Improved internationalization support with respect to WordPress and
-3rd party plugins behaviour.
-* Updated to Bootstrap 3 for better performance and responsiveness.
-* Moved Front End Event Submission, Superwidget, Platform Mode,
-Posterboard, Stream View, Agenda View, Facebook and Twitter to
-extensions. Please view their release notes for details.
-* Fixed DST issue causing times to shift one hour.
-* Clicking the browser back button returns site visitors to view they
-were on.
-* Fixed issue where the widget would not display a full day's events.
-* Fully hiding password protected events internal description.
-* Added improved database migration method which should allow for safe
-database schema changes.
-* Improved error messages rendering to include more details for
-tracing.
-
-= Calendar Features For Users =
-
-This plugin has many features we hope will prove useful to users,
-including:
-
-* **Recurring** events.
-* **Filtering** by event category or tag.
-* Easy **sharing** with Google Calendar, Apple iCal, MS Outlook and
-any other system that accepts iCalendar (.ics) feeds.
-* Embedded **Google Maps**.
-* **Color-coded** events based on category.
-* Featured **event images and category images**.
-* **Month**, **week**, **day**, **agenda**, and **posterboard**
-**views.
-* **Upcoming Events** widget.
-* Direct links to **filtered calendar views**.
-* **Facebook** integration.
-* Inline **Calendar Theme editor**.
-
-= Features for Website and Blog Owners =
-
-* Import other calendars automatically to display in your calendar.
-* Categorize and tag imported calendar feeds automatically.
-* Events from [The Events
-Calendar](http://wordpress.org/extend/plugins/the-events-calendar/).
-* Plugin can also be easily imported.
+Timely offers full ics/ical support. You can import events from other
+calendars and offer users the ability to subscribe to your calendar.
 
 Importing and exporting iCalendar (.ics) feeds is one of the strongest
 features of the All-in-One Event Calendar system. Enter an event on
@@ -112,33 +43,68 @@ one site and you can have it appear automatically in another website's
 calendar. You can even send events from a specific category or tag (or
 combination of categories and tags).
 
-Why is this cool? It allows event creators to create one event and
-have it displayed on a few or thousands of calendars with no extra
-work. And it also allows calendar owners to populate their calendar
-from other calendar feeds without having to go through the hassle of
-creating new events. For example, a soccer league can send its game
-schedule to a community sports calendar, which, in turn, can send only
-featured games (from all the sports leagues it aggregates) to a
-community calendar, which features sports as just one category.
+= Even More Features =
 
-= Additional Features =
+This plugin has many features we hope will prove useful to users,
+including:
 
-The All-in-One Event Calendar Plugin also has a few features that will
-prove useful for website and blog owners:
-
+* **Recurring** events including complex patterns.
+* **Filtering** by event category or tag.
+* Easy **sharing** with Google Calendar, Apple iCal, MS Outlook and
+any other system that accepts iCalendar (.ics) feeds.
+* Embedded **Google Maps**.
+* **Color-coded** events based on category.
+* Featured **event images** and **category images**.
+* **Month**, **week**, **day**, **agenda**, and **posterboard**
+views.
+* **Upcoming Events** widget.
+* Direct links to **filtered calendar views**.
+* **Theme** options to customize your calendar appearence.
+* Inline **Calendar Theme editor**.
+* Import other calendars automatically to display in your calendar.
+* Categorize and tag imported calendar feeds automatically.
+* Plugin can also be easily imported.
 * Each event is SEO-optimized.
 * Each event links to the original calendar.
 * Your calendar can be embedded into a WordPress page without needing
 to create template files or modify the theme.
 
-= Video =
+= Languages =
+
+Timely is supported by a committed group of translators offering
+[languages files](http://translate.time.ly/) in numerous languages
+including:
+
+* German
+* French
+* Russian
+* Italian
+* Dutch
+* Japanese
+* Portuguese
+* Swedish
+* Polish
+* Danish
+* Spanish
+* Bulgarian
+* Greek
+* Hungarian
+* Latvian
+
+You can help translate by going to
+[translate.time.ly](http://translate.time.ly).
+
+= Become the Hub of your community =
+
+If your goal is to run a community event calendar, Timely's All-in-one
+Event Calendar has everything you'll need.
 
 http://vimeo.com/55904173
 
 = Helpful Links =
 
-* [**Get help from our Support Site »**](http://support.time.ly).
-* [**Check out our great community forum »**](http://community.time.ly).
+* [**Access our User Guide**](http://time.ly/document/user-guide/).
+* [**Visit our Community Forums**](https://time.ly/forums/).
 
 == Frequently Asked Questions ==
 
@@ -171,6 +137,28 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.1.9 =
+* Improved calendar feeds import from Google calendar
+* Made calendar behaviour across browsers more consistent – fixed issue
+where some of the elements remained inactive after loading
+* Improved cache handling to allow easier development of child calendar
+themes
+* Improved memory handling – some heavy tasks are delayed or not
+performed
+* Improved legacy theme detection
+* Improved notifications mechanism to make informational notices clearly
+distinguishable
+* Improved SuperWidget navigation by handling more operations without
+resorting to rendering in base calendar context
+* Fixed event limit handling in shortcode – now number of events
+indicated when creating the shortcode is respected
+* Removed unwanted URLs from print view
+* Fixed multi day events display in Month view
+* Fixed word-wrapping rendering in month view – got rid of unwanted
+rendering artefacts
+* Fixed timezone handling on calendar views – unknown timezones are now
+treated as default calendar timezone
 
 = Version 2.1.8 =
 * Fixed issue where core themes were sometimes incorrectly treated as
@@ -975,35 +963,24 @@ WordPress Dashboard.
 3. Once the plugin is activated, follow the instructions in the notice
 to configure it.
 
-**Important notice:** When upgrading from version `1.0.2` or below you
-  must reactivate the plugin.
-
 = For advanced users: =
 
 To place the calendar in a DOM/HTML element besides the default page
 content container without modifying the theme:
 
-1. Navigate to **Settings** > **Calendar** in the WordPress Dashboard.
+1. Navigate to **Events** > **Settings** > **Advanced** > **Advanced
+Settings** in the WordPress Dashboard.
 2. Enter a CSS or jQuery-style selector of the target element in the
-**Contain calendar in this DOM element** field.
+**Move calendar into this DOM element** field.
 3. Click **Update**.
 
 == Screenshots ==
 
-1. Add new event - part 1
-2. Add new event - with recurrence
-3. Event categories
-4. Event categories with color picker
-5. Front-end: Month view of calendar
-6. Front-end: Month view of calendar with mouse cursor hovering over
-event
-7. Front-end: Month view of calendar with active category filter
-8. Front-end: Month view of calendar with active tag filter
-9. Front-end: Week view of calendar
-10. Front-end: Agenda view of calendar
-11. Settings page
-12. Upcoming Events widget
-13. Upcoming Events widget - configuration options
+1. Posterboard view
+2. Add New Event page
+3. Settings page
+4. Month view
+5. Event details page
 
 == Upgrade Notice ==
 

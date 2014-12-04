@@ -497,6 +497,10 @@ class Ai1ec_Front_Controller {
 			Ai1ecIcsConnectorPlugin::HOOK_NAME,
 			array( 'calendar-feed.ics', 'cron' )
 		);
+		$dispatcher->register_shortcode(
+			'ai1ec',
+			array( 'view.calendar.shortcode', 'shortcode' )
+		);
 
 		if ( is_admin() ) {
 			// get the repeat box
@@ -613,6 +617,10 @@ class Ai1ec_Front_Controller {
 				2
 			);
 			$dispatcher->register_action(
+				'wp_insert_post_data',
+				array( 'model.event.creating', 'wp_insert_post_data' )
+			);
+			$dispatcher->register_action(
 				'manage_ai1ec_event_posts_custom_column',
 				array( 'view.admin.all-events', 'custom_columns' ),
 				10,
@@ -672,10 +680,6 @@ class Ai1ec_Front_Controller {
 			);
 
 		} else { // ! is_admin()
-			$dispatcher->register_shortcode(
-				'ai1ec',
-				array( 'view.calendar.shortcode', 'shortcode' )
-			);
 			$dispatcher->register_action(
 				'after_setup_theme',
 				array( 'theme.loader', 'execute_theme_functions' )
@@ -1024,7 +1028,7 @@ class Ai1ec_Front_Controller {
 	 */
 	protected function _check_old_theme() {
 		$option = $this->_registry->get( 'model.option' );
-		if ( true === (bool)$option->get( 'ai1ec_fer_checked', false ) ) {
+		if ( AI1EC_VERSION === $option->get( 'ai1ec_fer_checked', false ) ) {
 			return;
 		}
 		$cur_theme  = $option->get( 'ai1ec_current_theme', array() );
@@ -1033,7 +1037,9 @@ class Ai1ec_Front_Controller {
 			! isset( $cur_theme['theme_root'] ) ||
 			$theme_root === dirname( $cur_theme['theme_root'] )
 		) {
-			$option->set( 'ai1ec_fer_checked', true );
+			$option->set( 'ai1ec_fer_checked', AI1EC_VERSION );
+			$cur_theme['legacy'] = false;
+			$option->set( 'ai1ec_current_theme', $cur_theme );
 			return;
 		}
 		$this->_registry->get( 'notification.admin' )->store(
@@ -1045,7 +1051,7 @@ class Ai1ec_Front_Controller {
 			array( Ai1ec_Notification_Admin::RCPT_ADMIN ),
 			true
 		);
-		$option->set( 'ai1ec_fer_checked', true );
+		$option->set( 'ai1ec_fer_checked', AI1EC_VERSION );
 	}
 
 }
