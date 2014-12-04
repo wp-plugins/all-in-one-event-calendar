@@ -9,7 +9,7 @@
  * @subpackage Ai1EC.Factory
  */
 class Ai1ec_Factory_Event extends Ai1ec_Base {
-	
+
 	/**
 	 * @var bool whether the theme is legacy
 	 */
@@ -27,10 +27,10 @@ class Ai1ec_Factory_Event extends Ai1ec_Base {
 
 	/**
 	 * Factory method for events
-	 * 
+	 *
 	 * @param string $data
 	 * @param string $instance
-	 * 
+	 *
 	 * @return Ai1ec_Event
 	 */
 	public function create_event_instance(
@@ -45,7 +45,14 @@ class Ai1ec_Factory_Event extends Ai1ec_Base {
 				$instance
 			);
 		}
-		return new Ai1ec_Event(
+		$class_name = 'Ai1ec_Event';
+		if (
+			'Ai1ec_Event' === $class_name &&
+			AI1EC_THEME_COMPATIBILITY_FER
+		) {
+			$class_name = 'Ai1ec_Event_Compatibility';
+		}
+		return new $class_name(
 			$registry,
 			$data,
 			$instance

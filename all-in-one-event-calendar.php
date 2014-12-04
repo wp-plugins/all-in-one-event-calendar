@@ -5,11 +5,10 @@
  * Description: A calendar system with month, week, day, agenda views, upcoming events widget, color-coded categories, recurrence, and import/export of .ics feeds.
  * Author: Time.ly Network Inc.
  * Author URI: http://time.ly/
- * Version: 2.1.5
+ * Version: 2.1.9
  * Text Domain: all-in-one-event-calendar
  * Domain Path: /language
  */
-
 $ai1ec_base_dir = dirname( __FILE__ );
 $ai1ec_base_url = plugins_url( '', __FILE__ );
 
@@ -44,6 +43,7 @@ $ai1ec_exception_handler = new Ai1ec_Exception_Handler(
 	'Ai1ec_Exception',
 	'Ai1ec_Error_Exception'
 );
+
 
 // if the user clicked the link to reactivate the plugin
 if ( isset( $_GET[Ai1ec_Exception_Handler::DB_REACTIVATE_PLUGIN] ) ) {

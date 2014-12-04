@@ -56,22 +56,22 @@ class __TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104f
                 echo ">
 \t\t\t\t\t<div class=\"ai1ec-month\">";
                 // line 15
-                echo twig_escape_filter($this->env, $this->env->getExtension('ai1ec')->month((isset($context["date"]) ? $context["date"] : null)), "html", null, true);
+                echo twig_escape_filter($this->env, $this->getAttribute((isset($context["date_info"]) ? $context["date_info"] : null), "month"), "html", null, true);
                 echo "</div>
 \t\t\t\t\t<div class=\"ai1ec-day\">";
                 // line 16
-                echo twig_escape_filter($this->env, $this->env->getExtension('ai1ec')->day((isset($context["date"]) ? $context["date"] : null)), "html", null, true);
+                echo twig_escape_filter($this->env, $this->getAttribute((isset($context["date_info"]) ? $context["date_info"] : null), "day"), "html", null, true);
                 echo "</div>
 \t\t\t\t\t<div class=\"ai1ec-weekday\">";
                 // line 17
-                echo twig_escape_filter($this->env, $this->env->getExtension('ai1ec')->weekday((isset($context["date"]) ? $context["date"] : null)), "html", null, true);
+                echo twig_escape_filter($this->env, $this->getAttribute((isset($context["date_info"]) ? $context["date_info"] : null), "weekday"), "html", null, true);
                 echo "</div>
 \t\t\t\t\t";
                 // line 18
                 if ((isset($context["show_year_in_agenda_dates"]) ? $context["show_year_in_agenda_dates"] : null)) {
                     // line 19
                     echo "\t\t\t\t\t\t<div class=\"ai1ec-year\">";
-                    echo twig_escape_filter($this->env, $this->env->getExtension('ai1ec')->year((isset($context["date"]) ? $context["date"] : null)), "html", null, true);
+                    echo twig_escape_filter($this->env, $this->getAttribute((isset($context["date_info"]) ? $context["date_info"] : null), "year"), "html", null, true);
                     echo "</div>
 \t\t\t\t\t";
                 }
@@ -92,11 +92,11 @@ class __TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104f
                         echo "\t\t\t\t\t\t\t<div class=\"ai1ec-event
 \t\t\t\t\t\t\t\tai1ec-event-id-";
                         // line 26
-                        echo twig_escape_filter($this->env, $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get", array(0 => "post_id"), "method"), "html", null, true);
+                        echo twig_escape_filter($this->env, $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "post_id"), "html", null, true);
                         echo "
 \t\t\t\t\t\t\t\tai1ec-event-instance-id-";
                         // line 27
-                        echo twig_escape_filter($this->env, $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get", array(0 => "instance_id"), "method"), "html", null, true);
+                        echo twig_escape_filter($this->env, $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "instance_id"), "html", null, true);
                         echo "
 \t\t\t\t\t\t\t\t";
                         // line 28
@@ -118,16 +118,16 @@ class __TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104f
 \t\t\t\t\t\t\t\t\t<span class=\"ai1ec-event-title\">
 \t\t\t\t\t\t\t\t\t\t";
                         // line 37
-                        echo $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get_runtime", array(0 => "filtered_title"), "method");
+                        echo $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "filtered_title");
                         echo "
 \t\t\t\t\t\t\t\t\t\t";
                         // line 38
-                        if (((isset($context["show_location_in_title"]) ? $context["show_location_in_title"] : null) && (!twig_test_empty($this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get", array(0 => "venue"), "method"))))) {
+                        if (((isset($context["show_location_in_title"]) ? $context["show_location_in_title"] : null) && (!twig_test_empty($this->getAttribute((isset($context["event"]) ? $context["event"] : null), "venue"))))) {
                             // line 39
                             echo "\t\t\t\t\t\t\t\t\t\t\t<span class=\"ai1ec-event-location\"
 \t\t\t\t\t\t\t\t\t\t\t\t>";
                             // line 40
-                            echo twig_escape_filter($this->env, sprintf((isset($context["text_venue_separator"]) ? $context["text_venue_separator"] : null), $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get", array(0 => "venue"), "method")), "html", null, true);
+                            echo twig_escape_filter($this->env, sprintf((isset($context["text_venue_separator"]) ? $context["text_venue_separator"] : null), $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "venue")), "html", null, true);
                             echo "</span>
 \t\t\t\t\t\t\t\t\t\t";
                         }
@@ -136,7 +136,7 @@ class __TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104f
 
 \t\t\t\t\t\t\t\t\t";
                         // line 44
-                        $context["edit_post_link"] = $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get_runtime", array(0 => "edit_post_link"), "method");
+                        $context["edit_post_link"] = $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "edit_post_link");
                         // line 45
                         echo "\t\t\t\t\t\t\t\t\t";
                         if ((!twig_test_empty((isset($context["edit_post_link"]) ? $context["edit_post_link"] : null)))) {
@@ -154,9 +154,9 @@ class __TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104f
                         // line 50
                         echo "
 \t\t\t\t\t\t\t\t\t<div class=\"ai1ec-event-time\">
-\t\t\t\t\t\t\t\t\t\t";
+\t\t\t\t\t\t\t\t\t\t ";
                         // line 52
-                        echo $this->env->getExtension('ai1ec')->timespan((isset($context["event"]) ? $context["event"] : null), "short");
+                        echo $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "timespan_short");
                         echo "
 \t\t\t\t\t\t\t\t\t</div>
 \t\t\t\t\t\t\t\t</div>
@@ -172,17 +172,26 @@ class __TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104f
 \t\t\t\t\t\t\t\t\t<div class=\"ai1ec-event-description\">
 \t\t\t\t\t\t\t\t\t\t";
                         // line 60
-                        if (twig_test_empty($this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get_runtime", array(0 => "content_img_url"), "method"))) {
+                        if ((twig_test_empty($this->getAttribute((isset($context["event"]) ? $context["event"] : null), "content_img_url")) && (!twig_test_empty($this->getAttribute((isset($context["event"]) ? $context["event"] : null), "avatar_not_wrapped"))))) {
                             // line 61
-                            echo "\t\t\t\t\t\t\t\t\t\t\t";
-                            echo $this->env->getExtension('ai1ec')->avatar((isset($context["event"]) ? $context["event"] : null), array(0 => "post_thumbnail", 1 => "location_avatar", 2 => "category_avatar"), "alignleft");
-                            // line 65
+                            echo "\t\t\t\t\t\t\t\t\t\t\t<a ";
+                            echo (isset($context["data_type_events"]) ? $context["data_type_events"] : null);
                             echo "
+\t\t\t\t\t\t\t\t\t\t\t\tclass=\"ai1ec-load-event\"
+\t\t\t\t\t\t\t\t\t\t\t\thref=\"";
+                            // line 63
+                            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "permalink"), "html_attr");
+                            echo "\">
+\t\t\t\t\t\t\t\t\t\t\t\t";
+                            // line 64
+                            echo $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "avatar_not_wrapped");
+                            echo "
+\t\t\t\t\t\t\t\t\t\t\t</a>
 \t\t\t\t\t\t\t\t\t\t";
                         }
                         // line 67
                         echo "\t\t\t\t\t\t\t\t\t\t";
-                        echo $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get_runtime", array(0 => "filtered_content"), "method");
+                        echo $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "filtered_content");
                         echo "
 \t\t\t\t\t\t\t\t\t</div>
 
@@ -190,18 +199,18 @@ class __TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104f
 \t\t\t\t\t\t\t\t\t\t<div class=\"ai1ec-btn-group ai1ec-actions\">
 \t\t\t\t\t\t\t\t\t\t\t";
                         // line 72
-                        if (((isset($context["is_ticket_button_enabled"]) ? $context["is_ticket_button_enabled"] : null) && (!twig_test_empty($this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get", array(0 => "ticket_url"), "method"))))) {
+                        if (((isset($context["is_ticket_button_enabled"]) ? $context["is_ticket_button_enabled"] : null) && (!twig_test_empty($this->getAttribute((isset($context["event"]) ? $context["event"] : null), "ticket_url"))))) {
                             // line 73
                             echo "\t\t\t\t\t\t\t\t\t\t\t\t<a class=\"ai1ec-pull-right ai1ec-btn ai1ec-btn-primary
 \t\t\t\t\t\t\t\t\t\t\t\t\t\tai1ec-btn-xs ai1ec-buy-tickets\"
 \t\t\t\t\t\t\t\t\t\t\t\t\ttarget=\"_blank\"
 \t\t\t\t\t\t\t\t\t\t\t\t\thref=\"";
                             // line 76
-                            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get", array(0 => "ticket_url"), "method"), "html_attr");
+                            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "ticket_url"), "html_attr");
                             echo "\"
 \t\t\t\t\t\t\t\t\t\t\t\t\t>";
                             // line 77
-                            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get_runtime", array(0 => "ticket_url_label"), "method"), "html", null, true);
+                            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "ticket_url_label"), "html", null, true);
                             echo "</a>
 \t\t\t\t\t\t\t\t\t\t\t";
                         }
@@ -213,7 +222,7 @@ class __TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104f
 \t\t\t\t\t\t\t\t\t\t\t\t\tai1ec-load-event\"
 \t\t\t\t\t\t\t\t\t\t\t\thref=\"";
                         // line 82
-                        echo twig_escape_filter($this->env, $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get_runtime", array(0 => "instance_permalink"), "method"), "html_attr");
+                        echo twig_escape_filter($this->env, $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "permalink"), "html_attr");
                         echo "\">
 \t\t\t\t\t\t\t\t\t\t\t\t";
                         // line 83
@@ -223,10 +232,10 @@ class __TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104f
 \t\t\t\t\t\t\t\t\t\t</div>
 \t\t\t\t\t\t\t\t\t\t";
                         // line 86
-                        $context["categories"] = $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get_runtime", array(0 => "categories_html"), "method");
+                        $context["categories"] = $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "categories_html");
                         // line 87
                         echo "\t\t\t\t\t\t\t\t\t\t";
-                        $context["tags"] = $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "get_runtime", array(0 => "tags_html"), "method");
+                        $context["tags"] = $this->getAttribute((isset($context["event"]) ? $context["event"] : null), "tags_html");
                         // line 88
                         echo "\t\t\t\t\t\t\t\t\t\t";
                         if ((!twig_test_empty((isset($context["categories"]) ? $context["categories"] : null)))) {
@@ -320,6 +329,6 @@ class __TwigTemplate_5ca1499a9c32090a9a368a28b4c13261022bf5d11f22b5211fb873b104f
 
     public function getDebugInfo()
     {
-        return array (  298 => 115,  288 => 112,  281 => 111,  279 => 110,  263 => 103,  253 => 98,  244 => 94,  239 => 92,  228 => 87,  226 => 86,  220 => 83,  200 => 76,  195 => 73,  193 => 72,  177 => 61,  155 => 50,  121 => 37,  92 => 25,  44 => 11,  313 => 94,  306 => 118,  302 => 116,  299 => 88,  296 => 114,  294 => 80,  280 => 74,  274 => 71,  266 => 68,  260 => 66,  209 => 79,  178 => 43,  175 => 60,  159 => 52,  152 => 33,  148 => 32,  144 => 46,  102 => 26,  90 => 22,  78 => 19,  42 => 11,  39 => 10,  217 => 82,  211 => 80,  194 => 50,  183 => 72,  168 => 64,  161 => 61,  143 => 45,  116 => 35,  111 => 34,  93 => 27,  86 => 21,  81 => 24,  59 => 15,  287 => 106,  283 => 105,  276 => 72,  267 => 102,  254 => 97,  248 => 94,  242 => 63,  236 => 89,  233 => 88,  231 => 88,  224 => 84,  221 => 84,  216 => 82,  210 => 78,  207 => 56,  204 => 77,  202 => 53,  197 => 51,  189 => 65,  180 => 65,  176 => 60,  174 => 59,  170 => 57,  153 => 55,  140 => 47,  137 => 46,  132 => 40,  122 => 38,  112 => 32,  107 => 29,  101 => 27,  99 => 27,  95 => 26,  91 => 24,  83 => 23,  79 => 21,  58 => 14,  50 => 12,  45 => 11,  29 => 9,  25 => 4,  164 => 37,  156 => 77,  145 => 49,  139 => 44,  131 => 42,  127 => 39,  123 => 29,  114 => 33,  104 => 52,  96 => 24,  77 => 23,  74 => 19,  68 => 16,  60 => 28,  27 => 5,  66 => 16,  640 => 354,  632 => 348,  624 => 343,  615 => 336,  613 => 334,  607 => 330,  605 => 329,  602 => 328,  596 => 325,  593 => 324,  591 => 323,  588 => 322,  581 => 318,  576 => 316,  572 => 315,  569 => 314,  566 => 313,  563 => 311,  554 => 305,  545 => 299,  539 => 296,  530 => 290,  521 => 284,  516 => 281,  513 => 280,  506 => 274,  500 => 272,  493 => 269,  491 => 268,  485 => 264,  479 => 262,  472 => 259,  470 => 258,  465 => 255,  457 => 249,  449 => 244,  435 => 233,  429 => 229,  422 => 223,  416 => 221,  409 => 218,  407 => 217,  401 => 213,  395 => 211,  388 => 208,  386 => 207,  381 => 204,  375 => 199,  369 => 197,  362 => 194,  360 => 193,  355 => 190,  350 => 186,  344 => 183,  341 => 182,  335 => 179,  329 => 176,  326 => 175,  324 => 174,  320 => 172,  317 => 170,  311 => 166,  308 => 91,  300 => 159,  297 => 158,  293 => 156,  291 => 79,  284 => 75,  278 => 148,  271 => 70,  269 => 106,  264 => 67,  258 => 101,  245 => 93,  243 => 130,  238 => 127,  225 => 61,  212 => 118,  208 => 117,  203 => 78,  192 => 49,  188 => 48,  179 => 70,  166 => 57,  158 => 88,  141 => 45,  134 => 41,  124 => 68,  115 => 61,  109 => 57,  97 => 28,  80 => 39,  71 => 18,  62 => 15,  49 => 12,  35 => 12,  30 => 6,  63 => 16,  57 => 14,  54 => 17,  43 => 17,  31 => 6,  24 => 3,  21 => 2,  82 => 20,  73 => 19,  70 => 24,  64 => 15,  55 => 14,  52 => 23,  48 => 14,  46 => 18,  41 => 10,  37 => 9,  32 => 6,  22 => 2,  265 => 123,  259 => 100,  252 => 134,  250 => 97,  247 => 115,  241 => 112,  234 => 89,  232 => 122,  229 => 107,  227 => 62,  219 => 82,  213 => 81,  205 => 93,  201 => 91,  199 => 74,  196 => 77,  190 => 86,  186 => 84,  184 => 67,  181 => 82,  173 => 67,  169 => 39,  167 => 76,  162 => 54,  160 => 72,  157 => 52,  151 => 50,  149 => 47,  142 => 63,  135 => 42,  130 => 40,  128 => 38,  125 => 38,  117 => 34,  113 => 48,  108 => 33,  106 => 28,  103 => 28,  94 => 23,  89 => 26,  87 => 24,  84 => 40,  76 => 38,  72 => 27,  67 => 17,  65 => 17,  61 => 21,  56 => 19,  53 => 13,  51 => 13,  40 => 10,  34 => 7,  28 => 3,  26 => 4,  36 => 9,  23 => 3,  19 => 1,);
+        return array (  311 => 116,  290 => 111,  278 => 106,  272 => 103,  267 => 101,  243 => 89,  240 => 88,  235 => 86,  209 => 76,  204 => 73,  202 => 72,  193 => 67,  187 => 64,  166 => 57,  144 => 46,  141 => 45,  92 => 25,  319 => 94,  317 => 93,  313 => 92,  310 => 91,  307 => 115,  305 => 114,  302 => 82,  291 => 77,  287 => 75,  285 => 74,  280 => 72,  277 => 71,  271 => 69,  269 => 68,  253 => 94,  238 => 65,  218 => 79,  189 => 46,  180 => 42,  163 => 36,  45 => 14,  42 => 13,  50 => 16,  47 => 15,  226 => 81,  220 => 62,  188 => 69,  182 => 66,  175 => 60,  152 => 33,  143 => 45,  122 => 38,  97 => 28,  93 => 25,  86 => 25,  71 => 18,  293 => 100,  289 => 99,  260 => 91,  254 => 88,  251 => 87,  248 => 92,  239 => 82,  237 => 87,  233 => 79,  230 => 83,  225 => 82,  222 => 80,  210 => 70,  208 => 54,  195 => 49,  171 => 54,  161 => 50,  159 => 52,  154 => 47,  150 => 46,  146 => 45,  137 => 42,  132 => 39,  126 => 36,  121 => 37,  118 => 33,  116 => 35,  111 => 29,  105 => 27,  99 => 27,  95 => 26,  83 => 23,  78 => 20,  62 => 14,  59 => 15,  38 => 5,  33 => 9,  29 => 9,  25 => 4,  164 => 83,  156 => 52,  139 => 44,  131 => 42,  127 => 39,  123 => 64,  114 => 60,  104 => 28,  96 => 46,  77 => 20,  74 => 19,  60 => 28,  69 => 18,  644 => 354,  636 => 348,  628 => 343,  619 => 336,  617 => 335,  611 => 331,  609 => 330,  606 => 329,  600 => 326,  597 => 325,  595 => 324,  592 => 323,  585 => 319,  580 => 317,  576 => 316,  573 => 315,  570 => 314,  567 => 312,  558 => 306,  549 => 300,  543 => 297,  534 => 291,  525 => 285,  520 => 282,  517 => 281,  510 => 275,  504 => 273,  497 => 270,  495 => 269,  489 => 265,  483 => 263,  476 => 260,  474 => 259,  469 => 256,  461 => 250,  453 => 245,  439 => 234,  433 => 230,  426 => 224,  420 => 222,  413 => 219,  411 => 218,  405 => 214,  399 => 212,  392 => 209,  390 => 208,  385 => 205,  379 => 200,  373 => 198,  366 => 195,  364 => 194,  359 => 191,  354 => 187,  348 => 184,  345 => 183,  339 => 180,  333 => 177,  330 => 176,  328 => 175,  324 => 173,  321 => 171,  315 => 118,  312 => 166,  304 => 160,  301 => 159,  297 => 112,  295 => 78,  288 => 110,  282 => 73,  275 => 70,  273 => 96,  268 => 142,  262 => 98,  256 => 135,  249 => 132,  242 => 83,  236 => 64,  216 => 72,  212 => 77,  207 => 117,  203 => 52,  192 => 71,  183 => 63,  177 => 61,  170 => 38,  155 => 50,  145 => 71,  138 => 74,  134 => 32,  119 => 62,  107 => 29,  101 => 51,  91 => 23,  80 => 21,  66 => 21,  35 => 12,  30 => 6,  63 => 16,  54 => 13,  43 => 7,  24 => 3,  21 => 2,  82 => 21,  73 => 19,  70 => 17,  64 => 15,  55 => 14,  52 => 10,  48 => 9,  46 => 18,  41 => 10,  37 => 10,  32 => 8,  22 => 2,  88 => 26,  81 => 24,  79 => 21,  75 => 36,  68 => 33,  57 => 14,  49 => 12,  44 => 11,  31 => 8,  27 => 5,  265 => 94,  259 => 97,  252 => 117,  250 => 116,  247 => 131,  241 => 112,  234 => 109,  232 => 108,  229 => 83,  227 => 77,  219 => 100,  213 => 77,  205 => 53,  201 => 91,  199 => 51,  196 => 112,  190 => 86,  186 => 45,  184 => 83,  181 => 58,  173 => 55,  169 => 77,  167 => 52,  162 => 89,  160 => 53,  157 => 71,  151 => 74,  149 => 47,  142 => 44,  135 => 42,  130 => 40,  128 => 69,  125 => 38,  117 => 31,  113 => 58,  108 => 29,  106 => 32,  103 => 28,  94 => 39,  89 => 26,  87 => 24,  84 => 22,  76 => 28,  72 => 21,  67 => 17,  65 => 17,  61 => 20,  56 => 18,  53 => 17,  51 => 13,  40 => 6,  34 => 4,  28 => 3,  26 => 4,  36 => 9,  23 => 3,  19 => 1,);
     }
 }

@@ -9,7 +9,7 @@
  * @package    AI1EC
  * @subpackage AI1EC.View
  */
-class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
+class Ai1ec_Calendar_View_Oneday extends Ai1ec_Calendar_View_Abstract {
 
 	/* (non-PHPdoc)
 	 * @see Ai1ec_Calendar_View_Abstract::get_name()
@@ -41,11 +41,15 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 
 		$cell_array = $this->get_oneday_cell_array(
 			$local_date,
-			array(
-				'cat_ids'  => $args['cat_ids'],
-				'tag_ids'  => $args['tag_ids'],
-				'post_ids' => $args['post_ids'],
-				'auth_ids' => $args['auth_ids'],
+			apply_filters(
+				'ai1ec_get_events_relative_to_filter',
+				array(
+					'cat_ids'  => $args['cat_ids'],
+					'tag_ids'  => $args['tag_ids'],
+					'post_ids' => $args['post_ids'],
+					'auth_ids' => $args['auth_ids'],
+				),
+				$view_args
 			)
 		);
 		// Create pagination links.
@@ -70,6 +74,14 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 		$time_format              = $this->_registry->get( 'model.option' )
 			->get( 'time_format', Ai1ec_I18n::__( 'g a' ) );
 
+		$hours = array();
+		$today = $this->_registry->get( 'date.time', 'now', 'sys.default' );
+		for ( $hour = 0; $hour < 24; $hour++ ) {
+			$hours[] = $today
+				->set_time( $hour, 0, 0 )
+				->format_i18n( $time_format );
+		}
+
 		$view_args = array(
 			'title'                    => $title,
 			'type'                     => 'oneday',
@@ -88,6 +100,9 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 			'text_all_day'             => __( 'All-day', AI1EC_PLUGIN_NAME ),
 			'text_now_label'           => __( 'Now:', AI1EC_PLUGIN_NAME ),
 			'text_venue_separator'     => __( '@ %s', AI1EC_PLUGIN_NAME ),
+			'hours'                    => $hours,
+			'indent_multiplier'        => 16,
+			'indent_offset'            => 54,
 		);
 		if ( $settings->get( 'ajaxify_events_in_web_widget' ) ) {
 			$view_args['data_type_events'] = $args['data_type'];
@@ -102,7 +117,13 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 			)
 		);
 
-		return $this->_get_view( $view_args );
+		return
+			$this->_registry->get( 'http.request' )->is_json_required(
+				$args['request_format']
+			)
+			? json_encode( $view_args )
+			: $this->_get_view( $view_args );
+
 	}
 
 	/**
@@ -270,48 +291,90 @@ class Ai1ec_Calendar_View_Oneday  extends Ai1ec_Calendar_View_Abstract {
 			$all_events[$day_start_ts]['notallday'] = array();
 		}
 
-		$notallday = array();
-		$evt_stack = array( 0 ); // Stack to keep track of indentation
-		foreach ( $all_events[$day_start_ts]['notallday'] as $evt ) {
-			// Calculate top and bottom edges of current event
-			$top    = (int)(
-				$evt->get( 'start' )->diff_sec( $loc_start_time ) / 60
-			);
-			$bottom = min(
-				$top + ( $evt->get_duration() / 60 ),
-				1440
-			);
-
-			// While there's more than one event in the stack and this event's
-			// top position is beyond the last event's bottom, pop the stack
-			while ( count( $evt_stack ) > 1 && $top >= end( $evt_stack ) ) {
-				array_pop( $evt_stack );
-			}
-			// Indentation is number of stacked events minus 1
-			$indent = count( $evt_stack ) - 1;
-			// Push this event onto the top of the stack
-			array_push( $evt_stack, $bottom );
-
-			$notallday[] = array(
-				'top'    => $top,
-				'height' => $bottom - $top,
-				'indent' => $indent,
-				'event'  => $evt,
-			);
-		}
-
 		$today_ymd = $this->_registry->get(
 			'date.time',
 			$this->_registry->get( 'date.system' )->current_time()
 		)->format( 'Y-m-d' );
 
+		$evt_stack = array( 0 ); // Stack to keep track of indentation
+
+		foreach ( $all_events[$day_start_ts] as $event_type => &$events ) {
+			foreach ( $events as &$evt ) {
+				$event = array(
+					'filtered_title'   => $evt->get_runtime( 'filtered_title' ),
+					'post_excerpt'     => $evt->get_runtime( 'post_excerpt' ),
+					'color_style'      => $evt->get_runtime( 'color_style' ),
+					'category_colors'  => $evt->get_runtime( 'category_colors' ),
+					'permalink'        => $evt->get_runtime( 'instance_permalink' ),
+					'ticket_url_label' => $evt->get_runtime( 'ticket_url_label' ),
+					'edit_post_link'   => $evt->get_runtime( 'edit_post_link' ),
+					'faded_color'      => $evt->get_runtime( 'faded_color' ),
+					'rgba_color'       => $evt->get_runtime( 'rgba_color' ),
+					'short_start_time' => $evt->get_runtime( 'short_start_time' ),
+					'instance_id'      => $evt->get( 'instance_id' ),
+					'post_id'          => $evt->get( 'post_id' ),
+					'is_multiday'      => $evt->get( 'is_multiday' ),
+					'venue'            => $evt->get( 'venue' ),
+					'ticket_url'       => $evt->get( 'ticket_url' ),
+					'start_truncated'  => $evt->get( 'start_truncated' ),
+					'end_truncated'    => $evt->get( 'end_truncated' ),
+					'popup_timespan'   => $this->_registry
+						->get( 'twig.ai1ec-extension')->timespan( $evt, 'short' ),
+					'avatar'           => $this->_registry
+						->get( 'twig.ai1ec-extension')->avatar(
+							$evt,
+							array(
+								'post_thumbnail',
+								'content_img',
+								'location_avatar',
+								'category_avatar',
+							),
+							'',
+							false ),
+				);
+				if ( AI1EC_THEME_COMPATIBILITY_FER ) {
+					$event = $evt;
+				}
+				if ( 'notallday' === $event_type) {
+					// Calculate top and bottom edges of current event
+					$top    = (int)(
+						$evt->get( 'start' )->diff_sec( $loc_start_time ) / 60
+					);
+					$bottom = min(
+						$top + ( $evt->get_duration() / 60 ),
+						1440
+					);
+					// While there's more than one event in the stack and this event's
+					// top position is beyond the last event's bottom, pop the stack
+					while ( count( $evt_stack ) > 1 && $top >= end( $evt_stack ) ) {
+						array_pop( $evt_stack );
+					}
+					// Indentation is number of stacked events minus 1
+					$indent = count( $evt_stack ) - 1;
+					// Push this event onto the top of the stack
+					array_push( $evt_stack, $bottom );
+					$evt = array(
+						'top'    => $top,
+						'height' => $bottom - $top,
+						'indent' => $indent,
+						'event'  => $event,
+					);
+				} else {
+					$evt = $event;
+				}
+			}
+		}
 		$days[$day_start_ts] = array(
 			'today'     => 0 === strcmp(
 				$today_ymd,
 				$start_time->format( 'Y-m-d' )
 			),
 			'allday'    => $all_events[$day_start_ts]['allday'],
-			'notallday' => $notallday,
+			'notallday' => $all_events[$day_start_ts]['notallday'],
+			'day'       => $this->_registry->
+				get( 'date.time', $day_start_ts )->format_i18n( 'j' ),
+			'weekday'   => $this->_registry->
+				get( 'date.time', $day_start_ts )->format_i18n( 'D' ),
 		);
 
 		return apply_filters(

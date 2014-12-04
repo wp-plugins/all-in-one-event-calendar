@@ -55,6 +55,7 @@ class Ai1ec_File_Php extends Ai1ec_File_Abstract {
 				// Check if file is custom LESS variable definitions.
 				$user_variables_pattern = Ai1ec_File_Less::THEME_LESS_FOLDER .
 					'/' . self::USER_VARIABLES_FILE;
+
 				if ( strpos( $this->_name, $user_variables_pattern ) === 0 ) {
 					// It's a user variables file. We must handle the fact that it might
 					// be legacy.

@@ -104,10 +104,10 @@ class Ai1ec_Less_Lessphp extends Ai1ec_Base {
 		$variables   = $this->convert_less_variables_for_parsing( $variables );
 		// Inject additional constants from extensions if not compiling core only.
 		if ( false === $compile_core ) {
-			
+
 			$variables   = apply_filters( 'ai1ec_less_constants', $variables );
 		}
-		
+
 
 		// Load the static variables defined in the theme's variables.less file.
 		$this->load_static_theme_variables();
@@ -158,10 +158,22 @@ class Ai1ec_Less_Lessphp extends Ai1ec_Base {
 				$this->lessc->addImportDir( $dir );
 			}
 		}
-		$variables['fontdir'] = '~"' . $theme['theme_url'] . '/font"';
-		$variables['fontdir_default'] = '~"' . $this->default_theme_url . 'font"';
-		$variables['imgdir'] = '~"' . $theme['theme_url'] . '/img"';
-		$variables['imgdir_default'] = '~"' . $this->default_theme_url . 'img"';
+		$variables['fontdir'] = '~"' .
+			Ai1ec_Http_Response_Helper::remove_protocols(
+				$theme['theme_url']
+			) . '/font"';
+		$variables['fontdir_default'] = '~"' .
+			Ai1ec_Http_Response_Helper::remove_protocols(
+				$this->default_theme_url
+			) . 'font"';
+		$variables['imgdir'] = '~"' .
+			Ai1ec_Http_Response_Helper::remove_protocols(
+				$theme['theme_url']
+			) . '/img"';
+		$variables['imgdir_default'] = '~"' .
+			Ai1ec_Http_Response_Helper::remove_protocols(
+				$this->default_theme_url
+			) . 'img"';
 		if ( true === $compile_core ) {
 			$variables['fontdir'] = '~"../font"';
 			$variables['fontdir_default'] = '~"../font"';
@@ -176,6 +188,14 @@ class Ai1ec_Less_Lessphp extends Ai1ec_Base {
 		} catch ( Exception $e ) {
 			throw $e;
 		}
+
+		// Replace font placeholders
+		$this->parsed_css = preg_replace_callback(
+			'/__BASE64_FONT_([a-zA-Z0-9]+)_(\S+)__/m',
+			array( $this, 'load_font_base64' ),
+			$this->parsed_css
+		);
+
 		return $this->parsed_css;
 	}
 
@@ -289,6 +309,35 @@ class Ai1ec_Less_Lessphp extends Ai1ec_Base {
 		$loader = $this->_registry->get( 'theme.loader' );
 		$file = $loader->get_file( 'variables.less', array(), false );
 		$this->unparsed_variable_file = $file->get_content();
+	}
+
+	/**
+	 * Load font as base 64 encoded
+	 *
+	 * @param array $matches
+	 * @return string
+	 */
+	private function load_font_base64( $matches ) {
+		// Find out the active theme URL.
+		$option = $this->_registry->get( 'model.option' );
+		$theme  = $option->get( 'ai1ec_current_theme' );
+		$dirs   = apply_filters(
+			'ai1ec_font_dirs',
+			array(
+				'AI1EC'   => array(
+					$theme['theme_dir'] . DIRECTORY_SEPARATOR . 'font',
+					AI1EC_DEFAULT_THEME_PATH . DIRECTORY_SEPARATOR . 'font',
+				)
+			)
+		);
+		$directories = $dirs[$matches[1]];
+		foreach ( $directories as $dir ) {
+			$font_file = $dir . DIRECTORY_SEPARATOR . $matches[2];
+			if ( file_exists( $font_file ) ) {
+				return base64_encode( file_get_contents( $font_file ) );
+			}
+		}
+		return '';
 	}
 
 	/**

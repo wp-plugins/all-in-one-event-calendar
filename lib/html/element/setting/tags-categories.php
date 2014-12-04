@@ -79,14 +79,16 @@ class Ai1ec_Html_Setting_Tags_Categories extends Ai1ec_Html_Element_Settings {
 			$options[] = $option;
 		}
 		$args = array(
-			'id'         => 'default_' . $type,
-			'name'       => 'default_' . $type . '[]',
+			'id'         => $this->_args['id'] . '_default_' . $type,
+			'name'       => $this->_args['id'] . '_default_' . $type . '[]',
 			'label'      => $label,
 			'options'    => $options,
 			'stacked'    => true,
 			'attributes' => array(
 				'class'    => 'ai1ec-form-control',
 				'multiple' => 'multiple',
+				// for Widget creator
+				'data-id'  => 'tags' === $type ? 'tag_ids' : 'cat_ids',
 			),
 		);
 		return $loader->get_file( 'setting/select.twig', $args, true )

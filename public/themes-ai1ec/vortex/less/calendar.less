@@ -87,11 +87,15 @@
 .ai1ec-category-filter .ai1ec-category {
 	display: block;
 }
-.ai1ec-category-filter,
-.ai1ec-tag-filter {
+.ai1ec-filters {
 	.ai1ec-color-swatch {
 		height: 7px;
 		width: 7px;
+	}
+	.ai1ec-dropdown-toggle > i {
+		font-size: 1.25em;
+		line-height: 0.8em;
+		vertical-align: -15%;
 	}
 	.ai1ec-dropdown-menu {
 		padding: 1px 2px;
@@ -701,6 +705,8 @@ table.ai1ec-oneday-view-original {
 		}
 	}
 	.ai1ec-event-avatar {
+		float: left;
+		margin: 0 16px 8px 0;
 		max-width: 40%;
 		img {
 			max-width: 300px;
@@ -744,9 +750,7 @@ table.ai1ec-oneday-view-original {
 		text-align: left;
 	}
 	#wpadminbar,
-	#comments {
-		display: none;
-	}
+	#comments,
 	#page > header {
 		display: none;
 	}
@@ -760,39 +764,34 @@ table.ai1ec-oneday-view-original {
 		box-shadow: none;
 		border: 2px solid gray !important;
 	}
-	.ai1ec-event-summary,
-	.ai1ec-event-summary .ai1ec-event-click,
-	.ai1ec-event-description {
-		display: block !important;
-	}
 	.ai1ec-agenda-view {
+		.ai1ec-event-summary-footer {
+			display: none;
+		}
 		.ai1ec-date-title {
 			border-color: #cacaca;
 			&:after {
 				display: none;
 			}
 		}
-		.ai1ec-event-summary .ai1ec-event-title {
-			display: inline;
-		}
-		.ai1ec-event-summary .ai1ec-event-time {
-			display: inline;
-			border: none !important;
-			box-shadow: none !important;
-		}
-		.ai1ec-event-summary .ai1ec-event-time {
-			display: inline;
-			border: none !important;
-			box-shadow: none !important;
+		.ai1ec-event-summary {
+			.ai1ec-event-title {
+				display: inline;
+			}
+			.ai1ec-event-time {
+				display: inline;
+				border: none !important;
+				box-shadow: none !important;
+			}
 		}
 		.ai1ec-event-description {
 			padding: 0 !important;
 		}
-	}
-	.ai1ec-agenda-view .ai1ec-event.ai1ec-allday .ai1ec-allday-label {
-		border: none !important;
-		box-shadow: none !important;
-		padding-left: 0.2em !important;
+		.ai1ec-event.ai1ec-allday .ai1ec-allday-label {
+			border: none !important;
+			box-shadow: none !important;
+			padding-left: 0.2em !important;
+		}
 	}
 	.timely .entry-meta,
 	.timely .ai1ec-subscribe,
@@ -804,11 +803,12 @@ table.ai1ec-oneday-view-original {
 	.ai1ec-read-more,
 	.ai1ec-color-swatch,
 	.post-edit-link,
-	.ai1ec-event-toggle {
+	.ai1ec-event-toggle,
+	.ai1ec-views-dropdown {
 		display: none !important;
 	}
 	.ai1ec-event-header {
-		cursor : text !important;
+		cursor: text !important;
 	}
 }
 

@@ -69,7 +69,7 @@ class Ai1ec_Ics_Import_Export_Engine
 		foreach ( $arguments['events'] as $event ) {
 			$post_ids[] = $event->get( 'post_id' );
 		}
-		$this->_taxonomy_model->update_meta( $post_ids );
+		$this->_taxonomy_model->prepare_meta_for_ics( $post_ids );
 		$this->_registry->get( 'controller.content-filter' )
 			->clear_the_content_filters();
 		foreach ( $arguments['events'] as $event ) {
@@ -139,9 +139,21 @@ class Ai1ec_Ics_Import_Export_Engine
 		// Maybe use $v->selectComponents(), which takes into account recurrence
 
 		// Fetch default timezone in case individual properties don't define it
-		$timezone = $v->getProperty( 'X-WR-TIMEZONE' );
-		$timezone = (string)$timezone[1];
-		$messages = array();
+		$tz = $v->getComponent( 'vtimezone' );
+		if ( ! empty( $tz ) ) {
+			$timezone   = $tz->getProperty( 'TZID' );
+		}
+		if ( empty( $timezone ) ) {
+			$timezone   = $v->getProperty( 'X-WR-TIMEZONE' );
+			$timezone   = (string)$timezone[1];
+		}
+
+		$messages       = array();
+		$local_timezone = $this->_registry->get( 'date.timezone' )
+			->get_default_timezone();
+		$current_timestamp = $this->_registry->get( 'date.time' )->format_to_gmt();
+		// initialize empty custom exclusions structure
+		$exclusions        = array();
 		// go over each event
 		while ( $e = $v->getComponent( 'vevent' ) ) {
 			// Event data array.
@@ -185,7 +197,7 @@ class Ai1ec_Ics_Import_Export_Engine
 			}
 
 			$categories = $e->getProperty( "CATEGORIES", false, true );
-			$imported_cat = array();
+			$imported_cat = array( Ai1ec_Event_Taxonomy::CATEGORIES => array() );
 			// If the user chose to preserve taxonomies during import, add categories.
 			if( $categories && $feed->keep_tags_categories ) {
 				$imported_cat = $this->_add_categories_and_tags(
@@ -206,7 +218,7 @@ class Ai1ec_Ics_Import_Export_Engine
 			}
 			$tags = $e->getProperty( "X-TAGS", false, true );
 
-			$imported_tags = array();
+			$imported_tags = array( Ai1ec_Event_Taxonomy::TAGS => array() );
 			// If the user chose to preserve taxonomies during import, add tags.
 			if( $tags && $feed->keep_tags_categories ) {
 				$imported_tags = $this->_add_categories_and_tags(
@@ -233,14 +245,17 @@ class Ai1ec_Ics_Import_Export_Engine
 			if ( ! empty( $ms_allday ) && $ms_allday[1] == 'TRUE' ) {
 				$allday = true;
 			}
-
-			$start = $this->_time_array_to_datetime( $start, $timezone );
-			$end   = $this->_time_array_to_datetime( $end,   $timezone );
+			$event_timezone = $timezone;
+			if ( $allday ) {
+				$event_timezone = $local_timezone;
+			}
+			$start = $this->_time_array_to_datetime( $start, $event_timezone );
+			$end   = $this->_time_array_to_datetime( $end,   $event_timezone );
 
 			if ( false === $start || false === $end ) {
 				throw new Ai1ec_Parse_Exception(
 					'Failed to parse one or more dates given timezone "' .
-					var_export( $timezone, true ) . '"'
+					var_export( $event_timezone, true ) . '"'
 				);
 				continue;
 			}
@@ -281,7 +296,7 @@ class Ai1ec_Ics_Import_Export_Engine
 				// We may have two formats:
 				// one exdate with many dates ot more EXDATE rules
 				$exdates      = explode( 'EXDATE', $exdates );
-				$def_timezone = $this->_get_import_timezone( $timezone );
+				$def_timezone = $this->_get_import_timezone( $event_timezone );
 				foreach ( $exdates as $exd ) {
 					if ( empty( $exd ) ) {
 						continue;
@@ -296,6 +311,14 @@ class Ai1ec_Ics_Import_Export_Engine
 							$excpt_date = trim( $particle );
 						}
 					}
+					// Google sends YYYYMMDD for all-day excluded events
+					if (
+						$allday &&
+						8 === strlen( $excpt_date )
+					) {
+						$excpt_date    .= 'T000000Z';
+						$excpt_timezone = 'UTC';
+					}
 					$ex_dt = $this->_registry->get(
 						'date.time',
 						$excpt_date,
@@ -309,7 +332,17 @@ class Ai1ec_Ics_Import_Export_Engine
 					}
 				}
 			}
-
+			// Add custom exclusions if there any
+			$recurrence_id = $e->getProperty( 'recurrence-id' );
+			if (
+				false === $recurrence_id &&
+				! empty( $exclusions[$e->getProperty( 'uid' )] )
+			) {
+				if ( isset( $exdate{0} ) ) {
+					$exdate .= ',';
+				}
+				$exdate .= implode( ',', $exclusions[$e->getProperty( 'uid' )] );
+			}
 			// ========================
 			// = Latitude & longitude =
 			// ========================
@@ -414,7 +447,6 @@ class Ai1ec_Ics_Import_Export_Engine
 				// If no contact name, default to organizer property.
 				$data['contact_name']    = $organizer;
 			}
-
 			// Store yet-unsaved values to the $data array.
 			$data += array(
 				'recurrence_rules'  => $rrule,
@@ -432,9 +464,9 @@ class Ai1ec_Ics_Import_Export_Engine
 				'ical_source_url'   => $e->getProperty( 'url' ),
 				'ical_organizer'    => $organizer,
 				'ical_contact'      => $contact,
-				'ical_uid'          => $e->getProperty( 'uid' ),
-				'categories'        => array_keys( $imported_cat ),
-				'tags'              => array_keys( $imported_tags ),
+				'ical_uid'          => $this->_get_ical_uid( $e ),
+				'categories'        => array_keys( $imported_cat[Ai1ec_Event_Taxonomy::CATEGORIES] ),
+				'tags'              => array_keys( $imported_tags[Ai1ec_Event_Taxonomy::TAGS] ),
 				'feed'              => $feed,
 				'post'              => array(
 					'post_status'       => 'publish',
@@ -451,8 +483,21 @@ class Ai1ec_Ics_Import_Export_Engine
 						),
 				),
 			);
+			// register any custom exclusions for given event
+			$exclusions = $this->_add_recurring_events_exclusions(
+				$e,
+				$exclusions,
+				$start
+			);
 
 			// Create event object.
+			$data  = apply_filters(
+				'ai1ec_pre_init_event_from_feed',
+				$data,
+				$e,
+				$feed
+			);
+
 			$event = $this->_registry->get( 'model.event', $data );
 
 			// Instant Event
@@ -506,8 +551,17 @@ class Ai1ec_Ics_Import_Export_Engine
 				}
 
 			}
-			// if the event was already present , unset it from the array so it's not deleted
-			unset( $events_in_db[$event->get( 'post_id' )] );
+
+			// import not standard taxonomies.
+			unset( $imported_cat[Ai1ec_Event_Taxonomy::CATEGORIES] );
+			foreach ( $imported_cat as $tax_name => $ids ) {
+				wp_set_post_terms( $event->get( 'post_id' ), array_keys( $ids ), $tax_name );
+			}
+
+			// if the event is not finished, unset it otherwise it could be deleted afterwards.
+			if ( $event->get( 'end' )->format_to_gmt() > $current_timestamp ) {
+				unset( $events_in_db[$event->get( 'post_id' )] );
+			}
 		}
 
 		return array(
@@ -664,6 +718,7 @@ class Ai1ec_Ics_Import_Export_Engine
 				)
 			)
 		);
+
 		$content = apply_filters(
 			'ai1ec_the_content',
 			apply_filters(
@@ -673,14 +728,20 @@ class Ai1ec_Ics_Import_Export_Engine
 		);
 		$content = str_replace(']]>', ']]&gt;', $content);
 		$content = html_entity_decode( $content, ENT_QUOTES, 'UTF-8' );
+
 		// Prepend featured image if available.
 		$size = null;
 		$avatar = $this->_registry->get( 'view.event.avatar' );
-		if ( $img_url = $avatar->get_post_thumbnail_url( $event, $size ) ) {
-			$content = '<div class="ai1ec-event-avatar alignleft timely"><img src="' .
+		$matches = $avatar->get_image_from_content( $content );
+		// if no img is already present - add thumbnail
+		if ( empty( $matches ) ) {
+			if ( $img_url = $avatar->get_post_thumbnail_url( $event, $size ) ) {
+				$content = '<div class="ai1ec-event-avatar alignleft timely"><img src="' .
 					esc_attr( $img_url ) . '" width="' . $size[0] . '" height="' .
 					$size[1] . '" /></div>' . $content;
+			}
 		}
+
 		if ( isset( $params['no_html'] ) && $params['no_html'] ) {
 			$e->setProperty(
 				'description',
@@ -806,6 +867,7 @@ class Ai1ec_Ics_Import_Export_Engine
 
 		$categories = array();
 		$language   = get_bloginfo( 'language' );
+
 		foreach (
 			$this->_taxonomy_model->get_post_categories(
 				$event->get( 'post_id' )
@@ -1052,19 +1114,76 @@ class Ai1ec_Ics_Import_Export_Engine
 	) {
 		$taxonomy       = $is_tag ? 'events_tags' : 'events_categories';
 		$categories     = explode( ',', $terms );
-		$get_term_by    = $use_name ? 'name' : 'id';
 		$event_taxonomy = $this->_registry->get( 'model.event.taxonomy' );
+
 		foreach ( $categories as $cat_name ) {
 			$cat_name = trim( $cat_name );
 			if ( empty( $cat_name ) ) {
 				continue;
 			}
-			$term_id = $event_taxonomy->initiate_term( $cat_name, $taxonomy, ! $use_name );
-			if ( false !== $term_id ) {
-				$imported_terms[$term_id] = true;
+			$term = $event_taxonomy->initiate_term( $cat_name, $taxonomy, ! $use_name );
+			if ( false !== $term ) {
+				if ( ! isset( $imported_terms[$term['taxonomy']] ) ) {
+					$imported_terms[$term['taxonomy']] = array();
+				}
+				$imported_terms[$term['taxonomy']][$term['term_id']] = true;
 			}
 		}
 		return $imported_terms;
+	}
+
+	/**
+	 * Returns modified ical uid for google recurring edited events.
+	 *
+	 * @param vevent $e Vevent object.
+	 *
+	 * @return string ICAL uid.
+	 */
+	protected function _get_ical_uid( $e ) {
+		$ical_uid      = $e->getProperty( 'uid' );
+		$recurrence_id = $e->getProperty( 'recurrence-id' );
+		if ( false !== $recurrence_id ) {
+			$ical_uid = implode( '', array_values( $recurrence_id ) ) . '-' .
+				$ical_uid;
+		}
+
+		return $ical_uid;
+	}
+
+	/**
+	 * Returns modified exclusions structure for given event.
+	 *
+	 * @param vcalendar       $e          Vcalendar event object.
+	 * @param array           $exclusions Exclusions.
+	 * @param Ai1ec_Date_Time $start Date time object.
+	 *
+	 * @return array Modified exclusions structure.
+	 */
+	protected function _add_recurring_events_exclusions( $e, $exclusions, $start ) {
+		$recurrence_id = $e->getProperty( 'recurrence-id' );
+		if (
+			false === $recurrence_id ||
+			! isset( $recurrence_id['year'] ) ||
+			! isset( $recurrence_id['month'] ) ||
+			! isset( $recurrence_id['day'] )
+		) {
+			return $exclusions;
+		}
+		$year = $month = $day = $hour = $min = $sec = null;
+		extract( $recurrence_id, EXTR_IF_EXISTS );
+		$timezone = '';
+		$exdate   = $year . $month . $day;
+		if (
+			null === $hour ||
+			null === $min ||
+			null === $sec
+		) {
+			$hour = $min = $sec = '00';
+			$timezone = 'Z';
+		}
+		$exdate .= 'T' . $hour . $min . $sec . $timezone;
+		$exclusions[$e->getProperty( 'uid' )][] = $exdate;
+		return $exclusions;
 	}
 
 }

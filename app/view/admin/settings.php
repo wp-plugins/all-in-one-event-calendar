@@ -51,7 +51,9 @@ class Ai1ec_View_Admin_Settings extends Ai1ec_View_Admin_Abstract {
 		$loader = $this->_registry->get( 'theme.loader' );
 		$file   = $loader->get_file( 'setting/page.twig', $args, true );
 		$file->render();
-		$this->_registry->get( 'robots.helper' )->install();
+		if ( apply_filters( 'ai1ec_robots_install', true ) ) {
+			$this->_registry->get( 'robots.helper' )->install();
+		}
 	}
 
 	/* (non-PHPdoc)
@@ -105,11 +107,7 @@ class Ai1ec_View_Admin_Settings extends Ai1ec_View_Admin_Abstract {
 	 * @param mixed $box
 	 */
 	public function support_meta_box( $object, $box ) {
-		include_once( ABSPATH . WPINC . '/feed.php' );
-		// Initialize new feed
-		$newsItems = array();
-		$feed      = fetch_feed( AI1EC_RSS_FEED );
-		$newsItems = is_wp_error( $feed ) ? array() : $feed->get_items( 0, 5 );
+		$newsItems = $this->_registry->get( 'news.feed' )->import_feed();
 		$loader    = $this->_registry->get( 'theme.loader' );
 		$file      = $loader->get_file(
 			'box_support.php',
@@ -177,8 +175,8 @@ class Ai1ec_View_Admin_Settings extends Ai1ec_View_Admin_Abstract {
 					'If the form below is not working please follow <a href="%s">this link</a>.'
 				) .
 				'</div>',
-				wp_nonce_url( 
-					add_query_arg( 'ai1ec_disable_gzip_compression', '1' ), 
+				wp_nonce_url(
+					add_query_arg( 'ai1ec_disable_gzip_compression', '1' ),
 					'ai1ec_disable_gzip_compression'
 				)
 			)

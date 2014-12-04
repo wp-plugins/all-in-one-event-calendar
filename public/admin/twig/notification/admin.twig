@@ -2,15 +2,13 @@
 	{% if label is not defined %}
           {% set label = text_label %}
 	{% endif %}
-	<h3>{{ label }}</h3>
-
-	<p>{{ message | raw }}</p>
+	<p><strong>{{ label }}:</strong> {{ message | raw }}</p>
 
 	{% if persistent == true %}
 		<div>
 			<input type="button" class="button ai1ec-dismissable"
 				data-key="{{ msg_key }}"
-				value="{{ "Dismiss" | __ }}">
+				value="{{ "I understand - hide this notice" | __ }}">
 		</div>
 		<p></p>
 	{% endif %}

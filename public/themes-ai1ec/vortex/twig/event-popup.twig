@@ -6,45 +6,45 @@
 	{% endif %}
 
 	<span class="ai1ec-popup-title">
-		<a href="{{ event.get_runtime( 'instance_permalink' ) | e('html_attr') }}"
-			>{{ event.get_runtime( 'filtered_title' ) | truncate | raw }}</a>
-		{% if show_location_in_title and event.get( 'venue' ) is not empty %}
+		<a href="{{ event.permalink | e('html_attr') }}"
+		   class="ai1ec-load-event"
+			>{{ event.filtered_title | truncate | raw }}</a>
+		{% if show_location_in_title and event.venue is not empty %}
 			<span class="ai1ec-event-location"
-				>{{ text_venue_separator | format( event.get( 'venue' ) ) }}</span>
+				>{{ text_venue_separator | format( event.venue ) }}</span>
 		{% endif %}
-		{% if is_ticket_button_enabled and event.get( 'ticket_url' ) is not empty %}
+		{% if is_ticket_button_enabled and event.ticket_url is not empty %}
 			<a class="ai1ec-pull-right ai1ec-btn ai1ec-btn-primary ai1ec-btn-xs
 				ai1ec-buy-tickets" target="_blank"
-				href="{{ event.get( 'ticket_url' ) | e('html_attr') }}"
-				>{{ event.get_runtime( 'ticket_url_label' ) }}</a>
+				href="{{ event.ticket_url | e('html_attr') }}"
+				>{{ event.ticket_url_label }}</a>
 		{% endif %}
 	</span>
 
-	{% set edit_post_link = event.get_runtime( 'edit_post_link' ) %}
-	{% if edit_post_link is not empty %}
-		<a class="post-edit-link" href="{{ edit_post_link | raw }}">
+	{% if event.edit_post_link is not empty %}
+		<a class="post-edit-link" href="{{ event.edit_post_link | raw }}">
 			<i class="ai1ec-fa ai1ec-fa-pencil"></i> {{ text_edit }}
 		</a>
 	{% endif %}
 
 	<div class="ai1ec-event-time">
 		{% if popup_timespan is empty %}
-			{{ event | timespan( 'short' ) | raw }}
+			{{ event.timespan_short | raw }}
 		{% else %}
 			{{ popup_timespan | raw }}
 		{% endif %}
 	</div>
 
-	{{ event | avatar( [
-		'post_thumbnail',
-		'content_img',
-		'location_avatar',
-		'category_avatar'
-		] ) | raw }}
+	{% if event.avatar_not_wrapped is not empty %}
+		<a class="ai1ec-load-event"
+			href="{{ event.permalink | e('html_attr') }}"
+			{{ data_type_events | raw }}>
+			{{ event.avatar_not_wrapped | raw }}
+		</a>
+	{% endif %}
 
-	{% set post_excerpt = event.get_runtime( 'post_excerpt' ) | trim %}
-	{% if post_excerpt is not empty %}
-		<div class="ai1ec-popup-excerpt">{{ post_excerpt | raw }}</div>
+	{% if event.post_excerpt is not empty %}
+		<div class="ai1ec-popup-excerpt">{{ event.post_excerpt | raw }}</div>
 	{% endif %}
 
 </div>

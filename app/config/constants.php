@@ -50,7 +50,7 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 	// = Plugin Version =
 	// ==================
 	if ( ! defined( 'AI1EC_VERSION' ) ) {
-		define( 'AI1EC_VERSION', '2.1.5' );
+		define( 'AI1EC_VERSION', '2.1.9' );
 	}
 
 	// ================
@@ -359,6 +359,11 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 		define( 'AI1EC_EVENT_PLATFORM', false );
 	}
 
+	// Use frontend rendering.
+	if ( ! defined( 'AI1EC_USE_FRONTEND_RENDERING' ) ) {
+		define( 'AI1EC_USE_FRONTEND_RENDERING', false );
+	}
+
 	// If i choose to use the calendar url as the base for events permalinks,
 	// i must specify another name for the events archive.
 	if ( ! defined( 'AI1EC_ALTERNATIVE_ARCHIVE_URL' ) ) {
@@ -442,6 +447,12 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 		define( 'AI1EC_ADMIN_THEME_IMG_URL',  AI1EC_URL . '/public/admin/' . AI1EC_IMG_FOLDER );
 	}
 
+	// ====================
+	// = Add-ons list URL =
+	// ====================
+	if ( ! defined( 'AI1EC_TIMELY_ADDONS_URI' ) ) {
+		define( 'AI1EC_TIMELY_ADDONS_URI', 'https://time.ly/?action=addons_list' );
+	}
 
 	// Enable All-in-One-Event-Calendar to work in debug mode, which means,
 	// that cache is ignored, extra output may appear at places, etc.
@@ -459,7 +470,7 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 	if ( ! defined( 'AI1EC_CACHE' ) ) {
 		define( 'AI1EC_CACHE', true );
 	}
-	
+
 	if ( ! defined( 'AI1EC_DISABLE_FILE_CACHE' ) ) {
 		define( 'AI1EC_DISABLE_FILE_CACHE', false );
 	}
@@ -469,6 +480,16 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 	// Named constant allows reuse of a single typed variable.
 	if ( ! defined( 'AI1EC_CACHE_UNAVAILABLE' ) ) {
 		define( 'AI1EC_CACHE_UNAVAILABLE', 'AI1EC_CACHE_UNAVAILABLE' );
+	}
+
+	// Defines if backward (<= 2.1.5) theme compatibility is enabled or not.
+	if ( ! defined( 'AI1EC_THEME_COMPATIBILITY_FER' ) ) {
+		define( 'AI1EC_THEME_COMPATIBILITY_FER', true );
+	}
+
+	// Defines amount of needed free memory to compile LESS files.
+	if ( ! defined( 'AI1EC_LESS_MIN_AVAIL_MEMORY' ) ) {
+		define( 'AI1EC_LESS_MIN_AVAIL_MEMORY', '24M' );
 	}
 
 }

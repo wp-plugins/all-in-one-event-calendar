@@ -137,6 +137,7 @@ abstract class Ai1ec_Base_Extension_Controller {
 		$this->_install_schema( $registry );
 		$this->_register_actions( $registry->get( 'event.dispatcher' ) );
 		$this->_add_settings( $registry->get( 'model.settings' ) );
+		$this->_perform_upgrade( $registry );
 		if ( method_exists( $this, 'initialize_licence_actions' ) ) {
 			$this->initialize_licence_actions();
 		}
@@ -193,6 +194,31 @@ abstract class Ai1ec_Base_Extension_Controller {
 			'tables' => array(),
 			'schema' => '',
 		);
+	}
+
+	/**
+	 * Performe upgarde actions based on extension version
+	 * 
+	 * @param Ai1ec_Registry_Object $registry
+	 */
+	protected function _perform_upgrade( Ai1ec_Registry_Object $registry ) {
+		$version_variable = 'ai1ec_' . $this->get_machine_name() .
+			'_version';
+		$option  = $registry->get( 'model.option' );
+		$version = $option->get( $version_variable );
+		if ( $version !== $this->get_version() ) {
+			$registry->get( 'model.settings' )->perform_upgrade_actions();
+			$this->_perform_upgrade_actions();
+			$option->set( $version_variable, $this->get_version(), true );
+		}
+	}
+
+	/**
+	 * Function called on add on upgrade.
+	 * Can be overridden by add ons for extra behaviour
+	 */
+	protected function _perform_upgrade_actions() {
+		
 	}
 
 	/**

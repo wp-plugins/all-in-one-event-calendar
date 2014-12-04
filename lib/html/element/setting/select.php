@@ -41,6 +41,7 @@ class Ai1ec_Html_Setting_Select extends Ai1ec_Html_Element_Settings {
 				);
 			}
 		}
+		$options = apply_filters( 'ai1ec_settings_select_options' , $options, $this->_args['id'] );
 		foreach ( $options as $key => &$option ) {
 			// if the key is a string, it's an optgroup
 			if ( is_string( $key ) ) {

@@ -11,6 +11,18 @@
  */
 class Ai1ec_Environment_Checks extends Ai1ec_Base {
 
+	const CORE_NAME = 'all-in-one-event-calendar/all-in-one-event-calendar.php';
+
+	/**
+	 * List of dependencies.
+	 *
+	 * @var array
+	 */
+	protected $_addons = array(
+		'all-in-one-event-calendar-extended-views/all-in-one-event-calendar-extended-views.php' => '1.1.1',
+		'all-in-one-event-calendar-super-widget/all-in-one-event-calendar-super-widget.php'     => '1.0.8',
+	);
+
 	/**
 	 * Runs checks for necessary config options.
 	 *
@@ -30,6 +42,7 @@ class Ai1ec_Environment_Checks extends Ai1ec_Base {
 		) {
 			return;
 		}
+		do_action( 'ai1ec_env_check' );
 		global $plugin_page;
 		$settings      = $this->_registry->get( 'model.settings' );
 		$notification  = $this->_registry->get( 'notification.admin' );
@@ -95,4 +108,103 @@ class Ai1ec_Environment_Checks extends Ai1ec_Base {
 		$option->set( 'ai1ec_force_flush_rewrite_rules', false );
 	}
 
+	/**
+	 * Checks for add-on versions.
+	 *
+	 * @param string $plugin Plugin name.
+	 *
+	 * @return void Method does not return.
+	 */
+	public function check_addons_activation( $plugin ) {
+		switch ( $plugin ) {
+			case self::CORE_NAME:
+				$this->_check_active_addons();
+				break;
+			default:
+				$min_version = isset( $this->_addons[$plugin] )
+				? $this->_addons[$plugin]
+				: null;
+				if ( null !== $min_version ) {
+					$this->_plugin_activation( $plugin, $min_version );
+				}
+				break;
+		}
+	}
+
+	/**
+	 * Launches after bulk update.
+	 *
+	 * @param bool $result Input filter value.
+	 *
+	 * @return bool Output filter value.
+	 */
+	public function check_bulk_addons_activation( $result ) {
+		$this->_check_active_addons( true );
+		return $result;
+	}
+
+	/**
+	 * Checks all Time.ly addons.
+	 *
+	 * @param bool $silent Whether to perform silent plugin deactivation or not.
+	 *
+	 * @return void Method does not return.
+	 */
+	protected function _check_active_addons( $silent = false ) {
+		foreach ( $this->_addons as $addon => $version ) {
+			if ( is_plugin_active( $addon ) ) {
+				$this->_plugin_activation( $addon, $version, true, $silent );
+			}
+		}
+	}
+
+	/**
+	 * Performs Extended Views version check.
+	 *
+	 * @param string $addon       Addon identifier.
+	 * @param string $min_version Minimum required version.
+	 * @param bool   $core        If set to true Core deactivates active and
+	 *                            outdated addons when it is activated. If set
+	 *                            false it means that addon activation process
+	 *                            called this method and it's enough to throw
+	 *                            and exception and allow exception handler
+	 *                            to deactivate addon with proper notices.
+	 * @param bool   $silent      Whether to perform silent plugin deactivation
+	 *                            or not.
+	 *
+	 * @return void Method does not return.
+	 */
+	protected function _plugin_activation(
+		$addon,
+		$min_version,
+		$core   = false,
+		$silent = false
+	) {
+		$ev_data = get_plugin_data(
+			WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $addon
+		);
+		if ( ! isset( $ev_data['Version'] ) ) {
+			return;
+		}
+		$version = $ev_data['Version'];
+		if ( -1 === version_compare( $version, $min_version ) ) {
+			$message = sprintf(
+				Ai1ec_I18n::__( 'Addon %s needs to be at least in version %s' ),
+				$ev_data['Name'],
+				$min_version
+			);
+			if ( ! $core ) {
+				throw new Ai1ec_Outdated_Addon_Exception( $message, $addon );
+			} else {
+				deactivate_plugins( $addon, $silent );
+				$this->_registry->get( 'notification.admin' )->store(
+					$message,
+					'error',
+					0,
+					array( Ai1ec_Notification_Admin::RCPT_ADMIN ),
+					true
+				);
+			}
+		}
+	}
 }

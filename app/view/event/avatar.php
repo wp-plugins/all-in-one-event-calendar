@@ -44,7 +44,7 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 		if ( empty( $url ) ) {
 			return '';
 		}
-	
+
 		$url     = esc_attr( $url );
 		$classes = esc_attr( $classes );
 
@@ -107,19 +107,20 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 				'default_avatar',
 			);
 		}
-	
+
 		$valid_fallbacks = array(
+			'post_image'          => 'get_post_image_url',
 			'post_thumbnail'      => 'get_post_thumbnail_url',
 			'content_img'         => 'get_content_img_url',
 			'category_avatar'     => 'get_category_avatar_url',
 			'default_avatar'      => 'get_default_avatar_url',
 		);
-	
+
 		foreach ( $fallback_order as $fallback ) {
 			if ( ! isset( $valid_fallbacks[$fallback] ) ) {
 				continue;
 			}
-	
+
 			$function = $valid_fallbacks[$fallback];
 			$url      = $this->$function( $event, $size );
 			if ( NULL !== $url ) {
@@ -127,7 +128,7 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 				break;
 			}
 		}
-	
+
 		if ( empty( $url ) ) {
 			return NULL;
 		}
@@ -137,51 +138,64 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 	/**
 	 * Read post meta for post-thumbnail and return its URL as a string.
 	 *
-	 * @param   null       $size           (width, height) array of returned image
+	 * @param Ai1ec_Event $event Event object.
+	 * @param null        $size  (width, height) array of returned image.
 	 *
 	 * @return  string|null
 	 */
 	public function get_post_thumbnail_url( Ai1ec_Event $event, &$size = null ) {
-		// Since WP does will return null if the wrong size is targeted,
-		// we iterate over an array of sizes, breaking if a URL is found.
-		$ordered_img_sizes = array( 'medium', 'large', 'full' );
-		foreach ( $ordered_img_sizes as $size ) {
-			$attributes = wp_get_attachment_image_src(
-				get_post_thumbnail_id( $event->get( 'post_id' ) ), $size
-			);
-			if ( $attributes ) {
-				$url = array_shift( $attributes );
-				$size = $attributes;
-				break;
-			}
-		}
-	
-		return empty( $url ) ? null : $url;
+		return $this->_get_post_attachment_url(
+			$event,
+			array(
+				'medium',
+				'large',
+				'full',
+			),
+			$size
+		);
+	}
+
+	/**
+	 * Read post meta for post-image and return its URL as a string.
+	 *
+	 * @param Ai1ec_Event $event Event object.
+	 * @param null        $size  (width, height) array of returned image.
+	 *
+	 * @return  string|null
+	 */
+	public function get_post_image_url( Ai1ec_Event $event, &$size = null ) {
+		return $this->_get_post_attachment_url(
+			$event,
+			array(
+				'full',
+				'large',
+				'medium'
+			),
+			$size
+		);
 	}
 
 	/**
 	 * Simple regex-parse of post_content for matches of <img src="foo" />; if
 	 * one is found, return its URL.
-	 * 
+	 *
 	 * @param   Ai1ec_Event $event
 	 * @param   null        $size           (width, height) array of returned image
 	 *
 	 * @return  string|null
 	 */
 	public function get_content_img_url( Ai1ec_Event $event, &$size = null ) {
-		preg_match(
-			'/<img([^>]+)src=["\']?([^"\'\ >]+)([^>]*)>/i',
-			$event->get( 'post' )->post_content,
-			$matches
+		$matches = $this->get_image_from_content(
+			$event->get( 'post' )->post_content
 		);
 		// Check if we have a result, otherwise a notice is issued.
 		if ( empty( $matches ) ) {
 			return null;
 		}
-	
+
 		$url = $matches[2];
 		$size = array( 0, 0 );
-	
+
 		// Try to detect width and height.
 		$attrs = $matches[1] . $matches[3];
 		$matches = null;
@@ -200,6 +214,21 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 		return $url;
 	}
 
+	/**
+	 * Get an image tag from an html string
+	 * 
+	 * @param string $content
+	 * 
+	 * @return array
+	 */
+	public function get_image_from_content( $content ) {
+		preg_match(
+			'/<img([^>]+)src=["\']?([^"\'\ >]+)([^>]*)>/i',
+			$content,
+			$matches
+		);
+		return $matches;
+	}
 	/**
 	 * Returns default avatar image (normally when no other ones are available).
 	 *
@@ -266,6 +295,37 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 				break;
 			}
 		}
+		return empty( $url ) ? null : $url;
+	}
+
+	/**
+	 * Read post meta for post-attachment and return its URL as a string.
+	 *
+	 * @param Ai1ec_Event $event             Event object.
+	 * @param array       $ordered_img_sizes Image sizes order.
+	 * @param null        $size              (width, height) array of returned
+	 *                                       image.
+	 *
+	 * @return  string|null
+	 */
+	protected function _get_post_attachment_url(
+		Ai1ec_Event $event,
+		array $ordered_img_sizes,
+		&$size = null
+	) {
+		// Since WP does will return null if the wrong size is targeted,
+		// we iterate over an array of sizes, breaking if a URL is found.
+		foreach ( $ordered_img_sizes as $size ) {
+			$attributes = wp_get_attachment_image_src(
+				get_post_thumbnail_id( $event->get( 'post_id' ) ), $size
+			);
+			if ( $attributes ) {
+				$url = array_shift( $attributes );
+				$size = $attributes;
+				break;
+			}
+		}
+
 		return empty( $url ) ? null : $url;
 	}
 

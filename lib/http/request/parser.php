@@ -100,15 +100,18 @@ class Ai1ec_Request_Parser extends Ai1ec_Abstract_Query {
 		$this->add_rule( 'exact_date',    false, 'string', null, false );
 		// This is the type of the request: Standard, json or jsonp
 		$this->add_rule( 'request_type',  false, 'string', 'html', false );
-		// This is the format of the request. For now it's html but if we implement templates it could be json
+		// This is the format of the request.
 		$this->add_rule( 'request_format',false, 'string', 'html', false );
 		// The callback function for jsonp calls
 		$this->add_rule( 'callback',      false, 'string', null, false );
 		// Whether to include navigation controls
 		$this->add_rule( 'no_navigation' ,false, 'string', false, false );
+		// whether to display the filter bar in the super widget
+		$this->add_rule( 'display_filters' ,false, 'string', false, false );
 		$this->add_rule( 'applying_filters' ,false, 'string', false, false );
 		$this->add_rule( 'shortcode' ,false, 'string', false, false );
 		$this->add_rule( 'events_limit', false, 'int', null, false );
+		do_action( 'ai1ec_request_parser_rules_added', $this );
 	}
 
 	/**

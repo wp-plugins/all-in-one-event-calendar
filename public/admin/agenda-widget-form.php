@@ -31,11 +31,11 @@
 </p>
 <div class="ai1ec-limit-by-options-container" <?php if( ! $limit_by_cat['value'] ) { ?> style="display: none;" <?php } ?>>
 	<!-- Limit by Category Select box -->
-	<select id="<?php echo $event_cat_ids['id'] ?>" class="ai1ec-widget-cat-ids" name="<?php echo $event_cat_ids['name'] ?>[]" size="5" multiple="multiple">
-		<?php foreach( $event_cat_ids['options'] as $event_cat ): ?>
-			<option value="<?php echo $event_cat->term_id; ?>"<?php if( in_array( $event_cat->term_id, $event_cat_ids['value'] ) ) { ?> selected="selected"<?php } ?>><?php echo $event_cat->name; ?></option>
+	<select id="<?php echo $cat_ids['id'] ?>" class="ai1ec-widget-cat-ids" name="<?php echo $cat_ids['name'] ?>[]" size="5" multiple="multiple">
+		<?php foreach( $cat_ids['options'] as $event_cat ): ?>
+			<option value="<?php echo $event_cat->term_id; ?>"<?php if( in_array( $event_cat->term_id, $cat_ids['value'] ) ) { ?> selected="selected"<?php } ?>><?php echo $event_cat->name; ?></option>
 		<?php endforeach ?>
-		<?php if( count( $event_cat_ids['options'] ) == 0 ) : ?>
+		<?php if( count( $cat_ids['options'] ) == 0 ) : ?>
 			<option disabled><?php _e( 'No categories found.', AI1EC_PLUGIN_NAME ) ?></option>
 		<?php endif ?>
 	</select>
@@ -47,11 +47,11 @@
 </p>
 <div class="ai1ec-limit-by-options-container" <?php if( ! $limit_by_tag['value'] ) { ?> style="display: none;" <?php } ?>>
 	<!-- Limit by Tag Select box -->
-	<select id="<?php echo $event_tag_ids['id'] ?>" class="ai1ec-widget-tag-ids" name="<?php echo $event_tag_ids['name'] ?>[]" size="5" multiple="multiple">
-		<?php foreach( $event_tag_ids['options'] as $event_tag ): ?>
-			<option value="<?php echo $event_tag->term_id; ?>"<?php if( in_array( $event_tag->term_id, $event_tag_ids['value'] ) ) { ?> selected="selected"<?php } ?>><?php echo $event_tag->name; ?></option>
+	<select id="<?php echo $tag_ids['id'] ?>" class="ai1ec-widget-tag-ids" name="<?php echo $tag_ids['name'] ?>[]" size="5" multiple="multiple">
+		<?php foreach( $tag_ids['options'] as $event_tag ): ?>
+			<option value="<?php echo $event_tag->term_id; ?>"<?php if( in_array( $event_tag->term_id, $tag_ids['value'] ) ) { ?> selected="selected"<?php } ?>><?php echo $event_tag->name; ?></option>
 		<?php endforeach ?>
-		<?php if( count( $event_tag_ids['options'] ) == 0 ) : ?>
+		<?php if( count( $tag_ids['options'] ) == 0 ) : ?>
 			<option disabled><?php _e( 'No tags found.', AI1EC_PLUGIN_NAME ) ?></option>
 		<?php endif ?>
 	</select>

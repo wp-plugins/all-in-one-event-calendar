@@ -18,11 +18,14 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 		$settings = $this->_registry->get( 'model.settings' );
 		$options  = $settings->get_options();
 		$_POST['default_tags_categories'] = (
-			isset( $_POST['default_tags'] ) ||
-			isset( $_POST['default_categories'] )
+			isset( $_POST['default_tags_categories_default_categories'] ) ||
+			isset( $_POST['default_tags_categories_default_tags'] )
 		);
+		// set some a variable to true to trigger the saving.
 		$_POST['enabled_views'] = true;
-		do_action( 'ai1ec_before_save_settings', $_POST );
+		// let other plugin modify the post
+		$_POST = apply_filters( 'ai1ec_before_save_settings', $_POST );
+
 		foreach ( $options as $name => $data ) {
 			$value = null;
 			if ( isset( $_POST[$name] ) ) {
@@ -39,7 +42,6 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 						continue;
 					}
 				} else {
-
 					switch ( $data['type'] ) {
 						case 'bool':
 							$value  = true;
@@ -77,7 +79,7 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 						case 'wp_option': // set the corresponding WP option
 							$this->_registry->get( 'model.option' )
 								->set( $name, $_POST[$name], true );
-							$value = null;
+							$value = (string)$_POST[$name];
 					}
 				}
 			} else {
@@ -89,6 +91,7 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 				$settings->set( $name, stripslashes_deep( $value ) );
 			}
 		}
+
 		$new_options = $settings->get_options();
 		// let extension manipulate things if needed.
 		do_action( 'ai1ec_settings_updated', $options, $new_options );
@@ -113,7 +116,9 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 		$enabled_views = $settings->get( 'enabled_views' );
 		foreach ( $enabled_views as $view => &$options ) {
 			$options['enabled'] = isset( $_POST['view_' . $view . '_enabled'] );
-			$options['default'] = $_POST['default_calendar_view'] === $view;
+			$options['default'] = isset( $_POST['default_calendar_view'] )
+				? $_POST['default_calendar_view'] === $view
+				: false;
 			$options['enabled_mobile'] =
 				isset( $_POST['view_' . $view . '_enabled_mobile'] );
 			$options['default_mobile'] =
@@ -130,11 +135,11 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 	 */
 	protected function _handle_saving_default_tags_categories() {
 		return array(
-			'tags' => isset( $_POST['default_tags'] ) ?
-				$_POST['default_tags'] :
+			'tags' => isset( $_POST['default_tags_categories_default_tags'] ) ?
+				$_POST['default_tags_categories_default_tags'] :
 				array(),
-			'categories' => isset( $_POST['default_categories'] ) ?
-				$_POST['default_categories'] :
+			'categories' => isset( $_POST['default_tags_categories_default_categories'] ) ?
+				$_POST['default_tags_categories_default_categories'] :
 				array(),
 		);
 	}

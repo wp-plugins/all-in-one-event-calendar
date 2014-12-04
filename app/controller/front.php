@@ -37,13 +37,9 @@ class Ai1ec_Front_Controller {
 	protected $_default_theme;
 
 	/**
-	 * Initialize the controller.
-	 *
-	 * @param Ai1ec_Loader $ai1ec_loader Instance of Ai1EC classes loader
-	 *
-	 * @return void
+	 * Initializes the default theme property.
 	 */
-	public function initialize( $ai1ec_loader ) {
+	public function __construct() {
 		// Initialize default theme.
 		$this->_default_theme = array(
 			'theme_dir'  => AI1EC_DEFAULT_THEME_PATH,
@@ -52,6 +48,16 @@ class Ai1ec_Front_Controller {
 			'stylesheet' => AI1EC_DEFAULT_THEME_NAME,
 			'legacy'     => false,
 		);
+	}
+
+	/**
+	 * Initialize the controller.
+	 *
+	 * @param Ai1ec_Loader $ai1ec_loader Instance of Ai1EC classes loader
+	 *
+	 * @return void
+	 */
+	public function initialize( $ai1ec_loader ) {
 		ai1ec_start();
 		$this->_init( $ai1ec_loader );
 		$this->_initialize_dispatcher();
@@ -60,12 +66,13 @@ class Ai1ec_Front_Controller {
 		$this->_registry->get( 'controller.shutdown' )
 			->register( 'ai1ec_stop' );
 		add_action( 'plugins_loaded', array( $this, 'register_extensions' ), 1 );
+		add_action( 'after_setup_theme', array( $this, 'register_themes' ), 1 );
 		add_action( 'init', array( $lessphp, 'invalidate_css_cache_if_requested' ) );
 	}
 
 	/**
 	 * Let other objects access default theme
-	 * 
+	 *
 	 * @return array
 	 */
 	public function get_default_theme() {
@@ -82,6 +89,15 @@ class Ai1ec_Front_Controller {
 	}
 
 	/**
+	 * Notify themes and pass them instance of objects registry.
+	 *
+	 * @return void
+	 */
+	public function register_themes() {
+		do_action( 'ai1ec_after_themes_setup', $this->_registry );
+	}
+
+	/**
 	 * Returns the registry object
 	 *
 	 * @param mixed $discard not used. Always return the registry.
@@ -90,19 +106,6 @@ class Ai1ec_Front_Controller {
 	 */
 	public function return_registry( $discard ) {
 		return $this->_registry;
-	}
-
-	/**
-	 * Perform actions needed when our plugin is activated.
-	 *
-	 * @wp_hook activate_all-in-one-event-calendar/all-in-one-event-calendar.php
-	 *
-	 * @return void
-	 */
-	public function activation_hook() {
-		$this->_registry->get( 'app' )->register_post_type();
-		// Flush rewrite rules.
-		$this->_registry->get( 'rewrite' )->check_rewrites();
 	}
 
 	/**
@@ -120,10 +123,15 @@ class Ai1ec_Front_Controller {
 			$this->_request
 		);
 		// get the command
-		$command = $resolver->get_command();
+		$commands = $resolver->get_commands();
 		// if we have a command
-		if ( null !== $command ) {
-			$command->execute();
+		if ( ! empty( $commands ) ) {
+			foreach( $commands as $command ) {
+				$result = $command->execute();
+				if ( $command->stop_execution() ) {
+					return $result;
+				}
+			}
 		}
 	}
 
@@ -233,6 +241,10 @@ class Ai1ec_Front_Controller {
 			$this->_initialize_schema();
 			// set the default theme if not set
 			$this->_add_default_theme_if_not_set();
+			// check if custom theme is set
+			if ( is_admin() ) {
+				$this->_check_old_theme();
+			}
 		} catch ( Ai1ec_Constants_Not_Set_Exception $e ) {
 			// This is blocking, throw it and disable the plugin
 			$exception = $e;
@@ -282,7 +294,10 @@ class Ai1ec_Front_Controller {
 				$url  = AI1EC_THEMES_URL . '/' . $theme_name;
 			}
 			// if it's from 1.x, move folders to avoid confusion
-			$this->_registry->get( 'theme.search' )->move_themes_to_backup( $core_themes );
+			if ( apply_filters( 'ai1ec_move_themes_to_backup', true ) ) {
+				$this->_registry->get( 'theme.search' )
+					->move_themes_to_backup( $core_themes );
+			}
 			// Ensure existence of theme directory.
 			if ( ! is_dir( $root . DIRECTORY_SEPARATOR . $theme_name ) ) {
 				// It's missing; something is wrong with this theme. Reset theme to
@@ -340,6 +355,17 @@ class Ai1ec_Front_Controller {
 			array( $this, 'initialize_router' ),
 			PHP_INT_MAX - 1
 		);
+		add_action(
+			'widgets_init',
+			array( 'Ai1ec_View_Admin_Widget', 'register_widget' )
+		);
+		if ( isset( $_GET[Ai1ec_Controller_Javascript_Widget::WIDGET_PARAMETER] ) ) {
+			$this->_registry->get( 'event.dispatcher' )->register_action(
+				'init',
+				array( 'controller.javascript-widget', 'render_js_widget' ),
+				PHP_INT_MAX
+			);
+		}
 		// Route the request.
 		$action = 'template_redirect';
 		if ( is_admin() ) {
@@ -465,15 +491,15 @@ class Ai1ec_Front_Controller {
 			10,
 			3
 		);
-		$dispatcher->register_action(
-			'widgets_init',
-			array( 'view.calendar.widget', 'register_widget' )
-		);
 
 		// register ICS cron action
 		$dispatcher->register_action(
 			Ai1ecIcsConnectorPlugin::HOOK_NAME,
 			array( 'calendar-feed.ics', 'cron' )
+		);
+		$dispatcher->register_shortcode(
+			'ai1ec',
+			array( 'view.calendar.shortcode', 'shortcode' )
 		);
 
 		if ( is_admin() ) {
@@ -507,16 +533,16 @@ class Ai1ec_Front_Controller {
 				array( 'view.admin.all-events', 'taxonomy_filter_post_type_request' )
 			);
 			$dispatcher->register_action(
-				'admin_enqueue_scripts',
-				array( 'css.admin', 'admin_enqueue_scripts' )
-			);
-			$dispatcher->register_action(
 				'admin_menu',
 				array( 'view.admin.calendar-feeds', 'add_page' )
 			);
 			$dispatcher->register_action(
 				'current_screen',
 				array( 'view.admin.calendar-feeds', 'add_meta_box' )
+			);
+			$dispatcher->register_action(
+				'admin_menu',
+				array( 'view.admin.add-ons', 'add_page' )
 			);
 			$dispatcher->register_action(
 				'admin_menu',
@@ -577,6 +603,10 @@ class Ai1ec_Front_Controller {
 				array( 'view.admin.add-new-event', 'event_meta_box_container' )
 			);
 			$dispatcher->register_action(
+				'add_meta_boxes',
+				array( 'view.admin.add-new-event', 'event_banner_meta_box_container' )
+			);
+			$dispatcher->register_action(
 				'edit_form_after_title',
 				array( 'view.admin.add-new-event', 'event_inline_alert' )
 			);
@@ -585,6 +615,10 @@ class Ai1ec_Front_Controller {
 				array( 'model.event.creating', 'save_post' ),
 				10,
 				2
+			);
+			$dispatcher->register_action(
+				'wp_insert_post_data',
+				array( 'model.event.creating', 'wp_insert_post_data' )
 			);
 			$dispatcher->register_action(
 				'manage_ai1ec_event_posts_custom_column',
@@ -623,11 +657,29 @@ class Ai1ec_Front_Controller {
 				'admin_init',
 				array( 'environment.check', 'run_checks' )
 			);
-		} else { // ! is_admin()
-			$dispatcher->register_shortcode(
-				'ai1ec',
-				array( 'view.calendar.shortcode', 'shortcode' )
+			$dispatcher->register_action(
+				'activated_plugin',
+				array( 'environment.check', 'check_addons_activation' )
 			);
+			$dispatcher->register_filter(
+				'upgrader_post_install',
+				array( 'environment.check', 'check_bulk_addons_activation' )
+			);
+			// Widget Creator
+			$dispatcher->register_action(
+				'admin_enqueue_scripts',
+				array( 'css.admin', 'admin_enqueue_scripts' )
+			);
+			$dispatcher->register_action(
+				'current_screen',
+				array( 'view.admin.widget-creator', 'add_meta_box' )
+			);
+			$dispatcher->register_action(
+				'admin_menu',
+				array( 'view.admin.widget-creator', 'add_page' )
+			);
+
+		} else { // ! is_admin()
 			$dispatcher->register_action(
 				'after_setup_theme',
 				array( 'theme.loader', 'execute_theme_functions' )
@@ -741,8 +793,8 @@ class Ai1ec_Front_Controller {
 	 * @return void
 	 */
 	protected function _install_crons() {
-		$scheduling = $this->_registry->get( 'scheduling.utility', $this->_registry );
-		$allow      = $this->_registry->get( 'model.settings', $this->_registry )
+		$scheduling = $this->_registry->get( 'scheduling.utility' );
+		$allow      = $this->_registry->get( 'model.settings' )
 				->get( 'allow_statistics' );
 		$correct    = false;
 		// install the cron for stats
@@ -768,19 +820,6 @@ class Ai1ec_Front_Controller {
 				'Some CRON function might not have been installed'
 			);
 		}
-	}
-
-	/**
-	 * Register the activation hook for the plugin.
-	 *
-	 * @return void
-	 */
-	protected function _register_activation_hook() {
-		// register_activation_hook
-		register_activation_hook(
-			AI1EC_PLUGIN_NAME . '/' . AI1EC_PLUGIN_NAME . '.php',
-			array( $this, 'activation_hook' )
-		);
 	}
 
 	/**
@@ -887,23 +926,23 @@ class Ai1ec_Front_Controller {
 	protected  function _migrate_categories_meta() {
 		$db         = $this->_registry->get( 'dbi.dbi' );
 		$table_name = $db->get_table_name( 'ai1ec_event_category_colors' );
-                $db_h = $this->_registry->get( 'database.helper' );
-                if ( $db_h->table_exists( $table_name ) ) { // if old table exists otherwise ignore it
-                    // Migrate color information
-                    $dest_table = $db->get_table_name( 'ai1ec_event_category_meta' );
-                    $colors     = $db->select(
-                            $table_name,
-                            array( 'term_id', 'term_color'),
-                            ARRAY_A
-                    );
-                    if ( ! empty( $colors ) ) {
-                            foreach ( $colors as $color ) {
-                                    $db->insert( $dest_table, $color );
-                            }
-                    }
-                    // Drop the old table
-                    $db->query( 'DROP TABLE IF EXISTS ' . $table_name );
-                }
+		$db_h       = $this->_registry->get( 'database.helper' );
+		if ( $db_h->table_exists( $table_name ) ) { // if old table exists otherwise ignore it
+			// Migrate color information
+			$dest_table = $db->get_table_name( 'ai1ec_event_category_meta' );
+			$colors     = $db->select(
+				$table_name,
+				array( 'term_id', 'term_color'),
+				ARRAY_A
+			);
+			if ( ! empty( $colors ) ) {
+				foreach ( $colors as $color ) {
+					$db->insert( $dest_table, $color );
+				}
+			}
+			// Drop the old table
+			$db->query( 'DROP TABLE IF EXISTS ' . $table_name );
+		}
 	}
 
 	/**
@@ -979,6 +1018,40 @@ class Ai1ec_Front_Controller {
 			) CHARACTER SET utf8;";
 
 		return $sql;
+	}
+
+	/**
+	 * Performs run-once check if calendar is using theme outside core directory
+	 * what may mean that it is old format theme.
+	 *
+	 * @return void Method does not return.
+	 */
+	protected function _check_old_theme() {
+		$option = $this->_registry->get( 'model.option' );
+		if ( AI1EC_VERSION === $option->get( 'ai1ec_fer_checked', false ) ) {
+			return;
+		}
+		$cur_theme  = $option->get( 'ai1ec_current_theme', array() );
+		$theme_root = dirname( AI1EC_DEFAULT_THEME_ROOT );
+		if (
+			! isset( $cur_theme['theme_root'] ) ||
+			$theme_root === dirname( $cur_theme['theme_root'] )
+		) {
+			$option->set( 'ai1ec_fer_checked', AI1EC_VERSION );
+			$cur_theme['legacy'] = false;
+			$option->set( 'ai1ec_current_theme', $cur_theme );
+			return;
+		}
+		$this->_registry->get( 'notification.admin' )->store(
+			Ai1ec_I18n::__(
+				'You may be using a legacy custom calendar theme. If you have problems viewing the calendar, please read <a href="https://time.ly/">this article</a>.'
+			),
+			'error',
+			0,
+			array( Ai1ec_Notification_Admin::RCPT_ADMIN ),
+			true
+		);
+		$option->set( 'ai1ec_fer_checked', AI1EC_VERSION );
 	}
 
 }
