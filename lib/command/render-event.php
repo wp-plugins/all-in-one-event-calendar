@@ -31,12 +31,20 @@ class Ai1ec_Command_Render_Event extends Ai1ec_Command_Render_Calendar {
 	 * @see Ai1ec_Command::do_execute()
 	 */
 	public function do_execute() {
-		// get the event html
-		$instance    = false;
-		if ( isset( $_REQUEST['instance_id'] ) ) {
-			$instance = (int)$_REQUEST['instance_id'];
+		// If not on the single event page, return nothing.
+		if ( ! is_single() ) {
+			return array(
+				'data'     => '',
+				'is_event' => true,
+			);
 		}
-		$event       = $this->_registry->get(
+
+		// Else proceed with rendering valid event. Fetch all relevant details.
+		$instance      = false;
+		if ( isset( $_REQUEST['instance_id'] ) ) {
+			$instance    = (int)$_REQUEST['instance_id'];
+		}
+		$event         = $this->_registry->get(
 			'model.event',
 			get_the_ID(),
 			$instance
@@ -44,38 +52,27 @@ class Ai1ec_Command_Render_Event extends Ai1ec_Command_Render_Calendar {
 		$timezone_name = $event->get( 'timezone_name' );
 		$event->get( 'start' )->set_preferred_timezone( $timezone_name );
 		$event->get( 'end'   )->set_preferred_timezone( $timezone_name );
-		$event_page    = null;
-		$footer_html   = '';
-		if( is_single() ) {
-			$event_page = $this->_registry->get( 'view.event.single' );
-			$footer_html = $event_page->get_footer( $event );
-		} else {
-			// return nothing for now
-			return array(
-				'data'     => '',
-				'is_event' => true,
-			);
-		}
-		$css = $this->_registry->get( 'css.frontend' )->add_link_to_html_for_frontend();
-		$js = $this->_registry->get( 'controller.javascript' )->load_frontend_js( false );
+		$event_page    = $this->_registry->get( 'view.event.single' );
+		$footer_html   = $event_page->get_footer( $event );
+		$css = $this->_registry->get( 'css.frontend' )
+			->add_link_to_html_for_frontend();
+		$js  = $this->_registry->get( 'controller.javascript' )
+			->load_frontend_js( false );
+
+		// If requesting event by JSON (remotely), return fully rendered event.
 		if ( 'html' !== $this->_request_type ) {
 			return array(
 				'data'     => array(
-					'html' => $event_page->get_full_article( $event )
+					'html'   => $event_page->get_full_article( $event, $footer_html )
 				),
-				'callback' => Ai1ec_Request_Parser::get_param(
-					'callback',
-					null
-				),
+				'callback' => Ai1ec_Request_Parser::get_param( 'callback', null ),
 			);
 		}
-		$to_return = array(
+		// Else return event details as components.
+		return array(
 			'data'     => $event_page->get_content( $event ),
 			'is_event' => true,
+			'footer'   => $footer_html,
 		);
-		if ( ! empty( $footer_html ) ) {
-			$to_return['footer'] = $event_page->get_footer( $event );
-		}
-		return $to_return;
 	}
 }

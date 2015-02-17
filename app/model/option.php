@@ -23,7 +23,9 @@ class Ai1ec_Option extends Ai1ec_App {
 	/**
 	 * Add cache instance to object scope.
 	 *
-	 * @return void
+	 * @param Ai1ec_Registry_Object $registry Registry object.
+	 *
+	 * @return Ai1ec_Option
 	 */
 	public function __construct( Ai1ec_Registry_Object $registry ) {
 		$this->_registry = $registry;
@@ -102,6 +104,7 @@ class Ai1ec_Option extends Ai1ec_App {
 		}
 		return delete_option( $name );
 	}
+
 
 	/**
 	 * Convert autoload flag input to value recognized by WordPress.

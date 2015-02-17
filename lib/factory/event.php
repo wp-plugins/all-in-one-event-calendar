@@ -38,7 +38,13 @@ class Ai1ec_Factory_Event extends Ai1ec_Base {
 		$data     = null,
 		$instance = false
 	) {
-		if ( true === $this->_legacy ) {
+		$use_backward_compatibility = $registry->get(
+			'compatibility.check'
+		)->use_backward_compatibility();
+		if (
+			$use_backward_compatibility &&
+			true === $this->_legacy
+		) {
 			return new Ai1ec_Event_Legacy(
 				$registry,
 				$data,
@@ -47,8 +53,8 @@ class Ai1ec_Factory_Event extends Ai1ec_Base {
 		}
 		$class_name = 'Ai1ec_Event';
 		if (
-			'Ai1ec_Event' === $class_name &&
-			AI1EC_THEME_COMPATIBILITY_FER
+			$use_backward_compatibility &&
+			'Ai1ec_Event' === $class_name
 		) {
 			$class_name = 'Ai1ec_Event_Compatibility';
 		}

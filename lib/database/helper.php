@@ -79,7 +79,6 @@ class Ai1ec_Database_Helper {
 		$existing  = $this->get_all_tables();
 		$table     = NULL;
 		$candidate = NULL;
-		$name      = $name;
 		foreach ( $this->_prefixes as $prefix ) {
 			$candidate = $prefix . $name;
 			$index     = strtolower( $candidate );

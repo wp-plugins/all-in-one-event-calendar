@@ -105,9 +105,9 @@ class Ai1ec_Cache_Strategy_Apc extends Ai1ec_Cache_Strategy {
 	 * @return string Key with prefix prepended
 	 */
 	protected function _key( $key ) {
-		static $prefix = NULL;
+		static $prefix = null;
 		if ( NULL === $prefix ) {
-			$prefix = substr( md5( site_url() ), 0, 8 );
+			$prefix = substr( md5( ai1ec_get_site_url() ), 0, 8 );
 		}
 		if ( 0 !== strncmp( $key, $prefix, 8 ) ) {
 			$key = $prefix . $key;

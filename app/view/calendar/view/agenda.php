@@ -106,6 +106,12 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 				'no_navigation'    => $view_args['no_navigation'],
 				'pagination_links' => $pagination_links,
 				'views_dropdown'   => $view_args['views_dropdown'],
+				'below_toolbar'    => apply_filters(
+					'ai1ec_below_toolbar',
+					'',
+					$type,
+					$view_args
+				),
 			);
 			// Add extra buttons to Agenda view's nav bar if events were returned.
 			if ( $type === 'agenda' && $dates ) {
@@ -130,9 +136,9 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 			'show_location_in_title'    => $settings->get( 'show_location_in_title' ),
 			'page_offset'               => $view_args['page_offset'],
 			'navigation'                => $navigation,
+			'pagination_links'          => $pagination_links,
 			'post_ids'                  => join( ',', $view_args['post_ids'] ),
 			'data_type'                 => $view_args['data_type'],
-			'data_type_events'          => '',
 			'is_ticket_button_enabled'  => $is_ticket_button_enabled,
 			'text_upcoming_events'      => __( 'There are no upcoming events to display at this time.', AI1EC_PLUGIN_NAME ),
 			'text_edit'                 => __( 'Edit', AI1EC_PLUGIN_NAME ),
@@ -141,20 +147,15 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 			'text_tags'                 => __( 'Tags:', AI1EC_PLUGIN_NAME ),
 			'text_venue_separator'      => __( '@ %s', AI1EC_PLUGIN_NAME ),
 		);
-		if ( $settings->get( 'ajaxify_events_in_web_widget' ) ) {
-			$args['data_type_events'] = $view_args['data_type'];
-		}
 
 		// Allow child views to modify arguments passed to template.
 		$args = $this->get_extra_template_arguments( $args );
 
-		$file = $loader->get_file( $type . '.twig', $args, false );
-
 		return
 			$this->_registry->get( 'http.request' )->is_json_required(
-				$view_args['request_format']
+				$view_args['request_format'], $type
 			)
-			? json_encode( $args )
+			? $loader->apply_filters_to_args( $args, $type . '.twig', false )
 			: $this->_get_view( $args );
 	}
 
@@ -250,7 +251,9 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 			$event_props['avatar']              = $event->getavatar();
 			$event_props['avatar_not_wrapped']  = $event->getavatar( false );
 			$event_object                       = $event_props;
-			if ( AI1EC_THEME_COMPATIBILITY_FER ) {
+			if (
+				$this->_compatibility->use_backward_compatibility()
+			) {
 				$event_object = $event;
 			}
 			$dates[$timestamp]['events'][$category][] = $event_object;
@@ -261,6 +264,10 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 				get( 'date.time', $timestamp )->format_i18n( 'D' );
 			$dates[$timestamp]['month']               = $this->_registry->
 				get( 'date.time', $timestamp )->format_i18n( 'M' );
+			$dates[$timestamp]['full_month']          = $this->_registry->
+				get( 'date.time', $timestamp )->format_i18n( 'F' );
+			$dates[$timestamp]['full_weekday']        = $this->_registry->
+				get( 'date.time', $timestamp )->format_i18n( 'l' );
 			$dates[$timestamp]['year']                = $this->_registry->
 				get( 'date.time', $timestamp )->format_i18n( 'Y' );
 		}
@@ -310,7 +317,11 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 
 		$links = array();
 
-		if ( AI1EC_USE_FRONTEND_RENDERING ) {
+		if (
+			$this->_registry->get(
+				'model.settings'
+			)->get( 'ai1ec_use_frontend_rendering' )
+		) {
 			$args['request_format'] = 'json';
 		}
 		$args['page_offset'] = -1;

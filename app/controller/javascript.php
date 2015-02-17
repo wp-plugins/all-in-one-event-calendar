@@ -203,7 +203,9 @@ class Ai1ec_Javascript_Controller {
 
 		// Load appropriate jQuery script based on browser.
 		$jquery = $this->get_jquery_version_based_on_browser(
-			$_SERVER['HTTP_USER_AGENT']
+			isset( $_SERVER['HTTP_USER_AGENT'] )
+				? $_SERVER['HTTP_USER_AGENT']
+				: ''
 		);
 
 		// Load the main script for the page.
@@ -324,6 +326,8 @@ class Ai1ec_Javascript_Controller {
 
 	/**
 	 * Loads version 1.9 or 2.0 of jQuery based on user agent.
+	 * If $user_agent is null (due to lack of HTTP header) we always serve
+	 * jQuery 2.0.
 	 *
 	 * @param string $user_agent
 	 *
@@ -331,7 +335,8 @@ class Ai1ec_Javascript_Controller {
 	 */
 	public function get_jquery_version_based_on_browser( $user_agent ) {
 		$js_path = AI1EC_ADMIN_THEME_JS_PATH . DIRECTORY_SEPARATOR;
-		$jquery = 'jquery_timely20.js';
+		$jquery  = 'jquery_timely20.js';
+
 		preg_match( '/MSIE (.*?);/', $user_agent, $matches );
 		if ( count( $matches ) > 1 ) {
 			//Then we're using IE
@@ -376,7 +381,7 @@ class Ai1ec_Javascript_Controller {
 		if ( $force_ssl_admin && ! is_ssl() ) {
 			force_ssl_admin( false );
 		}
-		$ajax_url        = admin_url( 'admin-ajax.php' );
+		$ajax_url        = ai1ec_admin_url( 'admin-ajax.php' );
 		force_ssl_admin( $force_ssl_admin );
 		$settings        = $this->_registry->get( 'model.settings' );
 		$locale          = $this->_registry->get( 'p28n.wpml' );
@@ -425,7 +430,7 @@ class Ai1ec_Javascript_Controller {
 			'general_url_not_valid'          => Ai1ec_I18n::__(
 				'Please remember that URLs must start with either "http://" or "https://".'
 			),
-			'calendar_loading_event'          => Ai1ec_I18n::__(
+			'calendar_loading'               => Ai1ec_I18n::__(
 				'Loading&hellip;'
 			),
 			'language'                       => $this->_registry->get( 'p28n.wpml' )->get_lang(),
@@ -452,7 +457,9 @@ class Ai1ec_Javascript_Controller {
 			'affix_vertical_offset_xs'       => $settings->get( 'affix_vertical_offset_xs' ),
 			'calendar_page_id'               => $settings->get( 'calendar_page_id' ),
 			'region'                         => ( $settings->get( 'geo_region_biasing' ) ) ? $locale->get_region() : '',
-			'site_url'                       => trailingslashit( get_site_url() ),
+			'site_url'                       => trailingslashit(
+				ai1ec_get_site_url()
+			),
 			'javascript_widgets'             => array(),
 			'widget_creator'                 => array(
 				'preview'         => Ai1ec_I18n::__( 'Preview:' ),
@@ -467,6 +474,8 @@ class Ai1ec_Javascript_Controller {
 				'cookie.utility'
 			)->get_path_for_cookie(),
 			'disable_autocompletion'         => $settings->get( 'disable_autocompletion' ),
+			'end_must_be_after_start'        => __( 'The end date can\'t be earlier than the start date.', AI1EC_PLUGIN_NAME ),
+			'show_at_least_six_hours'        => __( 'For week and day view, you must select an interval of at least 6 hours.', AI1EC_PLUGIN_NAME ),
 		);
 		return apply_filters( 'ai1ec_js_translations', $data );
 	}
@@ -522,10 +531,12 @@ class Ai1ec_Javascript_Controller {
 		);
 		$conditional_get->sendHeaders();
 		if ( ! $conditional_get->cacheIsValid ) {
-			$http_encoder = new HTTP_Encoder( array(
-				'content' => $javascript,
-				'type' => 'text/javascript'
-			)
+			$http_encoder = $this->_registry->get(
+				'http.encoder',
+				array(
+					'content' => $javascript,
+					'type' => 'text/javascript'
+				)
 			);
 			$compression_level = null;
 			if ( $this->_registry->get( 'model.settings' )->get( 'disable_gzip_compression' ) ) {
@@ -602,7 +613,7 @@ JSC;
 				// If we are on the calendar page we must load the correct option
 				self::IS_CALENDAR_PAGE     => $is_calendar_page,
 			),
-			trailingslashit( $this->_template_link_helper->get_site_url() )
+			trailingslashit( ai1ec_get_site_url() )
 		);
 		if ( true === $backend ) {
 			$this->_scripts_helper->enqueue_script(

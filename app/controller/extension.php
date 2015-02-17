@@ -125,7 +125,7 @@ abstract class Ai1ec_Base_Extension_Controller {
 	 * initialize the extension. 
 	 */
 	public function init( Ai1ec_Registry_Object $registry ) {
-		$this->_registry = $registry;
+		$this->_registry        = $registry;
 		// static properties are needed as uninstall hook must be static
 		// http://wpseek.com/register_uninstall_hook/
 		self::$_registry_static = $registry;

@@ -62,6 +62,10 @@ class Ai1ec_Http_Request {
 		if ( isset( $_GET['ai1ec_js_widget'] ) ) {
 			return true;
 		}
+		// Legacy support.
+		if ( isset( $_GET['ai1ec_super_widget'] ) ) {
+			return true;
+		}
 		if (
 			isset( $_GET['ai1ec_render_js'] ) ||
 			isset( $_GET['ai1ec_render_css'] )
@@ -173,11 +177,15 @@ class Ai1ec_Http_Request {
 	 *
 	 * @return bool True or false.
 	 */
-	public function is_json_required( $request_format ) {
+	public function is_json_required( $request_format, $type ) {
+		$fer_list = explode( ',', AI1EC_FER_ENABLED_TEMPLATES_LIST );
 		return
-			'json' === $request_format
-			&& AI1EC_USE_FRONTEND_RENDERING
-			&& $this->is_ajax();
+			'json' === $request_format &&
+			in_array( strtolower( $type ), $fer_list ) &&
+			$this->_registry->get(
+				'model.settings'
+			)->get( 'ai1ec_use_frontend_rendering' ) &&
+			$this->is_ajax();
 	}
 
 	/**

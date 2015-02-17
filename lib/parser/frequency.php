@@ -26,9 +26,18 @@ class Ai1ec_Frequency_Utility {
 	 * @var array Map of WordPress native multipliers
 	 */
 	protected $_wp_names = array(
-		'hourly'     => array( 'h' => 1   ),
-		'twicedaily' => array( 'd' => 0.5 ),
-		'daily'      => array( 'd' => 1   ),
+		'hourly'     => array(
+			'item'    => array( 'h' => 1 ),
+			'seconds' => 3600
+		),
+		'twicedaily' => array(
+			'item'    => array( 'd' => 0.5 ),
+			'seconds' => 43200
+		),
+		'daily'      => array(
+			'item'    => array( 'd' => 1 ),
+			'seconds' => 86400
+		),
 	);
 
 	/**
@@ -79,13 +88,13 @@ class Ai1ec_Frequency_Utility {
 	public function parse( $input ) {
 		$input = strtolower(
 			preg_replace(
-				'|(\d+)\s+([a-z])|',
+				'|(\d*\.?\d+)\s+([a-z])|',
 				'$1$2',
 				trim( $input )
 			)
 		);
 		if ( isset( $this->_wp_names[$input] ) ) {
-			$this->_parsed = $this->_wp_names[$input];
+			$this->_parsed = $this->_wp_names[$input]['item'];
 			return true;
 		}
 		$match = $this->_match( $input );
@@ -116,9 +125,12 @@ class Ai1ec_Frequency_Utility {
 	 * @return string Unified output format
 	 */
 	public function to_string() {
+		$seconds       = $this->to_seconds();
+		if ( $wp_name = $this->match_wp_native_interval( $seconds ) ) {
+			return $wp_name;
+		}
 		$reverse_quant = array_flip( $this->_multipliers );
 		krsort( $reverse_quant );
-		$seconds       = $this->to_seconds();
 		$output        = array();
 		foreach ( $reverse_quant as $duration => $quant ) {
 			if ( $duration > $seconds ) {
@@ -137,6 +149,27 @@ class Ai1ec_Frequency_Utility {
 	}
 
 	/**
+	 * Returns seconds interval to native wp name,
+	 *
+	 * @param int $seconds Value.
+	 *
+	 * @return bool|string False or name.
+	 */
+	public function match_wp_native_interval( $seconds ) {
+		if ( empty( $this->_parsed ) ) {
+			return false;
+		}
+		$response = false;
+		foreach ( $this->_wp_names as $name => $interval ) {
+			if ( $interval['seconds'] === $seconds ) {
+				$response = $name;
+				break;
+			}
+		}
+		return $response;
+	}
+
+	/**
 	 * Extract time identifiers from input string
 	 *
 	 * Given arbitrary string collects known identifiers preceeded by numeric
@@ -148,7 +181,7 @@ class Ai1ec_Frequency_Utility {
 	 * @return array Extracted time identifiers
 	 */
 	protected function _match( $input ) {
-		$regexp  = '/(\d+)([' .
+		$regexp  = '/(\d*\.?\d+)([' .
 			implode( '|', array_keys( $this->_multipliers ) ) .
 			'])?/';
 		$matches = NULL;
@@ -167,5 +200,4 @@ class Ai1ec_Frequency_Utility {
 		}
 		return $output;
 	}
-
 }

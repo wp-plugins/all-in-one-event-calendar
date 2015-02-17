@@ -82,16 +82,17 @@ class Ai1ec_Post_Custom_Type extends Ai1ec_Base {
 		// = labels for event categories taxonomy =
 		// ========================================
 		$events_categories_labels = array(
-			'name'          => Ai1ec_I18n::_x( 'Event Categories', 'Event categories taxonomy' ),
-			'singular_name' => Ai1ec_I18n::_x( 'Event Category', 'Event categories taxonomy (singular)' )
+			'name'          => Ai1ec_I18n::_x( 'Categories', 'Event categories taxonomy' ),
+			'singular_name' => Ai1ec_I18n::_x( 'Category', 'Event categories taxonomy (singular)' ),
+			'menu_name'     => Ai1ec_I18n::_x( 'Organize', 'Event categories menu item' ),
 		);
 
 		// ==================================
 		// = labels for event tags taxonomy =
 		// ==================================
 		$events_tags_labels = array(
-			'name'          => Ai1ec_I18n::_x( 'Event Tags', 'Event tags taxonomy' ),
-			'singular_name' => Ai1ec_I18n::_x( 'Event Tag', 'Event tags taxonomy (singular)' )
+			'name'          => Ai1ec_I18n::_x( 'Tags', 'Event tags taxonomy' ),
+			'singular_name' => Ai1ec_I18n::_x( 'Tag', 'Event tags taxonomy (singular)' )
 		);
 
 		// ==================================
@@ -114,7 +115,7 @@ class Ai1ec_Post_Custom_Type extends Ai1ec_Base {
 				'edit_terms'   => 'manage_events_categories',
 				'delete_terms' => 'manage_events_categories',
 				'assign_terms' => 'edit_ai1ec_events'
-			)
+			),
 		);
 
 		// ================================
@@ -124,12 +125,13 @@ class Ai1ec_Post_Custom_Type extends Ai1ec_Base {
 			'labels'       => $events_tags_labels,
 			'hierarchical' => false,
 			'rewrite'      => array( 'slug' => 'events_tags' ),
+			'show_ui'      => true,
 			'capabilities' => array(
 				'manage_terms' => 'manage_events_categories',
 				'edit_terms'   => 'manage_events_categories',
 				'delete_terms' => 'manage_events_categories',
 				'assign_terms' => 'edit_ai1ec_events'
-			)
+			),
 		);
 
 		// ================================
@@ -184,7 +186,7 @@ class Ai1ec_Post_Custom_Type extends Ai1ec_Base {
 		$contributor = get_role( 'ai1ec_event_assistant' );
 		// if it's present and has the wrong capability delete it.
 		if (
-			$contributor instanceOf WP_Role && 
+			$contributor instanceOf WP_Role &&
 			$contributor->has_cap( 'publish_ai1ec_events' )
 		) {
 			remove_role( 'ai1ec_event_assistant' );

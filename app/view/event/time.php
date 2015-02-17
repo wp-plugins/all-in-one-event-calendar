@@ -60,6 +60,7 @@ class Ai1ec_View_Event_Time extends Ai1ec_Base {
 			->set_time( 0, 0, 0 )
 			->format();
 
+		$break_years = $start->format( 'Y' ) !== $end->format( 'Y' );
 		$output = '';
 
 		// Display start date, depending on $start_date_display.
@@ -69,7 +70,7 @@ class Ai1ec_View_Event_Time extends Ai1ec_Base {
 			case 'short':
 			case 'long':
 				$property = $start_date_display . '_date';
-				$output .= $this->{'get_' . $property}( $start );
+				$output .= $this->{'get_' . $property}( $start, $break_years );
 				break;
 			default:
 				$start_date_display = 'long';
@@ -103,7 +104,7 @@ class Ai1ec_View_Event_Time extends Ai1ec_Base {
 			if ( $start_ts !== $end_ts ) {
 				// for short date, use short display type
 				if ( 'short' === $start_date_display ) {
-					$output .= $this->get_short_date( $end );
+					$output .= $this->get_short_date( $end, $break_years );
 				} else {
 					$output .= $this->get_long_date( $end );
 				}
@@ -132,7 +133,12 @@ class Ai1ec_View_Event_Time extends Ai1ec_Base {
 				'</span>'
 			);
 		}
-		return apply_filters( 'ai1ec_get_timespan_html', $output, $this );
+		return apply_filters(
+			'ai1ec_get_timespan_html',
+			$output,
+			$event,
+			$start_date_display
+		);
 	}
 
 	/**
@@ -153,7 +159,7 @@ class Ai1ec_View_Event_Time extends Ai1ec_Base {
 			$excludes[] =
 			$rrule->rrule_to_text( $exception_rules );
 		}
-		if ( $exception_dates ) {
+		if ( $exception_dates && 0 !== strpos( $exception_rules, 'EXDATE' ) ) {
 			$excludes[] =
 			$rrule->exdate_to_text( $exception_dates );
 		}
@@ -164,10 +170,14 @@ class Ai1ec_View_Event_Time extends Ai1ec_Base {
 	 * Get the short date
 	 * 
 	 * @param Ai1ec_Date_Time $time
+	 * @param bool            $add_year Whether to add year or not.
 	 * 
 	 * @return string
 	 */
-	public function get_short_date( Ai1ec_Date_Time $time ) {
+	public function get_short_date( Ai1ec_Date_Time $time, $add_year = false ) {
+		if ( $add_year ) {
+			return $time->format_i18n( 'M j Y' );
+		}
 		return $time->format_i18n( 'M j' );
 	}
 

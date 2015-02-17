@@ -15,16 +15,6 @@ class Ai1ec_Html_Setting_Select extends Ai1ec_Html_Element_Settings {
 	 * @see Ai1ec_Html_Element_Settings::render()
 	 */
 	public function render( $output = '' ) {
-		if ( isset( $this->_args['renderer']['condition'] ) ) {
-			$callback = explode( ':', $this->_args['renderer']['condition'] );
-			$render   = $this->_registry->dispatch(
-				$callback[0],
-				$callback[1]
-			);
-			if ( ! $render ) {
-				return '';
-			}
-		}
 		$options = $this->_args['renderer']['options'];
 		if ( ! is_array( $options ) ) {
 			$callback = explode( ':', $options );
@@ -41,7 +31,8 @@ class Ai1ec_Html_Setting_Select extends Ai1ec_Html_Element_Settings {
 				);
 			}
 		}
-		$options = apply_filters( 'ai1ec_settings_select_options' , $options, $this->_args['id'] );
+		$options   = apply_filters( 'ai1ec_settings_select_options' , $options, $this->_args['id'] );
+		$fieldsets = array();
 		foreach ( $options as $key => &$option ) {
 			// if the key is a string, it's an optgroup
 			if ( is_string( $key ) ) {
@@ -50,6 +41,14 @@ class Ai1ec_Html_Setting_Select extends Ai1ec_Html_Element_Settings {
 				}
 			} else {
 				$option = $this->_set_selected_value( $option );
+				if ( isset( $option['settings'] ) ) {
+					$fieldsets[] = $this->_render_fieldset(
+						$option['settings'],
+						$option['value'],
+						$this->_args['id'],
+						isset( $option['args']['selected'] )
+					);
+				}
 			}
 		}
 		$select_args = array();
@@ -58,6 +57,7 @@ class Ai1ec_Html_Setting_Select extends Ai1ec_Html_Element_Settings {
 			'label'      => $this->_args['renderer']['label'],
 			'attributes' => $select_args,
 			'options'    => $options,
+			'fieldsets'  => $fieldsets,
 		);
 		$loader = $this->_registry->get( 'theme.loader' );
 		$file   = $loader->get_file( 'setting/select.twig', $args, true );
@@ -96,6 +96,49 @@ class Ai1ec_Html_Setting_Select extends Ai1ec_Html_Element_Settings {
 			$options[] = $option;
 		}
 		return $options;
+	}
+
+	/**
+	 * Renders fieldset with options for selected item.
+	 *
+	 * @param array  $settings  Settings structure.
+	 * @param string $parent_id Option value from parent Html select element.
+	 * @param string $select_id Html Select element id.
+	 * @param bool   $visible   Whether fieldset is visible or not.
+	 *
+	 * @return string Html content.
+	 *
+	 * @throws Ai1ec_Bootstrap_Exception
+	 */
+	protected function _render_fieldset(
+		array $settings,
+		$parent_id,
+		$select_id,
+		$visible = false
+	) {
+		$setting_renderer = $this->_registry->get(
+			'html.element.setting-renderer'
+		);
+		$global_settings  = $this->_registry->get(
+			'model.settings'
+		);
+		$content = '';
+		foreach ( $settings as $id => $setting ) {
+			$setting['id']    = $id;
+			// fetch value from real setting as this one is some kind of
+			// mockup.
+			$setting['value'] = $global_settings->get( $id );
+			$content .= $setting_renderer->render( $setting );
+		}
+		$args   = array(
+			'parent_id' => $parent_id,
+			'contents'  => $content,
+			'select_id' => $select_id,
+			'visible'   => $visible,
+		);
+		$loader = $this->_registry->get( 'theme.loader' );
+		$file   = $loader->get_file( 'setting/select-fieldsets.twig', $args, true );
+		return parent::render( $file->get_content(), false );
 	}
 
 }

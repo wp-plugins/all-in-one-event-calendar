@@ -42,7 +42,18 @@ class Ai1ec_Recurrence_Rule extends Ai1ec_Base {
 				$this->_ending_sentence( $txt, $rc );
 				break;
 			default:
-				$txt = $rrule;
+				$processed = explode( '=', $rrule );
+				if (
+					isset( $processed[1] ) &&
+					in_array(
+						strtoupper( $processed[0] ),
+						array( 'RDATE', 'EXDATE' )
+					)
+				) {
+					$txt = $this->exdate_to_text( $processed[1] );
+				} else {
+					$txt = $rrule;
+				}
 		}
 		return $txt;
 	}
@@ -152,11 +163,19 @@ class Ai1ec_Recurrence_Rule extends Ai1ec_Base {
 	public function exdate_to_text( $exception_dates ) {
 		$dates_to_add = array();
 		foreach ( explode( ',', $exception_dates ) as $_exdate ) {
-			// convert to timestamp
-			$_exdate        = strtotime( $_exdate );
 			$date_format    = $this->_registry->get( 'model.option' )
 				->get( 'date_format', 'l, M j, Y' );
-			$dates_to_add[] = $this->_registry->get( 'date.time', $_exdate )
+			$dates_to_add[] = $this->_registry->get(
+				'date.time',
+				vsprintf(
+					'%04d-%02d-%02d',
+					sscanf(
+						$_exdate,
+						'%04d%02d%02dT%dZ'
+					)
+				),
+				'sys.default'
+				)
 				->format_i18n( $date_format );
 		}
 		// append dates to the string and return it;

@@ -40,12 +40,12 @@ class Ai1ec_Clone_Renderer_Helper extends Ai1ec_Base {
 	 */
 	function duplicate_post_make_duplicate_link_row( $actions, $post ) {
 		if ( $post->post_type == "ai1ec_event" ) {
-			$actions['clone'] = '<a href="'.$this->duplicate_post_get_clone_post_link( $post->ID , 'display', false).'" title="'
+			$actions['clone'] = '<a href="'.$this->duplicate_post_get_clone_post_link( $post->ID, 'display', false).'" title="'
 			. esc_attr(__("Make new copy of event", AI1EC_PLUGIN_NAME))
 			. '">' .  __( 'Clone', AI1EC_PLUGIN_NAME ) . '</a>';
 			$actions['edit_as_new_draft'] = '<a href="' . $this->duplicate_post_get_clone_post_link( $post->ID ) . '" title="'
-			. esc_attr(__( 'Copy to a new draft' , AI1EC_PLUGIN_NAME ))
-			. '">' .  __( 'Clone to Draft' , AI1EC_PLUGIN_NAME ) . '</a>';
+			. esc_attr(__( 'Copy to a new draft', AI1EC_PLUGIN_NAME ))
+			. '">' .  __( 'Clone to Draft', AI1EC_PLUGIN_NAME ) . '</a>';
 		}
 		return $actions;
 	}
@@ -85,7 +85,10 @@ class Ai1ec_Clone_Renderer_Helper extends Ai1ec_Base {
 
 		return apply_filters(
 			'duplicate_post_get_clone_post_link',
-			wp_nonce_url( admin_url( "admin.php". $action ), 'ai1ec_clone_' . $post->ID ),
+			wp_nonce_url(
+				ai1ec_admin_url( 'admin.php' . $action ),
+				'ai1ec_clone_' . $post->ID
+			),
 			$post->ID,
 			$context
 		);

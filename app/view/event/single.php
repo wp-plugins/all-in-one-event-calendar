@@ -94,10 +94,12 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 			'show_subscribe_buttons'  => ! $settings->get( 'turn_off_subscription_buttons' ),
 			'hide_featured_image'     => $settings->get( 'hide_featured_image' ),
 			'extra_buttons'           => $extra_buttons,
+			'show_get_calendar'       => ! $settings->get( 'disable_get_calendar_button' ),
 			'text_add_calendar'       => __( 'Add to Calendar', AI1EC_PLUGIN_NAME ),
 			'subscribe_buttons_text'  => $this->_registry
 				->get( 'view.calendar.subscribe-button' )
 				->get_labels(),
+			'text_get_calendar'       => Ai1ec_I18n::__( 'Get a Timely Calendar' ),
 			'text_when'               => __( 'When:', AI1EC_PLUGIN_NAME ),
 			'text_where'              => __( 'Where:', AI1EC_PLUGIN_NAME ),
 			'text_cost'               => __( 'Cost:', AI1EC_PLUGIN_NAME ),
@@ -107,6 +109,13 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 			'text_tags'               => __( 'Tags', AI1EC_PLUGIN_NAME ),
 			'timezone_info'           => $timezone_info,
 			'banner_image'            => $banner_image,
+			'content_img_url'         => $event->get_runtime( 'content_img_url' ),
+			'post_id'                 => $event->get( 'post_id' ),
+			'ticket_url'              => $event->get( 'ticket_url' ),
+			'tickets_url_label'       => $event->get_runtime( 'tickets_url_label' ),
+			'start'                   => $event->get( 'start' ),
+			'end'                     => $event->get( 'end' ),
+			'cost'                    => $event->get( 'cost' ),
 		);
 
 		if (
@@ -114,7 +123,7 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 			$event->get( 'instance_id' ) &&
 			current_user_can( 'edit_ai1ec_events' )
 		) {
-			$args['edit_instance_url'] = admin_url(
+			$args['edit_instance_url']  = ai1ec_admin_url(
 				'post.php?post=' . $event->get( 'post_id' ) .
 				'&action=edit&instance=' . $event->get( 'instance_id' )
 			);
@@ -134,22 +143,30 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 	 * @return The html of the footer
 	 */
 	public function get_footer( Ai1ec_Event $event ) {
+		$text_calendar_feed = Ai1ec_I18n::__(
+			'This post was replicated from another site\'s <a href="%s" title="iCalendar feed"><i class="ai1ec-fa ai1ec-fa-calendar"></i> calendar feed</a>.'
+		);
 		$loader = $this->_registry->get( 'theme.loader' );
+		$text_calendar_feed = sprintf(
+			$text_calendar_feed,
+			esc_attr( str_replace( 'http://', 'webcal://', $event->get( 'ical_feed_url' ) ) )
+		);
 		$args   = array(
 			'event'              => $event,
-			'text_calendar_feed' => __( 'This post was replicated from another site\'s <a class="ai1ec-ics-icon" href="%s" title="iCalendar feed">calendar feed</a>.', AI1EC_PLUGIN_NAME ),
-			'text_view_post'     => __( 'View original post', AI1EC_PLUGIN_NAME ),
+			'text_calendar_feed' => $text_calendar_feed,
+			'text_view_post'     => Ai1ec_I18n::__( 'View original' ),
 		);
 		return $loader->get_file( 'event-single-footer.twig', $args, false )
 			->get_content();
 	}
 
 	/**
-	 * Render the full article for the event
+	 * Render the full article for the event – title, content, and footer.
 	 *
 	 * @param Ai1ec_Event $event
+	 * @param string      $footer Footer HTML to append to event
 	 */
-	public function get_full_article( Ai1ec_Event $event ) {
+	public function get_full_article( Ai1ec_Event $event, $footer = '' ) {
 		$title         = apply_filters(
 			'the_title',
 			$event->get( 'post' )->post_title,
@@ -165,7 +182,7 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 				)
 			)
 		);
-		$args = compact( 'title', 'event_details', 'content' );
+		$args = compact( 'title', 'event_details', 'content', 'footer' );
 		$loader = $this->_registry->get( 'theme.loader' );
 		return $loader->get_file( 'event-single-full.twig', $args, false )
 			->get_content();

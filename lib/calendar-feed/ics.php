@@ -18,7 +18,7 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 
 	const ICS_OPTION_DB_VERSION = 'ai1ec_ics_db_version';
 
-	const ICS_DB_VERSION        = 107;
+	const ICS_DB_VERSION        = 220;
 
 	/**
 	 * @var array
@@ -222,11 +222,13 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 		}
 		$translations = array(
 			'[feed_url]'   => $_POST['ai1ec_calendar_url'],
-			'[categories]' => implode( ', ' , $categories ),
+			'[categories]' => implode( ', ', $categories ),
 			'[user_email]' => $_POST['ai1ec_submitter_email'],
 			'[site_title]' => get_bloginfo( 'name' ),
-			'[site_url]'   => site_url(),
-			'[feeds_url]'  => admin_url( AI1EC_FEED_SETTINGS_BASE_URL . '#ics' ),
+			'[site_url]'   => ai1ec_site_url(),
+			'[feeds_url]'  => ai1ec_admin_url(
+				AI1EC_FEED_SETTINGS_BASE_URL . '#ics'
+			),
 		);
 		return $translations;
 	}
@@ -269,6 +271,7 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 					map_display_enabled tinyint(1) NOT NULL DEFAULT '0',
 					keep_tags_categories tinyint(1) NOT NULL DEFAULT '0',
 					keep_old_events tinyint(1) NOT NULL DEFAULT '0',
+					import_timezone tinyint(1) NOT NULL DEFAULT '0',
 					PRIMARY KEY  (feed_id),
 					UNIQUE KEY feed (feed_url)
 					) CHARACTER SET utf8;";
@@ -383,6 +386,7 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 			array( 'cron_freq' => $settings->get( 'ics_cron_freq' ) ),
 			true
 		);
+
 		$args = array(
 			'cron_freq'        => $cron_freq->get_content(),
 			'event_categories' => $select2_cats,
@@ -420,6 +424,7 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 				'map_display_enabled',
 				'keep_tags_categories',
 				'keep_old_events',
+				'import_timezone',
 			)
 		);
 
@@ -459,6 +464,9 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 				),
 				'keep_old_events'      => (bool) intval(
 						$row->keep_old_events
+				),
+				'feed_import_timezone' => (bool) intval(
+					$row->import_timezone
 				),
 			);
 			$html .= $theme_loader->get_file( 'feed_row.php', $args, true )
@@ -513,13 +521,20 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 			'feed_category'        => $feed_categories,
 			'feed_tags'            => $_REQUEST['feed_tags'],
 			'comments_enabled'     => Ai1ec_Primitive_Int::db_bool(
-				$_REQUEST['comments_enabled'] ),
+				$_REQUEST['comments_enabled']
+			),
 			'map_display_enabled'  => Ai1ec_Primitive_Int::db_bool(
-				$_REQUEST['map_display_enabled'] ),
+				$_REQUEST['map_display_enabled']
+			),
 			'keep_tags_categories' => Ai1ec_Primitive_Int::db_bool(
-				$_REQUEST['keep_tags_categories'] ),
+				$_REQUEST['keep_tags_categories']
+			),
 			'keep_old_events' => Ai1ec_Primitive_Int::db_bool(
-				$_REQUEST['keep_old_events'] )
+				$_REQUEST['keep_old_events']
+			),
+			'import_timezone' => Ai1ec_Primitive_Int::db_bool(
+				$_REQUEST['feed_import_timezone']
+			),
 		);
 		$entry = apply_filters( 'ai1ec_ics_feed_entry', $entry );
 		if ( is_wp_error( $entry ) ) {
@@ -533,7 +548,7 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 			return $json_strategy->render( array( 'data' => $output ) );
 		}
 
-		$format     = array( '%s', '%s', '%s', '%d', '%d', '%d', '%d' );
+		$format     = array( '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d' );
 		$res        = $db->insert( $table_name, $entry, $format );
 		$feed_id    = $db->get_insert_id();
 		$categories = array();
@@ -566,7 +581,10 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 			),
 			'keep_old_events' => (bool) intval(
 				$_REQUEST['keep_old_events']
-			)
+			),
+			'feed_import_timezone' => (bool) intval(
+				$_REQUEST['feed_import_timezone']
+			),
 		);
 		$loader = $this->_registry->get( 'theme.loader' );
 		// display added feed row
@@ -699,5 +717,4 @@ class Ai1ecIcsConnectorPlugin extends Ai1ec_Connector_Plugin {
 	protected function _import_lock_name( $feed_id ) {
 		return 'ics_import_' . (int)$feed_id;
 	}
-
 }

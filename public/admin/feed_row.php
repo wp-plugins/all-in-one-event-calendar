@@ -53,7 +53,7 @@
 		?></strong>
 	</div>
 	<div class="ai1ec-feed-keep-old-events">
-		<?php _e( 'Keep old events', AI1EC_PLUGIN_NAME ); ?>:
+		<?php _e( 'On refresh, preserve previously imported events that are missing from the feed', AI1EC_PLUGIN_NAME ); ?>:
 		<strong><?php
 		if ( $keep_old_events ) {
 			_e( 'Yes', AI1EC_PLUGIN_NAME );
@@ -61,6 +61,18 @@
 			_e( 'No',  AI1EC_PLUGIN_NAME );
 		}
 		?></strong>
+	</div>
+	<div class="ai1ec-feed-import-timezone">
+		<span class="ai1ec-tooltip-toggle" title="<?php _e( 'Guesses the time zone of events that have none specified; recommended for Google Calendar feeds', AI1EC_PLUGIN_NAME ); ?>">
+			<?php _e( 'Assign default time zone to events in UTC', AI1EC_PLUGIN_NAME );
+		?>:</span>
+		<strong><?php
+			if ( $feed_import_timezone ) {
+				_e( 'Yes', AI1EC_PLUGIN_NAME );
+			} else {
+				_e( 'No',  AI1EC_PLUGIN_NAME );
+			} ?>
+		</strong>
 	</div>
 	<div class="ai1ec-btn-group ai1ec-pull-right">
 		<button type="button"

@@ -76,6 +76,7 @@ class Ai1ec_Command_Render_Calendar extends Ai1ec_Command {
 				'callback',
 				null
 			),
+			'caller'   => 'calendar',
 		);
 	}
 

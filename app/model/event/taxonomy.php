@@ -52,7 +52,7 @@ class Ai1ec_Event_Taxonomy extends Ai1ec_Base {
 	 * @param bool   $is_id    Set to true if $term is ID.
 	 * @param array  $attrs    Attributes to creatable entity.
 	 *
-	 * @return array|bool      Associative array with term_id 
+	 * @return array|bool      Associative array with term_id
 	 *                         and taxonomy keys or false on error
 	 */
 	public function initiate_term(
@@ -63,25 +63,38 @@ class Ai1ec_Event_Taxonomy extends Ai1ec_Base {
 	) {
 		// cast to int to have it working with term_exists
 		$term = ( $is_id ) ? (int) $term : $term;
-		$term_to_check = term_exists( $term );
+		$term_to_check = term_exists( $term, $taxonomy );
 		$to_return = array(
 			'taxonomy' => $taxonomy
 		);
 		// if term doesn't exist, create it.
 		if ( 0 === $term_to_check || null === $term_to_check ) {
-			$term_to_check = wp_insert_term( $term, $taxonomy, $attrs );
-			if ( is_wp_error( $term_to_check ) ) {
-				return false;
+			$alias_to_use = apply_filters( 'ai1ec_ics_import_alias', $term );
+			// the filter will either return null, the term_id to use or the original $term 
+			// if the filter is not run. Thus in need to check that $term !== $alias_to_use
+			if ( $alias_to_use && $alias_to_use !== $term ) {
+				$to_return['term_id'] = (int) $alias_to_use;
+				// check that the term matches the taxonomy
+				$tax = $this->get_taxonomy_for_term_id( term_exists( (int) $alias_to_use ) );
+				$to_return['taxonomy'] = $tax->taxonomy;
+			} else {
+				$term_to_check = wp_insert_term( $term, $taxonomy, $attrs );
+				if ( is_wp_error( $term_to_check ) ) {
+					return false;
+				}
+				$term_to_check = (object)$term_to_check;
+				$to_return['term_id'] = (int)$term_to_check->term_id;
 			}
-			$term_to_check = (object)$term_to_check;
-			$to_return['term_id'] = (int)$term_to_check->term_id;
 		} else {
-			$to_return['term_id'] = (int)$term_to_check;
+			$term_id = is_array( $term_to_check )
+				? $term_to_check['term_id']
+				: $term_to_check;
+			$to_return['term_id'] = (int)$term_id;
 			// when importing categories, use the mapping of the current site
 			// so place the term in the current taxonomy
 			if ( self::CATEGORIES === $taxonomy ) {
 				// check that the term matches the taxonomy
-				$tax = $this->_get_taxonomy_for_term_id( $term_to_check );
+				$tax = $this->get_taxonomy_for_term_id( $term_id );
 				$to_return['taxonomy'] = $tax->taxonomy;
 			}
 
@@ -164,12 +177,12 @@ class Ai1ec_Event_Taxonomy extends Ai1ec_Base {
 
 	/**
 	 * Get the taxonomy name from term id
-	 * 
+	 *
 	 * @param int $term
-	 * 
+	 *
 	 * @return stdClass The taxonomy nane
 	 */
-	protected function _get_taxonomy_for_term_id( $term ) {
+	public function get_taxonomy_for_term_id( $term_id ) {
 		$db = $this->_registry->get( 'dbi.dbi' );
 		return $db->get_row(
 			$db->prepare(
@@ -177,7 +190,7 @@ class Ai1ec_Event_Taxonomy extends Ai1ec_Base {
 				' AS terms INNER JOIN ' .
 				$db->get_table_name( 'term_taxonomy' ) .
 				' AS terms_taxonomy USING(term_id) '.
-				'WHERE terms.term_id = %d LIMIT 1', $term )
+				'WHERE terms.term_id = %d LIMIT 1', $term_id )
 		);
 	}
 }

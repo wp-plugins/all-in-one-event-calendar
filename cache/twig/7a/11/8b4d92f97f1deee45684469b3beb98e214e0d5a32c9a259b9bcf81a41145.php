@@ -321,135 +321,163 @@ class __TwigTemplate_7a118b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a
         echo "
 \t";
         // line 173
-        echo "\t<div class=\"ai1ec-form-group\">
-
-\t\t";
-        // line 175
-        if ((!twig_test_empty((isset($context["cat_select"]) ? $context["cat_select"] : null)))) {
-            // line 176
-            echo "\t\t\t<div class=\"ai1ec-col-sm-6\">
+        echo "\t";
+        if ((!twig_test_empty((isset($context["taxonomies"]) ? $context["taxonomies"] : null)))) {
+            // line 174
+            echo "\t\t";
+            $context['_parent'] = (array) $context;
+            $context['_seq'] = twig_ensure_traversable((isset($context["taxonomies"]) ? $context["taxonomies"] : null));
+            $context['loop'] = array(
+              'parent' => $context['_parent'],
+              'index0' => 0,
+              'index'  => 1,
+              'first'  => true,
+            );
+            if (is_array($context['_seq']) || (is_object($context['_seq']) && $context['_seq'] instanceof Countable)) {
+                $length = count($context['_seq']);
+                $context['loop']['revindex0'] = $length - 1;
+                $context['loop']['revindex'] = $length;
+                $context['loop']['length'] = $length;
+                $context['loop']['last'] = 1 === $length;
+            }
+            foreach ($context['_seq'] as $context["_key"] => $context["taxonomy"]) {
+                // line 175
+                echo "\t\t\t";
+                if (($this->getAttribute((isset($context["loop"]) ? $context["loop"] : null), "index") % 2 == 1)) {
+                    // line 176
+                    echo "\t\t\t\t<div class=\"ai1ec-form-group\">
+\t\t\t";
+                }
+                // line 178
+                echo "\t\t\t<div class=\"ai1ec-col-sm-";
+                echo ((($this->getAttribute((isset($context["loop"]) ? $context["loop"] : null), "last") && ($this->getAttribute((isset($context["loop"]) ? $context["loop"] : null), "index") % 2 == 1))) ? (12) : (6));
+                echo "\">
 \t\t\t\t";
-            // line 177
-            echo (isset($context["cat_select"]) ? $context["cat_select"] : null);
-            echo "
+                // line 179
+                echo (isset($context["taxonomy"]) ? $context["taxonomy"] : null);
+                echo "
 \t\t\t</div>
-\t\t\t<div class=\"ai1ec-col-sm-6\">
-\t\t\t\t";
-            // line 180
-            echo (isset($context["tag_select"]) ? $context["tag_select"] : null);
-            echo "
-\t\t\t</div>
-\t\t";
-        } else {
-            // line 183
-            echo "\t\t\t<div class=\"ai1ec-col-sm-12\">
-\t\t\t\t";
-            // line 184
-            echo (isset($context["tag_select"]) ? $context["tag_select"] : null);
-            echo "
-\t\t\t</div>
-\t\t";
+\t\t\t";
+                // line 181
+                if ((($this->getAttribute((isset($context["loop"]) ? $context["loop"] : null), "index") % 2 == 0) || $this->getAttribute((isset($context["loop"]) ? $context["loop"] : null), "last"))) {
+                    // line 182
+                    echo "\t\t\t\t</div>
+\t\t\t";
+                }
+                // line 184
+                echo "\t\t";
+                ++$context['loop']['index0'];
+                ++$context['loop']['index'];
+                $context['loop']['first'] = false;
+                if (isset($context['loop']['length'])) {
+                    --$context['loop']['revindex0'];
+                    --$context['loop']['revindex'];
+                    $context['loop']['last'] = 0 === $context['loop']['revindex0'];
+                }
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_iterated'], $context['_key'], $context['taxonomy'], $context['_parent'], $context['loop']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 185
+            echo "\t";
         }
-        // line 187
+        // line 186
         echo "
-\t</div>
-
 \t";
-        // line 191
+        // line 188
         echo "\t<div class=\"ai1ec-form-group\">
 \t\t<div class=\"ai1ec-col-sm-12\">
 \t\t\t<textarea id=\"ai1ec-description\" name=\"post_content\" class=\"ai1ec-form-control\" rows=\"4\"
 \t\t\t\t";
-        // line 194
+        // line 191
         if ($this->getAttribute((isset($context["required_fields"]) ? $context["required_fields"] : null), "is_description_required")) {
-            // line 195
+            // line 192
             echo "\t\t\t\t\tplaceholder=\"";
             echo twig_escape_filter($this->env, (isset($context["description_required"]) ? $context["description_required"] : null), "html_attr");
             echo "\"
 \t\t\t\t\trequired=\"true\"
 \t\t\t\t";
         } else {
-            // line 198
+            // line 195
             echo "\t\t\t\t\tplaceholder=\"";
             echo twig_escape_filter($this->env, (isset($context["description"]) ? $context["description"] : null), "html_attr");
             echo "\"
 \t\t\t\t";
         }
-        // line 200
+        // line 197
         echo "\t\t\t\t></textarea>
 \t\t</div>
 \t</div>
 
 \t";
-        // line 205
+        // line 202
         echo "\t<div class=\"ai1ec-form-group\">
 \t\t<div class=\"ai1ec-col-sm-6\">
 \t\t\t<input type=\"text\" id=\"ai1ec_contact_name\" name=\"ai1ec_contact_name\"
 \t\t\t";
-        // line 208
+        // line 205
         if ($this->getAttribute((isset($context["required_fields"]) ? $context["required_fields"] : null), "is_organizer_name_required")) {
-            // line 209
+            // line 206
             echo "\t\t\t\tplaceholder=\"";
             echo twig_escape_filter($this->env, (isset($context["organizer_name_required"]) ? $context["organizer_name_required"] : null), "html_attr");
             echo "\"
 \t\t\t\trequired=\"true\"
 \t\t\t";
         } else {
-            // line 212
+            // line 209
             echo "\t\t\t\tplaceholder=\"";
             echo twig_escape_filter($this->env, (isset($context["organizer_name"]) ? $context["organizer_name"] : null), "html_attr");
             echo "\"
 \t\t\t";
         }
-        // line 214
+        // line 211
         echo "\t\t\t\tclass=\"ai1ec-form-control\">
 \t\t</div>
 \t\t<div class=\"ai1ec-col-sm-6\">
 \t\t\t<input type=\"text\" id=\"ai1ec_contact_email\" name=\"ai1ec_contact_email\"
 \t\t\t\t";
-        // line 218
+        // line 215
         if ($this->getAttribute((isset($context["required_fields"]) ? $context["required_fields"] : null), "is_organizer_email_required")) {
-            // line 219
+            // line 216
             echo "\t\t\t\t\tplaceholder=\"";
             echo twig_escape_filter($this->env, (isset($context["organizer_email_required"]) ? $context["organizer_email_required"] : null), "html_attr");
             echo "\"
 \t\t\t\t\trequired=\"true\"
 \t\t\t\t";
         } else {
-            // line 222
+            // line 219
             echo "\t\t\t\t\tplaceholder=\"";
             echo twig_escape_filter($this->env, (isset($context["organizer_email"]) ? $context["organizer_email"] : null), "html_attr");
             echo "\"
 \t\t\t\t";
         }
-        // line 224
+        // line 221
         echo "\t\t\t\tclass=\"ai1ec-form-control\">
 \t\t</div>
 \t</div>
 
 \t<div id=\"ai1ec-extra-fields\">
 \t\t";
-        // line 230
+        // line 227
         echo "\t\t<div class=\"ai1ec-form-group\">
 \t\t\t<div class=\"ai1ec-col-sm-4\">
-\t\t\t\t<div id=\"ai1ec_cost_wrap\" class=\"ai1ec-collapse\">
+\t\t\t\t<div id=\"ai1ec_cost_wrap\" class=\"ai1ec-collapse ai1ec-in\">
 \t\t\t\t\t<input type=\"text\" id=\"ai1ec_cost\" name=\"ai1ec_cost\"
 \t\t\t\t\t\tplaceholder=\"";
-        // line 234
+        // line 231
         echo twig_escape_filter($this->env, (isset($context["cost_placeholder"]) ? $context["cost_placeholder"] : null), "html_attr");
         echo "\"
 \t\t\t\t\t\tclass=\"ai1ec-form-control\">
 \t\t\t\t</div>
 \t\t\t\t<label for=\"ai1ec_is_free\" class=\"ai1ec-checkbox\">
 \t\t\t\t\t<input type=\"checkbox\"
-\t\t\t\t\t\tchecked=\"checked\"
 \t\t\t\t\t\tname=\"ai1ec_is_free\"
 \t\t\t\t\t\tdata-toggle=\"ai1ec-collapse\"
 \t\t\t\t\t\tdata-target=\"#ai1ec_cost_wrap\"
 \t\t\t\t\t\tid=\"ai1ec_is_free\"
 \t\t\t\t\t\tvalue=\"1\">
 \t\t\t\t\t";
-        // line 245
+        // line 241
         echo twig_escape_filter($this->env, (isset($context["free_label"]) ? $context["free_label"] : null), "html", null, true);
         echo "
 \t\t\t\t</label>
@@ -457,7 +485,7 @@ class __TwigTemplate_7a118b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a
 \t\t\t<div class=\"ai1ec-col-sm-8\">
 \t\t\t\t<input type=\"text\" id=\"ai1ec_ticket_url\" name=\"ai1ec_ticket_url\"
 \t\t\t\t\tplaceholder=\"";
-        // line 250
+        // line 246
         echo twig_escape_filter($this->env, (isset($context["registration_url"]) ? $context["registration_url"] : null), "html_attr");
         echo "\"
 \t\t\t\t\tclass=\"ai1ec-form-control\">
@@ -465,66 +493,78 @@ class __TwigTemplate_7a118b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a
 \t\t</div>
 
 \t\t";
-        // line 256
+        // line 252
         echo "\t\t<div class=\"ai1ec-form-group\">
 \t\t\t<div class=\"ai1ec-col-sm-4\">
 \t\t\t\t<input type=\"text\" id=\"ai1ec_contact_phone\" name=\"ai1ec_contact_phone\"
 \t\t\t\t\t";
-        // line 259
+        // line 255
         if ($this->getAttribute((isset($context["required_fields"]) ? $context["required_fields"] : null), "is_phonenumber_required")) {
-            // line 260
+            // line 256
             echo "\t\t\t\t\t\tplaceholder=\"";
             echo twig_escape_filter($this->env, (isset($context["phone_number_required"]) ? $context["phone_number_required"] : null), "html_attr");
             echo "\"
 \t\t\t\t\t\trequired=\"true\"
 \t\t\t\t\t";
         } else {
-            // line 263
+            // line 259
             echo "\t\t\t\t\t\tplaceholder=\"";
             echo twig_escape_filter($this->env, (isset($context["phone_number"]) ? $context["phone_number"] : null), "html_attr");
             echo "\"
 \t\t\t\t\t";
         }
-        // line 265
+        // line 261
         echo "\t\t\t\t\tclass=\"ai1ec-form-control\">
 \t\t\t</div>
 \t\t\t<div class=\"ai1ec-col-sm-8\">
 \t\t\t\t<input type=\"text\" id=\"ai1ec_contact_url\" name=\"ai1ec_contact_url\"
 \t\t\t\t\t";
-        // line 269
+        // line 265
         if ($this->getAttribute((isset($context["required_fields"]) ? $context["required_fields"] : null), "is_contact_required")) {
-            // line 270
+            // line 266
             echo "\t\t\t\t\t\tplaceholder=\"";
             echo twig_escape_filter($this->env, (isset($context["external_website_required"]) ? $context["external_website_required"] : null), "html_attr");
             echo "\"
 \t\t\t\t\t\trequired=\"true\"
 \t\t\t\t\t";
         } else {
-            // line 273
+            // line 269
             echo "\t\t\t\t\t\tplaceholder=\"";
             echo twig_escape_filter($this->env, (isset($context["external_website"]) ? $context["external_website"] : null), "html_attr");
             echo "\"
 \t\t\t\t\t";
         }
-        // line 275
+        // line 271
         echo "\t\t\t\t\tclass=\"ai1ec-form-control\">
 \t\t\t</div>
 \t\t</div>
 \t</div>
 
 \t";
-        // line 281
+        // line 277
         echo "\t";
         if ((isset($context["allow_uploads"]) ? $context["allow_uploads"] : null)) {
-            // line 282
+            // line 278
             echo "\t\t<div class=\"ai1ec-form-group\">
 \t\t\t<div class=\"ai1ec-col-sm-3\">
 \t\t\t\t<label for=\"ai1ec-image\" class=\"ai1ec-file-upload-label\">
-\t\t\t\t\t";
-            // line 285
-            echo twig_escape_filter($this->env, (isset($context["image_label"]) ? $context["image_label"] : null), "html", null, true);
-            echo "
-\t\t\t\t</label>
+\t\t\t\t";
+            // line 281
+            if ($this->getAttribute((isset($context["required_fields"]) ? $context["required_fields"] : null), "is_image_required")) {
+                // line 282
+                echo "\t\t\t\t\t";
+                echo twig_escape_filter($this->env, (isset($context["image_label_required"]) ? $context["image_label_required"] : null), "html", null, true);
+                echo "
+\t\t\t\t";
+            } else {
+                // line 284
+                echo "\t\t\t\t\t";
+                echo twig_escape_filter($this->env, (isset($context["image_label"]) ? $context["image_label"] : null), "html", null, true);
+                echo "
+\t\t\t\t";
+            }
+            // line 286
+            echo "\t\t\t\t</label>
 \t\t\t</div>
 \t\t\t<div class=\"ai1ec-col-sm-9\">
 \t\t\t\t<div class=\"ai1ec-fileupload ai1ec-fileupload-new\" data-provides=\"fileupload\">
@@ -549,7 +589,14 @@ class __TwigTemplate_7a118b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a
             echo twig_escape_filter($this->env, (isset($context["change_label"]) ? $context["change_label"] : null), "html", null, true);
             echo "
 \t\t\t\t\t\t</span>
-\t\t\t\t\t\t<input type=\"file\" name=\"ai1ec_image\">
+\t\t\t\t\t\t<input type=\"file\" name=\"ai1ec_image\" ";
+            // line 302
+            if ($this->getAttribute((isset($context["required_fields"]) ? $context["required_fields"] : null), "is_image_required")) {
+                echo " required=\"true\" placeholder=\"";
+                echo twig_escape_filter($this->env, (isset($context["image_label_required"]) ? $context["image_label_required"] : null), "html", null, true);
+                echo "\"";
+            }
+            echo ">
 \t\t\t\t\t</span>
 \t\t\t\t\t<a href=\"#\" class=\"ai1ec-btn ai1ec-btn-default ai1ec-text-danger ai1ec-fileupload-exists\" data-dismiss=\"fileupload\">
 \t\t\t\t\t\t<i class=\"ai1ec-fa ai1ec-fa-times\"></i>
@@ -566,56 +613,42 @@ class __TwigTemplate_7a118b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a
         // line 312
         echo "
 \t";
-        // line 314
-        echo "\t";
-        if ((isset($context["recaptcha_key"]) ? $context["recaptcha_key"] : null)) {
-            // line 315
-            echo "\t\t<div class=\"ai1ec-recaptcha\"
-\t\t\tdata-placeholder=\"";
-            // line 316
-            echo twig_escape_filter($this->env, (isset($context["verification_words"]) ? $context["verification_words"] : null), "html_attr");
-            echo "\"
-\t\t\tdata-recaptcha-key=\"";
-            // line 317
-            echo twig_escape_filter($this->env, (isset($context["recaptcha_key"]) ? $context["recaptcha_key"] : null), "html_attr");
-            echo "\">
-\t\t\t<div class=\"ai1ec-initializing-message\">
-\t\t\t\t";
-            // line 319
-            echo twig_escape_filter($this->env, (isset($context["loading_recaptcha"]) ? $context["loading_recaptcha"] : null), "html", null, true);
+        // line 313
+        if ((array_key_exists("form_captcha_challenge", $context) && (isset($context["form_captcha_challenge"]) ? $context["form_captcha_challenge"] : null))) {
+            // line 314
+            echo "\t\t";
+            echo (isset($context["form_captcha_challenge"]) ? $context["form_captcha_challenge"] : null);
             echo "
-\t\t\t</div>
-\t\t</div>
 \t";
         }
-        // line 323
+        // line 316
         echo "
 \t";
-        // line 324
+        // line 317
         if ((isset($context["require_disclaimer"]) ? $context["require_disclaimer"] : null)) {
-            // line 325
+            // line 318
             echo "\t\t<div class=\"ai1ec-alert ai1ec-alert-danger ai1ec-hide ai1ec-required-disclaimer\">
 \t\t\t";
-            // line 326
+            // line 319
             echo twig_escape_filter($this->env, (isset($context["submit_event_agreement"]) ? $context["submit_event_agreement"] : null), "html", null, true);
             echo "
 \t\t</div>
 \t";
         }
-        // line 329
+        // line 322
         echo "
 \t";
-        // line 330
+        // line 323
         if ((isset($context["require_disclaimer"]) ? $context["require_disclaimer"] : null)) {
-            // line 331
+            // line 324
             echo "\t\t<div class=\"ai1ec-form-group\">
 \t\t\t<div class=\"ai1ec-col-sm-12\">
 \t\t\t\t<label for=\"require_disclaimer\" class=\"ai1ec-checkbox\">
 \t\t\t\t\t<input type=\"checkbox\" id=\"require_disclaimer\" value=\"1\" />
 \t\t\t\t\t\t";
-            // line 335
+            // line 328
             echo sprintf((isset($context["submit_event_agreed"]) ? $context["submit_event_agreed"] : null), "data-toggle=\"ai1ec-collapse\" data-target=\"#show_disclaimer\" class=\"ai1ec-collapsible-toggle\" id=\"open_require_disclaimer\"");
-            // line 336
+            // line 329
             echo "
 \t\t\t\t</label>
 \t\t\t</div>
@@ -624,7 +657,7 @@ class __TwigTemplate_7a118b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a
 \t\t\t<div class=\"ai1ec-col-sm-12\">
 \t\t\t\t<div class=\"well well-small\">
 \t\t\t\t\t";
-            // line 343
+            // line 336
             echo (isset($context["disclaimer"]) ? $context["disclaimer"] : null);
             echo "
 \t\t\t\t</div>
@@ -632,7 +665,7 @@ class __TwigTemplate_7a118b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a
 \t\t</div>
 \t";
         }
-        // line 348
+        // line 341
         echo "
 </div>
 
@@ -640,7 +673,7 @@ class __TwigTemplate_7a118b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a
 \t<a href=\"#\" class=\"ai1ec-btn ai1ec-btn-lg ai1ec-btn-primary ai1ec-submit\">
 \t\t<i class=\"ai1ec-fa ai1ec-fa-upload ai1ec-fa-fw\"></i>
 \t\t";
-        // line 354
+        // line 347
         echo twig_escape_filter($this->env, (isset($context["submit_event"]) ? $context["submit_event"] : null), "html", null, true);
         echo "
 \t\t<i class=\"ai1ec-fa ai1ec-chevron-right\"></i>
@@ -663,6 +696,6 @@ class __TwigTemplate_7a118b4d92f97f1deee45684469b3beb98e214e0d5a32c9a259b9bcf81a
 
     public function getDebugInfo()
     {
-        return array (  644 => 354,  636 => 348,  628 => 343,  619 => 336,  617 => 335,  611 => 331,  609 => 330,  606 => 329,  600 => 326,  597 => 325,  595 => 324,  592 => 323,  585 => 319,  580 => 317,  576 => 316,  573 => 315,  570 => 314,  567 => 312,  558 => 306,  549 => 300,  543 => 297,  534 => 291,  525 => 285,  520 => 282,  517 => 281,  510 => 275,  504 => 273,  497 => 270,  495 => 269,  489 => 265,  483 => 263,  476 => 260,  474 => 259,  469 => 256,  461 => 250,  453 => 245,  439 => 234,  433 => 230,  426 => 224,  420 => 222,  413 => 219,  411 => 218,  405 => 214,  399 => 212,  392 => 209,  390 => 208,  385 => 205,  379 => 200,  373 => 198,  366 => 195,  364 => 194,  359 => 191,  354 => 187,  348 => 184,  345 => 183,  339 => 180,  333 => 177,  330 => 176,  328 => 175,  324 => 173,  321 => 171,  315 => 167,  312 => 166,  304 => 160,  301 => 159,  297 => 157,  295 => 156,  288 => 151,  282 => 149,  275 => 146,  273 => 145,  268 => 142,  262 => 137,  256 => 135,  249 => 132,  242 => 128,  236 => 123,  216 => 119,  212 => 118,  207 => 117,  203 => 116,  192 => 110,  183 => 103,  177 => 100,  170 => 95,  155 => 85,  145 => 78,  138 => 74,  134 => 73,  119 => 62,  107 => 54,  101 => 51,  91 => 44,  80 => 39,  66 => 29,  35 => 9,  30 => 7,  63 => 21,  54 => 17,  43 => 12,  24 => 3,  21 => 2,  82 => 21,  73 => 18,  70 => 24,  64 => 15,  55 => 12,  52 => 11,  48 => 15,  46 => 18,  41 => 7,  37 => 10,  32 => 4,  22 => 2,  88 => 26,  81 => 24,  79 => 23,  75 => 36,  68 => 20,  57 => 18,  49 => 19,  44 => 12,  31 => 7,  27 => 7,  265 => 123,  259 => 120,  252 => 117,  250 => 116,  247 => 131,  241 => 112,  234 => 109,  232 => 108,  229 => 121,  227 => 106,  219 => 100,  213 => 96,  205 => 93,  201 => 91,  199 => 90,  196 => 112,  190 => 86,  186 => 84,  184 => 83,  181 => 82,  173 => 79,  169 => 77,  167 => 76,  162 => 89,  160 => 72,  157 => 71,  151 => 69,  149 => 68,  142 => 63,  135 => 59,  130 => 56,  128 => 69,  125 => 54,  117 => 49,  113 => 58,  108 => 45,  106 => 44,  103 => 43,  94 => 39,  89 => 36,  87 => 35,  84 => 40,  76 => 30,  72 => 21,  67 => 23,  65 => 19,  61 => 26,  56 => 24,  53 => 14,  51 => 17,  40 => 11,  34 => 5,  28 => 3,  26 => 4,  36 => 10,  23 => 3,  19 => 1,);
+        return array (  677 => 347,  669 => 341,  661 => 336,  652 => 329,  650 => 328,  644 => 324,  642 => 323,  639 => 322,  633 => 319,  630 => 318,  628 => 317,  625 => 316,  619 => 314,  617 => 313,  614 => 312,  605 => 306,  594 => 302,  589 => 300,  583 => 297,  574 => 291,  567 => 286,  561 => 284,  555 => 282,  553 => 281,  548 => 278,  545 => 277,  538 => 271,  532 => 269,  525 => 266,  523 => 265,  517 => 261,  511 => 259,  504 => 256,  502 => 255,  497 => 252,  489 => 246,  481 => 241,  468 => 231,  462 => 227,  455 => 221,  449 => 219,  442 => 216,  440 => 215,  434 => 211,  428 => 209,  421 => 206,  419 => 205,  414 => 202,  408 => 197,  402 => 195,  395 => 192,  393 => 191,  388 => 188,  385 => 186,  382 => 185,  368 => 184,  364 => 182,  362 => 181,  357 => 179,  352 => 178,  348 => 176,  345 => 175,  327 => 174,  324 => 173,  321 => 171,  315 => 167,  312 => 166,  304 => 160,  301 => 159,  297 => 157,  295 => 156,  288 => 151,  282 => 149,  275 => 146,  273 => 145,  268 => 142,  262 => 137,  256 => 135,  249 => 132,  247 => 131,  242 => 128,  236 => 123,  229 => 121,  212 => 118,  207 => 117,  203 => 116,  192 => 110,  183 => 103,  170 => 95,  138 => 74,  128 => 69,  107 => 54,  91 => 44,  80 => 39,  66 => 29,  61 => 26,  43 => 12,  73 => 18,  64 => 15,  55 => 12,  88 => 23,  79 => 23,  75 => 36,  68 => 20,  57 => 18,  118 => 43,  96 => 33,  85 => 22,  69 => 20,  60 => 16,  58 => 13,  49 => 19,  36 => 10,  204 => 84,  196 => 112,  177 => 100,  171 => 73,  165 => 69,  163 => 63,  158 => 61,  154 => 60,  150 => 59,  146 => 58,  142 => 57,  136 => 56,  130 => 54,  105 => 36,  101 => 51,  93 => 42,  87 => 29,  81 => 24,  74 => 32,  67 => 23,  65 => 19,  59 => 18,  53 => 14,  44 => 8,  25 => 3,  21 => 2,  77 => 34,  70 => 24,  62 => 21,  54 => 17,  50 => 15,  29 => 6,  40 => 11,  38 => 5,  27 => 7,  218 => 120,  216 => 119,  208 => 116,  201 => 115,  199 => 82,  188 => 109,  179 => 102,  173 => 98,  167 => 95,  162 => 89,  160 => 91,  155 => 85,  145 => 78,  141 => 81,  134 => 73,  126 => 71,  124 => 66,  121 => 65,  119 => 62,  113 => 58,  109 => 57,  104 => 56,  100 => 55,  92 => 32,  84 => 40,  76 => 19,  72 => 21,  63 => 21,  56 => 24,  51 => 10,  30 => 7,  46 => 18,  32 => 8,  26 => 4,  23 => 3,  48 => 15,  33 => 7,  28 => 5,  24 => 3,  41 => 11,  39 => 10,  37 => 10,  35 => 9,  31 => 7,  19 => 1,);
     }
 }

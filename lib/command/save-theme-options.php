@@ -40,11 +40,13 @@ class Ai1ec_Command_Save_Theme_Options extends Ai1ec_Command_Save_Abstract {
 				}
 			}
 			$_POST = add_magic_quotes( $_POST );
+
 		}
 		// Handle reset of theme options.
 		elseif ( isset( $_POST[Ai1ec_View_Theme_Options::RESET_ID] ) ) {
-			$lessphp = $this->_registry->get( 'less.lessphp' );
-			$variables = $lessphp->get_less_variable_data_from_config_file();
+			$option = $this->_registry->get( 'model.option' );
+			$option->delete( 'ai1ec_less_variables' );
+			$option->delete( 'ai1ec_render_css' );
 			do_action( 'ai1ec_reset_less_variables' );
 		}
 
@@ -58,7 +60,7 @@ class Ai1ec_Command_Save_Theme_Options extends Ai1ec_Command_Save_Abstract {
 		);
 
 		return array(
-			'url' => admin_url(
+			'url'        => ai1ec_admin_url(
 				'edit.php?post_type=ai1ec_event&page=all-in-one-event-calendar-edit-css'
 			),
 			'query_args' => array(),

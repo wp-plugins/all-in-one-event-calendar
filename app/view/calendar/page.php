@@ -16,7 +16,6 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 	 */
 	protected $_exact_dates = NULL;
 
-
 	/**
 	 * Public constructor
 	 *
@@ -30,11 +29,17 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 	/**
 	 * Get the content if the calendar page
 	 *
-	 * @param Ai1ec_Request_Parser $request
+	 * @param Ai1ec_Request_Parser $request Request object.
+	 * @param string               $caller  Method caller, expected one of
+	 *                                      ['shortcode', 'render-command']
+	 *                                      Defaults to 'render-command'.
+	 *
+	 * @return string Content.
 	 */
-	public function get_content( Ai1ec_Request_Parser $request ) {
-
-
+	public function get_content(
+		Ai1ec_Request_Parser $request,
+		$caller = 'render-command'
+	) {
 		// Get args for the current view; required to generate HTML for views
 		// dropdown list, categories, tags, subscribe buttons, and of course the
 		// view itself.
@@ -52,6 +57,10 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 				'</p></div></div>';
 		}
 		$type       = $request->get( 'request_type' );
+
+		$is_json = $this->_registry->get( 'http.request' )->is_json_required(
+			$view_args['request_format'], $action
+		);
 
 		// Add view-specific args to the current view args.
 		$exact_date = $this->get_exact_date( $request );
@@ -79,7 +88,7 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 				$request
 			);
 		}
-		$view_args  = $view_obj->get_extra_arguments( $view_args, $exact_date );
+		$view_args = $view_obj->get_extra_arguments( $view_args, $exact_date );
 
 		// Get HTML for views dropdown list.
 		$dropdown_args = $view_args;
@@ -95,29 +104,30 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 		$view_args['views_dropdown'] = $views_dropdown;
 
 		// Get HTML for categories and for tags
-		$taxonomy   = $this->_registry->get( 'view.calendar.taxonomy' );
-		$categories = $taxonomy->get_html_for_categories(
+		$taxonomy          = $this->_registry->get( 'view.calendar.taxonomy' );
+		$categories        = $taxonomy->get_html_for_categories(
 			$view_args
 		);
-		$tags       = $taxonomy->get_html_for_tags(
+		$tags              = $taxonomy->get_html_for_tags(
 			$view_args,
 			true
 		);
 
 		// Get HTML for subscribe buttons.
-		$subscribe_buttons =
-			$this->get_html_for_subscribe_buttons( $view_args );
-		// Get HTML for view itself.
-		$view       = $view_obj->get_content( $view_args );
+		$subscribe_buttons = $this->get_html_for_subscribe_buttons( $view_args );
 
-		$router = $this->_registry->get( 'routing.router' );
-		$are_filters_set = $router->is_at_least_one_filter_set_in_request(
+		// Get HTML for view itself.
+		$view              = $view_obj->get_content( $view_args );
+
+		$router            = $this->_registry->get( 'routing.router' );
+		$are_filters_set   = $router->is_at_least_one_filter_set_in_request(
 			$view_args
 		);
 
 		if (
 			( $view_args['no_navigation'] || $type !== 'html' ) &&
-			'jsonp' !== $type
+			'jsonp' !== $type &&
+			$is_json
 		) {
 
 			// send data both for json and jsonp as shortcodes are jsonp
@@ -128,6 +138,7 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 				'views_dropdown'     => $views_dropdown,
 				'subscribe_buttons'  => $subscribe_buttons,
 				'are_filters_set'    => $are_filters_set,
+				'is_json'            => $is_json,
 				'custom_filters'     => apply_filters(
 					'ai1ec_custom_filters_html',
 					'',
@@ -149,7 +160,8 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 				'contribution_buttons'         => apply_filters(
 					'ai1ec_contribution_buttons',
 					'',
-					$type
+					$type,
+					$caller
 				),
 				'show_dropdowns'               => apply_filters(
 					'ai1ec_show_dropdowns',
@@ -209,6 +221,13 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 				'views_dropdown'     => $views_dropdown,
 				'subscribe_buttons'  => $subscribe_buttons,
 				'are_filters_set'    => $are_filters_set,
+				'is_json'            => $is_json,
+				'custom_filters'     => apply_filters(
+					'ai1ec_custom_filters_html',
+					'',
+					$view_args,
+					$request
+				),
 			);
 		}
 	}
@@ -221,21 +240,25 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 	 * @return string Rendered HTML to include in output.
 	 */
 	public function get_html_for_subscribe_buttons( array $view_args ) {
-		$turn_off_subscribe = $this->_registry->get( 'model.settings' )
-			->get( 'turn_off_subscription_buttons' );
+		$settings           = $this->_registry->get( 'model.settings' );
+		$turn_off_subscribe = $settings->get( 'turn_off_subscription_buttons' );
 		if ( $turn_off_subscribe ) {
 			return '';
 		}
+
 		$args = array(
-			'url_args'                => '',
-			'is_filtered'             => false,
-			'export_url'              => AI1EC_EXPORT_URL,
-			'export_url_no_html'      => AI1EC_EXPORT_URL . '&no_html=true',
-			'text_filtered'           => __( 'Subscribe to filtered calendar', AI1EC_PLUGIN_NAME ),
-			'text_subscribe'          => __( 'Subscribe', AI1EC_PLUGIN_NAME ),
-			'text'                    => $this->_registry
+			'url_args'           => '',
+			'is_filtered'        => false,
+			'export_url'         => AI1EC_EXPORT_URL,
+			'export_url_no_html' => AI1EC_EXPORT_URL . '&no_html=true',
+			'text_filtered'      => Ai1ec_I18n::__( 'Subscribe to filtered calendar' ),
+			'text_subscribe'     => Ai1ec_I18n::__( 'Subscribe' ),
+			'text_get_calendar'  => Ai1ec_I18n::__( 'Get a Timely Calendar' ),
+			'show_get_calendar'  => ! $settings->get( 'disable_get_calendar_button' ),
+			'text'               => $this->_registry
 				->get( 'view.calendar.subscribe-button' )
 				->get_labels(),
+			'placement'          => 'up',
 		);
 		if ( ! empty( $view_args['cat_ids'] ) ) {
 			$args['url_args'] .= '&ai1ec_cat_ids=' .
@@ -315,7 +338,7 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 					$val['longname'],
 					1
 				);
-				if ( AI1EC_USE_FRONTEND_RENDERING ) {
+				if ( $settings->get( 'ai1ec_use_frontend_rendering' ) ) {
 					$options['request_format'] = 'json';
 				}
 				$href = $this->_registry->get( 'html.element.href', $options );

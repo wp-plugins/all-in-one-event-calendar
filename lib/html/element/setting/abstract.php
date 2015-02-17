@@ -64,10 +64,29 @@ abstract class Ai1ec_Html_Element_Settings extends Ai1ec_Base
 	 * Generate settings output line.
 	 *
 	 * @param string $output Generated output to finalize.
+	 * @param bool   $wrap   Whether content should be wrapped with div or not.
 	 *
 	 * @return string Finalized HTML snippet.
 	 */
-	public function render( $output = '' ) {
+	public function render( $output = '', $wrap = true ) {
+		if ( isset( $this->_args['renderer']['condition'] ) ) {
+			$condition = $this->_args['renderer']['condition'];
+			if ( is_bool( $condition ) ) {
+				$render = $condition;
+			} else {
+				$callback = explode( ':', $this->_args['renderer']['condition'] );
+				$render   = $this->_registry->dispatch(
+					$callback[0],
+					$callback[1]
+				);
+			}
+			if ( ! $render ) {
+				return '';
+			}
+		}
+		if ( ! $wrap ) {
+			return $output;
+		}
 		return '<div class="ai1ec-form-group">' . $output . '</div>';
 	}
 

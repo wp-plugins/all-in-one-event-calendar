@@ -76,37 +76,53 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 		$duration,
 		$timezone
 	) {
+		$restore_timezone  = date_default_timezone_get();
 		$recurrence_parser = $this->_registry->get( 'recurrence.rule' );
-		$evs               = array();
+		$events            = array();
 
-		$startdate = array(
-			'timestamp' => $_start,
-			'tz'        => $timezone,
-		);
-		$start			   = $event_instance['start'];
+		$start             = $event_instance['start'];
 		$wdate             = $startdate = $enddate
-		                   = iCalUtilityFunctions::_timestamp2date( $startdate, 6 );
+			= $this->_parsed_date_array( $_start, $timezone );
 		$enddate['year']   = $enddate['year'] + 3;
 		$exclude_dates	   = array();
 		$recurrence_dates  = array();
+		if ( $recurrence_dates = $event->get( 'recurrence_dates' ) ) {
+			$recurrence_dates  = $this->_populate_recurring_dates(
+				$recurrence_dates,
+				$startdate,
+				$timezone
+			);
+		}
+		if ( $exception_dates = $event->get( 'exception_dates' ) ) {
+			$exclude_dates  = $this->_populate_recurring_dates(
+				$exception_dates,
+				$startdate,
+				$timezone
+			);
+		}
 		if ( $event->get( 'exception_rules' ) ) {
 			// creat an array for the rules
 			$exception_rules = $recurrence_parser
 				->build_recurrence_rules_array(
 					$event->get( 'exception_rules' )
 				);
-			$exception_rules = iCalUtilityFunctions::_setRexrule(
-				$exception_rules
-			);
-			$result = array();
-			// The first array is the result and it is passed by reference
-			iCalUtilityFunctions::_recur2date(
-				$exclude_dates,
-				$exception_rules,
-				$wdate,
-				$startdate,
-				$enddate
-			);
+			unset($exception_rules['EXDATE']);
+			if ( ! empty( $exception_rules ) ) {
+				$exception_rules = iCalUtilityFunctions::_setRexrule(
+					$exception_rules
+				);
+				$result = array();
+				date_default_timezone_set( $timezone );
+				// The first array is the result and it is passed by reference
+				iCalUtilityFunctions::_recur2date(
+					$exclude_dates,
+					$exception_rules,
+					$wdate,
+					$startdate,
+					$enddate
+				);
+				date_default_timezone_set( $restore_timezone );
+			}
 		}
 		$recurrence_rules = $recurrence_parser
 			->build_recurrence_rules_array(
@@ -114,46 +130,33 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 			);
 
 		$recurrence_rules = iCalUtilityFunctions::_setRexrule( $recurrence_rules );
-		iCalUtilityFunctions::_recur2date(
-			$recurrence_dates,
-			$recurrence_rules,
-			$wdate,
-			$startdate,
-			$enddate
-		);
+		if ( $recurrence_rules ) {
+			date_default_timezone_set( $timezone );
+			iCalUtilityFunctions::_recur2date(
+				$recurrence_dates,
+				$recurrence_rules,
+				$wdate,
+				$startdate,
+				$enddate
+			);
+			date_default_timezone_set( $restore_timezone );
+		}
 
-		
+		if ( ! is_array( $recurrence_dates ) ) {
+			$recurrence_dates = array();
+		}
 		$recurrence_dates = array_keys( $recurrence_dates );
 		// Add the instances
-		foreach ( $recurrence_dates as $date ) {
-
+		foreach ( $recurrence_dates as $timestamp ) {
 			// The arrays are in the form timestamp => true so an isset call is what we need
-			if ( isset( $exclude_dates[$date] ) ) {
-				continue;
-			}
-			$event_instance['start'] = $date;
-			$event_instance['end']	 = $date + $duration;
-			$excluded	= false;
-
-			// Check if exception dates match this occurence
-			if ( $exception_dates = $event->get( 'exception_dates' ) ) {
-				$match_exdates = $this->date_match_exdates(
-					$date,
-					$exception_dates,
-					$timezone
-				);
-				if ( $match_exdates ) {
-					$excluded = true;
-				}
-			}
-
-			// Add event only if it is not excluded
-			if ( false === $excluded ) {
-				$evs[] = $event_instance;
+			if ( ! isset( $exclude_dates[$timestamp] ) ) {
+				$event_instance['start'] = $timestamp;
+				$event_instance['end']	 = $timestamp + $duration;
+				$events[$timestamp] = $event_instance;
 			}
 		}
 
-		return $evs;
+		return $events;
 	}
 
 	/**
@@ -164,51 +167,46 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 	 * @return bool Success.
 	 */
 	public function create( Ai1ec_Event $event ) {
-        $evs = array();
-        $e	 = array(
-            'post_id' => $event->get( 'post_id' ),
-            'start'   => $event->get( 'start'   )->format_to_gmt(),
-            'end'     => $event->get( 'end'     )->format_to_gmt(),
-        );
-        $duration = $event->get( 'end' )->diff_sec( $event->get( 'start' ) );
+		$events     = array();
+		$event_item = array(
+			'post_id' => $event->get( 'post_id' ),
+			'start'   => $event->get( 'start'   )->format_to_gmt(),
+			'end'     => $event->get( 'end'     )->format_to_gmt(),
+		);
+		$duration = $event->get( 'end' )->diff_sec( $event->get( 'start' ) );
 
-        // Always cache initial instance
-        $evs[] = $e;
+		$_start = $event->get( 'start' )->format_to_gmt();
+		$_end   = $event->get( 'end'   )->format_to_gmt();
 
-        $_start = $event->get( 'start' )->format_to_gmt();
-        $_end   = $event->get( 'end'   )->format_to_gmt();
+		// Always cache initial instance
+		$events[$_start] = $event_item;
 
-        if ( $event->get( 'recurrence_rules' ) ) {
-			$_restore_default_tz = date_default_timezone_get();
-			$start_timezone      = $event->get( 'start' )->get_timezone();
-			date_default_timezone_set( $start_timezone );
-			$evs = array_merge(
-				$evs,
-				$this->create_instances_by_recurrence(
-					$event,
-					$e,
-					$_start,
-					$duration,
-					$start_timezone
-				)
+		if ( $event->get( 'recurrence_rules' ) || $event->get( 'recurrence_dates' ) ) {
+			/**
+			 * NOTE: this timezone switch is intentional, because underlying
+			 * library doesn't allow us to pass it as an argument. Though no
+			 * lesser importance shall be given to the restore call bellow.
+			 */
+			$start_datetime = $event->get( 'start' );
+			$start_datetime->assert_utc_timezone();
+			$start_timezone = $this->_registry->get( 'date.timezone' )
+				->get_name( $start_datetime->get_timezone() );
+			$events += $this->create_instances_by_recurrence(
+				$event,
+				$event_item,
+				$_start,
+				$duration,
+				$start_timezone
 			);
-			date_default_timezone_set( $_restore_default_tz );
-			unset( $_restore_default_tz );
-        }
-
-        // Make entries unique (sometimes recurrence generator creates duplicates?)
-        $evs_unique = array();
-        foreach ( $evs as $ev ) {
-            $evs_unique[md5( serialize( $ev ) )] = $ev;
-        }
+		}
 
 		$search_helper = $this->_registry->get( 'model.search' );
-        foreach ( $evs_unique as $e ) {
-            // Find out if this event instance is already accounted for by an
-            // overriding 'RECURRENCE-ID' of the same iCalendar feed (by comparing the
-            // UID, start date, recurrence). If so, then do not create duplicate
-            // instance of event.
-            $start             = $e['start'];
+		foreach ( $events as $event_item ) {
+			// Find out if this event instance is already accounted for by an
+			// overriding 'RECURRENCE-ID' of the same iCalendar feed (by comparing the
+			// UID, start date, recurrence). If so, then do not create duplicate
+			// instance of event.
+			$start             = $event_item['start'];
 			$matching_event_id = null;
 			if ( $event->get( 'ical_uid' ) ) {
 				$matching_event_id = $search_helper->get_matching_event_id(
@@ -220,17 +218,17 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 				);
 			}
 
-            // If no other instance was found
-            if ( null === $matching_event_id ) {
+			// If no other instance was found
+			if ( null === $matching_event_id ) {
 				$this->_dbi->insert(
 					'ai1ec_event_instances',
-					$e,
+					$event_item,
 					array( '%d', '%d', '%d' )
 				);
-            }
-        }
+			}
+		}
 
-        return true;
+		return true;
 	}
 
 	/**
@@ -242,18 +240,18 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 	 *
 	 * @return bool True if given date is in rule.
 	 */
-    public function date_match_exdates( $date, $ics_rule, $timezone ) {
+	public function date_match_exdates( $date, $ics_rule, $timezone ) {
 		$ranges = $this->_get_date_ranges( $ics_rule, $timezone );
-        foreach ( $ranges as $interval ) {
+		foreach ( $ranges as $interval ) {
 			if ( $date >= $interval[0] && $date <= $interval[1] ) {
 				return true;
 			}
 			if ( $date <= $interval[0] ) {
 				break;
 			}
-        }
-        return false;
-    }
+		}
+		return false;
+	}
 
 	/**
 	 * Prepare date range list for fast exdate search.
@@ -286,6 +284,37 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 			}
 		}
 		return $ranges[$date_list];
+	}
+
+	protected function _populate_recurring_dates( $rule, array $start_struct, $timezone ) {
+		$start = clone $start_struct['_dt'];
+		$dates = array();
+		foreach ( explode( ',', $rule ) as $date ) {
+			$i_date = clone $start;
+			$spec   = sscanf( $date, '%04d%02d%02d' );
+			$i_date->set_date(
+				$spec[0],
+				$spec[1],
+				$spec[2]
+			);
+			$dates[$i_date->format_to_gmt()] = $i_date;
+		}
+		return $dates;
+	}
+
+	protected function _parsed_date_array( $startdate, $timezone ) {
+		$datetime = $this->_registry->get( 'date.time', $startdate, $timezone );
+		$parsed   = array(
+			'year'  => intval( $datetime->format( 'Y' ) ),
+			'month' => intval( $datetime->format( 'm' ) ),
+			'day'   => intval( $datetime->format( 'd' ) ),
+			'hour'  => intval( $datetime->format( 'H' ) ),
+			'min'   => intval( $datetime->format( 'i' ) ),
+			'sec'   => intval( $datetime->format( 's' ) ),
+			'tz'    => $datetime->get_timezone(),
+			'_dt'   => $datetime,
+		);
+		return $parsed;
 	}
 
 }
