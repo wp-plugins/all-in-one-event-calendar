@@ -1,44 +1,42 @@
 <div class="timely ai1ec-single-event
-	ai1ec-event-id-{{ event.get( 'post_id' ) }}
+	ai1ec-event-id-{{ post_id }}
 	{% if event.is_multiday %}ai1ec-multiday{% endif %}
 	{% if event.is_allday %}ai1ec-allday{% endif %}">
 
 <a id="ai1ec-event"></a>
 
-{% if show_subscribe_buttons or event.get( 'ticket_url' ) is not empty %}
-	<div class="ai1ec-actions">
-		<div class="ai1ec-btn-group-vertical ai1ec-clearfix">
-			{{ back_to_calendar | raw }}
-		</div>
-
-		<div class="ai1ec-btn-group-vertical ai1ec-clearfix">
-			{% if event.get( 'ticket_url' ) is not empty %}
-				<a href="{{ event.get( 'ticket_url' ) | e('html_attr') }}" target="_blank"
-					class="ai1ec-tickets ai1ec-btn ai1ec-btn-sm ai1ec-btn-primary
-						ai1ec-tooltip-trigger"
-						title="{{ event.get_runtime( 'tickets_url_label' ) | e('html_attr') }}"
-						data-placement="left">
-					<i class="ai1ec-fa ai1ec-fa-ticket ai1ec-fa-fw"></i>
-					<span class="ai1ec-hidden-xs">
-						{{ event.get_runtime( 'tickets_url_label' ) }}
-					</span>
-				</a>
-			{% endif %}
-			{% if show_subscribe_buttons %}
-				{% include 'subscribe-buttons.twig' with {
-					'button_classes':         'ai1ec-btn-dropdown',
-					'export_url':             subscribe_url,
-					'export_url_no_html':     subscribe_url_no_html,
-					'subscribe_label':        text_add_calendar,
-					'text':                   subscribe_buttons_text,
-				} %}
-			{% endif %}
-		</div>
-			{% if extra_buttons %}
-				{{ extra_buttons | raw }}
-			{% endif %}
+<div class="ai1ec-actions">
+	<div class="ai1ec-btn-group-vertical ai1ec-clearfix">
+		{{ back_to_calendar | raw }}
 	</div>
-{% endif %}
+
+	<div class="ai1ec-btn-group-vertical ai1ec-clearfix">
+		{% if ticket_url is not empty %}
+			<a href="{{ ticket_url | e( 'html_attr' ) }}" target="_blank"
+				class="ai1ec-tickets ai1ec-btn ai1ec-btn-sm ai1ec-btn-primary
+					ai1ec-tooltip-trigger"
+					title="{{ tickets_url_label | e( 'html_attr' ) }}"
+					data-placement="left">
+				<i class="ai1ec-fa ai1ec-fa-ticket ai1ec-fa-fw"></i>
+				<span class="ai1ec-hidden-xs">
+					{{ tickets_url_label }}
+				</span>
+			</a>
+		{% endif %}
+		{% if show_subscribe_buttons %}
+			{% include 'subscribe-buttons.twig' with {
+				'export_url':             subscribe_url,
+				'export_url_no_html':     subscribe_url_no_html,
+				'subscribe_label':        text_add_calendar,
+				'text':                   subscribe_buttons_text,
+			} %}
+		{% endif %}
+	</div>
+
+	{% if extra_buttons %}
+		{{ extra_buttons | raw }}
+	{% endif %}
+</div>
 
 {% if map is empty %}
 	{% set col1 = 'ai1ec-col-sm-3' %}
@@ -60,12 +58,12 @@
 			{{ event | timespan | raw }}
 			{% if timezone_info.show_timezone %}
 			<abbr class="ai1ec-initialism ai1ec-tooltip-trigger"
-				title="{{ timezone_info.text_timezone_title | e('html_attr') }}">{{ timezone_info.event_timezone }}</abbr>
+				title="{{ timezone_info.text_timezone_title | e( 'html_attr' ) }}">{{ timezone_info.event_timezone }}</abbr>
 			{% endif %}
 			{% include 'recurrence.twig' %}
 		</div>
-		<div class="ai1ec-hidden dt-start">{{ event.get( 'start' ) }}</div>
-		<div class="ai1ec-hidden dt-end">{{ event.get( 'end' ) }}</div>
+		<div class="ai1ec-hidden dt-start">{{ start }}</div>
+		<div class="ai1ec-hidden dt-end">{{ end }}</div>
 	</div>
 
 	{% if location is not empty %}
@@ -77,11 +75,11 @@
 		</div>
 	{% endif %}
 
-	{% if event.get( 'cost' ) is not empty or event.is_free %}
+	{% if cost is not empty or event.is_free %}
 		<div class="ai1ec-cost ai1ec-row">
 			<div class="ai1ec-field-label {{ col1 }}">{{ text_cost }}</div>
 			<div class="ai1ec-field-value {{ col2 }}">
-				{{ event.is_free ? text_free : event.get( 'cost' ) }}
+				{{ event.is_free ? text_free : cost }}
 			</div>
 		</div>
 	{% endif %}
@@ -97,7 +95,7 @@
 		<div class="ai1ec-categories ai1ec-row">
 			<div class="ai1ec-field-label {{ col1 }} ai1ec-col-xs-1">
 				<i class="ai1ec-fa ai1ec-fa-folder-open ai1ec-tooltip-trigger"
-					title="{{ text_categories | e('html_attr') }}"></i>
+					title="{{ text_categories | e( 'html_attr' ) }}"></i>
 			</div>
 			<div class="ai1ec-field-value {{ col2 }} ai1ec-col-xs-10">
 				{{ categories | raw }}
@@ -109,7 +107,7 @@
 		<div class="ai1ec-tags ai1ec-row">
 			<div class="ai1ec-field-label {{ col1 }} ai1ec-col-xs-1">
 				<i class="ai1ec-fa ai1ec-fa-tags ai1ec-tooltip-trigger"
-					title="{{ text_tags | e('html_attr') }}"></i>
+					title="{{ text_tags | e( 'html_attr' ) }}"></i>
 			</div>
 			<div class="ai1ec-field-value {{ col2 }} ai1ec-col-xs-10">
 				{{ tags | raw }}
@@ -125,7 +123,7 @@
 {% endif %}
 
 {% if not hide_featured_image %}
-	{% if event.get_runtime( 'content_img_url' ) is empty %}
+	{% if content_img_url is empty %}
 		{{ event | avatar( [
 			'post_thumbnail',
 			'location_avatar',

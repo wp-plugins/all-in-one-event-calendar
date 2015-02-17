@@ -16,6 +16,11 @@
 	.ai1ec-label-default;
 }
 
+// Notices
+.ai1ec-message .button {
+	vertical-align: baseline !important;
+}
+
 // Category colors
 .ai1ec-color-swatch,
 .ai1ec-color-swatch-empty {
@@ -30,6 +35,32 @@
 	opacity: 0.8;
 	filter: alpha(opacity=80);
 	border-color: rgba(0,0,0,0.5);
+}
+
+// Taxonomies
+.ai1ec-taxonomy-header {
+	padding: 0 2px 0;
+	i {
+		font-size: 1.15em;
+		line-height: 1em;
+	}
+	> h1 {
+		margin: 18px 0 15px;
+	}
+	> .ai1ec-nav {
+		margin-bottom: 9px !important;
+	}
+}
+.ai1ec_event_page_all-in-one-event-calendar-custom-filter-group-menu,
+.edit-tags-php.post-type-ai1ec_event {
+	.wrap {
+		> h2 {
+			margin-top: 118px;
+		}
+		> .ai1ec-taxonomy-header + h2 {
+			margin-top: 0;
+		}
+	}
 }
 
 // Category image upload

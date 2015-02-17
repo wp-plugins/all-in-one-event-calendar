@@ -46,7 +46,10 @@ class Ai1ec_View_Admin_Settings extends Ai1ec_View_Admin_Abstract {
 				'object' => null
 			),
 			'action' =>
-				admin_url( '?controller=front&action=ai1ec_save_settings&plugin=' . AI1EC_PLUGIN_NAME ),
+				ai1ec_admin_url(
+					'?controller=front&action=ai1ec_save_settings&plugin=' .
+					AI1EC_PLUGIN_NAME
+				),
 		);
 		$loader = $this->_registry->get( 'theme.loader' );
 		$file   = $loader->get_file( 'setting/page.twig', $args, true );
@@ -198,6 +201,7 @@ class Ai1ec_View_Admin_Settings extends Ai1ec_View_Admin_Abstract {
 	 */
 	protected function _get_tabs_to_show( array $plugin_settings, array $tabs ) {
 		$index = 0;
+		$renderer = $this->_registry->get( 'html.element.setting-renderer' );
 		foreach ( $plugin_settings as $id => $setting ) {
 			// if the setting is shown
 			if ( isset ( $setting['renderer'] ) ) {
@@ -210,21 +214,7 @@ class Ai1ec_View_Admin_Settings extends Ai1ec_View_Admin_Abstract {
 				) {
 					$tabs[$tab_to_use]['elements'] = array();
 				}
-				// get the renderer
-				$renderer_name = $setting['renderer']['class'];
 				$setting['id'] = $id;
-				$renderer      = null;
-				try {
-					$renderer = $this->_registry->get(
-						'html.element.setting.' . $renderer_name,
-						$setting
-					);
-				} catch ( Ai1ec_Bootstrap_Exception $exception ) {
-					$renderer = $this->_registry->get(
-						'html.element.setting.input',
-						$setting
-					);
-				}
 				// render the settings
 				$weight = 10;
 				if ( isset( $setting['renderer']['weight'] ) ) {
@@ -235,7 +225,7 @@ class Ai1ec_View_Admin_Settings extends Ai1ec_View_Admin_Abstract {
 				$tabs[$tab_to_use]['elements'][] = array(
 					'weight' => $weight,
 					'index'  => ++$index,
-					'html'   => $renderer->render(),
+					'html'   => $renderer->render( $setting ),
 				);
 				// if the settings has an item tab, set the item as active.
 				if ( isset( $setting['renderer']['item'] ) ) {
@@ -271,11 +261,22 @@ class Ai1ec_View_Admin_Settings extends Ai1ec_View_Admin_Abstract {
 						}
 					}
 				}
-				$tabs_to_display[$name] = $tab;
+				// lets make a check to avoid overriding tabs
+				if ( ! isset( $tabs_to_display[$name] ) ) {
+					$tabs_to_display[$name] = $tab;
+				} else {
+					$tabs_to_display[$name]['elements'] = $tab['elements'];
+				}
+
 			} else {
 				// no items, just check for any element to display.
 				if ( isset( $tab['elements'] ) ) {
-					$tabs_to_display[$name] = $tab;
+					// lets make a check to avoid overriding tabs
+					if ( ! isset( $tabs_to_display[$name] ) ) {
+						$tabs_to_display[$name] = $tab;
+					} else {
+						$tabs_to_display[$name]['elements'] = $tab['elements'];
+					}
 				}
 			}
 		}

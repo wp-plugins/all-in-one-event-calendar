@@ -5,7 +5,7 @@ calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WordPress at least: 3.5
 Tested up to: 4.1
-Stable tag: 2.1.9
+Stable tag: 2.2.0
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -136,6 +136,103 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.2.0 =
+* Implemented frontend renderring for improved performance
+* Implemented Google’s new NoCaptcha, a better way of detecting spam
+bots
+* Allow users to create recurring events with no pattern by clicking
+dates in the calendar
+* Created a new menu item “Organize” that contains Categories, Tags,
+Venues, and Filter Groups
+* New plugin that allows filter search by keyword for Hubs
+* Added the ability to select colours for terms of Filter Groups
+* Added the ability to map imported taxonomy to existing Filter Group
+terms
+* Exposed Filter Groups on the Frontend Event Submission form
+* Improved JavaScript components loading speed
+* Created a workaround option for dealing with a bug in Google’s
+handling of timezones on .ics feeds
+* Optimized cache usage: regenerating files only when a change
+justifies it
+* Categories/tags information is updated during Feeds import
+* The subscribe to calendar button now drops up, reducing theme
+conflicts
+* Made it possible to easily introduce template modifications
+* Improved display of event dates to ensure year will show
+* Improved URLs handling when WordPress is upgraded to use SSL
+addresses
+* Made it possible to have Powered by Time.ly logo on a calendar
+* Improved tooltip behaviour and removed them from mobile
+* Clarified the option to import past events
+* Persistent notices now contain easily accessible information helping
+determine the cause and resolution for the message
+* Improved calendar embedding options by making it more compatible
+with different platforms
+* Improved menu labels for Frontend Event Submissions
+* Made it possible to modify values that are passed to templates
+* Made it possible to filter upcoming events widget by more values
+* Clarified where it is appropriate to use JavaScript widgets vs
+WordPress widgets or shortcodes
+* Improved database queries performance (affects large deployments)
+* Improved add-on dependency message
+* Fixed issue where it was impossible to remove a color from a
+category
+* Fixed issue where calendar navigation stopped responding
+* Fixed issue where on some servers JavaScript was not fully rendered
+* Improved CSS handling so that it would not be recompiled unless
+necessary
+* Improved compatibility with iCalendar applications by removing end
+time from events that have none
+* Made it possible to set an end time on events that were previously
+set to no end time
+* Fixed an issue where settings translation was not updatable
+* Fixed issue where the “now” marker in week and day view was missing
+* Fixed a conflict with the views dropdown and the subscribe button
+* Fixed issue where multi-day events were displayed incorrectly in day
+view
+* Fixed a conflict where WPML and a static calendar homepage resulted
+in a 404
+* Fixed recurring events import: detecting modifications with greater
+accuracy
+* Temporary disabled microformatting to avoid conflicts with 3rd party
+plugins
+* Fixed an issue where the licence key menu is not available if the
+add-on has no settings
+* Next/Prev navigation is present again at the bottom of the calendar
+* Fixed an issue with date parsing in PHP version 5.2.4
+* Fixed an issue where “back to calendar” and “buy tickets” buttons
+were missing
+* Fixed an issue where featured image was not visible on the event
+details page
+* Fixed a plugin conflict with the popular “Gallery” plugin
+* Fixed an issue where event footers were not being rendered
+* In some cases, if browser identifier is unavailable, invalid
+JavaScript markup was being produced
+* Make sure timezone setting is respect whenever it’s made in site, or
+calendar settings
+* In case of rendering error user will be presented with a friendly
+message and calendar will try to re-configure
+* Fixed an issue where LESS would fail to compile on install
+* Fixed error which was appearing when choosing calendar viewable
+hours which do not pass validation
+* Editing event imported from Feed doesn’t break it’s relationship
+with feed
+* Fixed issue where custom permalinks resulted in a 404
+* Fixed issue where shortcodes used on the calendar page conflicted
+with Agenda View
+* When importing events from some calendars meta fields contained
+unreadable data
+* Fixed issue where “no end time” could not be unchecked
+* Fixed an issue where the Google map preview was obscuring the
+address fields
+* Fixed an issue where the “Post your Event” and “Add your Feed”
+buttons were not visible on shortcode calendars
+* Event detail pages will now always open in a modal from calendars
+embedded using the SuperWidget
+* Resolved conflict with the Form Maker plugin
+* Fixed an issue where an unauthorized user could access the clone
+event feature
 
 = Version 2.1.9 =
 * Improved calendar feeds import from Google calendar

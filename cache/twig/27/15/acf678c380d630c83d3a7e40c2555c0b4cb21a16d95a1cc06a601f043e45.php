@@ -16,22 +16,27 @@ class __TwigTemplate_2715acf678c380d630c83d3a7e40c2555c0b4cb21a16d95a1cc06a601f0
     protected function doDisplay(array $context, array $blocks = array())
     {
         // line 1
-        echo "<div class=\"ai1ec-subscribe-container ai1ec-btn-group ai1ec-pull-left
-\t\tai1ec-tooltip-trigger\" data-placement=\"left\" title=\"";
+        $context["alignment"] = (((isset($context["alignment"]) ? $context["alignment"] : null)) ? ((isset($context["alignment"]) ? $context["alignment"] : null)) : ("left"));
         // line 2
-        echo twig_escape_filter($this->env, $this->getAttribute((isset($context["text"]) ? $context["text"] : null), "tooltip"), "html", null, true);
-        echo "\">
-\t<button
-\t\ttype=\"button\"
-\t\tclass=\"ai1ec-btn ai1ec-btn-default ai1ec-btn-sm ai1ec-dropdown-toggle
-\t\t\tai1ec-subscribe ";
+        $context["placement"] = (((isset($context["placement"]) ? $context["placement"] : null)) ? ((isset($context["placement"]) ? $context["placement"] : null)) : ("down"));
+        // line 3
+        $context["alignment2"] = ((("left" == (isset($context["alignment"]) ? $context["alignment"] : null))) ? ("right") : ("left"));
+        // line 4
+        $context["button_classes"] = (((isset($context["button_classes"]) ? $context["button_classes"] : null)) ? ((isset($context["button_classes"]) ? $context["button_classes"] : null)) : ("ai1ec-btn-sm"));
+        // line 5
+        echo "<div class=\"ai1ec-dropdown";
+        if (((isset($context["placement"]) ? $context["placement"] : null) == "up")) {
+            echo " ai1ec-dropup";
+        }
+        echo " ai1ec-btn
+\tai1ec-btn-default ";
         // line 6
-        echo twig_escape_filter($this->env, (isset($context["button_classes"]) ? $context["button_classes"] : null), "html", null, true);
-        echo "\"
+        echo twig_escape_filter($this->env, (isset($context["button_classes"]) ? $context["button_classes"] : null), "html_attr");
+        echo "\">
+\t<span role=\"button\" class=\"ai1ec-dropdown-toggle ai1ec-subscribe\"
 \t\t\tdata-toggle=\"ai1ec-dropdown\">
 \t\t<i class=\"ai1ec-fa ai1ec-icon-rss ai1ec-fa-lg ai1ec-fa-fw\"></i>
 \t\t<span class=\"ai1ec-hidden-xs\">
-\t\t\t<span class=\"ai1ec-hidden-xs\">
 \t\t\t";
         // line 11
         if ((!twig_test_empty((isset($context["subscribe_label"]) ? $context["subscribe_label"] : null)))) {
@@ -60,116 +65,139 @@ class __TwigTemplate_2715acf678c380d630c83d3a7e40c2555c0b4cb21a16d95a1cc06a601f0
             echo "\t\t\t";
         }
         // line 20
-        echo "\t\t\t</span>
-\t\t\t<span class=\"ai1ec-caret\"></span>
+        echo "\t\t\t<span class=\"ai1ec-caret\"></span>
 \t\t</span>
-\t</button>
+\t</span>
 \t";
-        // line 24
+        // line 23
         $context["url"] = (strtr((isset($context["export_url"]) ? $context["export_url"] : null), array("webcal://" => "http://")) . (isset($context["url_args"]) ? $context["url_args"] : null));
-        // line 25
-        echo "\t<ul class=\"ai1ec-dropdown-menu ai1ec-pull-right\" role=\"menu\">
+        // line 24
+        echo "\t<ul class=\"ai1ec-dropdown-menu ai1ec-pull-";
+        echo twig_escape_filter($this->env, (isset($context["alignment2"]) ? $context["alignment2"] : null), "html", null, true);
+        echo "\" role=\"menu\">
 \t\t<li>
-\t\t\t<a class=\"ai1ec-tooltip-trigger ai1ec-tooltip-auto\"
-\t\t\t   target=\"_blank\"
-\t\t\t   data-placement=\"left\"
-\t\t\t   href=\"";
-        // line 30
-        echo twig_escape_filter($this->env, (isset($context["url"]) ? $context["url"] : null), "html_attr");
-        echo "\"
-\t\t\t   title=\"";
-        // line 31
+\t\t\t<a class=\"ai1ec-tooltip-trigger ai1ec-tooltip-auto\" target=\"_blank\"
+\t\t\t\tdata-placement=\"";
+        // line 27
+        echo twig_escape_filter($this->env, (isset($context["alignment"]) ? $context["alignment"] : null), "html", null, true);
+        echo "\" title=\"";
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["text"]) ? $context["text"] : null), "title"), "timely"), "html", null, true);
-        echo "\" >
+        echo "\"
+\t\t\t\thref=\"";
+        // line 28
+        echo twig_escape_filter($this->env, (isset($context["url"]) ? $context["url"] : null), "html_attr");
+        echo "\">
 \t\t\t\t<i class=\"ai1ec-fa ai1ec-fa-lg ai1ec-fa-fw ai1ec-icon-timely\"></i>
 \t\t\t\t";
-        // line 33
+        // line 30
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["text"]) ? $context["text"] : null), "label"), "timely"), "html", null, true);
         echo "
 \t\t\t</a>
 \t\t</li>
 \t\t<li>
-\t\t\t<a class=\"ai1ec-tooltip-trigger ai1ec-tooltip-auto\"
-\t\t\t   target=\"_blank\"
-\t\t\t   data-placement=\"left\"
-\t\t\t   href=\"http://www.google.com/calendar/render?cid=";
-        // line 40
-        echo twig_escape_filter($this->env, twig_urlencode_filter((isset($context["url"]) ? $context["url"] : null)), "html_attr");
-        echo "\"
-\t\t\t   title=\"";
-        // line 41
+\t\t\t<a class=\"ai1ec-tooltip-trigger ai1ec-tooltip-auto\" target=\"_blank\"
+\t\t\t  data-placement=\"";
+        // line 35
+        echo twig_escape_filter($this->env, (isset($context["alignment"]) ? $context["alignment"] : null), "html", null, true);
+        echo "\" title=\"";
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["text"]) ? $context["text"] : null), "title"), "google"), "html", null, true);
-        echo "\" >
+        echo "\"
+\t\t\t  href=\"http://www.google.com/calendar/render?cid=";
+        // line 36
+        echo twig_escape_filter($this->env, twig_urlencode_filter((isset($context["url"]) ? $context["url"] : null)), "html_attr");
+        echo "\">
 \t\t\t\t<i class=\"ai1ec-fa ai1ec-icon-google ai1ec-fa-lg ai1ec-fa-fw\"></i>
 \t\t\t\t";
-        // line 43
+        // line 38
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["text"]) ? $context["text"] : null), "label"), "google"), "html", null, true);
         echo "
 \t\t\t</a>
 \t\t</li>
 \t\t<li>
-\t\t\t<a class=\"ai1ec-tooltip-trigger ai1ec-tooltip-auto\"
-\t\t\t   target=\"_blank\"
-\t\t\t   data-placement=\"left\"
-\t\t\t   href=\"";
-        // line 50
-        echo twig_escape_filter($this->env, ((isset($context["export_url_no_html"]) ? $context["export_url_no_html"] : null) . (isset($context["url_args"]) ? $context["url_args"] : null)), "html_attr");
-        echo "\"
-\t\t\t   title=\"";
-        // line 51
+\t\t\t<a class=\"ai1ec-tooltip-trigger ai1ec-tooltip-auto\" target=\"_blank\"
+\t\t\t  data-placement=\"";
+        // line 43
+        echo twig_escape_filter($this->env, (isset($context["alignment"]) ? $context["alignment"] : null), "html", null, true);
+        echo "\" title=\"";
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["text"]) ? $context["text"] : null), "title"), "outlook"), "html", null, true);
-        echo "\" >
+        echo "\"
+\t\t\t  href=\"";
+        // line 44
+        echo twig_escape_filter($this->env, ((isset($context["export_url_no_html"]) ? $context["export_url_no_html"] : null) . (isset($context["url_args"]) ? $context["url_args"] : null)), "html_attr");
+        echo "\">
 \t\t\t\t<i class=\"ai1ec-fa ai1ec-icon-windows ai1ec-fa-lg ai1ec-fa-fw\"></i>
 \t\t\t\t";
-        // line 53
+        // line 46
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["text"]) ? $context["text"] : null), "label"), "outlook"), "html", null, true);
         echo "
 \t\t\t</a>
 \t\t</li>
 \t\t<li>
-\t\t\t<a class=\"ai1ec-tooltip-trigger ai1ec-tooltip-auto\"
-\t\t\t   target=\"_blank\"
-\t\t\t   data-placement=\"left\"
-\t\t\t   href=\"";
-        // line 60
-        echo twig_escape_filter($this->env, ((isset($context["export_url_no_html"]) ? $context["export_url_no_html"] : null) . (isset($context["url_args"]) ? $context["url_args"] : null)), "html_attr");
-        echo "\"
-\t\t\t   title=\"";
-        // line 61
+\t\t\t<a class=\"ai1ec-tooltip-trigger ai1ec-tooltip-auto\" target=\"_blank\"
+\t\t\t  data-placement=\"";
+        // line 51
+        echo twig_escape_filter($this->env, (isset($context["alignment"]) ? $context["alignment"] : null), "html", null, true);
+        echo "\" title=\"";
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["text"]) ? $context["text"] : null), "title"), "apple"), "html", null, true);
-        echo "\" >
+        echo "\"
+\t\t\t  href=\"";
+        // line 52
+        echo twig_escape_filter($this->env, ((isset($context["export_url_no_html"]) ? $context["export_url_no_html"] : null) . (isset($context["url_args"]) ? $context["url_args"] : null)), "html_attr");
+        echo "\">
 \t\t\t\t<i class=\"ai1ec-fa ai1ec-icon-apple ai1ec-fa-lg ai1ec-fa-fw\"></i>
 \t\t\t\t";
-        // line 63
+        // line 54
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["text"]) ? $context["text"] : null), "label"), "apple"), "html", null, true);
         echo "
 \t\t\t</a>
 \t\t</li>
 \t\t<li>
 \t\t\t";
-        // line 67
+        // line 58
         $context["export_url_no_html_http"] = strtr((isset($context["export_url_no_html"]) ? $context["export_url_no_html"] : null), array("webcal://" => "http://"));
-        // line 68
+        // line 59
         echo "\t\t\t<a class=\"ai1ec-tooltip-trigger ai1ec-tooltip-auto\"
-\t\t\t   data-placement=\"left\"
-\t\t\t   href=\"";
-        // line 70
-        echo twig_escape_filter($this->env, ((isset($context["export_url_no_html_http"]) ? $context["export_url_no_html_http"] : null) . (isset($context["url_args"]) ? $context["url_args"] : null)), "html_attr");
-        echo "\"
-\t\t\t   title=\"";
-        // line 71
+\t\t\t  data-placement=\"";
+        // line 60
+        echo twig_escape_filter($this->env, (isset($context["alignment"]) ? $context["alignment"] : null), "html", null, true);
+        echo "\" title=\"";
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["text"]) ? $context["text"] : null), "title"), "plaintext"), "html", null, true);
-        echo "\" >
+        echo "\"
+\t\t\t  href=\"";
+        // line 61
+        echo twig_escape_filter($this->env, ((isset($context["export_url_no_html_http"]) ? $context["export_url_no_html_http"] : null) . (isset($context["url_args"]) ? $context["url_args"] : null)), "html_attr");
+        echo "\">
 \t\t\t\t<i class=\"ai1ec-fa ai1ec-icon-calendar ai1ec-fa-fw\"></i>
 \t\t\t\t";
-        // line 73
+        // line 63
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["text"]) ? $context["text"] : null), "label"), "plaintext"), "html", null, true);
         echo "
 \t\t\t</a>
 \t\t</li>
 \t</ul>
 </div>
+
 ";
+        // line 69
+        if ((isset($context["show_get_calendar"]) ? $context["show_get_calendar"] : null)) {
+            // line 70
+            echo "\t<a href=\"http://time.ly\" target=\"_blank\"
+\t\tclass=\"ai1ec-btn ai1ec-btn-default ai1ec-get-calendar
+\t\t\t";
+            // line 72
+            echo twig_escape_filter($this->env, (isset($context["button_classes"]) ? $context["button_classes"] : null), "html_attr");
+            echo "\">
+\t\t<small class=\"ai1ec-fa-stack ai1ec-text-info ai1ec-fa-fw\">
+\t\t\t<i class=\"ai1ec-fa ai1ec-fa-square ai1ec-fa-stack-2x\"></i>
+\t\t\t<i class=\"ai1ec-fa ai1ec-icon-timely ai1ec-fa-stack-1x ai1ec-fa-inverse ai1ec-fa-lg\"></i>
+\t\t</small>
+\t\t<span class=\"ai1ec-hidden-xs\">";
+            // line 77
+            echo twig_escape_filter($this->env, (isset($context["text_get_calendar"]) ? $context["text_get_calendar"] : null), "html", null, true);
+            echo "</span>
+\t</a>
+";
+        }
     }
 
     public function getTemplateName()
@@ -184,6 +212,6 @@ class __TwigTemplate_2715acf678c380d630c83d3a7e40c2555c0b4cb21a16d95a1cc06a601f0
 
     public function getDebugInfo()
     {
-        return array (  153 => 68,  120 => 51,  758 => 246,  751 => 241,  749 => 240,  732 => 237,  730 => 236,  722 => 234,  716 => 232,  714 => 231,  708 => 228,  704 => 227,  700 => 226,  693 => 222,  689 => 220,  683 => 217,  679 => 216,  676 => 215,  674 => 214,  670 => 212,  665 => 210,  661 => 209,  657 => 207,  654 => 206,  649 => 204,  646 => 203,  640 => 201,  632 => 199,  622 => 195,  620 => 194,  616 => 193,  604 => 186,  601 => 185,  599 => 184,  589 => 180,  584 => 177,  577 => 174,  571 => 171,  560 => 167,  554 => 166,  548 => 165,  542 => 164,  536 => 163,  532 => 162,  527 => 161,  524 => 160,  521 => 159,  518 => 158,  515 => 157,  513 => 156,  509 => 155,  505 => 154,  501 => 153,  490 => 151,  485 => 150,  481 => 149,  477 => 148,  473 => 147,  468 => 145,  464 => 144,  459 => 143,  456 => 142,  452 => 141,  447 => 138,  443 => 136,  434 => 132,  428 => 130,  425 => 129,  419 => 128,  408 => 125,  404 => 124,  398 => 121,  393 => 119,  387 => 118,  384 => 117,  380 => 116,  377 => 115,  375 => 114,  367 => 112,  350 => 111,  346 => 110,  340 => 106,  338 => 105,  322 => 103,  320 => 102,  306 => 98,  294 => 93,  283 => 88,  279 => 86,  266 => 81,  264 => 80,  244 => 72,  206 => 59,  200 => 55,  168 => 43,  336 => 116,  334 => 115,  327 => 114,  325 => 113,  318 => 112,  316 => 111,  298 => 94,  292 => 103,  284 => 99,  276 => 97,  255 => 76,  246 => 83,  198 => 66,  178 => 57,  176 => 56,  148 => 46,  112 => 35,  102 => 31,  85 => 24,  58 => 15,  136 => 46,  133 => 45,  110 => 36,  98 => 30,  100 => 31,  90 => 27,  39 => 12,  311 => 116,  290 => 92,  278 => 106,  272 => 103,  267 => 101,  243 => 89,  240 => 88,  235 => 86,  209 => 76,  204 => 68,  202 => 72,  193 => 67,  187 => 61,  166 => 73,  144 => 63,  141 => 45,  92 => 29,  319 => 94,  317 => 93,  313 => 92,  310 => 109,  307 => 115,  305 => 107,  302 => 82,  291 => 77,  287 => 75,  285 => 74,  280 => 98,  277 => 71,  271 => 69,  269 => 82,  253 => 94,  238 => 65,  218 => 63,  189 => 46,  180 => 42,  163 => 36,  45 => 14,  42 => 11,  50 => 8,  47 => 7,  226 => 66,  220 => 73,  188 => 69,  182 => 66,  175 => 60,  152 => 47,  143 => 36,  122 => 38,  97 => 40,  93 => 25,  86 => 23,  71 => 25,  293 => 100,  289 => 99,  260 => 78,  254 => 88,  251 => 75,  248 => 92,  239 => 70,  237 => 80,  233 => 78,  230 => 67,  225 => 75,  222 => 65,  210 => 60,  208 => 70,  195 => 53,  171 => 54,  161 => 71,  159 => 40,  154 => 47,  150 => 38,  146 => 37,  137 => 34,  132 => 40,  126 => 36,  121 => 37,  118 => 33,  116 => 50,  111 => 35,  105 => 27,  99 => 27,  95 => 26,  83 => 23,  78 => 30,  62 => 17,  59 => 11,  38 => 9,  33 => 7,  29 => 6,  25 => 4,  164 => 42,  156 => 48,  139 => 61,  131 => 42,  127 => 42,  123 => 38,  114 => 38,  104 => 27,  96 => 31,  77 => 21,  74 => 19,  60 => 19,  69 => 24,  644 => 202,  636 => 200,  628 => 197,  619 => 336,  617 => 335,  611 => 331,  609 => 188,  606 => 329,  600 => 326,  597 => 325,  595 => 183,  592 => 323,  585 => 319,  580 => 175,  576 => 316,  573 => 172,  570 => 314,  567 => 169,  558 => 306,  549 => 300,  543 => 297,  534 => 291,  525 => 285,  520 => 282,  517 => 281,  510 => 275,  504 => 273,  497 => 152,  495 => 269,  489 => 265,  483 => 263,  476 => 260,  474 => 259,  469 => 256,  461 => 250,  453 => 245,  439 => 234,  433 => 230,  426 => 224,  420 => 222,  413 => 219,  411 => 126,  405 => 214,  399 => 212,  392 => 209,  390 => 208,  385 => 205,  379 => 200,  373 => 198,  366 => 195,  364 => 194,  359 => 191,  354 => 187,  348 => 184,  345 => 183,  339 => 180,  333 => 177,  330 => 176,  328 => 175,  324 => 173,  321 => 171,  315 => 118,  312 => 100,  304 => 97,  301 => 159,  297 => 112,  295 => 78,  288 => 110,  282 => 73,  275 => 70,  273 => 83,  268 => 142,  262 => 98,  256 => 135,  249 => 132,  242 => 83,  236 => 69,  216 => 72,  212 => 61,  207 => 117,  203 => 52,  192 => 52,  183 => 63,  177 => 61,  170 => 38,  155 => 39,  145 => 71,  138 => 47,  134 => 32,  119 => 40,  107 => 29,  101 => 41,  91 => 23,  80 => 22,  66 => 14,  35 => 6,  30 => 6,  63 => 20,  54 => 17,  43 => 7,  24 => 3,  21 => 2,  82 => 31,  73 => 20,  70 => 19,  64 => 20,  55 => 14,  52 => 15,  48 => 15,  46 => 10,  41 => 11,  37 => 11,  32 => 10,  22 => 2,  88 => 25,  81 => 25,  79 => 24,  75 => 22,  68 => 18,  57 => 14,  49 => 12,  44 => 7,  31 => 5,  27 => 6,  265 => 91,  259 => 88,  252 => 86,  250 => 85,  247 => 73,  241 => 81,  234 => 68,  232 => 108,  229 => 83,  227 => 77,  219 => 100,  213 => 77,  205 => 53,  201 => 91,  199 => 51,  196 => 65,  190 => 51,  186 => 50,  184 => 83,  181 => 48,  173 => 45,  169 => 77,  167 => 52,  162 => 89,  160 => 53,  157 => 70,  151 => 67,  149 => 47,  142 => 44,  135 => 60,  130 => 40,  128 => 31,  125 => 53,  117 => 36,  113 => 58,  108 => 29,  106 => 43,  103 => 28,  94 => 29,  89 => 26,  87 => 33,  84 => 25,  76 => 28,  72 => 21,  67 => 19,  65 => 15,  61 => 16,  56 => 17,  53 => 17,  51 => 13,  40 => 6,  34 => 8,  28 => 5,  26 => 3,  36 => 9,  23 => 3,  19 => 1,);
+        return array (  157 => 58,  734 => 240,  727 => 235,  725 => 234,  708 => 231,  706 => 230,  698 => 228,  692 => 226,  690 => 225,  684 => 222,  680 => 221,  673 => 217,  663 => 212,  659 => 211,  656 => 210,  654 => 209,  645 => 205,  641 => 204,  637 => 202,  634 => 201,  629 => 199,  626 => 198,  624 => 197,  620 => 196,  616 => 195,  612 => 193,  606 => 191,  604 => 190,  600 => 189,  593 => 184,  588 => 182,  585 => 181,  579 => 179,  573 => 176,  568 => 173,  564 => 171,  557 => 168,  551 => 165,  544 => 163,  526 => 160,  520 => 159,  516 => 158,  508 => 156,  505 => 155,  499 => 153,  493 => 151,  485 => 149,  474 => 147,  469 => 146,  465 => 145,  461 => 144,  457 => 143,  452 => 141,  447 => 140,  444 => 139,  435 => 135,  431 => 133,  422 => 129,  416 => 127,  413 => 126,  407 => 125,  399 => 123,  396 => 122,  392 => 121,  386 => 118,  381 => 116,  375 => 115,  372 => 114,  365 => 112,  363 => 111,  355 => 109,  338 => 108,  334 => 107,  328 => 103,  326 => 102,  308 => 99,  294 => 95,  292 => 94,  265 => 81,  252 => 76,  243 => 73,  228 => 67,  226 => 66,  202 => 58,  182 => 69,  164 => 42,  143 => 36,  329 => 116,  322 => 112,  306 => 109,  300 => 97,  298 => 106,  293 => 104,  286 => 91,  257 => 89,  251 => 86,  244 => 84,  225 => 76,  214 => 62,  200 => 67,  174 => 56,  172 => 55,  148 => 46,  108 => 29,  102 => 31,  140 => 44,  132 => 45,  129 => 44,  123 => 41,  116 => 39,  98 => 30,  86 => 23,  22 => 2,  309 => 116,  299 => 112,  284 => 109,  272 => 96,  266 => 101,  261 => 80,  237 => 87,  234 => 86,  231 => 68,  223 => 81,  219 => 80,  206 => 59,  190 => 66,  184 => 70,  149 => 47,  144 => 45,  139 => 51,  319 => 95,  317 => 94,  313 => 110,  310 => 100,  307 => 84,  305 => 114,  302 => 82,  291 => 110,  287 => 75,  285 => 74,  280 => 100,  277 => 71,  271 => 84,  269 => 68,  253 => 95,  238 => 81,  220 => 62,  205 => 53,  195 => 49,  189 => 46,  186 => 50,  180 => 62,  175 => 60,  152 => 47,  111 => 35,  45 => 11,  42 => 11,  120 => 43,  94 => 29,  71 => 21,  135 => 33,  127 => 39,  89 => 26,  47 => 7,  221 => 81,  217 => 73,  213 => 56,  211 => 77,  194 => 65,  168 => 61,  166 => 57,  161 => 58,  147 => 45,  115 => 34,  110 => 36,  278 => 99,  274 => 95,  267 => 94,  260 => 93,  258 => 79,  250 => 90,  245 => 87,  239 => 71,  233 => 79,  227 => 79,  224 => 78,  222 => 65,  215 => 78,  210 => 76,  198 => 67,  191 => 52,  187 => 63,  178 => 58,  169 => 44,  159 => 59,  153 => 48,  151 => 51,  133 => 41,  122 => 35,  114 => 38,  112 => 38,  99 => 27,  95 => 26,  83 => 23,  78 => 21,  137 => 34,  131 => 46,  125 => 30,  117 => 36,  103 => 28,  90 => 27,  82 => 27,  52 => 15,  34 => 6,  677 => 347,  669 => 215,  661 => 336,  652 => 329,  650 => 207,  644 => 324,  642 => 323,  639 => 322,  633 => 319,  630 => 318,  628 => 317,  625 => 316,  619 => 314,  617 => 313,  614 => 312,  605 => 306,  594 => 302,  589 => 300,  583 => 180,  574 => 291,  567 => 286,  561 => 170,  555 => 167,  553 => 281,  548 => 278,  545 => 277,  538 => 162,  532 => 161,  525 => 266,  523 => 265,  517 => 261,  511 => 157,  504 => 256,  502 => 154,  497 => 152,  489 => 150,  481 => 148,  468 => 231,  462 => 227,  455 => 221,  449 => 219,  442 => 216,  440 => 138,  434 => 211,  428 => 209,  421 => 206,  419 => 205,  414 => 202,  408 => 197,  402 => 195,  395 => 192,  393 => 191,  388 => 188,  385 => 186,  382 => 185,  368 => 113,  364 => 182,  362 => 181,  357 => 179,  352 => 178,  348 => 176,  345 => 175,  327 => 174,  324 => 113,  321 => 171,  315 => 111,  312 => 166,  304 => 108,  301 => 113,  297 => 157,  295 => 78,  288 => 151,  282 => 90,  275 => 86,  273 => 145,  268 => 95,  262 => 137,  256 => 78,  249 => 132,  247 => 74,  242 => 83,  236 => 70,  229 => 78,  212 => 71,  207 => 71,  203 => 52,  192 => 64,  183 => 60,  170 => 38,  138 => 44,  128 => 31,  107 => 36,  91 => 23,  80 => 22,  66 => 14,  61 => 16,  43 => 7,  73 => 23,  64 => 15,  55 => 14,  88 => 28,  79 => 24,  75 => 24,  68 => 20,  57 => 21,  118 => 43,  96 => 31,  85 => 24,  69 => 24,  60 => 13,  58 => 15,  49 => 12,  36 => 12,  204 => 69,  196 => 77,  177 => 47,  171 => 73,  165 => 53,  163 => 36,  158 => 61,  154 => 60,  150 => 54,  146 => 37,  142 => 44,  136 => 41,  130 => 40,  105 => 27,  101 => 35,  93 => 30,  87 => 24,  81 => 25,  74 => 19,  67 => 19,  65 => 19,  59 => 17,  53 => 15,  44 => 12,  25 => 4,  21 => 2,  77 => 21,  70 => 19,  62 => 17,  54 => 11,  50 => 14,  29 => 4,  40 => 6,  38 => 5,  27 => 5,  218 => 64,  216 => 119,  208 => 60,  201 => 72,  199 => 71,  188 => 72,  179 => 67,  173 => 63,  167 => 53,  162 => 60,  160 => 41,  155 => 39,  145 => 52,  141 => 45,  134 => 46,  126 => 44,  124 => 38,  121 => 37,  119 => 37,  113 => 37,  109 => 32,  104 => 27,  100 => 31,  92 => 29,  84 => 25,  76 => 23,  72 => 21,  63 => 18,  56 => 10,  51 => 13,  30 => 6,  46 => 10,  32 => 10,  26 => 3,  23 => 3,  48 => 8,  33 => 7,  28 => 5,  24 => 3,  41 => 9,  39 => 7,  37 => 8,  35 => 6,  31 => 5,  19 => 1,);
     }
 }

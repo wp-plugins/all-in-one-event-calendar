@@ -50,7 +50,7 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 	// = Plugin Version =
 	// ==================
 	if ( ! defined( 'AI1EC_VERSION' ) ) {
-		define( 'AI1EC_VERSION', '2.1.9' );
+		define( 'AI1EC_VERSION', '2.2.0' );
 	}
 
 	// ================
@@ -359,11 +359,6 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 		define( 'AI1EC_EVENT_PLATFORM', false );
 	}
 
-	// Use frontend rendering.
-	if ( ! defined( 'AI1EC_USE_FRONTEND_RENDERING' ) ) {
-		define( 'AI1EC_USE_FRONTEND_RENDERING', false );
-	}
-
 	// If i choose to use the calendar url as the base for events permalinks,
 	// i must specify another name for the events archive.
 	if ( ! defined( 'AI1EC_ALTERNATIVE_ARCHIVE_URL' ) ) {
@@ -492,4 +487,16 @@ function ai1ec_initiate_constants( $ai1ec_base_dir, $ai1ec_base_url ) {
 		define( 'AI1EC_LESS_MIN_AVAIL_MEMORY', '24M' );
 	}
 
+	// Defines if LESS files are parsed at every request
+	if ( ! defined( 'AI1EC_PARSE_LESS_FILES_AT_EVERY_REQUEST' ) ) {
+		define( 'AI1EC_PARSE_LESS_FILES_AT_EVERY_REQUEST', false );
+	}
+
+	// Defines a list of FER-enabled templates.
+	if ( ! defined( 'AI1EC_FER_ENABLED_TEMPLATES_LIST' ) ) {
+		define(
+			'AI1EC_FER_ENABLED_TEMPLATES_LIST',
+			'agenda,oneday,week,month,posterboard,stream'
+		);
+	}
 }

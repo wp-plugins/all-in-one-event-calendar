@@ -20,6 +20,7 @@
 #ai1ec-calendar-view-container {
 	position: relative;
 	-webkit-transform: translateZ(0);
+	z-index: 1;
 }
 #ai1ec-calendar-view .post-edit-link {
 	white-space: nowrap;
@@ -55,6 +56,10 @@
 		.ai1ec-clearfix {
 			padding-top: 8px;
 		}
+	}
+	&.ai1ec-empty-toolbar.ai1ec-affix-top {
+		border: none;
+		margin: 0;
 	}
 }
 // Hidden elements to detect current window mode.
@@ -826,14 +831,5 @@ table.ai1ec-oneday-view-original {
 .ai1ec-subscribe-container {
 	.ai1ec-fa.ai1ec-fa-fw {
 		width: 20px;
-	}
-
-	ul.ai1ec-dropdown-menu {
-		list-style: none;
-		li {
-			margin: 0;
-			padding: 0;
-			list-style: none;
-		}
 	}
 }

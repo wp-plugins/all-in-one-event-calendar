@@ -80,6 +80,16 @@ class Ai1ec_Front_Controller {
 	}
 
 	/**
+	 * Remove unwanted menus
+	 */
+	public function admin_menu() {
+		remove_submenu_page(
+			'edit.php?post_type=ai1ec_event',
+			'edit-tags.php?taxonomy=events_tags&amp;post_type=ai1ec_event'
+		);
+	}
+
+	/**
 	 * Notify extensions and pass them instance of objects registry.
 	 *
 	 * @return void
@@ -106,6 +116,28 @@ class Ai1ec_Front_Controller {
 	 */
 	public function return_registry( $discard ) {
 		return $this->_registry;
+	}
+
+	/**
+	 * If WIDGET_PARAMETER is set.
+	 *
+	 * @return boolean
+	 */
+	protected function is_widget() {
+		return isset(
+			$_GET[Ai1ec_Controller_Javascript_Widget::WIDGET_PARAMETER]
+		);
+	}
+
+	/**
+	 * If LEGACY_WIDGET_PARAMETER is set.
+	 *
+	 * @return boolean
+	 */
+	protected function is_legacy_widget() {
+		return isset(
+			$_GET[Ai1ec_Controller_Javascript_Widget::LEGACY_WIDGET_PARAMETER]
+		);
 	}
 
 	/**
@@ -143,14 +175,17 @@ class Ai1ec_Front_Controller {
 	 * @return void
 	 */
 	public function initialize_router() {
-		$settings            = $this->_registry->get( 'model.settings' );
-
-		$cal_page            = $settings->get( 'calendar_page_id' );
+		/* @var $cal_state Ai1ec_Calendar_State */
+		$cal_state              = $this->_registry->get( 'calendar.state' );
+		$cal_state->set_routing_initialization( true );
+		$settings               = $this->_registry->get( 'model.settings' );
+		$cal_page               = $settings->get( 'calendar_page_id' );
 
 		if (
 			! $cal_page ||
 			$cal_page < 1
 		) { // Routing may not be affected in any way if no calendar page exists.
+			$cal_state->set_routing_initialization( false );
 			return null;
 		}
 		$router              = $this->_registry->get( 'routing.router' );
@@ -172,6 +207,7 @@ class Ai1ec_Front_Controller {
 		$template_link_helper = $this->_registry->get( 'template.link.helper' );
 
 		if ( ! get_post( $cal_page ) ) {
+			$cal_state->set_routing_initialization( false );
 			return null;
 		}
 
@@ -195,16 +231,18 @@ class Ai1ec_Front_Controller {
 		// If the calendar is set as the front page, disable permalinks.
 		// They would not be legal under a Windows server. See:
 		// https://issues.apache.org/bugzilla/show_bug.cgi?id=41441
+
 		if (
 			$option->get( 'permalink_structure' ) &&
 			( int ) get_option( 'page_on_front' ) !==
-			( int ) $settings->get( 'calendar_page_id' )
+			( int ) $cal_page
 		) {
 			$application->set( 'permalinks_enabled', true );
 		}
 
 		$router->asset_base( $page_base )
 			->register_rewrite( $page_link );
+		$cal_state->set_routing_initialization( false );
 	}
 
 	/**
@@ -241,10 +279,6 @@ class Ai1ec_Front_Controller {
 			$this->_initialize_schema();
 			// set the default theme if not set
 			$this->_add_default_theme_if_not_set();
-			// check if custom theme is set
-			if ( is_admin() ) {
-				$this->_check_old_theme();
-			}
 		} catch ( Ai1ec_Constants_Not_Set_Exception $e ) {
 			// This is blocking, throw it and disable the plugin
 			$exception = $e;
@@ -309,7 +343,7 @@ class Ai1ec_Front_Controller {
 						Ai1ec_I18n::__(
 							'Your active calendar theme could not be properly initialized. The default theme has been activated instead. Please visit %s and try reactivating your theme manually.'
 						),
-						'<a href="' . admin_url( AI1EC_THEME_SELECTION_BASE_URL ) . '">' .
+						'<a href="' . ai1ec_admin_url( AI1EC_THEME_SELECTION_BASE_URL ) . '">' .
 						Ai1ec_I18n::__( 'Calendar Themes' ) . '</a>'
 					),
 					'error',
@@ -359,17 +393,23 @@ class Ai1ec_Front_Controller {
 			'widgets_init',
 			array( 'Ai1ec_View_Admin_Widget', 'register_widget' )
 		);
-		if ( isset( $_GET[Ai1ec_Controller_Javascript_Widget::WIDGET_PARAMETER] ) ) {
+
+		if (
+			$this->is_widget() ||
+			$this->is_legacy_widget()
+		) {
 			$this->_registry->get( 'event.dispatcher' )->register_action(
 				'init',
 				array( 'controller.javascript-widget', 'render_js_widget' ),
 				PHP_INT_MAX
 			);
 		}
+
 		// Route the request.
 		$action = 'template_redirect';
 		if ( is_admin() ) {
 			$action = 'init';
+			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		}
 		add_action( $action, array( $this, 'route_request' ) );
 		add_filter( 'ai1ec_registry', array( $this, 'return_registry' ) );
@@ -418,6 +458,12 @@ class Ai1ec_Front_Controller {
 			array( 'http.request', 'init_certificate' ),
 			10,
 			2
+		);
+		// add the filter to let the organize page work
+		$dispatcher->register_action(
+			'init',
+			array( 'view.admin.organize', 'add_taxonomy_actions' ),
+			10000
 		);
 		$dispatcher->register_action(
 			'plugins_loaded',
@@ -500,6 +546,19 @@ class Ai1ec_Front_Controller {
 		$dispatcher->register_shortcode(
 			'ai1ec',
 			array( 'view.calendar.shortcode', 'shortcode' )
+		);
+		$dispatcher->register_action(
+			'updated_option',
+			array( 'model.settings', 'wp_options_observer' ),
+			PHP_INT_MAX - 1,
+			3
+		);
+
+		$dispatcher->register_action(
+			'ai1ec_settings_updated',
+			array( 'compatibility.check', 'ai1ec_settings_observer' ),
+			PHP_INT_MAX - 1,
+			2
 		);
 
 		if ( is_admin() ) {
@@ -1019,39 +1078,4 @@ class Ai1ec_Front_Controller {
 
 		return $sql;
 	}
-
-	/**
-	 * Performs run-once check if calendar is using theme outside core directory
-	 * what may mean that it is old format theme.
-	 *
-	 * @return void Method does not return.
-	 */
-	protected function _check_old_theme() {
-		$option = $this->_registry->get( 'model.option' );
-		if ( AI1EC_VERSION === $option->get( 'ai1ec_fer_checked', false ) ) {
-			return;
-		}
-		$cur_theme  = $option->get( 'ai1ec_current_theme', array() );
-		$theme_root = dirname( AI1EC_DEFAULT_THEME_ROOT );
-		if (
-			! isset( $cur_theme['theme_root'] ) ||
-			$theme_root === dirname( $cur_theme['theme_root'] )
-		) {
-			$option->set( 'ai1ec_fer_checked', AI1EC_VERSION );
-			$cur_theme['legacy'] = false;
-			$option->set( 'ai1ec_current_theme', $cur_theme );
-			return;
-		}
-		$this->_registry->get( 'notification.admin' )->store(
-			Ai1ec_I18n::__(
-				'You may be using a legacy custom calendar theme. If you have problems viewing the calendar, please read <a href="https://time.ly/">this article</a>.'
-			),
-			'error',
-			0,
-			array( Ai1ec_Notification_Admin::RCPT_ADMIN ),
-			true
-		);
-		$option->set( 'ai1ec_fer_checked', AI1EC_VERSION );
-	}
-
 }

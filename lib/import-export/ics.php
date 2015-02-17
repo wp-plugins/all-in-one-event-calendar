@@ -124,11 +124,12 @@ class Ai1ec_Ics_Import_Export_Engine
 		vcalendar $v,
 		array $args
 	) {
-		$feed           = isset( $args['feed'] ) ? $args['feed'] : null;
-		$comment_status = isset( $args['comment_status'] ) ? $args['comment_status'] : 'open';
-		$do_show_map    = isset( $args['do_show_map'] ) ? $args['do_show_map'] : 0;
-		$count = 0;
-		$events_in_db   = isset( $args['events_in_db'] ) ? $args['events_in_db'] : 0;
+		$forced_timezone = null;
+		$feed            = isset( $args['feed'] ) ? $args['feed'] : null;
+		$comment_status  = isset( $args['comment_status'] ) ? $args['comment_status'] : 'open';
+		$do_show_map     = isset( $args['do_show_map'] ) ? $args['do_show_map'] : 0;
+		$count           = 0;
+		$events_in_db    = isset( $args['events_in_db'] ) ? $args['events_in_db'] : 0;
 		$v->sort();
 		// Reverse the sort order, so that RECURRENCE-IDs are listed before the
 		// defining recurrence events, and therefore take precedence during
@@ -141,16 +142,26 @@ class Ai1ec_Ics_Import_Export_Engine
 		// Fetch default timezone in case individual properties don't define it
 		$tz = $v->getComponent( 'vtimezone' );
 		if ( ! empty( $tz ) ) {
-			$timezone   = $tz->getProperty( 'TZID' );
-		}
-		if ( empty( $timezone ) ) {
-			$timezone   = $v->getProperty( 'X-WR-TIMEZONE' );
-			$timezone   = (string)$timezone[1];
+			$timezone = $tz->getProperty( 'TZID' );
 		}
 
-		$messages       = array();
-		$local_timezone = $this->_registry->get( 'date.timezone' )
+		$x_wr_timezone = $v->getProperty( 'X-WR-TIMEZONE' );
+		if (
+			isset( $x_wr_timezone[1] ) &&
+			is_array( $x_wr_timezone )
+		) {
+			$forced_timezone = (string)$x_wr_timezone[1];
+			$timezone        = empty( $timezone )
+				? (string)$x_wr_timezone[1]
+				: $timezone;
+		}
+
+		$messages        = array();
+		$local_timezone  = $this->_registry->get( 'date.timezone' )
 			->get_default_timezone();
+		if ( empty( $forced_timezone ) ) {
+			$forced_timezone = $local_timezone;
+		}
 		$current_timestamp = $this->_registry->get( 'date.time' )->format_to_gmt();
 		// initialize empty custom exclusions structure
 		$exclusions        = array();
@@ -200,7 +211,7 @@ class Ai1ec_Ics_Import_Export_Engine
 			$imported_cat = array( Ai1ec_Event_Taxonomy::CATEGORIES => array() );
 			// If the user chose to preserve taxonomies during import, add categories.
 			if( $categories && $feed->keep_tags_categories ) {
-				$imported_cat = $this->_add_categories_and_tags(
+				$imported_cat = $this->add_categories_and_tags(
 						$categories['value'],
 						$imported_cat,
 						false,
@@ -209,7 +220,7 @@ class Ai1ec_Ics_Import_Export_Engine
 			}
 			$feed_categories = $feed->feed_category;
 			if( ! empty( $feed_categories ) ) {
-				$imported_cat = $this->_add_categories_and_tags(
+				$imported_cat = $this->add_categories_and_tags(
 						$feed_categories,
 						$imported_cat,
 						false,
@@ -221,7 +232,7 @@ class Ai1ec_Ics_Import_Export_Engine
 			$imported_tags = array( Ai1ec_Event_Taxonomy::TAGS => array() );
 			// If the user chose to preserve taxonomies during import, add tags.
 			if( $tags && $feed->keep_tags_categories ) {
-				$imported_tags = $this->_add_categories_and_tags(
+				$imported_tags = $this->add_categories_and_tags(
 						$tags[1]['value'],
 						$imported_tags,
 						true,
@@ -230,7 +241,7 @@ class Ai1ec_Ics_Import_Export_Engine
 			}
 			$feed_tags = $feed->feed_tags;
 			if( ! empty( $feed_tags ) ) {
-				$imported_tags = $this->_add_categories_and_tags(
+				$imported_tags = $this->add_categories_and_tags(
 						$feed_tags,
 						$imported_tags,
 						true,
@@ -249,8 +260,16 @@ class Ai1ec_Ics_Import_Export_Engine
 			if ( $allday ) {
 				$event_timezone = $local_timezone;
 			}
-			$start = $this->_time_array_to_datetime( $start, $event_timezone );
-			$end   = $this->_time_array_to_datetime( $end,   $event_timezone );
+			$start = $this->_time_array_to_datetime(
+				$start,
+				$event_timezone,
+				$feed->import_timezone ? $forced_timezone : null
+			);
+			$end   = $this->_time_array_to_datetime(
+				$end,
+				$event_timezone,
+				$feed->import_timezone ? $forced_timezone : null
+			);
 
 			if ( false === $start || false === $end ) {
 				throw new Ai1ec_Parse_Exception(
@@ -380,6 +399,9 @@ class Ai1ec_Ics_Import_Export_Engine
 			preg_match( '/\s*(.*\S)\s+[\-@]\s+(.*)\s*/', $location, $matches );
 			// if there is no match, it's not a combined venue + address
 			if ( empty( $matches ) ) {
+				// temporary fix for Mac ICS import. Se AIOEC-2187 
+				// and https://github.com/iCalcreator/iCalcreator/issues/13
+				$location = str_replace( '\n', "\n", $location );
 				// if there is a comma, probably it's an address
 				if ( false === strpos( $location, ',' ) ) {
 					$venue = $location;
@@ -558,6 +580,11 @@ class Ai1ec_Ics_Import_Export_Engine
 				wp_set_post_terms( $event->get( 'post_id' ), array_keys( $ids ), $tax_name );
 			}
 
+			unset( $imported_tags[Ai1ec_Event_Taxonomy::TAGS] );
+			foreach ( $imported_tags as $tax_name => $ids ) {
+				wp_set_post_terms( $event->get( 'post_id' ), array_keys( $ids ), $tax_name );
+			}
+
 			// if the event is not finished, unset it otherwise it could be deleted afterwards.
 			if ( $event->get( 'end' )->format_to_gmt() > $current_timestamp ) {
 				unset( $events_in_db[$event->get( 'post_id' )] );
@@ -621,12 +648,19 @@ class Ai1ec_Ics_Import_Export_Engine
 	 * Passed array: Array( 'year', 'month', 'day', ['hour', 'min', 'sec', ['tz']] )
 	 * Return int: UNIX timestamp in GMT
 	 *
-	 * @param array  $time         iCalcreator time property array (*full* format expected)
-	 * @param string $def_timezone Default time zone in case not defined in $time
+	 * @param array       $time            iCalcreator time property array
+	 *                                     (*full* format expected)
+	 * @param string      $def_timezone    Default time zone in case not defined
+	 *                                     in $time
+	 * @param null|string $forced_timezone Timezone to use instead of UTC.
 	 *
 	 * @return int UNIX timestamp
 	 **/
-	protected function _time_array_to_datetime( array $time, $def_timezone ) {
+	protected function _time_array_to_datetime(
+		array $time,
+		$def_timezone,
+		$forced_timezone = null
+	) {
 		$timezone = '';
 		if ( isset( $time['params']['TZID'] ) ) {
 			$timezone = $time['params']['TZID'];
@@ -665,7 +699,12 @@ class Ai1ec_Ics_Import_Export_Engine
 			$time['value']['min'],
 			$time['value']['sec']
 		);
-
+		if (
+			'UTC' === $timezone &&
+			null !== $forced_timezone
+		) {
+			$date_time->set_timezone( $forced_timezone );
+		}
 		return $date_time;
 	}
 
@@ -828,14 +867,15 @@ class Ai1ec_Ics_Import_Export_Engine
 				$dtstart
 			);
 
-
-			$e->setProperty(
-				'dtend',
-				$this->_sanitize_value(
-					$event->get( 'end' )->format( "Ymd\THis" )
-				),
-				$dtend
-			);
+			if ( false === (bool)$event->get( 'instant_event' ) ) {
+				$e->setProperty(
+					'dtend',
+					$this->_sanitize_value(
+						$event->get( 'end' )->format( "Ymd\THis" )
+					),
+					$dtend
+				);
+			}
 		}
 
 		// ========================
@@ -1025,11 +1065,11 @@ class Ai1ec_Ics_Import_Export_Engine
 		}
 
 		// add rrule to exported calendar
-		if ( ! empty( $rrule ) ) {
+		if ( ! empty( $rrule ) && ! isset( $rrule['RDATE'] ) ) {
 			$e->setProperty( 'rrule', $this->_sanitize_value( $rrule ) );
 		}
 		// add exrule to exported calendar
-		if ( ! empty( $exrule ) ) {
+		if ( ! empty( $exrule ) && ! isset( $exrule['EXDATE'] ) ) {
 			$e->setProperty( 'exrule', $this->_sanitize_value( $exrule ) );
 		}
 
@@ -1039,6 +1079,28 @@ class Ai1ec_Ics_Import_Export_Engine
 		// For all day events that use a date as DTSTART, date must be supplied
 		// For other other events which use DATETIME, we must use that as well
 		// We must also match the exact starting time
+		$recurrence_dates = $event->get( 'recurrence_dates' );
+		if ( ! empty( $recurrence_dates ) ) {
+			$params    = array(
+				'VALUE' => 'DATE-TIME',
+				'TZID'  => $tz,
+			);
+			$dt_suffix = $event->get( 'start' )->format( '\THis' );
+			foreach (
+				explode( ',', $recurrence_dates )
+				as $exdate
+			) {
+				// date-time string in EXDATES is formatted as 'Ymd\THis\Z', that
+				// means - in UTC timezone, thus we use `format_to_gmt` here.
+				$exdate = $this->_registry->get( 'date.time', $exdate )
+					->format_to_gmt( 'Ymd' );
+				$e->setProperty(
+					'rdate',
+					array( $exdate . $dt_suffix ),
+					$params
+				);
+			}
+		}
 		$exception_dates = $event->get( 'exception_dates' );
 		if ( ! empty( $exception_dates ) ) {
 			$params    = array(
@@ -1106,7 +1168,7 @@ class Ai1ec_Ics_Import_Export_Engine
 	 *
 	 * @return array
 	 */
-	protected function _add_categories_and_tags(
+	public function add_categories_and_tags(
 		$terms,
 		array $imported_terms,
 		$is_tag,
@@ -1172,7 +1234,7 @@ class Ai1ec_Ics_Import_Export_Engine
 		$year = $month = $day = $hour = $min = $sec = null;
 		extract( $recurrence_id, EXTR_IF_EXISTS );
 		$timezone = '';
-		$exdate   = $year . $month . $day;
+		$exdate   = sprintf( '%04d%02d%02d', $year, $month, $day );
 		if (
 			null === $hour ||
 			null === $min ||
@@ -1181,7 +1243,13 @@ class Ai1ec_Ics_Import_Export_Engine
 			$hour = $min = $sec = '00';
 			$timezone = 'Z';
 		}
-		$exdate .= 'T' . $hour . $min . $sec . $timezone;
+		$exdate .= sprintf(
+			'T%02d%02d%02d%s',
+			$hour,
+			$min,
+			$sec,
+			$timezone
+		);
 		$exclusions[$e->getProperty( 'uid' )][] = $exdate;
 		return $exclusions;
 	}

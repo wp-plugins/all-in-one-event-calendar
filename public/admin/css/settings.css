@@ -148,12 +148,6 @@
 	width: 110px;
 }
 
-#show_front_end_create_form,
-#allow_anonymous_submissions,
-#allow_anonymous_uploads,
-#publish_anonymous_submissions {
-	margin-left: 17px;
-}
 .ai1ec-recaptcha-settings label {
 	width: 180px;
 }
@@ -195,4 +189,8 @@
 .ai1ec_event_page_all-in-one-event-calendar-edit-css #poststuff,
 .ai1ec_event_page_all-in-one-event-calendar-edit-css .metabox-holder {
 	padding-top: 0;
+}
+
+div.ai1ec-form-group > .ai1ec-setting-fieldset {
+	margin: 40px 15px 0px 15px;
 }

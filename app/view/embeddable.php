@@ -67,6 +67,15 @@ abstract class Ai1ec_Embeddable extends WP_Widget {
 	abstract public function get_name();
 
 	/**
+	 * The icon class associated with the widget. Defaults to calendar.
+	 *
+	 * @return string
+	 */
+	public function get_icon() {
+		return 'ai1ec-fa ai1ec-fa-calendar';
+	}
+
+	/**
 	 * Checks and returns widget requirements.
 	 *
 	 * @return string

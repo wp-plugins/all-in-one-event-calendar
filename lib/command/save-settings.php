@@ -25,7 +25,6 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 		$_POST['enabled_views'] = true;
 		// let other plugin modify the post
 		$_POST = apply_filters( 'ai1ec_before_save_settings', $_POST );
-
 		foreach ( $options as $name => $data ) {
 			$value = null;
 			if ( isset( $_POST[$name] ) ) {
@@ -97,7 +96,7 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 		do_action( 'ai1ec_settings_updated', $options, $new_options );
 
 		return array(
-			'url' => admin_url(
+			'url'        => ai1ec_admin_url(
 				'edit.php?post_type=ai1ec_event&page=all-in-one-event-calendar-settings'
 			),
 			'query_args' => array(

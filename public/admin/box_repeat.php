@@ -11,24 +11,29 @@
 
 	<big>
 		<ul class="ai1ec-nav ai1ec-nav-pills ai1ec-row">
-			<li class="ai1ec-active ai1ec-col-xs-3 ai1ec-text-center">
+			<li class="ai1ec-active ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center">
 				<a href="#ai1ec_daily_content" data-toggle="ai1ec-tab">
 					<?php _e( 'Daily', AI1EC_PLUGIN_NAME ) ;?>
 				</a>
 			</li>
-			<li class="ai1ec-col-xs-3 ai1ec-text-center">
+			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center">
 				<a href="#ai1ec_weekly_content" data-toggle="ai1ec-tab">
 					<?php _e( 'Weekly', AI1EC_PLUGIN_NAME ) ;?>
 				</a>
 			</li>
-			<li class="ai1ec-col-xs-3 ai1ec-text-center">
+			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center">
 				<a href="#ai1ec_monthly_content" data-toggle="ai1ec-tab">
 					<?php _e( 'Monthly', AI1EC_PLUGIN_NAME ) ;?>
 				</a>
 			</li>
-			<li class="ai1ec-col-xs-3 ai1ec-text-center">
+			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center">
 				<a href="#ai1ec_yearly_content" data-toggle="ai1ec-tab">
 					<?php _e( 'Yearly', AI1EC_PLUGIN_NAME ) ;?>
+				</a>
+			</li>
+			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center">
+				<a href="#ai1ec_custom_content" data-toggle="ai1ec-tab">
+					<?php _e( 'Custom', AI1EC_PLUGIN_NAME ) ;?>
 				</a>
 			</li>
 		</ul>
@@ -52,6 +57,10 @@
 		<div id="ai1ec_yearly_content" data-freq="yearly"
 			class="ai1ec-tab-pane">
 			<?php echo $row_yearly; ?>
+		</div>
+		<div id="ai1ec_custom_content" data-freq="custom"
+			class="ai1ec-tab-pane">
+			<?php echo $row_custom; ?>
 		</div>
 	</div>
 </div>

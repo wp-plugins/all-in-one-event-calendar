@@ -1,13 +1,13 @@
-<div class="ai1ec-subscribe-container ai1ec-btn-group ai1ec-pull-left
-		ai1ec-tooltip-trigger" data-placement="left" title="{{ text.tooltip }}">
-	<button
-		type="button"
-		class="ai1ec-btn ai1ec-btn-default ai1ec-btn-sm ai1ec-dropdown-toggle
-			ai1ec-subscribe {{ button_classes }}"
+{% set alignment = alignment ? alignment : 'left' %}
+{% set placement = placement ? placement : 'down' %}
+{% set alignment2 = 'left' == alignment ? 'right' : 'left' %}
+{% set button_classes = button_classes ? button_classes : 'ai1ec-btn-sm' %}
+<div class="ai1ec-dropdown{% if placement == 'up' %} ai1ec-dropup{% endif %} ai1ec-btn
+	ai1ec-btn-default {{ button_classes | e('html_attr') }}">
+	<span role="button" class="ai1ec-dropdown-toggle ai1ec-subscribe"
 			data-toggle="ai1ec-dropdown">
 		<i class="ai1ec-fa ai1ec-icon-rss ai1ec-fa-lg ai1ec-fa-fw"></i>
 		<span class="ai1ec-hidden-xs">
-			<span class="ai1ec-hidden-xs">
 			{% if subscribe_label is not empty %}
 				{{ subscribe_label }}
 			{% else %}
@@ -17,48 +17,39 @@
 					{{ text_subscribe }}
 				{% endif %}
 			{% endif %}
-			</span>
 			<span class="ai1ec-caret"></span>
 		</span>
-	</button>
+	</span>
 	{% set url = export_url | replace( {"webcal://": "http://"} ) ~ url_args %}
-	<ul class="ai1ec-dropdown-menu ai1ec-pull-right" role="menu">
+	<ul class="ai1ec-dropdown-menu ai1ec-pull-{{ alignment2 }}" role="menu">
 		<li>
-			<a class="ai1ec-tooltip-trigger ai1ec-tooltip-auto"
-			   target="_blank"
-			   data-placement="left"
-			   href="{{ url | e('html_attr') }}"
-			   title="{{ text.title.timely }}" >
+			<a class="ai1ec-tooltip-trigger ai1ec-tooltip-auto" target="_blank"
+				data-placement="{{ alignment }}" title="{{ text.title.timely }}"
+				href="{{ url | e('html_attr') }}">
 				<i class="ai1ec-fa ai1ec-fa-lg ai1ec-fa-fw ai1ec-icon-timely"></i>
 				{{ text.label.timely }}
 			</a>
 		</li>
 		<li>
-			<a class="ai1ec-tooltip-trigger ai1ec-tooltip-auto"
-			   target="_blank"
-			   data-placement="left"
-			   href="http://www.google.com/calendar/render?cid={{ url | url_encode | e('html_attr') }}"
-			   title="{{ text.title.google }}" >
+			<a class="ai1ec-tooltip-trigger ai1ec-tooltip-auto" target="_blank"
+			  data-placement="{{ alignment }}" title="{{ text.title.google }}"
+			  href="http://www.google.com/calendar/render?cid={{ url | url_encode | e('html_attr') }}">
 				<i class="ai1ec-fa ai1ec-icon-google ai1ec-fa-lg ai1ec-fa-fw"></i>
 				{{ text.label.google }}
 			</a>
 		</li>
 		<li>
-			<a class="ai1ec-tooltip-trigger ai1ec-tooltip-auto"
-			   target="_blank"
-			   data-placement="left"
-			   href="{{ ( export_url_no_html ~ url_args ) | e('html_attr') }}"
-			   title="{{ text.title.outlook }}" >
+			<a class="ai1ec-tooltip-trigger ai1ec-tooltip-auto" target="_blank"
+			  data-placement="{{ alignment }}" title="{{ text.title.outlook }}"
+			  href="{{ ( export_url_no_html ~ url_args ) | e('html_attr') }}">
 				<i class="ai1ec-fa ai1ec-icon-windows ai1ec-fa-lg ai1ec-fa-fw"></i>
 				{{ text.label.outlook }}
 			</a>
 		</li>
 		<li>
-			<a class="ai1ec-tooltip-trigger ai1ec-tooltip-auto"
-			   target="_blank"
-			   data-placement="left"
-			   href="{{ ( export_url_no_html ~ url_args ) | e('html_attr') }}"
-			   title="{{ text.title.apple }}" >
+			<a class="ai1ec-tooltip-trigger ai1ec-tooltip-auto" target="_blank"
+			  data-placement="{{ alignment }}" title="{{ text.title.apple }}"
+			  href="{{ ( export_url_no_html ~ url_args ) | e('html_attr') }}">
 				<i class="ai1ec-fa ai1ec-icon-apple ai1ec-fa-lg ai1ec-fa-fw"></i>
 				{{ text.label.apple }}
 			</a>
@@ -66,12 +57,23 @@
 		<li>
 			{% set export_url_no_html_http = export_url_no_html | replace( {"webcal://": "http://"} ) %}
 			<a class="ai1ec-tooltip-trigger ai1ec-tooltip-auto"
-			   data-placement="left"
-			   href="{{ ( export_url_no_html_http ~ url_args ) | e('html_attr') }}"
-			   title="{{ text.title.plaintext }}" >
+			  data-placement="{{ alignment }}" title="{{ text.title.plaintext }}"
+			  href="{{ ( export_url_no_html_http ~ url_args ) | e('html_attr') }}">
 				<i class="ai1ec-fa ai1ec-icon-calendar ai1ec-fa-fw"></i>
 				{{ text.label.plaintext }}
 			</a>
 		</li>
 	</ul>
 </div>
+
+{% if show_get_calendar %}
+	<a href="http://time.ly" target="_blank"
+		class="ai1ec-btn ai1ec-btn-default ai1ec-get-calendar
+			{{ button_classes | e('html_attr') }}">
+		<small class="ai1ec-fa-stack ai1ec-text-info ai1ec-fa-fw">
+			<i class="ai1ec-fa ai1ec-fa-square ai1ec-fa-stack-2x"></i>
+			<i class="ai1ec-fa ai1ec-icon-timely ai1ec-fa-stack-1x ai1ec-fa-inverse ai1ec-fa-lg"></i>
+		</small>
+		<span class="ai1ec-hidden-xs">{{ text_get_calendar }}</span>
+	</a>
+{% endif %}

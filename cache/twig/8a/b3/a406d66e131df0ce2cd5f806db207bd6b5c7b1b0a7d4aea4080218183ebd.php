@@ -70,29 +70,15 @@ class __TwigTemplate_8ab3a406d66e131df0ce2cd5f806db207bd6b5c7b1b0a7d4aea40802181
 \t\t\t\t\t\t\t</div>
 \t\t\t\t\t\t</div>
 \t\t\t\t\t\t";
-        // line 37
-        echo "\t\t\t\t\t\t";
-        if ((isset($context["recaptcha_key"]) ? $context["recaptcha_key"] : null)) {
-            // line 38
-            echo "\t\t\t\t\t\t\t<div class=\"ai1ec-recaptcha\"
-\t\t\t\t\t\t\t\tdata-placeholder=\"";
-            // line 39
-            echo twig_escape_filter($this->env, (isset($context["verification_words"]) ? $context["verification_words"] : null), "html_attr");
-            echo "\"
-\t\t\t\t\t\t\t\tdata-recaptcha-key=\"";
-            // line 40
-            echo twig_escape_filter($this->env, (isset($context["recaptcha_key"]) ? $context["recaptcha_key"] : null), "html_attr");
-            echo "\">
-\t\t\t\t\t\t\t\t<div class=\"ai1ec-initializing-message\">
-\t\t\t\t\t\t\t\t\t";
-            // line 42
-            echo twig_escape_filter($this->env, (isset($context["loading_recaptcha"]) ? $context["loading_recaptcha"] : null), "html", null, true);
+        // line 36
+        if ((array_key_exists("form_captcha_challenge", $context) && (isset($context["form_captcha_challenge"]) ? $context["form_captcha_challenge"] : null))) {
+            // line 37
+            echo "\t\t\t\t\t\t\t";
+            echo (isset($context["form_captcha_challenge"]) ? $context["form_captcha_challenge"] : null);
             echo "
-\t\t\t\t\t\t\t\t</div>
-\t\t\t\t\t\t\t</div>
 \t\t\t\t\t\t";
         }
-        // line 46
+        // line 39
         echo "\t\t\t\t\t</div>
 
 \t\t\t\t\t<p class=\"ai1ec-centered\">
@@ -100,7 +86,7 @@ class __TwigTemplate_8ab3a406d66e131df0ce2cd5f806db207bd6b5c7b1b0a7d4aea40802181
 \t\t\t\t\t\t\tclass=\"ai1ec-btn ai1ec-btn-info ai1ec-btn-lg\" data-toggle=\"ai1ec-collapse\">
 \t\t\t\t\t\t\t<i class=\"ai1ec-fa ai1ec-fa-download ai1ec-fa-lg\"></i>
 \t\t\t\t\t\t\t";
-        // line 52
+        // line 45
         echo twig_escape_filter($this->env, (isset($context["get_your_own_calendar"]) ? $context["get_your_own_calendar"] : null), "html", null, true);
         echo "
 \t\t\t\t\t\t\t<i class=\"ai1ec-fa ai1ec-fa-chevron-down\"></i>
@@ -110,49 +96,49 @@ class __TwigTemplate_8ab3a406d66e131df0ce2cd5f806db207bd6b5c7b1b0a7d4aea40802181
 
 \t\t\t\t\t<div id=\"ai1ec-info-pane\" class=\"ai1ec-collapse ai1ec-prose\">
 \t\t\t\t\t\t";
-        // line 60
+        // line 53
         echo "\t\t\t\t\t\t<p>
 \t\t\t\t\t\t\t";
-        // line 61
+        // line 54
         echo (isset($context["calendar_install"]) ? $context["calendar_install"] : null);
         echo "
 \t\t\t\t\t\t</p>
 \t\t\t\t\t\t<ol>
 \t\t\t\t\t\t\t<li>";
-        // line 64
+        // line 57
         echo (isset($context["calendar_browse"]) ? $context["calendar_browse"] : null);
         echo "</li>
 \t\t\t\t\t\t\t<li>";
-        // line 65
+        // line 58
         echo (isset($context["calendar_download"]) ? $context["calendar_download"] : null);
         echo "</li>
 \t\t\t\t\t\t\t<li>";
-        // line 66
+        // line 59
         echo (isset($context["wordpress_login"]) ? $context["wordpress_login"] : null);
         echo "</li>
 \t\t\t\t\t\t\t<li>";
-        // line 67
+        // line 60
         echo (isset($context["calendar_upload"]) ? $context["calendar_upload"] : null);
         echo "</li>
 \t\t\t\t\t\t\t<li>";
-        // line 68
+        // line 61
         echo (isset($context["calendar_install_now"]) ? $context["calendar_install_now"] : null);
         echo "</li>
 \t\t\t\t\t\t</ol>
 \t\t\t\t\t\t<p>
 \t\t\t\t\t\t\t";
-        // line 71
+        // line 64
         echo (isset($context["calendar_running"]) ? $context["calendar_running"] : null);
         echo "
 \t\t\t\t\t\t</p>
 \t\t\t\t\t\t<p>
 \t\t\t\t\t\t\t";
-        // line 74
+        // line 67
         echo (isset($context["calendar_support"]) ? $context["calendar_support"] : null);
         echo "
 \t\t\t\t\t\t</p>
 \t\t\t\t\t\t";
-        // line 77
+        // line 70
         echo "\t\t\t\t\t</div>
 \t\t\t\t</div>
 \t\t\t\t<div class=\"ai1ec-modal-footer\">
@@ -160,7 +146,7 @@ class __TwigTemplate_8ab3a406d66e131df0ce2cd5f806db207bd6b5c7b1b0a7d4aea40802181
 \t\t\t\t\t\t<button type=\"submit\"
 \t\t\t\t\t\t\tclass=\"ai1ec-btn ai1ec-btn-lg ai1ec-btn-primary ai1ec-submit\">
 \t\t\t\t\t\t\t";
-        // line 83
+        // line 76
         echo twig_escape_filter($this->env, (isset($context["submit_for_review"]) ? $context["submit_for_review"] : null), "html", null, true);
         echo "
 \t\t\t\t\t\t\t<i class=\"ai1ec-fa ai1ec-fa-chevron-right\"></i>
@@ -186,6 +172,6 @@ class __TwigTemplate_8ab3a406d66e131df0ce2cd5f806db207bd6b5c7b1b0a7d4aea40802181
 
     public function getDebugInfo()
     {
-        return array (  164 => 83,  156 => 77,  139 => 68,  131 => 66,  127 => 65,  123 => 64,  114 => 60,  104 => 52,  96 => 46,  77 => 38,  74 => 37,  60 => 28,  69 => 24,  644 => 354,  636 => 348,  628 => 343,  619 => 336,  617 => 335,  611 => 331,  609 => 330,  606 => 329,  600 => 326,  597 => 325,  595 => 324,  592 => 323,  585 => 319,  580 => 317,  576 => 316,  573 => 315,  570 => 314,  567 => 312,  558 => 306,  549 => 300,  543 => 297,  534 => 291,  525 => 285,  520 => 282,  517 => 281,  510 => 275,  504 => 273,  497 => 270,  495 => 269,  489 => 265,  483 => 263,  476 => 260,  474 => 259,  469 => 256,  461 => 250,  453 => 245,  439 => 234,  433 => 230,  426 => 224,  420 => 222,  413 => 219,  411 => 218,  405 => 214,  399 => 212,  392 => 209,  390 => 208,  385 => 205,  379 => 200,  373 => 198,  366 => 195,  364 => 194,  359 => 191,  354 => 187,  348 => 184,  345 => 183,  339 => 180,  333 => 177,  330 => 176,  328 => 175,  324 => 173,  321 => 171,  315 => 167,  312 => 166,  304 => 160,  301 => 159,  297 => 157,  295 => 156,  288 => 151,  282 => 149,  275 => 146,  273 => 145,  268 => 142,  262 => 137,  256 => 135,  249 => 132,  242 => 128,  236 => 123,  216 => 119,  212 => 118,  207 => 117,  203 => 116,  192 => 110,  183 => 103,  177 => 100,  170 => 95,  155 => 85,  145 => 71,  138 => 74,  134 => 73,  119 => 62,  107 => 54,  101 => 51,  91 => 44,  80 => 39,  66 => 29,  35 => 9,  30 => 7,  63 => 22,  54 => 17,  43 => 17,  24 => 3,  21 => 2,  82 => 21,  73 => 18,  70 => 24,  64 => 15,  55 => 12,  52 => 23,  48 => 15,  46 => 18,  41 => 7,  37 => 9,  32 => 8,  22 => 2,  88 => 26,  81 => 24,  79 => 23,  75 => 36,  68 => 33,  57 => 18,  49 => 14,  44 => 12,  31 => 7,  27 => 7,  265 => 123,  259 => 120,  252 => 117,  250 => 116,  247 => 131,  241 => 112,  234 => 109,  232 => 108,  229 => 121,  227 => 106,  219 => 100,  213 => 96,  205 => 93,  201 => 91,  199 => 90,  196 => 112,  190 => 86,  186 => 84,  184 => 83,  181 => 82,  173 => 79,  169 => 77,  167 => 76,  162 => 89,  160 => 72,  157 => 71,  151 => 74,  149 => 68,  142 => 63,  135 => 67,  130 => 56,  128 => 69,  125 => 54,  117 => 61,  113 => 58,  108 => 45,  106 => 44,  103 => 43,  94 => 39,  89 => 42,  87 => 35,  84 => 40,  76 => 28,  72 => 21,  67 => 23,  65 => 19,  61 => 21,  56 => 19,  53 => 14,  51 => 17,  40 => 11,  34 => 11,  28 => 3,  26 => 4,  36 => 10,  23 => 3,  19 => 1,);
+        return array (  137 => 67,  131 => 64,  125 => 61,  117 => 59,  103 => 54,  90 => 45,  82 => 39,  52 => 23,  34 => 11,  677 => 347,  669 => 341,  661 => 336,  652 => 329,  650 => 328,  644 => 324,  642 => 323,  639 => 322,  633 => 319,  630 => 318,  628 => 317,  625 => 316,  619 => 314,  617 => 313,  614 => 312,  605 => 306,  594 => 302,  589 => 300,  583 => 297,  574 => 291,  567 => 286,  561 => 284,  555 => 282,  553 => 281,  548 => 278,  545 => 277,  538 => 271,  532 => 269,  525 => 266,  523 => 265,  517 => 261,  511 => 259,  504 => 256,  502 => 255,  497 => 252,  489 => 246,  481 => 241,  468 => 231,  462 => 227,  455 => 221,  449 => 219,  442 => 216,  440 => 215,  434 => 211,  428 => 209,  421 => 206,  419 => 205,  414 => 202,  408 => 197,  402 => 195,  395 => 192,  393 => 191,  388 => 188,  385 => 186,  382 => 185,  368 => 184,  364 => 182,  362 => 181,  357 => 179,  352 => 178,  348 => 176,  345 => 175,  327 => 174,  324 => 173,  321 => 171,  315 => 167,  312 => 166,  304 => 160,  301 => 159,  297 => 157,  295 => 156,  288 => 151,  282 => 149,  275 => 146,  273 => 145,  268 => 142,  262 => 137,  256 => 135,  249 => 132,  247 => 131,  242 => 128,  236 => 123,  229 => 121,  212 => 118,  207 => 117,  203 => 116,  192 => 110,  183 => 103,  170 => 95,  138 => 74,  128 => 69,  107 => 54,  91 => 44,  80 => 39,  66 => 29,  61 => 21,  43 => 17,  73 => 18,  64 => 15,  55 => 12,  88 => 23,  79 => 23,  75 => 36,  68 => 33,  57 => 18,  118 => 43,  96 => 33,  85 => 22,  69 => 24,  60 => 28,  58 => 13,  49 => 14,  36 => 10,  204 => 84,  196 => 112,  177 => 100,  171 => 73,  165 => 69,  163 => 63,  158 => 61,  154 => 60,  150 => 76,  146 => 58,  142 => 70,  136 => 56,  130 => 54,  105 => 36,  101 => 51,  93 => 42,  87 => 29,  81 => 24,  74 => 36,  67 => 23,  65 => 19,  59 => 18,  53 => 14,  44 => 8,  25 => 3,  21 => 2,  77 => 34,  70 => 24,  62 => 21,  54 => 17,  50 => 15,  29 => 6,  40 => 11,  38 => 5,  27 => 7,  218 => 120,  216 => 119,  208 => 116,  201 => 115,  199 => 82,  188 => 109,  179 => 102,  173 => 98,  167 => 95,  162 => 89,  160 => 91,  155 => 85,  145 => 78,  141 => 81,  134 => 73,  126 => 71,  124 => 66,  121 => 60,  119 => 62,  113 => 58,  109 => 57,  104 => 56,  100 => 53,  92 => 32,  84 => 40,  76 => 37,  72 => 21,  63 => 22,  56 => 19,  51 => 10,  30 => 7,  46 => 18,  32 => 8,  26 => 4,  23 => 3,  48 => 15,  33 => 7,  28 => 5,  24 => 3,  41 => 11,  39 => 10,  37 => 9,  35 => 9,  31 => 7,  19 => 1,);
     }
 }

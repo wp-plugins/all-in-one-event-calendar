@@ -58,6 +58,7 @@ class Ai1ec_View_Admin_Get_repeat_Box extends Ai1ec_Base {
 			'row_weekly'      => $this->row_weekly(),
 			'row_monthly'     => $this->row_monthly(),
 			'row_yearly'      => $this->row_yearly(),
+			'row_custom'      => $this->row_custom(),
 			'count'           => $this->create_count_input(
 				'ai1ec_count',
 				$count
@@ -131,11 +132,17 @@ class Ai1ec_View_Admin_Get_repeat_Box extends Ai1ec_Base {
 					'Recurrence rule cannot be empty.'
 				);
 			} else {
-				$rrule = $this->_registry->get( 'recurrence.rule' );
-				// convert rrule to text
-				$message = ucfirst(
-					$rrule->rrule_to_text( $_REQUEST['rrule'] )
-				);
+				//list( $rule, $value ) = explode( '=', $_REQUEST['rrule'], 2 );
+				//if ( in_array( array(), $rule ) ) {
+				//	$message = $this->_registry->get( 'recurrence.date' );
+				//
+				//} else {
+					$rrule = $this->_registry->get( 'recurrence.rule' );
+					// convert rrule to text
+					$message = ucfirst(
+						$rrule->rrule_to_text( $_REQUEST['rrule'] )
+					);
+					//}
 			}
 		} else {
 			$error   = true;
@@ -207,6 +214,23 @@ class Ai1ec_View_Admin_Get_repeat_Box extends Ai1ec_Base {
 			) . Ai1ec_I18n::__( 'day(s)' ),
 		);
 		return $loader->get_file( 'row_daily.php', $args, true )
+			->get_content();
+	}
+
+	/**
+	 * row_custom function
+	 *
+	 * Returns custom dates selector
+	 *
+	 * @return void
+	 **/
+	protected function row_custom( $visible = false, $selected = 1 ) {
+		$loader = $this->_registry->get( 'theme.loader' );
+
+		$args = array(
+			'visible'  => $visible
+		);
+		return $loader->get_file( 'row_custom.php', $args, true )
 			->get_content();
 	}
 

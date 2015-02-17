@@ -16,70 +16,78 @@ class __TwigTemplate_3714fa01bbe4d4ffa4f03a4cba6fb9acbd490824785b969c9e705534675
     protected function doDisplay(array $context, array $blocks = array())
     {
         // line 1
-        echo "<select class=\"ai1ec-categories-selector ai1ec-select2-multiselect-selector\"
-\tid=\"";
-        // line 2
+        echo "<div class=\"ai1ec-s2-with-icon\" data-ai1ec-icon=\"";
+        echo twig_escape_filter($this->env, (isset($context["icon"]) ? $context["icon"] : null), "html_attr");
+        echo "\">
+\t<select class=\"ai1ec-categories-selector ai1ec-select2-multiselect-selector\"
+\t\tid=\"";
+        // line 3
         echo twig_escape_filter($this->env, (isset($context["id"]) ? $context["id"] : null), "html", null, true);
         echo "\" name=\"";
         echo twig_escape_filter($this->env, (isset($context["name"]) ? $context["name"] : null), "html", null, true);
         echo "\"
-\tplaceholder=\"";
-        // line 3
-        echo twig_escape_filter($this->env, (isset($context["placeholder"]) ? $context["placeholder"] : null), "html_attr");
-        echo "\"
-\tdata-placeholder=\"";
+\t\tplaceholder=\"";
         // line 4
         echo twig_escape_filter($this->env, (isset($context["placeholder"]) ? $context["placeholder"] : null), "html_attr");
         echo "\"
-\tmultiple=\"multiple\">
-\t";
-        // line 6
+\t\tdata-placeholder=\"";
+        // line 5
+        echo twig_escape_filter($this->env, (isset($context["placeholder"]) ? $context["placeholder"] : null), "html_attr");
+        echo "\"
+\t\tmultiple=\"multiple\">
+\t\t";
+        // line 7
         $context['_parent'] = (array) $context;
         $context['_seq'] = twig_ensure_traversable((isset($context["categories"]) ? $context["categories"] : null));
         foreach ($context['_seq'] as $context["_key"] => $context["term"]) {
-            // line 7
-            echo "\t\t<option value=\"";
+            // line 8
+            echo "\t\t\t<option value=\"";
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["term"]) ? $context["term"] : null), "term_id"), "html", null, true);
             echo "\"
-\t\t\t";
-            // line 8
+\t\t\t\t";
+            // line 9
             if (twig_in_filter($this->getAttribute((isset($context["term"]) ? $context["term"] : null), "term_id"), (isset($context["selected_cat_ids"]) ? $context["selected_cat_ids"] : null))) {
-                // line 9
-                echo "      \tselected=\"selected\"
-      ";
+                // line 10
+                echo "\t\t\t\t\tselected=\"selected\"
+\t\t\t\t";
             }
-            // line 11
-            echo "\t\t\t";
+            // line 12
+            echo "\t\t\t\t";
             if ((!twig_test_empty($this->getAttribute((isset($context["term"]) ? $context["term"] : null), "description")))) {
-                // line 12
-                echo "\t\t\t\tdata-description=\"";
+                // line 13
+                echo "\t\t\t\t\tdata-description=\"";
                 echo twig_escape_filter($this->env, $this->getAttribute((isset($context["term"]) ? $context["term"] : null), "description"), "html_attr");
                 echo "\"
-\t\t\t";
+\t\t\t\t";
             }
-            // line 14
-            echo "\t\t\t";
+            // line 15
+            echo "\t\t\t\t";
             if ((!twig_test_empty($this->getAttribute((isset($context["term"]) ? $context["term"] : null), "color")))) {
-                // line 15
-                echo "\t\t\t\tdata-color=\"";
+                // line 16
+                echo "\t\t\t\t\tdata-color=\"";
                 echo twig_escape_filter($this->env, $this->getAttribute((isset($context["term"]) ? $context["term"] : null), "color"), "html_attr");
                 echo "\"
-\t\t\t";
+\t\t\t\t";
             }
-            // line 17
-            echo "\t\t\t>
-\t\t\t";
             // line 18
+            echo "\t\t\t\t>
+\t\t\t\t";
+            // line 19
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["term"]) ? $context["term"] : null), "name"), "html", null, true);
             echo "
-\t\t</option>
-\t";
+\t\t\t</option>
+\t\t";
         }
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['term'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 21
-        echo "</select>
+        // line 22
+        echo "\t</select>
+\t<i class=\"";
+        // line 23
+        echo twig_escape_filter($this->env, (isset($context["icon"]) ? $context["icon"] : null), "html_attr");
+        echo "\"></i>
+</div>
 ";
     }
 
@@ -95,6 +103,6 @@ class __TwigTemplate_3714fa01bbe4d4ffa4f03a4cba6fb9acbd490824785b969c9e705534675
 
     public function getDebugInfo()
     {
-        return array (  82 => 21,  73 => 18,  70 => 17,  64 => 15,  55 => 12,  52 => 11,  48 => 9,  46 => 8,  41 => 7,  37 => 6,  32 => 4,  22 => 2,  88 => 26,  81 => 24,  79 => 23,  75 => 22,  68 => 20,  57 => 16,  49 => 13,  44 => 12,  31 => 8,  27 => 7,  265 => 123,  259 => 120,  252 => 117,  250 => 116,  247 => 115,  241 => 112,  234 => 109,  232 => 108,  229 => 107,  227 => 106,  219 => 100,  213 => 96,  205 => 93,  201 => 91,  199 => 90,  196 => 89,  190 => 86,  186 => 84,  184 => 83,  181 => 82,  173 => 79,  169 => 77,  167 => 76,  162 => 73,  160 => 72,  157 => 71,  151 => 69,  149 => 68,  142 => 63,  135 => 59,  130 => 56,  128 => 55,  125 => 54,  117 => 49,  113 => 48,  108 => 45,  106 => 44,  103 => 43,  94 => 39,  89 => 36,  87 => 35,  84 => 34,  76 => 30,  72 => 21,  67 => 24,  65 => 19,  61 => 14,  56 => 19,  53 => 14,  51 => 17,  40 => 11,  34 => 5,  28 => 3,  26 => 2,  36 => 10,  23 => 2,  19 => 1,);
+        return array (  73 => 18,  64 => 15,  55 => 12,  88 => 23,  79 => 23,  75 => 22,  68 => 20,  57 => 16,  118 => 43,  96 => 33,  85 => 22,  69 => 20,  60 => 16,  58 => 13,  49 => 9,  36 => 10,  204 => 84,  196 => 81,  177 => 76,  171 => 73,  165 => 69,  163 => 63,  158 => 61,  154 => 60,  150 => 59,  146 => 58,  142 => 57,  136 => 56,  130 => 54,  105 => 36,  101 => 34,  93 => 42,  87 => 29,  81 => 24,  74 => 32,  67 => 16,  65 => 19,  59 => 18,  53 => 14,  44 => 8,  25 => 3,  21 => 2,  77 => 34,  70 => 26,  62 => 21,  54 => 16,  50 => 15,  29 => 6,  40 => 7,  38 => 5,  27 => 7,  218 => 120,  216 => 118,  208 => 116,  201 => 115,  199 => 82,  188 => 109,  179 => 102,  173 => 98,  167 => 95,  162 => 92,  160 => 91,  155 => 89,  145 => 82,  141 => 81,  134 => 77,  126 => 71,  124 => 66,  121 => 65,  119 => 64,  113 => 53,  109 => 57,  104 => 56,  100 => 55,  92 => 32,  84 => 45,  76 => 19,  72 => 21,  63 => 17,  56 => 17,  51 => 10,  30 => 7,  46 => 15,  32 => 8,  26 => 6,  23 => 2,  48 => 16,  33 => 7,  28 => 5,  24 => 3,  41 => 11,  39 => 10,  37 => 8,  35 => 5,  31 => 4,  19 => 1,);
     }
 }

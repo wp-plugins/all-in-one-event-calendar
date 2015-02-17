@@ -362,7 +362,7 @@ class Ai1ec_Date_Timezone extends Ai1ec_Base {
 						Ai1ec_I18n::__(
 							'Please select site timezone in %s <em>Timezone</em> dropdown menu.'
 						),
-						'<a href="' . admin_url( 'options-general.php' ) .
+						'<a href="' . ai1ec_admin_url( 'options-general.php' ) .
 						'">' . Ai1ec_I18n::__( 'Settings' ) . '</a>'
 					),
 					'error'
@@ -398,7 +398,7 @@ class Ai1ec_Date_Timezone extends Ai1ec_Base {
 					'Timezone "UTC%+d" is not recognized. Please %suse valid%s timezone name, until then events will be created in UTC timezone.'
 				),
 				$zone,
-				'<a href="' . admin_url( 'options-general.php' ) . '">',
+				'<a href="' . ai1ec_admin_url( 'options-general.php' ) . '">',
 				'</a>'
 			),
 			'error'
@@ -466,7 +466,7 @@ class Ai1ec_Date_Timezone extends Ai1ec_Base {
 
 	/**
 	 * Check if timezone is set in wp_option
-	 * 
+	 *
 	 */
 	public function is_timezone_not_set() {
 		$timezone = $this->_registry->get( 'model.option' )
@@ -476,7 +476,7 @@ class Ai1ec_Date_Timezone extends Ai1ec_Base {
 
 	/**
 	 * Render options for select in settings
-	 * 
+	 *
 	 * @return array
 	 */
 	public function get_timezones( $only_zones = false ) {
@@ -510,7 +510,7 @@ class Ai1ec_Date_Timezone extends Ai1ec_Base {
 				'value' => $zone,
 			);
 		}
-		
+
 		return $options;
 	}
 

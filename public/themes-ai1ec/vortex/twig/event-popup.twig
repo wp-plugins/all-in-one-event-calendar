@@ -37,8 +37,7 @@
 
 	{% if event.avatar_not_wrapped is not empty %}
 		<a class="ai1ec-load-event"
-			href="{{ event.permalink | e('html_attr') }}"
-			{{ data_type_events | raw }}>
+			href="{{ event.permalink | e('html_attr') }}">
 			{{ event.avatar_not_wrapped | raw }}
 		</a>
 	{% endif %}

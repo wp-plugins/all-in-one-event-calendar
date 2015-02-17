@@ -69,3 +69,71 @@ function ai1ec_deprecated( $function ) {
 		E_USER_WARNING
 	);
 }
+
+/* (non-PHPdoc)
+ * @see admin_url()
+ */
+function ai1ec_admin_url( $path = '', $scheme = 'admin' ) {
+	if ( ai1ec_is_ssl_forced() ) {
+		$scheme = 'https';
+	}
+	return admin_url( $path, $scheme );
+}
+
+/* (non-PHPdoc)
+ * @see get_admin_url()
+ */
+function ai1ec_get_admin_url( $blog_id = null, $path = '', $scheme = 'admin' ) {
+	if ( ai1ec_is_ssl_forced() ) {
+		$scheme = 'https';
+	}
+	return get_admin_url( $blog_id, $path, $scheme );
+}
+
+/* (non-PHPdoc)
+ * @see get_site_url()
+ */
+function ai1ec_get_site_url( $blog_id = null, $path = '', $scheme = null ) {
+	if ( ai1ec_is_ssl_forced() ) {
+		$scheme = 'https';
+	}
+	return get_site_url( $blog_id, $path, $scheme );
+}
+
+/* (non-PHPdoc)
+ * @see site_url()
+ */
+function ai1ec_site_url( $path = '', $scheme = null ) {
+	if ( ai1ec_is_ssl_forced() ) {
+		$scheme = 'https';
+	}
+	return site_url( $path, $scheme );
+}
+
+/* (non-PHPdoc)
+ * @see network_admin_url()
+ */
+function ai1ec_network_admin_url( $path = '', $scheme = 'admin' ) {
+	if ( ai1ec_is_ssl_forced() ) {
+		$scheme = 'https';
+	}
+	return network_admin_url( $path, $scheme );
+}
+
+/**
+ * Returns whether SSL URLs are forced or not.
+ *
+ * @return bool Result.
+ */
+function ai1ec_is_ssl_forced() {
+	return (
+		is_admin() &&
+		(
+			class_exists( 'WordPressHTTPS' ) ||
+			(
+				defined( 'FORCE_SSL_ADMIN' ) &&
+				true === FORCE_SSL_ADMIN
+			)
+		)
+	);
+}

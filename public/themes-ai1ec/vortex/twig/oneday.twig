@@ -36,7 +36,6 @@
 
 					{% for event in day.allday %}
 						<a href="{{ event.permalink | e( 'html_attr' ) }}"
-							{{ data_type_events | raw }}
 							data-instance-id="{{ event.instance_id }}"
 							class="ai1ec-event-container ai1ec-load-event ai1ec-popup-trigger
 								ai1ec-event-id-{{ event.post_id }}
@@ -62,7 +61,6 @@
 							{% endif %}
 							<span class="ai1ec-popup-title">
 								<a class="ai1ec-load-event"
-									{{ data_type_events | raw }}
 									href="{{ event.permalink | e( 'html_attr' ) }}"
 									>{{ event.filtered_title | raw }}</a>
 								{% if show_location_in_title and event.venue %}
@@ -89,8 +87,7 @@
 							</div>
 
 							<a class="ai1ec-load-event"
-								href="{{ event.permalink | e('html_attr') }}"
-								{{ data_type_events | raw }}>
+								href="{{ event.permalink | e('html_attr') }}">
 								{{ event.avatar_not_wrapped | raw }}
 							</a>
 
@@ -126,7 +123,7 @@
 										style="top: {{ h * 60 + quarter * 15 }}px;"></div>
 								{% endfor %}
 							{% endfor %}
-							{% if day.today %}
+							{% if day.today or show_now %}
 								<div class="ai1ec-now-marker" style="top: {{ now_top }}px;">
 									<div>
 										{{ text_now_label }} {{ now_text }}
@@ -141,7 +138,6 @@
 						{% for day_array in day.notallday %}
 							{% set event = day_array.event %}
 							<a href="{{ event.permalink | e( 'html_attr' ) }}"
-								{{ data_type_events | raw }}
 								data-instance-id="{{ event.instance_id }}"
 								class="ai1ec-event-container ai1ec-load-event ai1ec-popup-trigger
 									ai1ec-event-id-{{ event.post_id }}
@@ -196,7 +192,6 @@
 								{% endif %}
 								<span class="ai1ec-popup-title">
 									<a class="ai1ec-load-event"
-										{{ data_type_events | raw }}
 										href="{{ event.permalink | e( 'html_attr' ) }}"
 										>{{ event.filtered_title | raw }}</a>
 									{% if show_location_in_title and event.venue %}
@@ -223,8 +218,7 @@
 								</div>
 
 								<a class="ai1ec-load-event"
-									href="{{ event.permalink | e('html_attr') }}"
-									{{ data_type_events | raw }}>
+									href="{{ event.permalink | e('html_attr') }}">
 									{{ event.avatar_not_wrapped | raw }}
 								</a>
 

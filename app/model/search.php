@@ -92,7 +92,7 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 			->get_wpml_table_where();
 
 		if ( $spanning ) {
-			$spanning_string = 'i.end > %d AND i.start < %d ';
+			$spanning_string = 'i.end >= %d AND i.start <= %d ';
 		} else {
 			$spanning_string = 'i.start BETWEEN %d AND %d ';
 		}
@@ -205,7 +205,7 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 	 *                              ['date_first'] UNIX timestamp (date part) of first event
 	 *                              ['date_last'] UNIX timestamp (date part) of last event
 	 */
-	function get_events_relative_to(
+	public function get_events_relative_to(
 		$time,
 		$limit       = 0,
 		$page_offset = 0,
@@ -229,7 +229,7 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 		// Convert timestamp to GMT time
 		$time = $this->_registry->get(
 			'date.system'
-		)->current_time() >> 11 << 11;
+		)->get_current_rounded_time();
 		// Get post status Where snippet and associated SQL arguments
 		$where_parameters  = $this->_get_post_status_sql();
 		$post_status_where = $where_parameters['post_status_where'];
@@ -338,6 +338,31 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 			'next'       => $next,
 			'date_first' => $date_first,
 			'date_last'  => $date_last,
+		);
+	}
+
+	/**
+	 * Returns events for given day. Event must start before end of day and must
+	 * ends after beginning of day.
+	 *
+	 * @param Ai1ec_Date_Time $day    Date object.
+	 * @param array           $filter Search filters;
+	 *
+	 * @return array List of events.
+	 */
+	public function get_events_for_day(
+		Ai1ec_Date_Time $day,
+		array $filter = array()
+	) {
+		$end_of_day   = $this->_registry->get( 'date.time', $day )
+			->set_time( 23, 59, 59 );
+		$start_of_day = $this->_registry->get( 'date.time', $day )
+			->set_time( 0, 0, 0 );
+		return $this->get_events_between(
+			$start_of_day,
+			$end_of_day,
+			$filter,
+			true
 		);
 	}
 

@@ -39,12 +39,16 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 		if ( true === $this->_redirect ) {
 			if ( '' === $post['status'] ) {
 				return array(
-					'url' => admin_url( 'edit.php?post_type=' . AI1EC_POST_TYPE ),
+					'url'        => ai1ec_admin_url(
+						'edit.php?post_type=' . AI1EC_POST_TYPE
+					),
 					'query_args' => array()
 				);
 			} else {
 				return array(
-					'url' => admin_url( 'post.php?action=edit&post=' . $id ),
+					'url'        => ai1ec_admin_url(
+						'post.php?action=edit&post=' . $id
+					),
 					'query_args' => array()
 				);
 			}
@@ -69,8 +73,11 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 		)->get_current_action();
 
 		if (
+			current_user_can( 'edit_ai1ec_events' ) &&
 			'clone' === $current_action &&
-			! empty( $_REQUEST['post'] )
+			! empty( $_REQUEST['post'] ) &&
+			! empty( $_REQUEST['_wpnonce'] ) &&
+			wp_verify_nonce( $_REQUEST['_wpnonce'], 'bulk-posts' )
 		) {
 			foreach ( $_REQUEST['post'] as $post_id ) {
 				$this->_posts[] = array(
@@ -160,7 +167,7 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 
 		$new_post_id    = wp_insert_post( $new_post );
 		$edit_event_url = esc_attr(
-			admin_url( "post.php?post={$new_post_id}&action=edit" )
+			ai1ec_admin_url( "post.php?post={$new_post_id}&action=edit" )
 		);
 		$message = sprintf(
 			__( '<p>The event <strong>%s</strong> was cloned succesfully. <a href="%s">Edit cloned event</a></p>', AI1EC_PLUGIN_NAME ),
@@ -232,7 +239,7 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 			$meta_values = get_post_custom_values( $meta_key, $post->ID );
 			foreach ( $meta_values as $meta_value ) {
 				$meta_value = maybe_unserialize( $meta_value );
-				add_post_meta( $new_id , $meta_key , $meta_value );
+				add_post_meta( $new_id, $meta_key, $meta_value );
 			}
 		}
 	}
@@ -306,23 +313,23 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 		$db = $this->_registry->get( 'dbi.dbi' );
 		if ( $db->are_terms_set() ) {
 			// Clear default category (added by wp_insert_post)
-			wp_set_object_terms( $new_id , NULL, 'category' );
+			wp_set_object_terms( $new_id, NULL, 'category' );
 
 			$post_taxonomies = get_object_taxonomies( $post->post_type );
 
 			$taxonomies_blacklist = array();
-			$taxonomies = array_diff( $post_taxonomies , $taxonomies_blacklist );
+			$taxonomies = array_diff( $post_taxonomies, $taxonomies_blacklist );
 			foreach ( $taxonomies as $taxonomy ) {
 				$post_terms = wp_get_object_terms(
-					$post->ID ,
-					$taxonomy ,
+					$post->ID,
+					$taxonomy,
 					array( 'orderby' => 'term_order' )
 				);
 				$terms = array();
 				for ( $i = 0; $i < count( $post_terms ); $i++ ) {
 					$terms[] = $post_terms[ $i ]->slug;
 				}
-				wp_set_object_terms( $new_id , $terms , $taxonomy );
+				wp_set_object_terms( $new_id, $terms, $taxonomy );
 			}
 		}
 	}

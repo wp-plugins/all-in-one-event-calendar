@@ -43,4 +43,18 @@ class Ai1ec_Outdated_Addon_Exception extends Ai1ec_Exception {
 	public function __toString() {
 		return '';
 	}
+
+	/**
+	 * @see Ai1ec_Exception::get_redirect_url()
+	 */
+	public function get_redirect_url() {
+		return ai1ec_admin_url( 'plugins.php' );
+	}
+
+	/**
+	 * @see Ai1ec_Exception::display_backtrace()
+	 */
+	public function display_backtrace(){
+		return false;
+	}
 }

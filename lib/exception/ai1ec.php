@@ -31,4 +31,22 @@ class Ai1ec_Exception extends Exception {
 	public function plugin_to_disable() {
 		return '';
 	}
+
+	/**
+	 * Returns destination URL if exception handler redirects.
+	 *
+	 * @return string Result.
+	 */
+	public function get_redirect_url() {
+		return ai1ec_get_admin_url();
+	}
+
+	/**
+	 * Defined whether exception handler should attach backtrace or not.
+	 * 
+	 * @return bool Value.
+	 */
+	public function display_backtrace(){
+		return true;
+	}
 }

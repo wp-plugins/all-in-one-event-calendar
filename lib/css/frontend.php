@@ -13,8 +13,8 @@ class Ai1ec_Css_Frontend extends Ai1ec_Base {
 
 	const QUERY_STRING_PARAM                = 'ai1ec_render_css';
 
-	// This is for testing purpose, set it to AI1EC_DEBUG value.
-	const PARSE_LESS_FILES_AT_EVERY_REQUEST = AI1EC_DEBUG;
+	// This is for testing purpose, set it to AI1EC_PARSE_LESS_FILES_AT_EVERY_REQUEST value.
+	const PARSE_LESS_FILES_AT_EVERY_REQUEST = AI1EC_PARSE_LESS_FILES_AT_EVERY_REQUEST;
 
 	const KEY_FOR_PERSISTANCE               = 'ai1ec_parsed_css';
 	/**
@@ -141,6 +141,11 @@ class Ai1ec_Css_Frontend extends Ai1ec_Base {
 	 */
 	public function update_persistence_layer( $css ) {
 		$filename = $this->persistance_context->write_data_to_persistence( $css );
+		$this->db_adapter->set(
+			'ai1ec_filename_css',
+			$filename['file'],
+			true
+		);
 		$this->save_less_parse_time( $filename['url'] );
 	}
 
@@ -157,10 +162,13 @@ class Ai1ec_Css_Frontend extends Ai1ec_Base {
 		// if it's empty it's a new install probably. Return static css.
 		// if it's numeric, just consider it a new install
 		if ( empty( $saved_par ) ) {
+			$theme = $this->_registry->get(
+				'model.option'
+			)->get( 'ai1ec_current_theme' );
 			return Ai1ec_Http_Response_Helper::remove_protocols(
 				apply_filters(
 					'ai1ec_frontend_standard_css_url',
-					AI1EC_URL . '/public/themes-ai1ec/vortex/css/ai1ec_parsed_css.css'
+					$theme['theme_url'] . '/css/ai1ec_parsed_css.css'
 				)
 			);
 		}
@@ -171,7 +179,7 @@ class Ai1ec_Css_Frontend extends Ai1ec_Base {
 				return Ai1ec_Http_Response_Helper::remove_protocols(
 					add_query_arg(
 						array( self::QUERY_STRING_PARAM => $time, ),
-						trailingslashit( $template_helper->get_site_url() )
+						trailingslashit( ai1ec_get_site_url() )
 					)
 				);
 			} else {
@@ -215,6 +223,12 @@ class Ai1ec_Css_Frontend extends Ai1ec_Base {
 		array $variables    = null,
 		$update_persistence = false
 	) {
+		if ( ! $this->lessphp_controller->is_compilation_needed( $variables ) ) {
+			$this->_registry->get(
+				'model.option'
+			)->delete( 'ai1ec_render_css' );
+			return true;
+		}
 		$notification = $this->_registry->get( 'notification.admin' );
 		if (
 			! $this->_registry->get(
@@ -286,14 +300,14 @@ class Ai1ec_Css_Frontend extends Ai1ec_Base {
 					'<p>' . Ai1ec_I18n::__(
 						"Theme options were successfully reset to their default values. <a href='%s'>Visit site</a>"
 					) . '</p>',
-					get_site_url()
+					ai1ec_get_site_url()
 				);
 			} else {
 				$message = sprintf(
 					'<p>' .Ai1ec_I18n::__(
 						"Theme options were updated successfully. <a href='%s'>Visit site</a>"
 					) . '</p>',
-					get_site_url()
+					ai1ec_get_site_url()
 				);
 			}
 

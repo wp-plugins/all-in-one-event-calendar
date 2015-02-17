@@ -21,15 +21,14 @@ class Ai1ec_Twig_Loader_Filesystem extends Twig_Loader_Filesystem {
 	 * @throws Twig_Error_Loader When $name is not found.
 	 */
 	public function getCacheKey( $name ) {
-		$cache_key = $this->findTemplate( $name );
+		// namespace style separators avoid OS colisions.
+		$cache_key = str_replace( '/', '\\', $this->findTemplate( $name ) );
 		// make path relative
 		$cache_key = str_replace(
-			WP_PLUGIN_DIR . DIRECTORY_SEPARATOR,
+			str_replace( '/', '\\', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR ) ,
 			'',
 			$cache_key
 		);
-		// namespace style separators avoid OS colisions.
-		$cache_key = str_replace( '/', '\\', $cache_key );
 		return $cache_key;
 	}
 

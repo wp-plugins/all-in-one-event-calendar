@@ -171,12 +171,12 @@ class Ai1ec_Exception_Handler {
 				$matches
 			)
 		) {
-			$line = '<h4>' .
+			$line = '<p><strong>' .
 				sprintf(
-					__( 'Disabled add-on "%s" due to an error' ),
+					__( 'The add-on "%s" has been disabled due to an error:' ),
 					__( trim( $matches[1] ), dirname( $addon ) )
 				) .
-				'</h4>';
+				'</strong></p>';
 		}
 		return $line;
 	}
@@ -196,19 +196,17 @@ class Ai1ec_Exception_Handler {
 			die();
 		}
 		// if it's something we handle, handle it
-		$backtrace = '';
-		$trace     = nl2br( $exception );
-		if ( ! empty( $trace ) ) {
-			$backtrace = '<br><br>' . $trace;
-		}
+		$backtrace = $this->_get_backtrace( $exception );
 		if ( $exception instanceof $this->_exception_class ) {
 			// check if it's a plugin instead of core
 			$disable_addon = $this->is_caused_by_addon( $exception );
 			$message       = method_exists( $exception, 'get_html_message' )
 				? $exception->get_html_message()
 				: $exception->getMessage();
-			$message .= $backtrace .
-				'<br>Request Uri: ' . $_SERVER['REQUEST_URI'];
+			$message = '<p>' . $message . '</p>';
+			if ( $exception->display_backtrace() ) {
+				$message .= $backtrace;
+			}
 			if ( null !== $disable_addon ) {
 				include_once ABSPATH . 'wp-admin/includes/plugin.php';
 				// deactivate the plugin. Fire handlers to hide options.
@@ -222,7 +220,7 @@ class Ai1ec_Exception_Handler {
 						array( Ai1ec_Notification_Admin::RCPT_ADMIN ),
 						true
 					);
-				$this->redirect();
+				$this->redirect( $exception->get_redirect_url() );
 			} else {
 				// check if it has a methof for deatiled html
 				$this->soft_deactivate_plugin( $message );
@@ -392,25 +390,23 @@ class Ai1ec_Exception_Handler {
 		$redirect_url = add_query_arg(
 			self::DB_REACTIVATE_PLUGIN,
 			'true',
-			get_admin_url( $_SERVER['REQUEST_URI'] )
+			get_admin_url()
 		);
 		$label = __(
-			'All In One Event Calendar has been disabled due to an error:',
+			'All-in-One Event Calendar has been disabled due to an error:',
 			AI1EC_PLUGIN_NAME
 		);
-		$message = '<div class="message error">'.
-						'<strong>' . $label . '</strong>';
-		if ( ! empty( $this->_message ) ) {
-			$message .= '<p>' . $this->_message . '</p>';
-		}
-		$message .= sprintf(
+		$message  = '<div class="message error">';
+		$message .= '<p><strong>' . $label . '</strong></p>';
+		$message .= $this->_message;
+		$message .= ' <a href="' . $redirect_url .
+			'" class="button button-primary ai1ec-dismissable">' .
 			__(
-				'<p>If you corrected the error and wish to try reactivating the plugin, <a href="%s">click here</a>.</p>',
+				'Try reactivating plugin',
 				AI1EC_PLUGIN_NAME
-			),
-			$redirect_url
-		);
-		$message .= '</div>';
+			);
+		$message .= '</a>';
+		$message .= '<p></p></div>';
 		echo $message;
 	}
 
@@ -419,12 +415,14 @@ class Ai1ec_Exception_Handler {
 	 *
 	 * @return void Method does not return
 	 */
-	protected function redirect() {
+	protected function redirect( $suggested_url = null ) {
+		$url = ai1ec_get_site_url();
 		if ( is_admin() ) {
-			Ai1ec_Http_Response_Helper::redirect( get_admin_url() );
-		} else {
-			Ai1ec_Http_Response_Helper::redirect( get_site_url() );
+			$url = null !== $suggested_url
+				? $suggested_url
+				: ai1ec_get_admin_url();
 		}
+		Ai1ec_Http_Response_Helper::redirect( $url );
 	}
 	/**
 	 * Had to add it as var_dump was locking my browser.
@@ -560,6 +558,41 @@ class Ai1ec_Exception_Handler {
 		}
 
 		echo nl2br( str_replace( ' ', '&nbsp;', htmlentities( $string ) ) );
+	}
+
+	/**
+	 * Get HTML code with backtrace information for given exception.
+	 *
+	 * @param Exception $exception
+	 *
+	 * @return string HTML code.
+	 */
+	protected function _get_backtrace( Exception $exception ) {
+		$backtrace = '';
+		$trace     = nl2br( $exception->getTraceAsString() );
+		$ident     = sha1( $trace );
+		if ( ! empty( $trace ) ) {
+			$request_uri  = $_SERVER['REQUEST_URI'];
+			$button_label = __( 'Toggle error details', AI1EC_PLUGIN_NAME );
+			$title        = __( 'Error Details:', AI1EC_PLUGIN_NAME );
+			$backtrace    = <<<JAVASCRIPT
+			<script type="text/javascript">
+			jQuery( function($) {
+				$( "a[data-rel='$ident']" ).click( function() {
+					jQuery( "#ai1ec-error-$ident" ).slideToggle( "fast" );
+					return false;
+				});
+			});
+			</script>
+			<blockquote id="ai1ec-error-$ident" style="display: none;">
+				<strong>$title</strong>
+				<p>$trace</p>
+				<p>Request Uri: $request_uri</p>
+			</blockquote>
+			<a href="#" data-rel="$ident" class="button">$button_label</a>
+JAVASCRIPT;
+		}
+		return $backtrace;
 	}
 
 }

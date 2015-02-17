@@ -10,12 +10,13 @@
  * @subpackage AI1EC.Javascript
  */
 class Ai1ec_Controller_Javascript_Widget extends Ai1ec_Base {
-	
+
 	const WIDGET_PARAMETER = 'ai1ec_js_widget';
+	const LEGACY_WIDGET_PARAMETER = 'ai1ec_super_widget';
 
 	protected $_widgets = array();
-	
-	
+
+
 	public function add_widget( $widget_id, $widget_class ) {
 		$this->_widgets[$widget_id] = $widget_class;
 	}
@@ -44,7 +45,7 @@ class Ai1ec_Controller_Javascript_Widget extends Ai1ec_Base {
 	 * @return array
 	 */
 	public function add_js_translation( array $data ) {
-		$data['set_calendar_page'] = __( 
+		$data['set_calendar_page'] = __(
 			'You must choose the Calendar page before using the Super Widget',
 			AI1EC_PLUGIN_NAME
 		);
@@ -56,7 +57,11 @@ class Ai1ec_Controller_Javascript_Widget extends Ai1ec_Base {
 	 */
 	public function render_js_widget() {
 		if ( isset( $_GET['render'] ) && 'true' === $_GET['render'] ) {
-			$widget = $_GET[self::WIDGET_PARAMETER];
+			if ( isset( $_GET[self::WIDGET_PARAMETER] ) ){
+				$widget = $_GET[self::WIDGET_PARAMETER];
+			} else if ( isset( $_GET[self::LEGACY_WIDGET_PARAMETER] ) ) {
+				$widget = $_GET[self::LEGACY_WIDGET_PARAMETER];
+			}
 			$widget_class = null;
 			if ( isset( $this->_widgets[$widget] ) ) {
 				$widget_class = $this->_widgets[$widget];
@@ -69,15 +74,15 @@ class Ai1ec_Controller_Javascript_Widget extends Ai1ec_Base {
 		}
 		$this->render_javascript();
 	}
-	
+
 	public function render_javascript() {
 		header( 'Content-Type: application/javascript' );
 		header(
 			'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + 31536000 ) . ' GMT'
 		);
 		header( 'Cache-Control: public, max-age=31536000' );
-	
-	
+
+
 		$jscontroller   = $this->_registry->get( 'controller.javascript' );
 		$css_controller = $this->_registry->get( 'css.frontend' );
 		$require_main   = AI1EC_ADMIN_THEME_JS_PATH . DIRECTORY_SEPARATOR . 'require.js';
@@ -99,7 +104,7 @@ class Ai1ec_Controller_Javascript_Widget extends Ai1ec_Base {
 			$extension_urls,
 			'ai1ec_widget.js'
 		);
-	
+
 		$translation['extension_urls'] = $extension_urls;
 		// the single event page js is loaded dinamically.
 		$translation['event_page'] = array(
@@ -120,23 +125,25 @@ class Ai1ec_Controller_Javascript_Widget extends Ai1ec_Base {
 		);
 		// get jquery
 		$jquery = $jscontroller->get_jquery_version_based_on_browser(
-			$_SERVER['HTTP_USER_AGENT']
+			isset( $_SERVER['HTTP_USER_AGENT'] )
+				? $_SERVER['HTTP_USER_AGENT']
+				: ''
 		);
-	
+
 		$domready = $jscontroller->get_module(
 			'domReady.js'
 		);
 		$frontend = $jscontroller->get_module(
 			'scripts/common_scripts/frontend/common_frontend.js'
 		);
-	
+
 		// compress data if possible
 		$compatibility_ob = $this->_registry->get( 'compatibility.ob' );
 		$js = <<<JS
 		/******** Called once Require.js has loaded ******/
-	
+
 		(function() {
-	
+
 			var timely_css = document.createElement( 'style' );
 			timely_css.innerHTML = '$css_rules';
 			( document.getElementsByTagName( "head" )[0] || document.documentElement ).appendChild( timely_css );
@@ -156,10 +163,10 @@ class Ai1ec_Controller_Javascript_Widget extends Ai1ec_Base {
 		})(); // We call our anonymous function immediately
 JS;
 			$compatibility_ob->gzip_if_possible( $js );
-		
+
 			exit( 0 );
 	}
-	
+
 	public function render_content( Ai1ec_Embeddable $widget_instance ) {
 		$args = array();
 		$defaults = $widget_instance->get_js_widget_configurable_defaults();
