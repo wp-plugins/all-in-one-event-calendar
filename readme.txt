@@ -843,10 +843,8 @@ dates.
 * Fixed getOffset problem - notify me if it still happens for you
 
 = Version 1.3 =
-* Added shortcodes support.[#36](http://trac.the-seed.ca/ticket/36)
-(Howto is under Frequently Asked Questions tab)
-* Added support to exclude events using
-[EXRULE](http://www.kanzaki.com/docs/ical/exrule.html)
+* Added shortcodes support. (Howto is under Frequently Asked Questions tab)
+* Added support to exclude events using [EXRULE](http://www.kanzaki.com/docs/ical/exrule.html)
 * Added Czech translation
 * Added Danish translation
 * Updated Swedish translation
@@ -855,9 +853,7 @@ dates.
 * Reviewed plugin's security. The plugin is as safe to use as is
 WordPress itself.
 * Fixed: instance_id not corresponding with correct data
-[#275](http://trac.the-seed.ca/ticket/275)
 * Fixed: Call-time pass-by-reference warning
-[#268](http://trac.the-seed.ca/ticket/268)
 * Improvement: Added support for custom fields
 
 = Version 1.2.4 =
@@ -866,77 +862,57 @@ with PHP versions below 5.3.0
 
 = Version 1.2.3 =
 * Improvement: Days of the week in month recurrence
-[#170](http://trac.the-seed.ca/ticket/170)
 * Improvement: Make Month view, Week view compatible with touchscreen
-devices [#210](http://trac.the-seed.ca/ticket/210)
+devices
 * Improvement: Improve error handling in get_timezone_offset
-function[#219](http://trac.the-seed.ca/ticket/219)
+function
 * Improvement: Update iCalcreator class
-[#256](http://trac.the-seed.ca/ticket/256)
 * Fixed: Widget Limit options (category, tag, etc) multiselect fails
-to display properly [#192](http://trac.the-seed.ca/ticket/192)
+to display properly
 * Fixed: Private Events Show in Calendar and Upcoming
-Events. [#201](http://trac.the-seed.ca/ticket/201)
+Events.
 * Fixed: Dates getting mixed up between Ai1EC calendars
-[#229](http://trac.the-seed.ca/ticket/229)
 * Fixed: Error displayed when event is a draft
-[#239](http://trac.the-seed.ca/ticket/239)
 * Fixed: PHP Notice errors from widget
-[#255](http://trac.the-seed.ca/ticket/255)
 
 = Version 1.2.2 =
 * Fixed: Issue with Week view having an improper width
-[#208](http://trac.the-seed.ca/ticket/208)
 
 = Version 1.2.1 =
 * Fixed: Exporting single event was exporting the whole calendar
-[#183](http://trac.the-seed.ca/ticket/183)
 * Fixed: Widget date was off by one in certain cases
-[#151](http://trac.the-seed.ca/ticket/151)
 * Fixed: Trashed events were still being displayed
-[#169](http://trac.the-seed.ca/ticket/169)
 * Fixed: All day events were exporting with timezone specific time
-ranges [#30](http://trac.the-seed.ca/ticket/30)
+ranges
 * Fixed: End date was able to be before the start date
-[#172](http://trac.the-seed.ca/ticket/172)
 * Fixed: 404 or bad ICS URLs now provide a warning message rather than
-fail silently [#204](http://trac.the-seed.ca/ticket/204)
+fail silently
 * Fixed: Added cachebuster to google export URL to avoid Google
-Calendar errors [#160](http://trac.the-seed.ca/ticket/160)
+Calendar errors
 * Fixed: Week view was always using AM and PM
-[#190](http://trac.the-seed.ca/ticket/190)
 * Fixed: Repeat_box was too small for some translations
-[#165](http://trac.the-seed.ca/ticket/165)
 
 = Version 1.2 =
 * Added scrollable Week view
-[#117](http://trac.the-seed.ca/ticket/117)
 * Fixed some notice-level errors
 
 = Version 1.1.3 =
 * Fixed: last date issue for recurring events "until" end date
-[#147](http://trac.theseednetwork.com/ticket/147)
 * Fixed an issue with settings page not saving changes.
 * Fixed issues when subscribing to calendars.
 * Export only published events
-[#95](http://trac.theseednetwork.com/ticket/95)
 * Added translation patch. Thank you josjo!
-[#150](http://trac.theseednetwork.com/ticket/150)
 * Add language and region awareness in functions for Google Map. Thank
-you josjo! [#102](http://trac.theseednetwork.com/ticket/102)
+you josjo!
 * Small translation error in class-ai1ec-app-helper.php. Thank you
-josjo! [#94](http://trac.theseednetwork.com/ticket/94)
+josjo!
 * Added Dutch, Spanish, and Swedish translations. For up to date
-language files, visit [ticket
-#78](http://trac.theseednetwork.com/ticket/78).
+language files, visit
 
 = Version 1.1.2 =
 * Fixed: Problem in repeat UI when selecting months before October
-[#136](http://trac.theseednetwork.com/ticket/136)
 * Fixed: Append instance_id only to events permalink
-[#140](http://trac.theseednetwork.com/ticket/140)
 * Fixed: Events ending on date problem
-[#141](http://trac.theseednetwork.com/ticket/141)
 * Feature: Added French translations
 
 = Version 1.1.1 =
@@ -944,58 +920,39 @@ language files, visit [ticket
 
 = Version 1.1 =
 * Feature: New recurrence UI when adding events
-[#40](http://trac.theseednetwork.com/ticket/40)
 * Feature: Translate recurrence rule to Human readable format that
-allows localization [#40](http://trac.theseednetwork.com/ticket/40)
+allows localization
 * Feature: Add Filter by Categories, Tags to Widget
-[#44](http://trac.theseednetwork.com/ticket/44)
 * Feature: Add option to keep all events expanded in the agenda view
-[#33](http://trac.theseednetwork.com/ticket/33)
 * Feature: Make it possible to globalize the date picker. Thank you
-josjo! [#52](http://trac.theseednetwork.com/ticket/52)
+josjo!
 * Fixed: On recurring events show the date time of the current event
 and NOT the original event
-[#39](http://trac.theseednetwork.com/ticket/39)
 * Fixed: Events posted in Standard time from Daylight Savings Time are
-wrong [#42](http://trac.theseednetwork.com/ticket/42)
+wrong
 * Fixed: Multi-day Events listing twice
-[#56](http://trac.theseednetwork.com/ticket/56)
 * Fixed: %e is not supported in gmstrftime on Windows
-[#53](http://trac.theseednetwork.com/ticket/53)
 * Improved: IE9 Support
-[#11](http://trac.theseednetwork.com/ticket/11)
 * Improved: Corrected as many as possible HTML validation errors
-[#9](http://trac.theseednetwork.com/ticket/9)
 * Improved: Optimization changes for better performance.
 
 = Version 1.0.9 =
 * Fixed a problem with timezone dropdown list
 
 = Version 1.0.8 =
-* Added better if not full localization support
-[#25](http://trac.theseednetwork.com/ticket/25)
-[#23](http://trac.theseednetwork.com/ticket/23)
-[#10](http://trac.theseednetwork.com/ticket/10) - thank you josjo
+* Added better if not full localization support - thank you josjo
 * Added qTranslate support and output to post data using WordPress
-filters [#1](http://trac.theseednetwork.com/ticket/1)
+filters
 * Added uninstall support
-[#7](http://trac.theseednetwork.com/ticket/7)
-* Added 24h time in time pickers
-[#26](http://trac.theseednetwork.com/ticket/26) - thank you josjo
+* Added 24h time in time pickers - thank you josjo
 * Fixed an issue when event duration time is decremented in single
-(detailed) view [#2](http://trac.theseednetwork.com/ticket/2)
+(detailed) view
 * Fixed an issue with times for ics imported events
-[#6](http://trac.theseednetwork.com/ticket/6)
 * Better timezone control
-[#27](http://trac.theseednetwork.com/ticket/27)
 * Fixed the category filter in agenda view
-[#12](http://trac.theseednetwork.com/ticket/12)
 * Fixed event date being set to null when using quick edit
-[#16](http://trac.theseednetwork.com/ticket/16)
-* Fixed a bug in time pickers
-[#17](http://trac.theseednetwork.com/ticket/17) - thank you josjo
+* Fixed a bug in time pickers - thank you josjo
 * Deprecated function split() is removed
-[#8](http://trac.theseednetwork.com/ticket/8)
 
 = Version 1.0.7 =
 * Fixed issue with some MySQL version
