@@ -5,4 +5,7 @@
 		{{ pagination_links | raw }}
 		{{ after_pagination | raw }}
 	</div>
+	{% if below_toolbar is defined %}
+		{{ below_toolbar | raw }}
+	{% endif %}
 </div>

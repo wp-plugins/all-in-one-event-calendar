@@ -128,7 +128,8 @@ abstract class Ai1ec_Base_License_Controller extends Ai1ec_Base_Extension_Contro
 		$license_key = $this->_registry->get( 'model.settings' )
 			->get( $this->_licence );
 		// setup the updater
-		$edd_updater = new EDD_SL_Plugin_Updater(
+		$edd_updater = $this->_registry->get(
+			'edd.updater',
 			$this->_store,
 			$this->get_file(),
 			array(

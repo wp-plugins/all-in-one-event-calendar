@@ -24,12 +24,14 @@ class Ai1ec_Event extends Ai1ec_Base {
 	 *            [-1] - only `get` (for storage) operations require care.
 	 */
 	protected $_swizzable = array(
-		'contact_url'   => -1, // strip on save/import
-		'cost'          => 0,
-		'ticket_url'    => -1, // strip on save/import
-		'start'         => -1,
-		'end'           => -1,
-		'timezone_name' => -1,
+		'contact_url'      => -1, // strip on save/import
+		'cost'             => 0,
+		'ticket_url'       => -1, // strip on save/import
+		'start'            => -1,
+		'end'              => -1,
+		'timezone_name'    => -1,
+		'recurrence_dates' => 1,
+		'exception_dates'  => 1,
 	);
 
 	/**
@@ -158,6 +160,15 @@ class Ai1ec_Event extends Ai1ec_Base {
 			$this->set( 'post', (object)$data );
 		}
 		return $this;
+	}
+
+	/**
+	 * Delete the events from all tables
+	 */
+	public function delete() {
+		// delete post (this will trigger deletion of cached events, and
+		// remove the event from events table)
+		wp_delete_post( $this->get( 'post_id' ), true );
 	}
 
 	/**
@@ -379,6 +390,20 @@ class Ai1ec_Event extends Ai1ec_Base {
 		);
 	}
 
+	protected function _handle_property_construct_recurrence_dates( $value ) {
+		if ( $value ) {
+			$this->_entity->set( 'recurrence_rules', 'RDATE=' . $value );
+		}
+		return $value;
+	}
+
+	protected function _handle_property_construct_exception_dates( $value ) {
+		if ( $value ) {
+			$this->_entity->set( 'exception_rules', 'EXDATE=' . $value );
+		}
+		return $value;
+	}
+
 	/**
 	 * Handle `cost` value reading from permanent storage.
 	 *
@@ -417,9 +442,13 @@ class Ai1ec_Event extends Ai1ec_Base {
 	 * @staticvar string $format Cached format.
 	 */
 	public function get_uid() {
+		$ical_uid = $this->get( 'ical_uid' );
+		if ( ! empty( $ical_uid ) ) {
+			return $ical_uid;
+		}
 		static $format = null;
 		if ( null === $format ) {
-			$site_url = parse_url( get_site_url() );
+			$site_url = parse_url( ai1ec_get_site_url() );
 			$format   = 'ai1ec-%d@' . $site_url['host'];
 			if ( isset( $site_url['path'] ) ) {
 				$format .= $site_url['path'];
@@ -554,26 +583,38 @@ class Ai1ec_Event extends Ai1ec_Base {
 			$this->set( 'post_id', $post_id );
 			$columns['post_id'] = $post_id;
 
-			$taxonomy = $this->_registry->get(
-				'model.event.taxonomy',
-				$post_id
-			);
-			$taxonomy->set_categories( $this->get( 'categories' ) );
-			$taxonomy->set_tags(       $this->get( 'tags' ) );
-
-			if (
-				$feed = $this->get( 'feed' ) &&
-				isset( $feed->feed_id )
-			) {
-				$taxonomy->set_feed( $feed );
-			}
-
 			// =========================
 			// = Insert new event data =
 			// =========================
 			if ( false === $dbi->insert( $table_name, $columns, $format ) ) {
 				return false;
 			}
+		}
+
+		$taxonomy = $this->_registry->get(
+			'model.event.taxonomy',
+			$post_id
+		);
+		$cats = $this->get( 'categories' );
+		if (
+			is_array( $cats ) &&
+			! empty( $cats )
+		) {
+			$taxonomy->set_categories( $cats );
+		}
+		$tags = $this->get( 'tags' );
+		if (
+			is_array( $tags ) &&
+			! empty( $tags )
+		) {
+			$taxonomy->set_tags( $tags );
+		}
+
+		if (
+			$feed = $this->get( 'feed' ) &&
+			isset( $feed->feed_id )
+		) {
+			$taxonomy->set_feed( $feed );
 		}
 
 		// give other plugins / extensions the ability to do things

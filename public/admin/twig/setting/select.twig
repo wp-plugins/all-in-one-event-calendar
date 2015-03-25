@@ -6,3 +6,8 @@
   {% from 'form-elements/select.twig' import select %}
   {{ select( id, name, attributes, options ) }}
 </div>
+{% if fieldsets is not empty %}
+  {% for fieldset in fieldsets %}
+    {{ fieldset | raw }}
+  {% endfor %}
+{% endif %}

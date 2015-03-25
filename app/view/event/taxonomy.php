@@ -17,70 +17,66 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 	protected $_taxonomy_model = null;
 
 	/**
-	 * Style attribute for event category
+	 * @var array Caches the color evaluated for each event.
+	 */
+	protected $_event_color_map = array();
+
+	/**
+	 * @var array Caches the color squares HTML evaluated for each event.
+	 */
+	protected $_event_color_squares_map = array();
+
+	/**
+	 * Returns style attribute for events rendered in Month, Week, or Day view.
+	 *
+	 * @param  Ai1ec_Event $event Event object.
+	 *
+	 * @return string             Color style attribute.
 	 */
 	public function get_color_style( Ai1ec_Event $event ) {
-		static $color_styles = array();
-		$categories = $this->_taxonomy_model->get_post_categories(
-			$event->get( 'post_id' )
-		);
-		// No specific styling for events not in categories.
-		if ( ! $categories ) {
-			return '';
+		$color = $this->get_color_for_event( $event );
+
+		// Convert to style attribute.
+		if ( $color ) {
+			$color = $event->is_allday() || $event->is_multiday()
+				? 'background-color: ' . $color . ';'
+				: 'color: ' . $color . ' !important;';
+		} else {
+			$color = '';
 		}
 
-		$type = $event->is_allday() || $event->is_multiday();
-		// If not yet cached, fetch and save style.
-		if ( ! isset( $color_styles[$categories[0]->term_id][$type] ) ) {
-			$color_styles[$categories[0]->term_id][$type] =
-				$this->get_event_category_color_style(
-					$categories[0]->term_id,
-					$type
-				);
-		}
-
-		return $color_styles[$categories[0]->term_id][$type];
+		return $color;
 	}
 
 	/**
-	 * Returns the style attribute assigning the category color style to an event.
+	 * Returns HTML of category color swatches for this event.
 	 *
-	 * @param int  $term_id Term ID of event category
-	 * @param bool $allday  Whether the event is all-day
+	 * @param  Ai1ec_Event $event Event object.
 	 *
-	 * @return string
-	 */
-	public function get_event_category_color_style(
-		$term_id,
-		$allday = false
-	) {
-		$color = $this->_taxonomy_model->get_category_color( $term_id );
-		if ( ! is_null( $color ) && ! empty( $color ) ) {
-			if ( $allday )
-				return 'background-color: ' . $color . ';';
-			else
-				return 'color: ' . $color . ' !important;';
-		}
-		return '';
-	}
-
-	/**
-	 * HTML of category color boxes for this event
+	 * @return string             HTML of the event's category color swatches.
 	 */
 	public function get_category_colors( Ai1ec_Event $event ) {
-		static $category_colors = array();
-		$id = $event->get( 'post_id' );
-		if ( ! isset( $category_colors[$id] ) ) {
-			$categories           = $this->_taxonomy_model
-				->get_post_categories( $id );
-			$category_colors[$id] = '';
+		$post_id = $event->get( 'post_id' );
+
+		if ( ! isset( $this->_event_color_squares_map[$post_id] ) ) {
+			$squares = '';
+			$categories = $this->_taxonomy_model->get_post_categories( $post_id );
+
 			if ( false !== $categories ) {
-				$category_colors[$id] = $this->get_event_category_colors(
-					$categories
-				);
+				$squares = $this->get_event_category_colors( $categories );
 			}
+
+			// Allow add-ons to modify/add to category color swatch HTML.
+			$squares = apply_filters(
+				'ai1ec_event_color_squares',
+				$squares,
+				$event
+			);
+
+			$this->_event_color_squares_map[$post_id] = $squares;
 		}
-		return $category_colors[$id];
+
+		return $this->_event_color_squares_map[$post_id];
 	}
 
 	/**
@@ -91,10 +87,11 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 	 * @return string
 	 */
 	public function get_category_color_square( $term_id ) {
-		$taxonomy = $this->_registry->get( 'model.taxonomy' );
-		$color = $taxonomy->get_category_color( $term_id );
+		$color = $this->_taxonomy_model->get_category_color( $term_id );
+		$event_taxonomy = $this->_registry->get( 'model.event.taxonomy' );
 		if ( null !== $color ) {
-			$cat = get_term( $term_id, 'events_categories' );
+			$taxonomy = $event_taxonomy->get_taxonomy_for_term_id( $term_id );
+			$cat = get_term( $term_id, $taxonomy->taxonomy );
 			return '<span class="ai1ec-color-swatch ai1ec-tooltip-trigger" ' .
 				'style="background:' . $color . '" title="' .
 				esc_attr( $cat->name ) . '"></span>';
@@ -110,8 +107,7 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 	 * @return string HTML snippet to use for category image.
 	 */
 	public function get_category_image_square( $term_id ) {
-		$image = $this->_registry->get( 'model.taxonomy' )
-			->get_category_image( $term_id );
+		$image = $this->_taxonomy_model->get_category_image( $term_id );
 		if ( null !== $image ) {
 			return '<img src="' . $image . '" alt="' .
 				Ai1ec_I18n::__( 'Category image' ) .
@@ -139,79 +135,76 @@ class Ai1ec_View_Event_Taxonomy extends Ai1ec_Base {
 	}
 
 	/**
-	 * Style attribute for event bg color
+	 * Style attribute for event background color.
+	 *
+	 * @param  Ai1ec_Event $event Event object.
+	 *
+	 * @return string             Color to assign to event background.
 	 */
 	public function get_category_bg_color( Ai1ec_Event $event ) {
-		$category_bg_color = null;
-		$categories        = $this->_taxonomy_model->get_post_categories(
-			$event->get( 'post_id' )
-		);
-		if ( ! empty( $categories ) ) {
-			$category_bg_color = $this
-				->get_event_category_bg_color(
-					$categories[0]->term_id,
-					$event->is_allday() || $event->is_multiday()
-				);
+		$color = $this->get_color_for_event( $event );
+
+		// Convert to HTML attribute.
+		if ( $color ) {
+			$color = 'style="background-color: ' . $color . ';"';
+		} else {
+			$color = '';
 		}
-		return $category_bg_color;
+
+		return $color;
 	}
 
 	/**
-	 * Style attribute for event bg color
+	 * Style attribute for event text color.
+	 *
+	 * @param  Ai1ec_Event $event Event object.
+	 *
+	 * @return string             Color to assign to event text (foreground).
 	 */
 	public function get_category_text_color( Ai1ec_Event $event ) {
-		$category_text_color = null;
-		$categories          = $this->_taxonomy_model->get_post_categories(
-			$event->get( 'post_id' )
-		);
-		if ( ! empty( $categories ) ) {
-			$category_text_color = $this
-				->get_event_category_text_color(
-					$categories[0]->term_id,
-					$event->is_allday() || $event->is_multiday()
-				);
+		$color = $this->get_color_for_event( $event );
+
+		// Convert to HTML attribute.
+		if ( $color ) {
+			$color = 'style="color: ' . $color . ';"';
+		} else {
+			$color = '';
 		}
-		return $category_text_color;
+
+		return $color;
 	}
 
 	/**
-	 * get_event_text_color function
+	 * Caches color for event having the given post ID.
 	 *
-	 * Returns the style attribute assigning the category color style to an event.
-	 *
-	 * @param int $term_id The Event Category's term ID
-	 * @param bool $allday Whether the event is all-day
-	 * @return string
-	 **/
-	public function get_event_category_text_color( $term_id ) {
-		$taxonomy = $this->_registry->get( 'model.taxonomy' );
-		$color    = $taxonomy->get_category_color(
-			$term_id
-		);
-		if ( ! empty( $color ) ) {
-			return 'style="color: ' . $color . ';"';
-		}
-		return '';
-	}
+	 * @param  int    $post_id Event's post ID.
+	 * @return string          Color associated with event.
+	 */
+	public function get_color_for_event( $event ) {
+		$post_id = $event->get( 'post_id' );
 
-	/**
-	 * get_event_category_bg_color function
-	 *
-	 * Returns the style attribute assigning the category color style to an event.
-	 *
-	 * @param int $term_id The Event Category's term ID
-	 * @param bool $allday Whether the event is all-day
-	 * @return string
-	 **/
-	public function get_event_category_bg_color( $term_id ) {
-		$taxonomy = $this->_registry->get( 'model.taxonomy' );
-		$color    = $taxonomy->get_category_color(
-			$term_id
-		);
-		if ( ! empty( $color ) ) {
-			return 'style="background-color: ' . $color . ';"';
+		// If color for this event is uncached, populate cache.
+		if ( ! isset( $this->_event_color_map[$post_id] ) ) {
+			// Find out if an add-on has provided its own color for the event.
+			$color = apply_filters( 'ai1ec_event_color', '', $event );
+
+			// If none provided, fall back to event categories.
+			if ( empty( $color ) ) {
+				$categories = $this->_taxonomy_model->get_post_categories( $post_id );
+				// Find the first category of this post that defines a color.
+				foreach ( $categories as $category ) {
+					$color = $this->_taxonomy_model->get_category_color(
+						$category->term_id
+					);
+					if ( $color ) {
+						break;
+					}
+				}
+			}
+			$this->_event_color_map[$post_id] = $color;
 		}
-		return '';
+
+		return $this->_event_color_map[$post_id];
 	}
 
 	/**

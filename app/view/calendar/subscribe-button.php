@@ -18,7 +18,6 @@ class Ai1ec_View_Calendar_SubscribeButton {
 	 */
 	public function get_labels() {
 		return array(
-			'tooltip' => Ai1ec_I18n::__( 'Subscribe in your personal calendar' ),
 			'label' => array(
 				'timely'    => Ai1ec_I18n::__( 'Add to Timely Calendar' ),
 				'google'    => Ai1ec_I18n::__( 'Add to Google' ),

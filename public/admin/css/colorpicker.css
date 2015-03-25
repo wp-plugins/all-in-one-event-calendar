@@ -16,12 +16,17 @@
 	background: transparent;
 }
 ul.colorpicker-list {
+	background: #fff;
+	border: 1px solid #ccc;
+	margin: 0;
 	padding: 0.1em;
+	position: absolute;
+	width: 136px;
 }
 .colorpicker-list li {
 	float: left;
-	width: 13px;
-	height: 13px;
+	width: 15px;
+	height: 15px;
 	margin: 1px;
 	cursor: pointer;
 	border-radius: 2px;
@@ -29,90 +34,44 @@ ul.colorpicker-list {
 	-moz-border-radius: 2px;
 	-webkit-border-radius: 2px;
 }
-.select-more-colors {
-	width: 100% !important;
-	line-height: 22px;
-	height: 22px !important;
-	border-color: #fff !important;
-	margin: 2px 1px 2px 1px !important;
-	text-align: center;
-	font-family: Tahoma,Verdana,Arial,Helvetica;
-	font-size: 11px;
-	/*padding-left: 17px !important;*/	
+.colorpicker-list li:hover {
+	opacity: 0.85;
 }
-li.select-more-colors:hover {
-	width:103px !important;
-	border-color: #0A246A !important;
-	background: #B6BDD2 !important;
-	margin-right: 2px !important;
-	
-	
+.colorpicker-list li.ai1ec-btn {
+	height: auto;
 }
-.color-1 {
-	background: #60a !important;
-}
-.color-2 {
-	background: #807 !important;
-}
-.color-3 {
-	background: #920 !important;
-}
-.color-4 {
-	background: #a60 !important;
-}
-.color-5 {
-	background: #990 !important;
-}
-.color-6 {
-	background: #080 !important;
-}
-.color-7 {
-	background: #077 !important;
-}
-.color-8 {
-	background: #00a !important;
-}
-.color-9 {
-	background: #000 !important;
-}
-.color-10 {
-	background: #444 !important;
-}
-.color-11 {
-	background: #85e !important;
-}
-.color-12 {
-	background: #d5d !important;
-}
-.color-13 {
-	background: #d43 !important;
-}
-.color-14 {
-	background: #d90 !important;
-}
-.color-15 {
-	background: #bb0 !important;
-}
-.color-16 {
-	background: #2b0 !important;
-}
-.color-17 {
-	background: #0ba !important;
-}
-.color-18 {
-	background: #26d !important;
-}
-.color-19 {
-	background: #777 !important;
-}
-.color-20 {
-	background: #aaa !important;
-}
-.color-21 {
-	width: 13px;
-	height: 13px;
-	background: url( ../img/color-picker-default.png );
-}
+.color-1 { background: #9fcb33; }
+.color-2 { background: #2ecc71; }
+.color-3 { background: #1abc9c; }
+.color-4 { background: #3498db; }
+.color-5 { background: #6879C9; }
+.color-6 { background: #9b59b6; }
+.color-7 { background: #b23f73; }
+.color-8 { background: #e74c3c; }
+.color-9 { background: #7ba633; }
+.color-10 { background: #27ae60; }
+.color-11 { background: #16a085; }
+.color-12 { background: #2273A8; }
+.color-13 { background: #5C62B3; }
+.color-14 { background: #8e44ad; }
+.color-15 { background: #832d51; }
+.color-16 { background: #c0392b; }
+.color-17 { background: #FFE84B; }
+.color-18 { background: #f8c82d; }
+.color-19 { background: #e67e22; }
+.color-20 { background: #2D547B; }
+.color-21 { background: #516B81; }
+.color-22 { background: #95a5a6; }
+.color-23 { background: #dae0e2; }
+.color-24 { background: #ffffff; }
+.color-25 { background: #e5ba5a; }
+.color-26 { background: #E0933D; }
+.color-27 { background: #BB5611; }
+.color-28 { background: #000000; }
+.color-29 { background: #3A4E62; }
+.color-30 { background: #7f8c8d; }
+.color-31 { background: #bdc3c7; }
+.color-32 { background: url( ../img/color-picker-default.png ); }
 .colorpicker {
 	width: 356px;
 	height: 176px;
@@ -157,9 +116,9 @@ li.select-more-colors:hover {
 	left: 171px;
 	width: 35px;
 	height: 150px;
-	cursor: n-resize;
 }
 .colorpicker_hue div {
+	cursor: ns-resize;
 	position: absolute;
 	width: 35px;
 	height: 9px;

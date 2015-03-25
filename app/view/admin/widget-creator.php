@@ -114,6 +114,7 @@ class Ai1ec_View_Widget_Creator extends Ai1ec_View_Admin_Abstract {
 			$widget           = $this->_registry->get( $widget_class );
 			$tabs[$widget_id] = array(
 				'name'         => $widget->get_name(),
+				'icon'         => $widget->get_icon(),
 				'requirements' => $widget->check_requirements(),
 				'elements'     => $this->get_html_from_settings(
 					$widget->get_configurable_for_widget_creation()
@@ -125,13 +126,19 @@ class Ai1ec_View_Widget_Creator extends Ai1ec_View_Admin_Abstract {
 		$file   = $loader->get_file(
 			'widget-creator/super-widget-contents.twig',
 			array(
-				'tabs'            => $tabs,
-				'siteurl'             => trailingslashit( get_site_url() ),
-				'common_info'         => __( 'Use this tool to generate code snippets you can place on your site to embed new calendars and widgets.', AI1EC_PLUGIN_NAME ),
-				'preview'             => __( 'Preview:', AI1EC_PLUGIN_NAME ),
-				'full_calendar_title' => __( 'Full Calendar', AI1EC_PLUGIN_NAME ),
-				'paste_text'          => __( 'Paste this code onto your site:', AI1EC_PLUGIN_NAME ),
-				'updated_code_text'   => __( 'This code will update to reflect changes made to the settings. Changing settings will not affect previously embedded widgets.', AI1EC_PLUGIN_NAME )
+				'tabs'              => $tabs,
+				'siteurl'           => trailingslashit( ai1ec_get_site_url() ),
+				'text_common_info'  => Ai1ec_I18n::__( 'Use this tool to generate code snippets you can add to <strong>an external website</strong> to embed new calendars and widgets.' ),
+				'text_alert'        => Ai1ec_I18n::__( '<h4>Attention!</h4><p>These widgets are designed to be embedded in <strong>external sites only</strong> and may cause conflicts if used within the same WordPress site.</p>' ),
+				'text_alternatives' => sprintf(
+					Ai1ec_I18n::__( '<p>Use <a href="%s"><strong>Appearance</strong> &gt; <strong>Widgets</strong></a> to add event widgets to your WordPress site as you would any other widget, or use <a href="%s" target="_blank">shortcodes</a> to embed the full calendar.</strong></p>' ),
+					admin_url( 'widgets.php' ),
+					'http://time.ly/document/user-guide/using-calendar/display-multiple-calendars-site/'
+				),
+				'display_alert'     => apply_filters( 'ai1ec_display_widget_creator_warning', true ),
+				'text_preview'      => Ai1ec_I18n::__( 'Preview:' ),
+				'text_paste'        => Ai1ec_I18n::__( 'Paste this code onto your site:' ),
+				'text_updated_code' => Ai1ec_I18n::__( 'This code will update to reflect changes made to the settings. Changing settings will not affect previously embedded widgets.' ),
 			),
 			true
 		);

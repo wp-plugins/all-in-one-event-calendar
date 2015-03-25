@@ -33,8 +33,8 @@
 
 								{% for event in day.events %}
 									<a href="{{ event.permalink | e( 'html_attr' ) }}"
-										{{ data_type_events | raw }}
 										{% if event.is_multiday %}
+											data-start-day="{{ event.start_day }}"
 											data-end-day="{{ event.multiday_end_day }}"
 											data-start-truncated="{{ event.start_truncated ? 'true' : 'false' }}"
 											data-end-truncated="{{ event.end_truncated ? 'true' : 'false' }}"
@@ -67,7 +67,6 @@
 										{% endif %}
 										<span class="ai1ec-popup-title">
 											<a class="ai1ec-load-event"
-												{{ data_type_events | raw }}
 												href="{{ event.permalink | e( 'html_attr' ) }}"
 												>{{ event.filtered_title | raw }}</a>
 											{% if show_location_in_title and event.venue %}
@@ -94,8 +93,7 @@
 										</div>
 
 										<a class="ai1ec-load-event"
-											href="{{ event.permalink | e('html_attr') }}"
-											{{ data_type_events | raw }}>
+											href="{{ event.permalink | e('html_attr') }}">
 											{{ event.avatar_not_wrapped | raw }}
 										</a>
 
@@ -115,3 +113,5 @@
 		{% endfor %} {# week in cell_array #}
 	</tbody>
 </table>
+
+<div class="ai1ec-pull-left">{{ pagination_links | raw }}</div>

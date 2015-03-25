@@ -153,6 +153,15 @@ class Ai1ec_View_Admin_Widget extends Ai1ec_Embeddable {
 	}
 
 	/**
+	 * The icon class associated with the widget.
+	 *
+	 * @return string
+	 */
+	public function get_icon() {
+		return 'ai1ec-fa ai1ec-fa-clock-o';
+	}
+
+	/**
 	 * Form function.
 	 *
 	 * Renders the widget's configuration form for the Manage Widgets page.
@@ -310,9 +319,10 @@ class Ai1ec_View_Admin_Widget extends Ai1ec_Embeddable {
 
 		// Set $limit to the specified category/tag
 		$limit = array(
-			'cat_ids'   => $args_for_widget['cat_ids'],
-			'tag_ids'   => $args_for_widget['tag_ids'],
+			'cat_ids'    => $args_for_widget['cat_ids'],
+			'tag_ids'    => $args_for_widget['tag_ids'],
 		);
+		$limit = apply_filters( 'ai1ec_add_filters_upcoming_widget', $limit );
 
 		// Get events, then classify into date array
 		// JB: apply seek check here

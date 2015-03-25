@@ -23,15 +23,15 @@ class Ai1ec_Filesystem_Checker {
 	public function is_writable( $path ) {
 		global $wp_filesystem;
 
-		// try without credentials 
+		// try without credentials
 		$writable = WP_Filesystem( false, $path );
 		// We consider the directory as writable if it uses the direct transport,
 		// otherwise credentials would be needed
 		if ( true === $writable ) {
 			return true;
 		}
-		// if the user has FTP and sockets defined 
-		if ( 
+		// if the user has FTP and sockets defined
+		if (
 				$this->is_ftp_or_sockets( $wp_filesystem->method ) &&
 				$this->are_ftp_constants_defined()
 		) {
@@ -56,7 +56,7 @@ class Ai1ec_Filesystem_Checker {
 
 	/**
 	 * Check if method is ssh
-	 * 
+	 *
 	 * @param strin $method
 	 * @return boolean
 	 */
@@ -66,7 +66,7 @@ class Ai1ec_Filesystem_Checker {
 
 	/**
 	 * Check if method is ftp or sockets
-	 * 
+	 *
 	 * @param string $method
 	 * @return boolean
 	 */
@@ -77,7 +77,7 @@ class Ai1ec_Filesystem_Checker {
 
 	/**
 	 * Check if credentials for ssh are defined
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function are_ssh_constants_defined() {
@@ -99,7 +99,7 @@ class Ai1ec_Filesystem_Checker {
 
 	/**
 	 * Creates a file using $wp_filesystem.
-	 * 
+	 *
 	 * @param string $file
 	 * @param string $content
 	 */
@@ -110,21 +110,22 @@ class Ai1ec_Filesystem_Checker {
 			$content
 		);
 	}
-	
+
 	/**
 	 * Get the content folder from Wordpress if available
-	 * 
+	 *
 	 * @return string the folder to use or ''
 	 */
 	public function get_ai1ec_static_dir_if_available() {
 		global $wp_filesystem;
 		// reset the filesystem to it's standard.
 		WP_Filesystem();
-		$content_dir = $wp_filesystem->wp_content_dir();
+		$content_dir = $wp_filesystem->wp_content_dir() . DIRECTORY_SEPARATOR
+			. 'uploads' . DIRECTORY_SEPARATOR;
 		$static_dir = trailingslashit( $content_dir . 'ai1ec_static' );
-		if ( 
-			! $wp_filesystem->is_dir( $static_dir ) && 
-			! $wp_filesystem->mkdir( $static_dir ) 
+		if (
+			! $wp_filesystem->is_dir( $static_dir ) &&
+			! $wp_filesystem->mkdir( $static_dir )
 		) {
 			return '';
 		}

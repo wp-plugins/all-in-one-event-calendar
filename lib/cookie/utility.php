@@ -64,7 +64,7 @@ class Ai1ec_Cookie_Utility extends Ai1ec_Base {
 	 * @return string
 	 */
 	public function get_path_for_cookie() {
-		$parsed = parse_url( site_url() );
+		$parsed = parse_url( ai1ec_site_url() );
 		return isset( $parsed['path'] ) ? $parsed['path'] : '/';
 	}
 }

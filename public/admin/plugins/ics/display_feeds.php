@@ -44,6 +44,7 @@
 			<?php $event_tags->render(); ?>
 		</div>
 	</div>
+	<?php do_action( 'ai1ec_ics_row_after_categories_tags', null ); ?>
 	<div class="ai1ec-feed-comments-enabled">
 		<label for="ai1ec_comments_enabled">
 			<input type="checkbox" name="ai1ec_comments_enabled"
@@ -65,13 +66,24 @@
 			<?php _e( 'Import any tags/categories provided by feed, in addition those selected above', AI1EC_PLUGIN_NAME ); ?>
 		</label>
 	</div>
+	<?php do_action( 'ai1ec_ics_row_after_keep_categories_tags', null ); ?>
 	<div class="ai1ec-feed-keep-old-events">
 		<label for="ai1ec_keep_old_events">
 			<input type="checkbox" name="ai1ec_keep_old_events"
 				id="ai1ec_keep_old_events" value="1">
-			<?php _e( 'Keep old events', AI1EC_PLUGIN_NAME ); ?>
+			<?php _e( 'On refresh, preserve previously imported events that are missing from the feed', AI1EC_PLUGIN_NAME ); ?>
 		</label>
 	</div>
+	<div class="ai1ec-feed-import-timezone">
+		<label for="ai1ec_feed_import_timezone">
+			<input type="checkbox" name="ai1ec_feed_import_timezones"
+				   id="ai1ec_feed_import_timezone" value="1">
+			<span class="ai1ec-tooltip-toggle" title="<?php _e( 'Guesses the time zone of events that have none specified; recommended for Google Calendar feeds', AI1EC_PLUGIN_NAME ); ?>">
+				<?php _e( 'Assign default time zone to events in UTC', AI1EC_PLUGIN_NAME ); ?>
+			</span>
+		</label>
+	</div>
+	<?php do_action( 'ai1ec_ics_row_after_settings', null ); ?>
 	<div class="ai1ec-pull-right">
 		<button type="button" id="ai1ec_add_new_ics"
 			class="ai1ec-btn ai1ec-btn-primary ai1ec-btn-sm"

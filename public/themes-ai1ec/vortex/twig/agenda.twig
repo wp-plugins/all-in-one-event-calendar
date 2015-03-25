@@ -58,8 +58,7 @@
 
 									<div class="ai1ec-event-description">
 										{% if event.content_img_url is empty and event.avatar_not_wrapped is not empty %}
-											<a {{ data_type_events | raw }}
-												class="ai1ec-load-event"
+											<a class="ai1ec-load-event"
 												href="{{ event.permalink | e('html_attr') }}">
 												{{ event.avatar_not_wrapped | raw }}
 											</a>
@@ -76,9 +75,8 @@
 													href="{{ event.ticket_url | e('html_attr') }}"
 													>{{ event.ticket_url_label }}</a>
 											{% endif %}
-											<a {{ data_type_events | raw }}
-												class="ai1ec-read-more ai1ec-btn ai1ec-btn-default
-													ai1ec-load-event"
+											<a class="ai1ec-read-more ai1ec-btn ai1ec-btn-default
+												ai1ec-load-event"
 												href="{{ event.permalink | e('html_attr') }}">
 												{{ text_read_more }} <i class="ai1ec-fa ai1ec-fa-arrow-right"></i>
 											</a>

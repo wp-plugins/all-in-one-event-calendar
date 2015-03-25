@@ -67,8 +67,8 @@ class Ai1ec_Calendar_View_Week extends Ai1ec_Calendar_View_Abstract {
 			->get( 'time_format', Ai1ec_I18n::__( 'g a' ) );
 
 		// Calculate today marker's position.
-		$now = $this->_registry->get( 'date.time' );
-		$now_text = $now->format_i18n( 'M j' );
+		$now = $this->_registry->get( 'date.time', 'now', 'sys.default' );
+		$now_text = $now->format_i18n( 'M j h:i a' );
 		$now = $now->format( 'G' ) * 60 + $now->format( 'i' );
 		// Find out if the current week view contains "now" and thus should display
 		// the "now" marker.
@@ -104,7 +104,6 @@ class Ai1ec_Calendar_View_Week extends Ai1ec_Calendar_View_Abstract {
 			'done_allday_label'        => false,
 			'done_grid'                => false,
 			'data_type'                => $args['data_type'],
-			'data_type_events'         => '',
 			'is_ticket_button_enabled' => $is_ticket_button_enabled,
 			'show_reveal_button'       => $show_reveal_button,
 			'text_full_day'            => __( 'Reveal full day', AI1EC_PLUGIN_NAME ),
@@ -114,10 +113,8 @@ class Ai1ec_Calendar_View_Week extends Ai1ec_Calendar_View_Abstract {
 			'hours'                    => $hours,
 			'indent_multiplier'        => 8,
 			'indent_offset'            => 0,
+			'pagination_links'         => $pagination_links,
 		);
-		if ( $settings->get( 'ajaxify_events_in_web_widget' ) ) {
-			$view_args['data_type_events'] = $args['data_type'];
-		}
 
 		// Add navigation if requested.
 		$view_args['navigation'] = $this->_get_navigation(
@@ -125,14 +122,20 @@ class Ai1ec_Calendar_View_Week extends Ai1ec_Calendar_View_Abstract {
 				'no_navigation'    => $args['no_navigation'],
 				'pagination_links' => $pagination_links,
 				'views_dropdown'   => $args['views_dropdown'],
+				'below_toolbar'    => apply_filters(
+					'ai1ec_below_toolbar',
+					'',
+					$this->get_name(),
+					$args
+				),
 			)
 		);
 
 		return
 			$this->_registry->get( 'http.request' )->is_json_required(
-				$args['request_format']
+				$args['request_format'], 'week'
 			)
-			? json_encode( $view_args )
+			? $this->_apply_filters_to_args( $view_args )
 			: $this->_get_view( $view_args );
 	}
 
@@ -361,7 +364,9 @@ class Ai1ec_Calendar_View_Week extends Ai1ec_Calendar_View_Abstract {
 								'',
 								false ),
 					);
-					if ( AI1EC_THEME_COMPATIBILITY_FER ) {
+					if (
+						$this->_compatibility->use_backward_compatibility()
+					) {
 						$event = $evt;
 					}
 					if ( 'notallday' === $event_type) {
@@ -389,7 +394,6 @@ class Ai1ec_Calendar_View_Week extends Ai1ec_Calendar_View_Abstract {
 					}
 				}
 			}
-
 
 			$days[$day_date] = array(
 				'today'     =>

@@ -60,13 +60,12 @@ class Ai1ec_Calendar_View_Oneday extends Ai1ec_Calendar_View_Abstract {
 		$pagination_links = $this->_get_pagination( $args, $title );
 
 		// Calculate today marker's position.
-		$now              = $date_system->current_time();
-		$midnight         = $this->_registry->get( 'date.time', $now )
+		$midnight         = $this->_registry->get( 'date.time', 'now', 'sys.default' )
 			->set_time( 0, 0, 0 );
-		$now              = $this->_registry->get( 'date.time', $now );
+		$now              = $this->_registry->get( 'date.time', 'now', 'sys.default' );
 		$now_text         = $this->_registry->get( 'view.event.time' )
 			->get_short_time( $now );
-		$now              = $now->diff_sec( $midnight );
+		$now              = (int) ( $now->diff_sec( $midnight ) / 60 );
 
 		$is_ticket_button_enabled = apply_filters( 'ai1ec_oneday_ticket_button', false );
 		$show_reveal_button       = apply_filters( 'ai1ec_oneday_reveal_button', false );
@@ -93,7 +92,6 @@ class Ai1ec_Calendar_View_Oneday extends Ai1ec_Calendar_View_Abstract {
 			'done_allday_label'        => false,// legacy
 			'done_grid'                => false,// legacy
 			'data_type'                => $args['data_type'],
-			'data_type_events'         => '',
 			'is_ticket_button_enabled' => $is_ticket_button_enabled,
 			'show_reveal_button'       => $show_reveal_button,
 			'text_full_day'            => __( 'Reveal full day', AI1EC_PLUGIN_NAME ),
@@ -103,10 +101,8 @@ class Ai1ec_Calendar_View_Oneday extends Ai1ec_Calendar_View_Abstract {
 			'hours'                    => $hours,
 			'indent_multiplier'        => 16,
 			'indent_offset'            => 54,
+			'pagination_links'         => $pagination_links,
 		);
-		if ( $settings->get( 'ajaxify_events_in_web_widget' ) ) {
-			$view_args['data_type_events'] = $args['data_type'];
-		}
 
 		// Add navigation if requested.
 		$view_args['navigation'] = $this->_get_navigation(
@@ -114,14 +110,20 @@ class Ai1ec_Calendar_View_Oneday extends Ai1ec_Calendar_View_Abstract {
 				'no_navigation'    => $args['no_navigation'],
 				'pagination_links' => $pagination_links,
 				'views_dropdown'   => $args['views_dropdown'],
+				'below_toolbar'    => apply_filters(
+					'ai1ec_below_toolbar',
+					'',
+					$this->get_name(),
+					$args
+				),
 			)
 		);
 
 		return
 			$this->_registry->get( 'http.request' )->is_json_required(
-				$args['request_format']
+				$args['request_format'], 'oneday'
 			)
-			? json_encode( $view_args )
+			? $this->_apply_filters_to_args( $view_args )
 			: $this->_get_view( $view_args );
 
 	}
@@ -217,8 +219,7 @@ class Ai1ec_Calendar_View_Oneday extends Ai1ec_Calendar_View_Abstract {
 		array $filter = array(),
 		$legacy       = false
 	) {
-		$search      = $this->_registry->get( 'model.search' );
-		$date_system = $this->_registry->get( 'date.system' );
+		$search = $this->_registry->get( 'model.search' );
 
 		$loc_start_time = $this->_registry
 			->get( 'date.time', $start_time, 'sys.default' )
@@ -228,17 +229,7 @@ class Ai1ec_Calendar_View_Oneday extends Ai1ec_Calendar_View_Abstract {
 			->adjust_day( +1 )
 			->set_time( 0, 0, 0 );
 
-		// expand search range to include dates that actually render on this day
-		$search_start = $this->_registry->get( 'date.time', $loc_start_time )
-			->adjust_day( -1 );
-		$search_end    = $this->_registry->get( 'date.time', $loc_end_time )
-			->adjust_day( 1 );
-
-		$day_events = $search->get_events_between(
-			$search_start,
-			$search_end,
-			$filter
-		);
+		$day_events = $search->get_events_for_day( $loc_start_time, $filter );
 		$this->_update_meta( $day_events );
 		// Split up events on a per-day basis
 		$all_events = array();
@@ -332,7 +323,9 @@ class Ai1ec_Calendar_View_Oneday extends Ai1ec_Calendar_View_Abstract {
 							'',
 							false ),
 				);
-				if ( AI1EC_THEME_COMPATIBILITY_FER ) {
+				if (
+					$this->_compatibility->use_backward_compatibility()
+				) {
 					$event = $evt;
 				}
 				if ( 'notallday' === $event_type) {

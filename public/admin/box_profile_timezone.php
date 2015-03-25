@@ -1,5 +1,5 @@
 <h3><a name="ai1ec"><?php
-_e( 'All in One Event Calendar', AI1EC_PLUGIN_NAME );
+_e( 'All-in-One Event Calendar', AI1EC_PLUGIN_NAME );
 ?></a></h3>
 <table class="ai1ec-form">
 	<tbody>

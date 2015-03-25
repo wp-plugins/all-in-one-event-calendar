@@ -31,6 +31,11 @@ abstract class Ai1ec_Command_Save_Abstract extends Ai1ec_Command {
 		array $args
 	) {
 		parent::__construct( $registry, $request );
+		if ( ! is_array( $args['action'] ) ) {
+			$args['action'] = array(
+				$args['action'] => true,
+			);
+		}
 		$this->_action = $args['action'];
 		$this->_nonce_action = $args['nonce_action'];
 		$this->_nonce_name = $args['nonce_name'];
@@ -45,7 +50,7 @@ abstract class Ai1ec_Command_Save_Abstract extends Ai1ec_Command {
 			return false;
 		}
 		if ( $params['controller'] === $this->_controller &&
-			$params['action'] === $this->_action ) {
+			isset( $this->_action[$params['action']] ) ) {
 			$pass = wp_verify_nonce(
 				$_POST[$this->_nonce_name],
 				$this->_nonce_action

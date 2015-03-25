@@ -20,7 +20,7 @@ class Ai1ec_View_Admin_Navigation extends Ai1ec_Base {
 	public function plugin_action_links( $links ) {
 		$settings_link = sprintf(
 			Ai1ec_I18n::__( '<a href="%s">Settings</a>' ),
-			admin_url( AI1EC_SETTINGS_BASE_URL )
+			ai1ec_admin_url( AI1EC_SETTINGS_BASE_URL )
 		);
 		array_unshift( $links, $settings_link );
 		return $links;

@@ -113,13 +113,15 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 				}
 			}
 		}
-
+		$request_type = $this->_registry->get(
+			'model.settings'
+		)->get( 'ai1ec_use_frontend_rendering' ) ? 'json' : 'jsonp';
 		$query = array(
 			'ai1ec_cat_ids'	 => implode( ',', $_events_categories ),
 			'ai1ec_tag_ids'	 => implode( ',', $_events_tags ),
 			'ai1ec_post_ids' => implode( ',', $post_ids ),
 			'action'         => $view,
-			'request_type'   => 'jsonp',
+			'request_type'   => $request_type,
 			'events_limit'   => isset( $atts['events_limit'] )
 			// definition above casts values as array, so we take first element,
 			// as there won't be others
@@ -146,13 +148,11 @@ class Ai1ec_View_Calendar_Shortcode extends Ai1ec_Base {
 		);
 		$request->parse();
 		$page_content = $this->_registry->get( 'view.calendar.page' )
-			->get_content( $request );
+			->get_content( $request, 'shortcode' );
 		$this->_registry->get( 'css.frontend' )
 			->add_link_to_html_for_frontend();
 		$this->_registry->get( 'controller.javascript' )
 			->load_frontend_js( true );
-
 		return $page_content['html'];
 	}
-
 }

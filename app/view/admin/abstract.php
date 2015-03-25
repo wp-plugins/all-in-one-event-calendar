@@ -23,7 +23,7 @@ abstract class Ai1ec_View_Admin_Abstract extends Ai1ec_Base {
 
 	/**
 	 * Standard constructor
-	 * 
+	 *
 	 * @param Ai1ec_Registry_Object $registry
 	 */
 	public function __construct( Ai1ec_Registry_Object $registry ) {
@@ -34,7 +34,7 @@ abstract class Ai1ec_View_Admin_Abstract extends Ai1ec_Base {
 
 	/**
 	 * Get the url of the page
-	 * 
+	 *
 	 * @return string
 	 */
 	public function get_url() {
@@ -43,7 +43,7 @@ abstract class Ai1ec_View_Admin_Abstract extends Ai1ec_Base {
 				'post_type' => AI1EC_POST_TYPE,
 				'page'      => AI1EC_PLUGIN_NAME . '-' . $this->_page_suffix,
 			),
-			get_admin_url() . 'edit.php'
+			ai1ec_admin_url( 'edit.php' )
 		);
 	}
 
@@ -56,7 +56,7 @@ abstract class Ai1ec_View_Admin_Abstract extends Ai1ec_Base {
 	 * Adds the page to the correct menu.
 	 */
 	abstract public function add_meta_box();
-	
+
 	/**
 	 * Display the page html
 	 */

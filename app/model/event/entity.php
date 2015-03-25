@@ -79,14 +79,40 @@ class Ai1ec_Event_Entity extends Ai1ec_Base {
 					? 'UTC'
 					: $this->_timezone_name
 			);
+			$this->adjust_preferred_timezone();
 		} else {
 			$this->{$field} = $value;
 		}
 		if ( 'timezone_name' === $name ) {
 			$this->_start->set_timezone( $value );
 			$this->_end  ->set_timezone( $value );
+			$this->adjust_preferred_timezone();
 		}
 		return $this;
+	}
+
+	/**
+	 * Optionally adjust preferred (display) timezone.
+	 *
+	 * @return bool|DateTimeZone False or new timezone.
+	 *
+	 * @staticvar bool $do_adjust True when adjustment should be performed.
+	 */
+	public function adjust_preferred_timezone() {
+		static $do_adjust = null;
+		if ( null === $do_adjust ) {
+			$do_adjust = !$this->_registry
+				->get( 'model.settings' )
+				->get( 'always_use_calendar_timezone', false );
+		}
+		if ( ! $do_adjust ) {
+			return false;
+		}
+		$timezone = $this->_registry->get( 'date.timezone' )->get(
+			$this->_timezone_name
+		);
+		$this->set_preferred_timezone( $timezone );
+		return $timezone;
 	}
 
 	/**

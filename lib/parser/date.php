@@ -13,12 +13,12 @@ class Ai1ec_Parser_Date {
 	/**
 	 * @var string Character separating tokens.
 	 */
-	protected $_token_separator    = "\f";
+	protected $_token_separator;
 
 	/**
 	 * @var string Character specifying need for localization.
 	 */
-	protected $_localize_indicator = "\v";
+	protected $_localize_indicator;
 
 	/**
 	 * @var array Map of input and parsed formats.
@@ -36,6 +36,16 @@ class Ai1ec_Parser_Date {
 		'a' => array( 'a', 'get_meridiem' ),
 		'A' => array( 'A', 'get_meridiem' ),
 	);
+
+	/**
+	 * Constructor.
+	 *
+	 * @return void Method does not return.
+	 */
+	public function __construct() {
+		$this->_token_separator    = chr( 12 );
+		$this->_localize_indicator = chr( 11 );
+	}
 
 	/**
 	 * Get i18n-safe format string.
@@ -58,7 +68,7 @@ class Ai1ec_Parser_Date {
 	 *
 	 * @param string $format Input format.
 	 *
-	 * @return string Format to use in `date`-like calls. 
+	 * @return string Format to use in `date`-like calls.
 	 */
 	public function parse( $format ) {
 		$parsed = '';

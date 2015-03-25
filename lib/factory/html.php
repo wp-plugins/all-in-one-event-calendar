@@ -219,6 +219,9 @@ class Ai1ec_Factory_Html extends Ai1ec_Base {
 			'data-placeholder' => $args['placeholder'],
 			'class'            => 'ai1ec-select2-multiselect-selector span12'
 		);
+		if ( isset( $args['class'] ) ) {
+			$select2_args['class'] .= ' ' . $args['class'];
+		}
 		$container_class = false;
 		if ( isset( $args['type'] ) ) {
 			$container_class = 'ai1ec-' . $args['type'] . '-filter';

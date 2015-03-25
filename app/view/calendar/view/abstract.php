@@ -17,6 +17,11 @@ abstract class Ai1ec_Calendar_View_Abstract extends Ai1ec_Base {
 	protected $_request;
 
 	/**
+	 * @var Ai1ec_Compatibility_Check Theme compatibility check object.
+	 */
+	protected $_compatibility;
+
+	/**
 	 * Public constructor
 	 *
 	 * @param Ai1ec_Registry_Object $registry
@@ -24,7 +29,8 @@ abstract class Ai1ec_Calendar_View_Abstract extends Ai1ec_Base {
 	 */
 	public function __construct( Ai1ec_Registry_Object $registry, Ai1ec_Request_Parser $request ) {
 		parent::__construct( $registry );
-		$this->_request = $request;
+		$this->_request       = $request;
+		$this->_compatibility = $registry->get( 'compatibility.check' );
 	}
 
 	/**
@@ -103,6 +109,17 @@ abstract class Ai1ec_Calendar_View_Abstract extends Ai1ec_Base {
 			$file->get_content(),
 			$view_args
 		);
+	}
+
+	/**
+	 * Applies filters to view args for front end rendering
+	 *
+	 * @param array $args
+	 */
+	protected function _apply_filters_to_args( array $args ) {
+		$loader = $this->_registry->get( 'theme.loader' );
+		$view   = $this->get_name();
+		return $loader->apply_filters_to_args( $args, $view . '.twig', false );
 	}
 
 	/**
@@ -198,6 +215,9 @@ abstract class Ai1ec_Calendar_View_Abstract extends Ai1ec_Base {
 	 * @param Ai1ec_Event $event
 	 */
 	protected function _add_runtime_properties( Ai1ec_Event $event ) {
+		global $post;
+		$original_post      = $post;
+		$post               = $event->get( 'post' );
 		$instance_permalink = get_permalink(
 			$event->get( 'post_id' )
 		);
@@ -217,7 +237,8 @@ abstract class Ai1ec_Calendar_View_Abstract extends Ai1ec_Base {
 				true
 			)
 		);
-
+		$calendar_state = $this->_registry->get( 'calendar.state' );
+		$calendar_state->set_append_content( false );
 		$event->set_runtime(
 			'filtered_content',
 			apply_filters(
@@ -228,6 +249,7 @@ abstract class Ai1ec_Calendar_View_Abstract extends Ai1ec_Base {
 				)
 			)
 		);
+		$calendar_state->set_append_content( true );
 
 		$taxonomy = $this->_registry->get( 'view.event.taxonomy' );
 		$ticket   = $this->_registry->get( 'view.event.ticket' );
@@ -238,8 +260,8 @@ abstract class Ai1ec_Calendar_View_Abstract extends Ai1ec_Base {
 		$event->set_runtime( 'category_colors', $taxonomy->get_category_colors( $event ) );
 		$event->set_runtime( 'ticket_url_label', $ticket->get_tickets_url_label( $event, false ) );
 		$event->set_runtime( 'edit_post_link', get_edit_post_link( $event->get( 'post_id' ) ) );
-		$post = $this->_registry->get( 'view.event.post' );
-		$event->set_runtime( 'post_excerpt', $post->trim_excerpt( $event ) );
+		$event_post = $this->_registry->get( 'view.event.post' );
+		$event->set_runtime( 'post_excerpt', $event_post->trim_excerpt( $event ) );
 		$color = $this->_registry->get( 'view.event.color' );
 		$event->set_runtime( 'faded_color', $color->get_faded_color( $event ) );
 		$event->set_runtime( 'rgba_color', $color->get_rgba_color( $event ) );
@@ -249,6 +271,7 @@ abstract class Ai1ec_Calendar_View_Abstract extends Ai1ec_Base {
 			->get_short_time( $event->get( 'start' ) )
 		);
 		$this->_add_view_specific_runtime_properties( $event );
+		$post = $original_post;
 	}
 
 	/**
