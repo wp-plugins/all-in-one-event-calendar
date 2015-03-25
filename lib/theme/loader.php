@@ -130,6 +130,8 @@ class Ai1ec_Theme_Loader {
 			return false;
 		}
 
+		$path = apply_filters( 'ai1ec_theme_loader_add_path_file', $path, $url,  $target, $is_extension );
+		$url  = apply_filters( 'ai1ec_theme_loader_add_path_http', $url,  $path, $target, $is_extension );
 		// New element to insert into associative array.
 		$new = array( $path => $url );
 

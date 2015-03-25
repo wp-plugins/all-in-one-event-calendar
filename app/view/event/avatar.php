@@ -95,9 +95,9 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 	 */
 	public function get_event_avatar_url(
 		Ai1ec_Event $event,
-		$fallback_order = NULL,
-		&$source        = NULL,
-		&$size          = NULL
+		$fallback_order = null,
+		&$source        = null,
+		&$size          = null
 	) {
 		if ( empty( $fallback_order ) ) {
 			$fallback_order = array(
@@ -108,13 +108,7 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 			);
 		}
 
-		$valid_fallbacks = array(
-			'post_image'          => 'get_post_image_url',
-			'post_thumbnail'      => 'get_post_thumbnail_url',
-			'content_img'         => 'get_content_img_url',
-			'category_avatar'     => 'get_category_avatar_url',
-			'default_avatar'      => 'get_default_avatar_url',
-		);
+		$valid_fallbacks = $this->_get_valid_fallbacks();
 
 		foreach ( $fallback_order as $fallback ) {
 			if ( ! isset( $valid_fallbacks[$fallback] ) ) {
@@ -122,15 +116,23 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 			}
 
 			$function = $valid_fallbacks[$fallback];
-			$url      = $this->$function( $event, $size );
-			if ( NULL !== $url ) {
+			$url      = null;
+			if (
+				! is_array( $function ) &&
+				method_exists( $this, $function )
+			) {
+				$url = $this->$function( $event, $size );
+			} else if ( is_callable( $function ) ) {
+				$url = call_user_func_array( $function, array( $event, &$size ) );
+			}
+			if ( null !== $url ) {
 				$source = $fallback;
 				break;
 			}
 		}
 
 		if ( empty( $url ) ) {
-			return NULL;
+			return null;
 		}
 		return $url;
 	}
@@ -216,9 +218,9 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 
 	/**
 	 * Get an image tag from an html string
-	 * 
+	 *
 	 * @param string $content
-	 * 
+	 *
 	 * @return array
 	 */
 	public function get_image_from_content( $content ) {
@@ -327,6 +329,28 @@ class Ai1ec_View_Event_Avatar extends Ai1ec_Base {
 		}
 
 		return empty( $url ) ? null : $url;
+	}
+
+	/**
+	 * Returns list of valid fallbacks.
+	 *
+	 * @return array List of valid fallbacks.
+	 */
+	protected function _get_valid_fallbacks() {
+		static $fallbacks;
+		if ( null === $fallbacks ) {
+			$fallbacks = apply_filters(
+				'ai1ec_avatar_valid_callbacks',
+				array(
+					'post_image'      => 'get_post_image_url',
+					'post_thumbnail'  => 'get_post_thumbnail_url',
+					'content_img'     => 'get_content_img_url',
+					'category_avatar' => 'get_category_avatar_url',
+					'default_avatar'  => 'get_default_avatar_url',
+				)
+			);
+		}
+		return $fallbacks;
 	}
 
 }

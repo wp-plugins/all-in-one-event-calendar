@@ -20,6 +20,7 @@
 			</div>
 		<?php endif; ?>
 	</div>
+	<?php do_action( 'ai1ec_ics_row_after_categories_tags', $feed_id ); ?>
 	<div class="ai1ec-clearfix">
 		<div class="ai1ec-feed-comments-enabled ai1ec-pull-left">
 			<?php _e( 'Allow comments', AI1EC_PLUGIN_NAME ); ?>:
@@ -52,6 +53,7 @@
 		}
 		?></strong>
 	</div>
+	<?php do_action( 'ai1ec_ics_row_after_keep_categories_tags', $feed_id ); ?>
 	<div class="ai1ec-feed-keep-old-events">
 		<?php _e( 'On refresh, preserve previously imported events that are missing from the feed', AI1EC_PLUGIN_NAME ); ?>:
 		<strong><?php
@@ -74,6 +76,7 @@
 			} ?>
 		</strong>
 	</div>
+	<?php do_action( 'ai1ec_ics_row_after_settings', $feed_id ); ?>
 	<div class="ai1ec-btn-group ai1ec-pull-right">
 		<button type="button"
 			class="ai1ec-btn ai1ec-btn-sm ai1ec-btn-default ai1ec-text-primary

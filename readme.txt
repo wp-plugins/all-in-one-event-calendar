@@ -5,7 +5,7 @@ calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WordPress at least: 3.5
 Tested up to: 4.1
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -136,6 +136,16 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.2.1 =
+* Fixed ICS issue where old events were imported when option was not
+checked
+* Fixed issue where the map covered other fields when creating a new
+event
+* Fixed an issue where events occuring on the last day of a month would
+appear on the first of the month
+* Posterboad will now show the event time in the local timezone
+* Removed browser request to share user's location details
 
 = Version 2.2.0 =
 * Implemented frontend renderring for improved performance

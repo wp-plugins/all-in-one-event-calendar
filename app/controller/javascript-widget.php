@@ -95,6 +95,8 @@ class Ai1ec_Controller_Javascript_Widget extends Ai1ec_Base {
 		// load the css to hardcode, saving a call
 		$css_rules        = $css_controller->get_compiled_css();
 		$css_rules = addslashes( $css_rules );
+		$translation['permalinks_structure'] = $this->
+			_registry->get( 'model.option' )->get( 'permalink_structure' );
 		$translation['calendar_url'] = $permalink;
 		// Let extensions add their scripts.
 		// look at Extended Views or Super Widget for examples

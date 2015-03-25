@@ -28,7 +28,7 @@ class Ai1ec_Calendar_Avatar_Fallbacks extends Ai1ec_Base {
 	 * @return array
 	 */
 	public function get_all() {
-		return $this->_fallbacks;
+		return apply_filters( 'ai1ec_avatar_fallbacks', $this->_fallbacks );
 	}
 
 	/**

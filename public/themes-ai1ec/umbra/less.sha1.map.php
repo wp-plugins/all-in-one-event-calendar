@@ -52,6 +52,11 @@
     'posterboardTileBg' => '#222',
     'posterboardTileBorder' => 'rgba(0,0,0,0)',
     'posterboardTileShadow' => 'rgba(0,0,0,0.4)',
+    'saasThemeDateBlockBackgroundColor' => '#539a00',
+    'saasThemeDateBlockColor' => '#fff',
+    'saasThemePageTitleFontColor' => '#000',
+    'saasThemePageTitleFontFamily' => '"Helvetica Neue", Helvetica, Arial, sans-serif',
+    'saasThemePageTitleFontSize' => '68px',
     'streamDateTitleBackground' => '#222222',
     'streamDateTitleText' => '#777777',
     'streamEventBackground' => '#000000',
@@ -279,8 +284,8 @@
     ),
     'less\\calendar.less' => 
     array (
-      'size' => 17109,
-      'sha1' => '2a798c8ddd41c4e233984f44169007431b44640a',
+      'size' => 17172,
+      'sha1' => 'f0db2abf437a322da4ed45aa1ff8890b0e0486c5',
     ),
     'less\\cfg-icons.less' => 
     array (
@@ -414,13 +419,13 @@
     ),
     'less\\saas-theme.less' => 
     array (
-      'size' => 4801,
-      'sha1' => '16d538d67346c7138c80b62ff2bafe322c3df120',
+      'size' => 4921,
+      'sha1' => '6f5b921928f31c52abf57ea1f953462f4aa7edc4',
     ),
     'less\\style.less' => 
     array (
-      'size' => 20445,
-      'sha1' => 'ac56d5ce59a4e74971a24715ff3810276b3ad59a',
+      'size' => 20657,
+      'sha1' => 'b4ce4f3d5d1edd41764c5127f1931172d9f5e192',
     ),
     'less\\timely-font-awesome.less' => 
     array (
@@ -454,8 +459,8 @@
     ),
     'less\\user_variables_st.php' => 
     array (
-      'size' => 1371,
-      'sha1' => 'ded99ceac5b062520bb865fffefefd929c6516e8',
+      'size' => 2331,
+      'sha1' => '4cadf8e9182b34ad61e6c4dd54d5b51b951a8037',
     ),
     'less\\variables.less' => 
     array (

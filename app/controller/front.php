@@ -461,7 +461,7 @@ class Ai1ec_Front_Controller {
 		);
 		// add the filter to let the organize page work
 		$dispatcher->register_action(
-			'init',
+			'admin_init',
 			array( 'view.admin.organize', 'add_taxonomy_actions' ),
 			10000
 		);
@@ -576,11 +576,6 @@ class Ai1ec_Front_Controller {
 			$dispatcher->register_action(
 				'wp_ajax_ai1ec_rrule_to_text',
 				array( 'view.admin.get-repeat-box', 'convert_rrule_to_text' )
-			);
-			// tracking opt in ai1ec_tracking
-			$dispatcher->register_action(
-				'wp_ajax_ai1ec_tracking',
-				array( 'controller.export', 'track_optin' )
 			);
 			// taxonomy filter
 			$dispatcher->register_action(
@@ -853,32 +848,8 @@ class Ai1ec_Front_Controller {
 	 */
 	protected function _install_crons() {
 		$scheduling = $this->_registry->get( 'scheduling.utility' );
-		$allow      = $this->_registry->get( 'model.settings' )
-				->get( 'allow_statistics' );
-		$correct    = false;
-		// install the cron for stats
-		$hook_name = 'ai1ec_n_cron';
-		// if stats are disabled, cancel the cron
-		if ( false === $allow ) {
-			$scheduling->delete( $hook_name );
-			$correct = true;
-		} else {
-			$correct = $scheduling->reschedule(
-				$hook_name,
-				AI1EC_N_CRON_FREQ,
-				AI1EC_N_CRON_VERSION
-			);
-			$this->_registry->get( 'event.dispatcher' )
-				->register_action(
-					$hook_name,
-					array( 'controller.export', 'n_cron' )
-				);
-		}
-		if ( false === $correct ) {
-			throw new Ai1ec_Scheduling_Exception(
-				'Some CRON function might not have been installed'
-			);
-		}
+		$hook_name  = 'ai1ec_n_cron';
+		$scheduling->delete( $hook_name );
 	}
 
 	/**

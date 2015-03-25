@@ -311,15 +311,6 @@ class Ai1ec_Javascript_Controller {
 		if ( false === $script_to_load ) {
 			$script_to_load = apply_filters( 'ai1ec_backend_js', self::LOAD_ONLY_BACKEND_SCRIPTS );
 		}
-		if ( current_user_can( 'manage_options' ) &&
-			$this->_registry->get( 'model.settings' )->get( 'show_tracking_popup' )
-		) {
-			wp_enqueue_style( 'wp-pointer' );
-			wp_enqueue_script( 'jquery-ui' );
-			wp_enqueue_script( 'wp-pointer' );
-			wp_enqueue_script( 'utils' );
-		}
-
 		$this->add_link_to_render_js( $script_to_load, true );
 
 	}
@@ -448,8 +439,6 @@ class Ai1ec_Javascript_Controller {
 			'week_view_starts_at'            => $settings->get( 'week_view_starts_at' ),
 			'week_view_ends_at'              => $settings->get( 'week_view_ends_at' ),
 			'blog_timezone'                  => $blog_timezone,
-			'show_tracking_popup'            =>
-				current_user_can( 'manage_options' ) && $settings->get( 'show_tracking_popup' ),
 			'affix_filter_menu'              => $settings->get( 'affix_filter_menu' ),
 			'affix_vertical_offset_md'       => $settings->get( 'affix_vertical_offset_md' ),
 			'affix_vertical_offset_lg'       => $settings->get( 'affix_vertical_offset_lg' ),

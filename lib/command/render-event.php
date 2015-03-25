@@ -49,9 +49,6 @@ class Ai1ec_Command_Render_Event extends Ai1ec_Command_Render_Calendar {
 			get_the_ID(),
 			$instance
 		);
-		$timezone_name = $event->get( 'timezone_name' );
-		$event->get( 'start' )->set_preferred_timezone( $timezone_name );
-		$event->get( 'end'   )->set_preferred_timezone( $timezone_name );
 		$event_page    = $this->_registry->get( 'view.event.single' );
 		$footer_html   = $event_page->get_footer( $event );
 		$css = $this->_registry->get( 'css.frontend' )

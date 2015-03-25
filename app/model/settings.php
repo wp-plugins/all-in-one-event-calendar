@@ -47,7 +47,7 @@ class Ai1ec_Settings extends Ai1ec_App {
 		$renderer,
 		$version = '2.0.0'
 	) {
-		
+
 		if ( 'deprecated' === $type ) {
 			unset( $this->_options[$option] );
 		} else if (
@@ -57,7 +57,8 @@ class Ai1ec_Settings extends Ai1ec_App {
 			( isset( $renderer['label'] ) &&
 				(string)$this->_options[$option]['renderer']['label'] !== (string)$renderer['label'] ) ||
 			( isset( $renderer['help'] ) &&
-				(string)$this->_options[$option]['renderer']['help'] !== (string)$renderer['help'] )
+				( ! isset( $this->_options[$option]['renderer']['help'] ) || // handle the case when you are adding help
+				(string)$this->_options[$option]['renderer']['help'] !== (string)$renderer['help'] ) )
 		) {
 			$this->_options[$option] = array(
 				'value'    => ( isset( $this->_options[$option] ) )
@@ -367,7 +368,7 @@ class Ai1ec_Settings extends Ai1ec_App {
 				'default'  => array(),
 			),
 			'show_tracking_popup' => array(
-				'type'    => 'bool',
+				'type'    => 'deprecated',
 				'default' => true,
 			),
 			'calendar_page_id' => array(
@@ -969,7 +970,22 @@ class Ai1ec_Settings extends Ai1ec_App {
 					),
 				),
 				'default' => '',
-			)
+			),
+			'always_use_calendar_timezone' => array(
+				'type'     => 'bool',
+				'renderer' => array(
+					'class'  => 'checkbox',
+					'tab'    => 'viewing-events',
+					'item'   => 'viewing-events',
+					'label'  => Ai1ec_I18n::__(
+						'Display events in <strong>calendar time zone</strong>'
+					),
+					'help'  => Ai1ec_I18n::__(
+						'If this box is checked events will appear in the calendar time zone with time zone information displayed on the event details page.'
+					),
+				),
+				'default'  => false,
+			),
 		);
 	}
 

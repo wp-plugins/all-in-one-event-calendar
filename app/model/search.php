@@ -59,6 +59,14 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 	 *                                   ['post_ids'] => list of post IDs;
 	 *                                   ['auth_ids'] => list of author IDs.
 	 * @param bool $spanning         Also include events that span this period.
+	 * @param bool $single_day       This parameter is added for oneday view.
+	 *                               Query should find events lasting in
+	 *                               particular day instead of checking dates
+	 *                               range. If you need to call this method
+	 *                               with $single_day set to true consider
+	 *                               using method get_events_for_day. This
+	 *                               parameter matters only if $spanning is set
+	 *                               to false.
 	 *
 	 * @return array List of matching event objects.
 	 */
@@ -66,7 +74,8 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 		Ai1ec_Date_Time $start,
 		Ai1ec_Date_Time $end,
 		array $filter = array(),
-		$spanning     = false
+		$spanning     = false,
+		$single_day   = false
 	) {
 		// Query arguments
 		$args = array(
@@ -92,6 +101,8 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 			->get_wpml_table_where();
 
 		if ( $spanning ) {
+			$spanning_string = 'i.end > %d AND i.start < %d ';
+		} elseif ( $single_day ) {
 			$spanning_string = 'i.end >= %d AND i.start <= %d ';
 		} else {
 			$spanning_string = 'i.start BETWEEN %d AND %d ';
@@ -197,6 +208,8 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 	 *                            this parameter. If you pass false ( or pass nothing ) you end up with a query
 	 *                            with events that finish before today. I don't know the rationale
 	 *                            behind this but that's how it works
+	 * @param bool $unique        Whether display only unique events and don't
+	 *                            duplicate results with other instances or not.
 	 *
 	 * @return array              five-element array:
 	 *                              ['events'] an array of matching event objects
@@ -210,7 +223,8 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 		$limit       = 0,
 		$page_offset = 0,
 		$filter      = array(),
-		$last_day    = false
+		$last_day    = false,
+		$unique      = false
 	) {
 		$localization_helper = $this->_registry->get( 'p28n.wpml' );
 		$settings = $this->_registry->get( 'model.settings' );
@@ -294,6 +308,7 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 			$wpml_where_particle .
 			$filter['filter_where'] .
 			$post_status_where .
+			( $unique ? 'GROUP BY e.post_id ' : '' ) .
 			// Reverse order when viewing negative pages, to get correct set of
 			// records. Then reverse results later to order them properly.
 			'ORDER BY i.start ' . $order_direction .
@@ -362,6 +377,7 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 			$start_of_day,
 			$end_of_day,
 			$filter,
+			false,
 			true
 		);
 	}

@@ -95,6 +95,7 @@ class Ai1ec_Command_Save_Settings extends Ai1ec_Command_Save_Abstract {
 		// let extension manipulate things if needed.
 		do_action( 'ai1ec_settings_updated', $options, $new_options );
 
+		$settings->persist();
 		return array(
 			'url'        => ai1ec_admin_url(
 				'edit.php?post_type=ai1ec_event&page=all-in-one-event-calendar-settings'

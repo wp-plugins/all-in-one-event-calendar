@@ -5,7 +5,7 @@
 	<!-- AI1EC_PAGE_CONTENT_PLACEHOLDER -->
 	<div id="ai1ec-calendar" class="timely ai1ec-calendar">
 		{% if ai1ec_above_calendar is defined %}
-			{{ ai1ec_above_calendar | raw }}
+			{{ ai1ec_above_calendar }}
 		{% endif %}
 		{{ filter_menu }}
 		<div id="ai1ec-calendar-view-container"
@@ -22,5 +22,8 @@
 		</div>
 	</div><!-- /.timely -->
 </div>
+{% if inline_js_calendar is not empty %}
+	<script type="text/javascript">{{ inline_js_calendar }}</script>
+{% endif %}
 <!-- END All-in-One Event Calendar Plugin -->
 {% endautoescape %}

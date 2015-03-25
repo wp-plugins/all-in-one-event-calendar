@@ -34,6 +34,7 @@
 								{% for event in day.events %}
 									<a href="{{ event.permalink | e( 'html_attr' ) }}"
 										{% if event.is_multiday %}
+											data-start-day="{{ event.start_day }}"
 											data-end-day="{{ event.multiday_end_day }}"
 											data-start-truncated="{{ event.start_truncated ? 'true' : 'false' }}"
 											data-end-truncated="{{ event.end_truncated ? 'true' : 'false' }}"

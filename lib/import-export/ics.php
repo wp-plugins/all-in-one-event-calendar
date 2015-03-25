@@ -369,8 +369,8 @@ class Ai1ec_Ics_Import_Export_Engine
 			$geo_tag  = $e->getProperty( 'geo' );
 			if ( is_array( $geo_tag ) ) {
 				if (
-				isset( $geo_tag['latitude'] ) &&
-				isset( $geo_tag['longitude'] )
+					isset( $geo_tag['latitude'] ) &&
+					isset( $geo_tag['longitude'] )
 				) {
 					$latitude  = (float)$geo_tag['latitude'];
 					$longitude = (float)$geo_tag['longitude'];
@@ -399,7 +399,7 @@ class Ai1ec_Ics_Import_Export_Engine
 			preg_match( '/\s*(.*\S)\s+[\-@]\s+(.*)\s*/', $location, $matches );
 			// if there is no match, it's not a combined venue + address
 			if ( empty( $matches ) ) {
-				// temporary fix for Mac ICS import. Se AIOEC-2187 
+				// temporary fix for Mac ICS import. Se AIOEC-2187
 				// and https://github.com/iCalcreator/iCalcreator/issues/13
 				$location = str_replace( '\n', "\n", $location );
 				// if there is a comma, probably it's an address
@@ -416,12 +416,13 @@ class Ai1ec_Ics_Import_Export_Engine
 			// =====================================================
 			// = Set show map status based on presence of location =
 			// =====================================================
+			$event_do_show_map = $do_show_map;
 			if (
 				1 === $do_show_map &&
 				NULL === $latitude &&
 				empty( $address )
 			) {
-				$do_show_map = 0;
+				$event_do_show_map = 0;
 			}
 
 			// ==================
@@ -481,7 +482,7 @@ class Ai1ec_Ics_Import_Export_Engine
 				'ticket_url'        => $this->_parse_legacy_loggable_url(
 					$ticket_url
 				),
-				'show_map'          => $do_show_map,
+				'show_map'          => $event_do_show_map,
 				'ical_feed_url'     => $feed->feed_url,
 				'ical_source_url'   => $e->getProperty( 'url' ),
 				'ical_organizer'    => $organizer,
@@ -571,8 +572,8 @@ class Ai1ec_Ics_Import_Export_Engine
 					$event->save( true );
 					$count++;
 				}
-
 			}
+			do_action( 'ai1ec_ics_event_saved', $event, $feed );
 
 			// import not standard taxonomies.
 			unset( $imported_cat[Ai1ec_Event_Taxonomy::CATEGORIES] );
@@ -585,10 +586,7 @@ class Ai1ec_Ics_Import_Export_Engine
 				wp_set_post_terms( $event->get( 'post_id' ), array_keys( $ids ), $tax_name );
 			}
 
-			// if the event is not finished, unset it otherwise it could be deleted afterwards.
-			if ( $event->get( 'end' )->format_to_gmt() > $current_timestamp ) {
-				unset( $events_in_db[$event->get( 'post_id' )] );
-			}
+			unset( $events_in_db[$event->get( 'post_id' )] );
 		}
 
 		return array(

@@ -123,7 +123,7 @@ class Ai1ec_Calendar_View_Month extends Ai1ec_Calendar_View_Abstract {
 
 		$local_date = $this->_registry
 			->get( 'date.time', $args['exact_date'], 'sys.default' );
-		$orig_date = clone $local_date;
+		$orig_date = $this->_registry->get( 'date.time',  $local_date );
 		// =================
 		// = Previous year =
 		// =================
@@ -270,6 +270,10 @@ class Ai1ec_Calendar_View_Month extends Ai1ec_Calendar_View_Abstract {
 			->adjust( -1, 'second' )
 			->format_i18n( 'd' );
 		$event->set_runtime( 'multiday_end_day', $end_day );
+		$event->set_runtime(
+			'start_day',
+			$event->get( 'start' )->format( 'j' )
+		);
 	}
 
 	/**
@@ -299,7 +303,7 @@ class Ai1ec_Calendar_View_Month extends Ai1ec_Calendar_View_Abstract {
 
 		// Get the last day of the month
 		$last_day = $timestamp->format( 't' );
-		$last_timestamp = clone $timestamp;
+		$last_timestamp = $this->_registry->get( 'date.time', $timestamp );
 		$last_timestamp->set_date(
 			$timestamp->format( 'Y' ),
 			$timestamp->format( 'm' ),
@@ -349,6 +353,7 @@ class Ai1ec_Calendar_View_Month extends Ai1ec_Calendar_View_Abstract {
 					'edit_post_link'   => $evt->get_runtime( 'edit_post_link' ),
 					'short_start_time' => $evt->get_runtime( 'short_start_time' ),
 					'multiday_end_day' => $evt->get_runtime( 'multiday_end_day' ),
+					'start_day'        => $evt->get_runtime( 'start_day' ),
 					'short_start_time' => $evt->get_runtime( 'short_start_time' ),
 					'instance_id'      => $evt->get( 'instance_id' ),
 					'post_id'          => $evt->get( 'post_id' ),
@@ -435,14 +440,16 @@ class Ai1ec_Calendar_View_Month extends Ai1ec_Calendar_View_Abstract {
 			$day_entry
 		);
 		unset( $day_entry );
-		$start_time = clone $time;
+		$start_time = $this->_registry->get( 'date.time',  $time );
 		$start_time->set_date(
 			$time->format( 'Y' ),
 			$time->format( 'm' ),
 			1
 		)->set_time( 0, 0, 0 );
-		$end_time = clone $start_time;
+		$end_time = $this->_registry->get( 'date.time',  $start_time );
+
 		$end_time->adjust_month( 1 );
+
 		$search = $this->_registry->get( 'model.search' );
 		$month_events = $search->get_events_between(
 			$start_time,

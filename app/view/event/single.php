@@ -57,15 +57,28 @@ class Ai1ec_View_Event_Single extends Ai1ec_Base {
 		);
 		$default_tz = $this->_registry->get( 'date.timezone' )
 			->get_default_timezone();
-		if ( $event->get( 'timezone_name' ) !== $default_tz ) {
+		/**
+		 * Only display the timezone information if:
+		 *     -) local timezone is not enforced -- because if it is enforced
+		 *        then site owner knows that it's clear, from event contents,
+		 *        where event happens and what time means;
+		 *     -) the timezone is different from the site timezone because if
+		 *        they do match then it is likely obvious when and wheere the
+		 *        event is about to take place.
+		 */
+		if (
+			$this->_registry->get( 'model.settings' )
+				->get( 'always_use_calendar_timezone' ) &&
+			$event->get( 'timezone_name' ) !== $default_tz
+		) {
 			$timezone_info = array(
 				'show_timezone'       => true,
-				'event_timezone'      => $event->get( 'start' )->get_gmt_offset_as_text(),
+				'event_timezone'      => $event->get( 'timezone_name' ),
 				'text_timezone_title' => sprintf(
 					Ai1ec_I18n:: __(
 						'Event was created in the %s time zone'
 					),
-					$event->get( 'timezone_name' )
+					$event->get( 'start' )->get_gmt_offset_as_text()
 				),
 			);
 		}

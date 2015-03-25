@@ -206,6 +206,10 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 					'ai1ec_disable_standard_filter_menu',
 					false
 				),
+				'inline_js_calendar'           => apply_filters(
+					'ai1ec_inline_js_calendar',
+					''
+				),
 			);
 
 			$calendar = $loader->get_file( 'calendar.twig', $calendar_args, false );

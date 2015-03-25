@@ -250,6 +250,8 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 				get( 'view.event.time' )->get_timespan_html( $event, 'short' );
 			$event_props['avatar']              = $event->getavatar();
 			$event_props['avatar_not_wrapped']  = $event->getavatar( false );
+			$event_props['avatar_url']  = $this->_registry
+				->get( 'view.event.avatar' )->get_event_avatar_url( $event );
 			$event_object                       = $event_props;
 			if (
 				$this->_compatibility->use_backward_compatibility()

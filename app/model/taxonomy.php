@@ -121,7 +121,7 @@ class Ai1ec_Taxonomy extends Ai1ec_Base {
 		$post_id = (int)$post_id;
 		if ( ! isset( $this->_taxonomy_map[$taxonomy][$post_id] ) ) {
 			$definition = wp_get_post_terms( $post_id, $taxonomy );
-			if ( empty( $definition ) ) {
+			if ( empty( $definition ) || is_wp_error( $definition ) ) {
 				$definition = array();
 			}
 			$this->_taxonomy_map[$taxonomy][$post_id] = $definition;
