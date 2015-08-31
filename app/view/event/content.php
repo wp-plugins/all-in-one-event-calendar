@@ -157,6 +157,13 @@ HTML;
 			return null;
 		}
 
+		// Mark found image.
+		$event->get( 'post' )->post_content = str_replace(
+			'<img' . $matches[1],
+			'<img' . $matches[1] . ' data-ai1ec-hidden ',
+			$event->get( 'post' )->post_content
+		);
+
 		$url = $matches[2];
 		$size = array( 0, 0 );
 

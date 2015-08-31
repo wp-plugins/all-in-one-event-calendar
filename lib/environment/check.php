@@ -175,7 +175,7 @@ class Ai1ec_Environment_Checks extends Ai1ec_Base {
 	 *                            or not.
 	 *
 	 * @return void Method does not return.
-	 *              
+	 *
 	 * @throws Ai1ec_Bootstrap_Exception
 	 * @throws Ai1ec_Outdated_Addon_Exception
 	 */
@@ -202,7 +202,7 @@ class Ai1ec_Environment_Checks extends Ai1ec_Base {
 				$ev_data['Name'],
 				$min_version
 			);
-
+			$this->_registry->get( 'calendar.updates' )->clear_transients();
 			throw new Ai1ec_Outdated_Addon_Exception( $message, $addon );
 		}
 	}

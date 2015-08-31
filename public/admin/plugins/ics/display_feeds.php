@@ -9,20 +9,13 @@
 <div id="ics-alerts"></div>
 <div class="ai1ec-form-horizontal">
 	<div class="ai1ec-form-group">
-		<div class="ai1ec-col-md-8">
+		<div class="ai1ec-col-md-12">
 			<label class="ai1ec-control-label ai1ec-pull-left" for="cron_freq">
 			  <?php _e( 'Check for new events', AI1EC_PLUGIN_NAME ) ?>:
 			</label>
 			<div class="ai1ec-col-sm-6">
 				<?php echo $cron_freq ?>
 			</div>
-		</div>
-		<div class="ai1ec-col-md-4">
-			<button type="submit" name="ai1ec_save_settings" id="ai1ec_save_settings"
-				class="ai1ec-btn ai1ec-btn-primary ai1ec-pull-right">
-				<i class="ai1ec-fa ai1ec-fa-save ai1ec-fa-fw"></i>
-				<?php _e( 'Save Settings', AI1EC_PLUGIN_NAME ); ?>
-			</button>
 		</div>
 	</div>
 </div>
@@ -85,18 +78,28 @@
 	</div>
 	<?php do_action( 'ai1ec_ics_row_after_settings', null ); ?>
 	<div class="ai1ec-pull-right">
+    	<button type="button" id="ai1ec_cancel_ics"
+			class="ai1ec-btn ai1ec-btn-primary ai1ec-btn-sm">
+			<i class="ai1ec-fa ai1ec-fa-cancel"></i>
+			<?php _e( 'Cancel', AI1EC_PLUGIN_NAME ); ?>
+		</button>
 		<button type="button" id="ai1ec_add_new_ics"
 			class="ai1ec-btn ai1ec-btn-primary ai1ec-btn-sm"
 			data-loading-text="<?php echo esc_attr(
 				'<i class="ai1ec-fa ai1ec-fa-spinner ai1ec-fa-spin ai1ec-fa-fw"></i> ' .
 				__( 'Please wait&#8230;', AI1EC_PLUGIN_NAME ) ); ?>">
 			<i class="ai1ec-fa ai1ec-fa-plus"></i>
-			<?php _e( 'Add new subscription', AI1EC_PLUGIN_NAME ) ?>
+			<span id="ai1ec_ics_add_new">
+				<?php _e( 'Add new subscription', AI1EC_PLUGIN_NAME ); ?>
+			</span>
+			<span id="ai1ec_ics_update" class="ai1ec-hidden">
+				<?php _e( 'Update subscription', AI1EC_PLUGIN_NAME ); ?>
+			</span>
 		</button>
 	</div>
 </div>
 
-<?php
-echo $feed_rows;
-echo $modal->render();
-?>
+<div class="timely ai1ec-form-inline ai1ec-panel-group" id="ai1ec-feeds-accordion">
+	<?php echo $feed_rows; ?>
+</div>
+<?php echo $modal->render(); ?>

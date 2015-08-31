@@ -70,7 +70,7 @@
 	{% endif %} {# dates is not empty #}
 
 	{% if show_calendar_button or show_subscribe_buttons %}
-		<p>
+		<div class="ai1ec-subscribe-buttons-widget">
 			{% if show_calendar_button %}
 				<a class="ai1ec-btn ai1ec-btn-default ai1ec-btn-xs ai1ec-pull-right
 					ai1ec-calendar-link"
@@ -90,7 +90,7 @@
 					'alignment':          'right',
 				} %}
 			{% endif %}
-		</p>
+		</div>
 	{% endif %} {# show_calendar_button or show_subscribe_buttons #}
 
 </div>

@@ -156,6 +156,13 @@
       'i' => 'g',
       'r' => 'y',
     ),
+    'Ai1ec_Calendar_Updates' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'calendar' . DIRECTORY_SEPARATOR . 'updates.php',
+      'c' => 'Ai1ec_Calendar_Updates',
+      'i' => 'g',
+      'r' => 'y',
+    ),
     'Ai1ec_Calendar_View_Abstract' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'calendar' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'abstract.php',
@@ -237,6 +244,13 @@
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'command' . DIRECTORY_SEPARATOR . 'change-theme.php',
       'c' => 'Ai1ec_Command_Change_Theme',
+      'i' => 'g',
+      'r' => 'y',
+    ),
+    'Ai1ec_Command_Check_Updates' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'command' . DIRECTORY_SEPARATOR . 'check-updates.php',
+      'c' => 'Ai1ec_Command_Check_Updates',
       'i' => 'g',
       'r' => 'y',
     ),
@@ -504,11 +518,12 @@
       'i' => 'g',
       'r' => 'y',
     ),
-    'Ai1ec_EDD_SL_Plugin_Updater' => 
+    'Ai1ec_Dbi_Utils' => 
     array (
-      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'edd' . DIRECTORY_SEPARATOR . 'updater.php',
-      'c' => 'Ai1ec_EDD_SL_Plugin_Updater',
-      'i' => 'n',
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'dbi' . DIRECTORY_SEPARATOR . 'dbi-utils.php',
+      'c' => 'Ai1ec_Dbi_Utils',
+      'i' => 'g',
+      'r' => 'y',
     ),
     'Ai1ec_Email_Notification' => 
     array (
@@ -782,6 +797,13 @@
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . 'filter' . DIRECTORY_SEPARATOR . 'post_ids.php',
       'c' => 'Ai1ec_Filter_Posts',
+      'i' => 'n',
+      'r' => 'y',
+    ),
+    'Ai1ec_Filter_Posts_By_Instance' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . 'filter' . DIRECTORY_SEPARATOR . 'instance_ids.php',
+      'c' => 'Ai1ec_Filter_Posts_By_Instance',
       'i' => 'n',
       'r' => 'y',
     ),
@@ -1616,12 +1638,6 @@
       'c' => 'Ai1ecdm_Datetime_Migration',
       'i' => 'g',
       'r' => 'y',
-    ),
-    'EDD_SL_Plugin_Updater' => 
-    array (
-      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'edd' . DIRECTORY_SEPARATOR . 'EDD_SL_Plugin_Updater.php',
-      'c' => 'EDD_SL_Plugin_Updater',
-      'i' => 'g',
     ),
     'HTTP_ConditionalGet' => 
     array (
@@ -2779,6 +2795,13 @@
       'i' => 'g',
       'r' => 'y',
     ),
+    'calendar.updates' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'calendar' . DIRECTORY_SEPARATOR . 'updates.php',
+      'c' => 'Ai1ec_Calendar_Updates',
+      'i' => 'g',
+      'r' => 'y',
+    ),
     'calendarComponent' => 
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'iCal' . DIRECTORY_SEPARATOR . 'iCalcreator-2.20' . DIRECTORY_SEPARATOR . 'iCalcreator.class.php',
@@ -2831,6 +2854,13 @@
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'command' . DIRECTORY_SEPARATOR . 'change-theme.php',
       'c' => 'Ai1ec_Command_Change_Theme',
+      'i' => 'g',
+      'r' => 'y',
+    ),
+    'command.check-updates' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'command' . DIRECTORY_SEPARATOR . 'check-updates.php',
+      'c' => 'Ai1ec_Command_Check_Updates',
       'i' => 'g',
       'r' => 'y',
     ),
@@ -3167,17 +3197,12 @@
       'i' => 'g',
       'r' => 'y',
     ),
-    'edd.EDD_SL_Plugin_Updater' => 
+    'dbi.dbi-utils' => 
     array (
-      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'edd' . DIRECTORY_SEPARATOR . 'EDD_SL_Plugin_Updater.php',
-      'c' => 'EDD_SL_Plugin_Updater',
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'dbi' . DIRECTORY_SEPARATOR . 'dbi-utils.php',
+      'c' => 'Ai1ec_Dbi_Utils',
       'i' => 'g',
-    ),
-    'edd.updater' => 
-    array (
-      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'edd' . DIRECTORY_SEPARATOR . 'updater.php',
-      'c' => 'Ai1ec_EDD_SL_Plugin_Updater',
-      'i' => 'n',
+      'r' => 'y',
     ),
     'environment.check' => 
     array (
@@ -3805,6 +3830,13 @@
     array (
       'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . 'filter' . DIRECTORY_SEPARATOR . 'cat_ids.php',
       'c' => 'Ai1ec_Filter_Categories',
+      'i' => 'n',
+      'r' => 'y',
+    ),
+    'model.filter.instance_ids' => 
+    array (
+      'f' => AI1EC_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . 'filter' . DIRECTORY_SEPARATOR . 'instance_ids.php',
+      'c' => 'Ai1ec_Filter_Posts_By_Instance',
       'i' => 'n',
       'r' => 'y',
     ),

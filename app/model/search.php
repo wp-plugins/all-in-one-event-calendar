@@ -17,11 +17,25 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 	private $_dbi = null;
 
 	/**
+	 * Caches the ids of the last 'between' query
+	 *
+	 * @var array
+	 */
+	protected $_ids_between_cache = array();
+
+	/**
 	 * Creates local DBI instance.
 	 */
 	public function __construct( Ai1ec_Registry_Object $registry ){
 		parent::__construct( $registry );
 		$this->_dbi = $this->_registry->get( 'dbi.dbi' );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_cached_between_ids() {
+		return $this->_ids_between_cache;
 	}
 
 	/**
@@ -54,10 +68,12 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 	 * @param Ai1ec_Date_Time $start Limit to events starting after this.
 	 * @param Ai1ec_Date_Time $end   Limit to events starting before this.
 	 * @param array $filter          Array of filters for the events returned:
-	 *                                   ['cat_ids']  => list of category IDs;
-	 *                                   ['tag_ids']  => list of tag IDs;
-	 *                                   ['post_ids'] => list of post IDs;
-	 *                                   ['auth_ids'] => list of author IDs.
+	 *                                   ['cat_ids']      => list of category IDs;
+	 *                                   ['tag_ids']      => list of tag IDs;
+	 *                                   ['post_ids']     => list of post IDs;
+	 *                                   ['auth_ids']     => list of author IDs;
+	 *                                   ['instance_ids'] => list of events
+	 *                                                       instance ids;
 	 * @param bool $spanning         Also include events that span this period.
 	 * @param bool $single_day       This parameter is added for oneday view.
 	 *                               Query should find events lasting in
@@ -170,12 +186,18 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 		$events = $this->_dbi->get_results( $query, ARRAY_A );
 
 		$id_list = array();
+		$id_instance_list = array();
 		foreach ( $events as $event ) {
 			$id_list[] = $event['post_id'];
+			$id_instance_list[] = array(
+				'id'          => $event['post_id'],
+				'instance_id' => $event['instance_id'],
+			);
 		}
 
 		if ( ! empty( $id_list ) ) {
 			update_meta_cache( 'post', $id_list );
+			$this->_ids_between_cache = $id_instance_list;
 		}
 
 		foreach ( $events as &$event ) {
@@ -198,10 +220,11 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 	 * @param int $limit          return a maximum of this number of items
 	 * @param int $page_offset    offset the result set by $limit times this number
 	 * @param array $filter       Array of filters for the events returned.
-	 *                            ['cat_ids']   => non-associatative array of category IDs
-	 *                            ['tag_ids']   => non-associatative array of tag IDs
-	 *                            ['post_ids']  => non-associatative array of post IDs
-	 *                            ['auth_ids']  => non-associatative array of author IDs
+	 *                            ['cat_ids']      => non-associatative array of category IDs
+	 *                            ['tag_ids']      => non-associatative array of tag IDs
+	 *                            ['post_ids']     => non-associatative array of post IDs
+	 *                            ['auth_ids']     => non-associatative array of author IDs
+	 *                            ['instance_ids'] => non-associatative array of author IDs
 	 * @param int $last_day       Last day (time), that was displayed.
 	 *                            NOTE FROM NICOLA: be careful, if you want a query with events
 	 *                            that have a start date which is greater than today, pass 0 as
@@ -472,6 +495,42 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 	}
 
 	/**
+	 * Returns events instances closest to today.
+	 *
+	 * @param array $events_ids Events ids filter.
+	 *
+	 * @return array Events collection.
+	 * @throws Ai1ec_Bootstrap_Exception
+	 */
+	public function get_instances_closest_to_today( array $events_ids = array() ) {
+		$where_events_ids = '';
+		if ( ! empty( $events_ids ) ) {
+			$where_events_ids = 'i.post_id IN ('
+				. implode( ',', $events_ids ) . ') AND ';
+		}
+		$query = 'SELECT i.id, i.post_id FROM ' .
+			$this->_dbi->get_table_name( 'ai1ec_event_instances' ) .
+			' i WHERE ' .
+			$where_events_ids .
+			' i.start > %d ' .
+			' GROUP BY i.post_id';
+		/** @var $today Ai1ec_Date_Time */
+		$today   = $this->_registry->get( 'date.time', 'now', 'sys.default' );
+		$today->set_time( 0, 0, 0 );
+		$query   = $this->_dbi->prepare( $query, $today->format( 'U' ) );
+		$results = $this->_dbi->get_results( $query );
+		$events  = array();
+		foreach ( $results as $result ) {
+			$events[] = $this->get_event(
+				$result->post_id,
+				$result->id
+			);
+		}
+
+		return $events;
+	}
+
+	/**
 	 * Check if given event must be treated as all-day event.
 	 *
 	 * Event instances that span 24 hours are treated as all-day.
@@ -597,10 +656,11 @@ class Ai1ec_Event_Search extends Ai1ec_Base {
 	 * statements for running an SQL query limited to the specified options.
 	 *
 	 * @param array $filter Array of filters for the events returned:
-	 *                          ['cat_ids']   => list of category IDs
-	 *                          ['tag_ids']   => list of tag IDs
-	 *                          ['post_ids']  => list of event post IDs
-	 *                          ['auth_ids']  => list of event author IDs
+	 *                          ['cat_ids']      => list of category IDs
+	 *                          ['tag_ids']      => list of tag IDs
+	 *                          ['post_ids']     => list of event post IDs
+	 *                          ['auth_ids']     => list of event author IDs
+	 *                          ['instance_ids'] => list of event instance IDs
 	 *
 	 * @return array The modified filter array to having:
 	 *                   ['filter_join']  the Join statements for the SQL

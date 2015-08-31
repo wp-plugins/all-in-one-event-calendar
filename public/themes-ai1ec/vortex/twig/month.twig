@@ -61,7 +61,9 @@
 										</div>
 									</a>
 
-									<div class="ai1ec-popover ai1ec-popup ai1ec-popup-in-{{ type }}-view">
+									<div class="ai1ec-popover ai1ec-popup ai1ec-popup-in-{{ type }}-view
+									            ai1ec-event-id-{{ event.post_id }}
+									            ai1ec-event-instance-id-{{ event.instance_id }}">
 										{% if event.category_colors %}
 											<div class="ai1ec-color-swatches">{{ event.category_colors | raw }}</div>
 										{% endif %}
@@ -96,6 +98,7 @@
 											href="{{ event.permalink | e('html_attr') }}">
 											{{ event.avatar_not_wrapped | raw }}
 										</a>
+										{{ action_buttons | raw }}
 
 										{% if event.post_excerpt %}
 											<div class="ai1ec-popup-excerpt">{{ event.post_excerpt | raw }}</div>

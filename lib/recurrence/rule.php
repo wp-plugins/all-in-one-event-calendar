@@ -183,6 +183,24 @@ class Ai1ec_Recurrence_Rule extends Ai1ec_Base {
 	}
 
 	/**
+	 * Filter recurrence / exclusion rule or dates. Avoid throwing exception for old, malformed values.
+	 *
+	 * @param string $rule Rule or dates value.
+	 *
+	 * @return string Fixed rule or dates value.
+	 */
+	public function filter_rule( $rule ) {
+		$matches = null;
+		if (
+			empty( $rule ) ||
+			! preg_match('/(T[0-9]+)(ZUNTIL=[0-9Z;T]+)/i', $rule, $matches)
+		) {
+			return $rule;
+		}
+		return preg_replace('/(T[0-9]+)(ZUNTIL=[0-9Z;T]+)/i', '$1', $rule);
+	}
+
+	/**
 	 * when using BYday you need an array of arrays.
 	 * This function create valid arrays that keep into account the presence
 	 * of a week number beofre the day
@@ -207,7 +225,7 @@ class Ai1ec_Recurrence_Rule extends Ai1ec_Base {
 	 **/
 	protected function _get_sentence_by( &$txt, $freq, $rc ) {
 		global $wp_locale;
-	
+
 		switch( $freq ) {
 			case 'weekly':
 				if( $rc->getByDay() ) {
@@ -320,7 +338,7 @@ class Ai1ec_Recurrence_Rule extends Ai1ec_Base {
 				break;
 		}
 	}
-	
+
 	/**
 	 * _ordinal function
 	 *
@@ -330,17 +348,17 @@ class Ai1ec_Recurrence_Rule extends Ai1ec_Base {
 	 **/
 	protected function _ordinal( $cdnl ) {
 		$locale = explode( '_', get_locale() );
-	
+
 		if( isset( $locale[0] ) && $locale[0] != 'en' )
 			return $cdnl;
-	
+
 		$test_c = abs($cdnl) % 10;
 		$ext = ( ( abs( $cdnl ) % 100 < 21 && abs( $cdnl ) % 100 > 4 ) ? 'th'
 			: ( ( $test_c < 4 ) ? ( $test_c < 3 ) ? ( $test_c < 2 ) ? ( $test_c < 1 )
 				? 'th' : 'st' : 'nd' : 'rd' : 'th' ) );
 		return $cdnl.$ext;
 	}
-	
+
 	/**
 	 * Returns the textual representation of the given recurrence frequency and
 	 * interval, with result stored in $txt.
@@ -447,7 +465,7 @@ class Ai1ec_Recurrence_Rule extends Ai1ec_Base {
 				$this->_registry->get(
 					'date.time',
 					$until
-				)->format_i18n( 
+				)->format_i18n(
 					$this->_registry->get( 'model.option')->get( 'date_format' )
 				)
 			);
@@ -460,6 +478,6 @@ class Ai1ec_Recurrence_Rule extends Ai1ec_Base {
 			$txt .= ', ' . Ai1ec_I18n::__( 'forever' );
 		}
 	}
-	
+
 
 }

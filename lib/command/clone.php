@@ -229,17 +229,24 @@ class Ai1ec_Command_Clone extends Ai1ec_Command {
 	 */
 	protected function _duplicate_post_copy_post_meta_info( $new_id, $post ) {
 		$post_meta_keys = get_post_custom_keys( $post->ID );
-		if ( empty( $post_meta_keys ) ) return;
-		//$meta_blacklist = explode(",",get_option('duplicate_post_blacklist'));
-		//if ( $meta_blacklist == "" )
-		$meta_blacklist = array();
-		$meta_keys = array_diff( $post_meta_keys, $meta_blacklist );
+		if ( empty( $post_meta_keys ) ) {
+			return;
+		}
 
-		foreach ( $meta_keys as $meta_key ) {
+		foreach ( $post_meta_keys as $meta_key ) {
 			$meta_values = get_post_custom_values( $meta_key, $post->ID );
 			foreach ( $meta_values as $meta_value ) {
 				$meta_value = maybe_unserialize( $meta_value );
-				add_post_meta( $new_id, $meta_key, $meta_value );
+				$meta_value = apply_filters(
+					'ai1ec_duplicate_post_meta_value',
+					$meta_value,
+					$meta_key,
+					$post,
+					$new_id
+				);
+				if ( null !== $meta_value ) {
+					add_post_meta( $new_id, $meta_key, $meta_value );
+				}
 			}
 		}
 	}

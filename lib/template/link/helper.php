@@ -39,4 +39,25 @@ class Ai1ec_Template_Link_Helper {
 	public function get_permalink( $id = 0, $leavename = false ) {
 		return get_permalink( $id, $leavename );
 	}
+
+	/**
+	 * Retrieve full calendar permalink even if Calendar page is set to be
+	 * homepage.
+	 *
+	 * @param int|object $post      Optional. Post ID or object.
+	 * @param bool       $leavename Optional. Leave name.
+	 * @param bool       $sample    Optional. Sample permalink.
+	 *
+	 * @return string
+	 */
+	public function get_full_permalink(
+		$post = false,
+		$leavename = false,
+		$sample = false
+	) {
+		if ( false === $post ) {
+			return '';
+		}
+		return _get_page_link( $post, $leavename, $sample );
+	}
 }

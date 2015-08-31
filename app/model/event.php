@@ -24,9 +24,7 @@ class Ai1ec_Event extends Ai1ec_Base {
 	 *            [-1] - only `get` (for storage) operations require care.
 	 */
 	protected $_swizzable = array(
-		'contact_url'      => -1, // strip on save/import
 		'cost'             => 0,
-		'ticket_url'       => -1, // strip on save/import
 		'start'            => -1,
 		'end'              => -1,
 		'timezone_name'    => -1,
@@ -230,7 +228,11 @@ class Ai1ec_Event extends Ai1ec_Base {
 			GROUP_CONCAT( ttt.term_id ) AS tags
 		';
 
-		if ( false !== $instance && is_numeric( $instance ) ) {
+		if (
+			false !== $instance &&
+			is_numeric( $instance ) &&
+			$instance > 0
+		) {
 			$select_sql .= ', IF( aei.start IS NOT NULL, aei.start, e.start ) as start,' .
 						   '  IF( aei.start IS NOT NULL, aei.end,   e.end )   as end ';
 
@@ -240,6 +242,13 @@ class Ai1ec_Event extends Ai1ec_Base {
 				' aei ON aei.id = ' . $instance . ' AND e.post_id = aei.post_id ';
 		} else {
 			$select_sql .= ', e.start as start, e.end as end, e.allday ';
+			if ( -1 === (int)$instance ) {
+				$select_sql .= ', aei.id as instance_id ';
+				$left_join   = 'LEFT JOIN ' .
+					$dbi->get_table_name( 'ai1ec_event_instances' ) .
+					' aei ON e.post_id = aei.post_id ' .
+					'AND e.start = aei.start AND e.end = aei.end ';
+			}
 		}
 
 		// =============================
@@ -284,14 +293,15 @@ class Ai1ec_Event extends Ai1ec_Base {
 	 *                                         initialize fields with associative
 	 *                                         array $data containing both post
 	 *                                         and event fields.
-	 * @param bool                  $instance  Optionally instance ID.
+	 * @param int|bool              $instance  Optionally instance ID. When ID
+	 *                                         value is -1 then it is
+	 *                                         retrieved from db.
 	 *
 	 * @throws Ai1ec_Invalid_Argument_Exception When $data is not one
 	 *                                          of int|array|null.
 	 * @throws Ai1ec_Event_Not_Found_Exception  When $data relates to
 	 *                                          non-existent ID.
 	 *
-	 * @return void
 	 */
 	function __construct(
 		Ai1ec_Registry_Object $registry,
@@ -322,35 +332,6 @@ class Ai1ec_Event extends Ai1ec_Base {
 				//  ignore
 			}
 		}
-	}
-
-	/**
-	 * Restore original URL from loggable event URL
-	 *
-	 * @param string $value URL as seen by visitor
-	 *
-	 * @return string Original URL
-	 */
-	public function get_nonloggable_url( $value ) {
-		if (
-			empty( $value ) ||
-			false === strpos( $value, AI1EC_REDIRECTION_SERVICE )
-		) {
-			return $value;
-		}
-		$decoded = json_decode(
-			base64_decode(
-				trim(
-					substr( $value, strlen( AI1EC_REDIRECTION_SERVICE ) ),
-					'/'
-				)
-			),
-			true
-		);
-		if ( ! isset( $decoded['l'] ) ) {
-			return '';
-		}
-		return $decoded['l'];
 	}
 
 	/**
@@ -780,17 +761,6 @@ class Ai1ec_Event extends Ai1ec_Base {
 	}
 
 	/**
-	 * Store `Ticket URL` in non-loggable form
-	 *
-	 * @param string $ticket_url URL for buying tickets.
-	 *
-	 * @return string Non loggable URL
-	 */
-	protected function _handle_property_destruct_ticket_url( $ticket_url ) {
-		return $this->get_nonloggable_url( $ticket_url );
-	}
-
-	/**
 	 * Format datetime to UNIX timestamp for storage.
 	 *
 	 * @param Ai1ec_Date_Time $start Datetime object to compact.
@@ -810,17 +780,6 @@ class Ai1ec_Event extends Ai1ec_Base {
 	 */
 	protected function _handle_property_destruct_end( Ai1ec_Date_Time $end ) {
 		return $end->format_to_gmt();
-	}
-
-	/**
-	 * Store `Contact URL` in non-loggable form.
-	 *
-	 * @param string $contact_url URL for contact details.
-	 *
-	 * @return string Non loggable URL.
-	 */
-	protected function _handle_property_destruct_contact_url( $contact_url ) {
-		return $this->get_nonloggable_url( $contact_url );
 	}
 
 	/**

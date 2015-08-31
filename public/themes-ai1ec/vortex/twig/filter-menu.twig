@@ -5,7 +5,8 @@
 {% if categories           is empty       and
       tags                 is empty       and
       additional_filters   is not defined and
-      contribution_buttons is empty
+      contribution_buttons is empty       and
+      additional_buttons   is not defined
 %}
 	ai1ec-hidden
 {% endif %}
@@ -17,8 +18,9 @@
 			{{ additional_filters | raw }}
 		{% endif %}
 	</ul>
-  <div class="ai1ec-pull-right">
-  	{{ contribution_buttons | raw }}
-  </div>
+	<div class="ai1ec-pull-right">
+	{% if additional_buttons is defined %}
+		{{ additional_buttons | raw }}
+	{% endif %}
+	</div>
 </div>{# /.ai1ec-calendar-toolbar #}
-

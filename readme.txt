@@ -4,8 +4,8 @@ Tags: calendar, events, ics, ics feed, wordpress ical importer, google
 calendar, ical, iCalendar, all-in-one, events sync, events widget,
 calendar widget
 Requires WordPress at least: 3.5
-Tested up to: 4.1
-Stable tag: 2.2.1
+Tested up to: 4.3
+Stable tag: 2.3.3
 License: GNU General Public License, version 3 (GPL-3.0)
 
 A calendar system with many views, upcoming events widget, color-coded
@@ -98,7 +98,7 @@ You can help translate by going to
 If your goal is to run a community event calendar, Timely's All-in-one
 Event Calendar has everything you'll need.
 
-http://vimeo.com/55904173
+https://vimeo.com/135004810
 
 = Helpful Links =
 
@@ -136,6 +136,45 @@ http://vimeo.com/55904173
 **[ai1ec post_id="1, 2"]**
 
 == Changelog ==
+
+= Version 2.3.3 =
+* Fixed bug with month view navigation
+
+= Version 2.3.2 =
+* Confirmed compatibility with WordPress 4.3
+
+= Version 2.3.1 =
+* Fixing piece of code that was incompatible with PHP versions prior
+to 5.3 while we strive to provide good experience to all WordPress
+users
+
+= Version 2.3.0 =
+* Some custom recurrence rules (having multiple definitions) weren't
+correctly processed
+* Sometimes links to other dates weren't showing on Agenda view
+* Edits to a recurring event would fail to save
+* Settings page would fail to load in rare circumstances
+* Updates were failing with some PHP versions
+* Dates would not change when navigating back in time
+* Make sure event preview is not showing unreadable characters (HTML)
+* Tag and Category names can now contain apostrophe
+* Remove code related to inclusion in Time.ly Network of calendars (was
+working only if user opted-in)
+* Deleting an event instance before saving no longer affects the main
+recurring event
+* Event Contributor role now can edit events
+* Editing custom recurrence dates now displays them in the date picker
+* Made it easier to detect and interact with events rendering using
+JavaScript
+* Rendering proper page while calendar is not fully configured
+* Made it possible for 3rd party developers to add buttons to event
+details page .ics feeds can now be edited. 
+* Made it possible for 3rd party developers to add elements to ICS feeds
+import screen
+* Made it possible to filter by author
+* Calendar should load a bit faster due to different JavaScript
+placement
+* Allowed Newsletters to include events occuring far in the future
 
 = Version 2.2.1 =
 * Fixed ICS issue where old events were imported when option was not

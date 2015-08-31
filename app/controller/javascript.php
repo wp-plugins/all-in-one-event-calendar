@@ -215,10 +215,13 @@ class Ai1ec_Javascript_Controller {
 		}
 
 		// Load translation module.
-		$translation = $this->get_frontend_translation_data();
-		$permalink = $this->_template_link_helper
+		$translation    = $this->get_frontend_translation_data();
+		$permalink      = $this->_template_link_helper
 			->get_permalink( $this->_settings->get( 'calendar_page_id' ) );
-		$translation['calendar_url'] = $permalink;
+		$full_permalink = $this->_template_link_helper
+			->get_full_permalink( $this->_settings->get( 'calendar_page_id' ) );
+		$translation['calendar_url']      = $permalink;
+		$translation['full_calendar_url'] = $full_permalink;
 		$translation_module = $this->create_require_js_module(
 			self::FRONTEND_CONFIG_MODULE,
 			$translation
@@ -413,7 +416,7 @@ class Ai1ec_Javascript_Controller {
 				'When the "Input coordinates" checkbox is checked, "Longitude" is a required field.'
 			),
 			'ai1ec_contact_url_not_valid'         => Ai1ec_I18n::__(
-				'The URL you have entered in the <b>Organizer Contact Info</b> &gt; <b>External URL</b> seems to be invalid.'
+				'The URL you have entered in the <b>Organizer Contact Info</b> &gt; <b>Website URL</b> seems to be invalid.'
 			),
 			'ai1ec_ticket_url_not_valid'           => Ai1ec_I18n::__(
 				'The URL you have entered in the <b>Event Cost and Tickets</b> &gt; <b>Buy Tickets URL</b> seems to be invalid.'
@@ -616,7 +619,7 @@ JSC;
 					self::JS_HANDLE,
 					$url,
 					array(),
-					true
+					false
 			);
 		}
 	}

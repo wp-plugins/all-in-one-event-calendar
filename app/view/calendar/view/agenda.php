@@ -34,6 +34,10 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 		$events_limit     = is_numeric( $view_args['events_limit'] )
 			? $view_args['events_limit']
 			: $settings->get( $per_page_setting );
+		$events_limit = apply_filters(
+			'ai1ec_events_limit',
+			$events_limit
+		);
 		$results = $search->get_events_relative_to(
 			$timestamp,
 			$events_limit,
@@ -41,14 +45,19 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 			apply_filters(
 				'ai1ec_get_events_relative_to_filter',
 				array(
-					'post_ids' => $view_args['post_ids'],
-					'auth_ids' => $view_args['auth_ids'],
-					'cat_ids'  => $view_args['cat_ids'],
-					'tag_ids'  => $view_args['tag_ids'],
+					'post_ids'     => $view_args['post_ids'],
+					'auth_ids'     => $view_args['auth_ids'],
+					'cat_ids'      => $view_args['cat_ids'],
+					'tag_ids'      => $view_args['tag_ids'],
+					'instance_ids' => $view_args['instance_ids'],
 				),
 				$view_args
 			),
-			$view_args['time_limit']
+			$view_args['time_limit'],
+			apply_filters(
+				'ai1ec_show_unique_events',
+				false
+			)
 		);
 		$this->_update_meta( $results['events'] );
 		$dates = $this->get_agenda_like_date_array(
@@ -79,8 +88,9 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 		}
 
 		// Create navigation bar if requested.
-		$navigation = '';
-		$loader = $this->_registry->get( 'theme.loader' );
+		$navigation       = '';
+		$loader           = $this->_registry->get( 'theme.loader' );
+		$pagination_links = '';
 		if ( ! $view_args['no_navigation'] ) {
 			$pagination_links = $this->_get_agenda_like_pagination_links(
 				$view_args,
@@ -246,13 +256,23 @@ class Ai1ec_Calendar_View_Agenda extends Ai1ec_Calendar_View_Abstract {
 			$event_props['post_excerpt']        = $event->get_runtime( 'post_excerpt' );
 			$event_props['short_start_time']    = $event->get_runtime( 'short_start_time' );
 			$event_props['is_allday']           = $event->is_allday();
+			$event_props['is_multiday']         = $event->is_multiday();
+			$event_props['enddate_info']        = array(
+				'month'     => $event->get( 'end' )->format( 'M' ),
+				'day'       => $event->get( 'end' )->format( 'j' ),
+				'weekday'   => $event->get( 'end' )->format( 'D' ),
+				'year'      => $event->get( 'end' )->format( 'Y' ),
+			);
 			$event_props['timespan_short']      = $event->_registry->
 				get( 'view.event.time' )->get_timespan_html( $event, 'short' );
 			$event_props['avatar']              = $event->getavatar();
 			$event_props['avatar_not_wrapped']  = $event->getavatar( false );
 			$event_props['avatar_url']  = $this->_registry
 				->get( 'view.event.avatar' )->get_event_avatar_url( $event );
-			$event_object                       = $event_props;
+			$event_props['category_divider_color'] = $event->get_runtime(
+				'category_divider_color'
+			);
+			$event_object                          = $event_props;
 			if (
 				$this->_compatibility->use_backward_compatibility()
 			) {

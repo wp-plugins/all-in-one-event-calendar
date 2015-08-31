@@ -11,27 +11,27 @@
 
 	<big>
 		<ul class="ai1ec-nav ai1ec-nav-pills ai1ec-row">
-			<li class="ai1ec-active ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center">
+			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center ai1ec-freq-daily ai1ec-freq">
 				<a href="#ai1ec_daily_content" data-toggle="ai1ec-tab">
 					<?php _e( 'Daily', AI1EC_PLUGIN_NAME ) ;?>
 				</a>
 			</li>
-			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center">
+			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center ai1ec-freq-weekly ai1ec-freq">
 				<a href="#ai1ec_weekly_content" data-toggle="ai1ec-tab">
 					<?php _e( 'Weekly', AI1EC_PLUGIN_NAME ) ;?>
 				</a>
 			</li>
-			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center">
+			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center ai1ec-freq-monthly ai1ec-freq">
 				<a href="#ai1ec_monthly_content" data-toggle="ai1ec-tab">
 					<?php _e( 'Monthly', AI1EC_PLUGIN_NAME ) ;?>
 				</a>
 			</li>
-			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center">
+			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center ai1ec-freq-yearly ai1ec-freq">
 				<a href="#ai1ec_yearly_content" data-toggle="ai1ec-tab">
 					<?php _e( 'Yearly', AI1EC_PLUGIN_NAME ) ;?>
 				</a>
 			</li>
-			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center">
+			<li class="ai1ec-col-xs-4 ai1ec-col-sm-2 ai1ec-text-center ai1ec-freq-custom ai1ec-freq">
 				<a href="#ai1ec_custom_content" data-toggle="ai1ec-tab">
 					<?php _e( 'Custom', AI1EC_PLUGIN_NAME ) ;?>
 				</a>
@@ -41,37 +41,37 @@
 		<p></p>
 	</big>
 
-	<div class="ai1ec-tab-content">
+	<div class="ai1ec-tab-content" id="ai1ec-tab-content" data-active-freq="<?php echo $selected_tab; ?>">
 		<div id="ai1ec_daily_content" data-freq="daily"
-			class="ai1ec-tab-pane ai1ec-active">
+			class="ai1ec-tab-pane ai1ec-freq ai1ec-freq-daily">
 			<?php echo $row_daily; ?>
 		</div>
 		<div id="ai1ec_weekly_content" data-freq="weekly"
-			class="ai1ec-tab-pane">
+			class="ai1ec-tab-pane ai1ec-freq ai1ec-freq-weekly">
 			<?php echo $row_weekly; ?>
 		</div>
 		<div id="ai1ec_monthly_content" data-freq="monthly"
-			class="ai1ec-tab-pane">
+			class="ai1ec-tab-pane ai1ec-freq ai1ec-freq-monthly">
 			<?php echo $row_monthly; ?>
 		</div>
 		<div id="ai1ec_yearly_content" data-freq="yearly"
-			class="ai1ec-tab-pane">
+			class="ai1ec-tab-pane ai1ec-freq ai1ec-freq-yearly">
 			<?php echo $row_yearly; ?>
 		</div>
 		<div id="ai1ec_custom_content" data-freq="custom"
-			class="ai1ec-tab-pane">
+			class="ai1ec-tab-pane ai1ec-freq ai1ec-freq-custom">
 			<?php echo $row_custom; ?>
 		</div>
 	</div>
 </div>
 
 <div class="ai1ec-modal-footer">
-	<div class="ai1ec-form-horizontal ai1ec-text-left">
+	<div class="ai1ec-form-horizontal ai1ec-text-left ai1ec-end-field">
 		<div class="ai1ec-form-group">
 			<label for="ai1ec_end" class="ai1ec-control-label ai1ec-col-sm-3">
 				<?php _e( 'End', AI1EC_PLUGIN_NAME ); ?>:
 			</label>
-			<div class="ai1ec-col-sm-9">
+			<div class="ai1ec-col-sm-9" id="end-input" data-ending-type="<?php echo $ending_type; ?>">
 				<?php echo $end; ?>
 			</div>
 		</div>

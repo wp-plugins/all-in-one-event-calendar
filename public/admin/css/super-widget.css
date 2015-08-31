@@ -9,3 +9,14 @@
 #ai1ec-widget-creator .ai1ec-nav {
 	margin-bottom: 8px;
 }
+
+#ai1ec-widget-creator .ai1ec-default-filters .ai1ec-col-md-6 {
+	padding-right: 0;
+}
+#ai1ec-widget-creator .ai1ec-default-filters .ai1ec-col-sm-9 {
+	padding-right: 30px;
+}
+#ai1ec-widget-creator .ai1ec-default-filters .ai1ec-col-md-6 label {
+	font-size: smaller;
+	margin-bottom: 1px;
+}

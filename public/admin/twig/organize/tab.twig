@@ -7,7 +7,7 @@
 		{% if taxonomy.icon is not empty %}
 			<i class="{{ taxonomy.icon | e('html_attr') }} ai1ec-fa-fw"></i>
 		{% endif %}
-		{{ taxonomy.name }}
+		{{ taxonomy.name | raw }}
 		</a>
 
 		{% if taxonomy.active and taxonomy.edit_url is not empty %}

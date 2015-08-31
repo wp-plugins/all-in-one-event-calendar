@@ -33,6 +33,10 @@ class Ai1ec_Html_Setting_Input extends Ai1ec_Html_Element_Settings {
 			case 'email':
 				$input_type = 'email';
 				break;
+
+			case 'url':
+				$input_type = 'url';
+				break;
 		}
 
 		$input_args = array(

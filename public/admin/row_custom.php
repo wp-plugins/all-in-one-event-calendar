@@ -3,7 +3,7 @@
 		<?php _e( 'Custom dates:', AI1EC_PLUGIN_NAME ) ;?>
 	</label>
 	<div class="ai1ec-col-sm-8">
-		<div id="ai1ec_recurrence_calendar"></div>
+		<div id="ai1ec_recurrence_calendar" data-date="<?php echo $selected_dates; ?>"></div>
 	</div>
 </div>
 <div class="ai1ec-form-group">

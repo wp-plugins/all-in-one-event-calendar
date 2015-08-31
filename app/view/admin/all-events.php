@@ -1,7 +1,7 @@
 <?php
 
 class Ai1ec_View_Admin_All_Events extends Ai1ec_Base {
-	
+
 	/**
 	 * change_columns function
 	 *
@@ -30,10 +30,10 @@ class Ai1ec_View_Admin_All_Events extends Ai1ec_Base {
 	 * @return void
 	 **/
 	public function orderby( $orderby, $wp_query ) {
-		
+
 		$db = $this->_registry->get( 'dbi.dbi' );
 		$aco = $this->_registry->get( 'acl.aco' );
-	
+
 		if( true === $aco->is_all_events_page() ) {
 			$wp_query->query = wp_parse_args( $wp_query->query );
 			$table_name = $db->get_table_name( 'ai1ec_events' );
@@ -46,7 +46,7 @@ class Ai1ec_View_Admin_All_Events extends Ai1ec_Base {
 		}
 		return $orderby;
 	}
-	
+
 	/**
 	 * custom_columns function
 	 *
@@ -66,7 +66,7 @@ class Ai1ec_View_Admin_All_Events extends Ai1ec_Base {
 			}
 		}
 	}
-	
+
 	/**
 	 * sortable_columns function
 	 *
@@ -75,20 +75,24 @@ class Ai1ec_View_Admin_All_Events extends Ai1ec_Base {
 	 * @return void
 	 **/
 	public function sortable_columns( $columns ) {
-		$columns["ai1ec_event_date"] = 'ai1ec_event_date';
+		$columns['ai1ec_event_date'] = 'ai1ec_event_date';
+		$columns['author']           = 'author';
 		return $columns;
 	}
 
 	/**
 	 * taxonomy_filter_restrict_manage_posts function
 	 *
-	 * Adds filter dropdowns for event categories and event tags
+	 * Adds filter dropdowns for event categories and event tags.
+	 * Adds filter dropdowns for event authors.
+	 *
+	 * @uses wp_dropdown_users To create a dropdown with current user selected.
 	 *
 	 * @return void
 	 **/
 	function taxonomy_filter_restrict_manage_posts() {
 		global $typenow;
-	
+
 		// =============================================
 		// = add the dropdowns only on the events page =
 		// =============================================
@@ -104,12 +108,21 @@ class Ai1ec_View_Admin_All_Events extends Ai1ec_Base {
 				'selected'        => isset( $_GET[$tax_slug] ) ? $_GET[$tax_slug] : '',
 				'hierarchical'    => $tax_obj->hierarchical,
 				'show_count'      => true,
-				'hide_if_empty'   => true
+				'hide_if_empty'   => true,
+				'value_field'     => 'slug',
 				));
 			}
+			$args = array(
+				'name'            => 'author',
+				'show_option_all' => __( 'Show All Authors', AI1EC_PLUGIN_NAME ),
+			);
+			if ( isset( $_GET['user'] ) ) {
+				$args['selected'] = (int)$_GET['user'];
+			}
+			wp_dropdown_users($args);
 		}
 	}
-	
+
 	/**
 	 * taxonomy_filter_post_type_request function
 	 *
@@ -117,7 +130,7 @@ class Ai1ec_View_Admin_All_Events extends Ai1ec_Base {
 	 *
 	 * @return void
 	 **/
-	function taxonomy_filter_post_type_request( $query ) {
+	public function taxonomy_filter_post_type_request( $query ) {
 		global $pagenow, $typenow;
 		if( 'edit.php' === $pagenow ) {
 			$filters = get_object_taxonomies( $typenow );
@@ -125,13 +138,13 @@ class Ai1ec_View_Admin_All_Events extends Ai1ec_Base {
 				$var = &$query->query_vars[$tax_slug];
 				if( isset( $var ) ) {
 					$term = null;
-	
+
 					if( is_numeric( $var ) ) {
 						$term = get_term_by( 'id', $var, $tax_slug );
 					} else {
 						$term = get_term_by( 'slug', $var, $tax_slug );
 					}
-	
+
 					if( isset( $term->slug ) ) {
 						$var = $term->slug;
 					}

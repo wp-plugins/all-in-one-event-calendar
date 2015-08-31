@@ -40,7 +40,7 @@ class Ai1ec_Command_Render_Event extends Ai1ec_Command_Render_Calendar {
 		}
 
 		// Else proceed with rendering valid event. Fetch all relevant details.
-		$instance      = false;
+		$instance      = -1;
 		if ( isset( $_REQUEST['instance_id'] ) ) {
 			$instance    = (int)$_REQUEST['instance_id'];
 		}

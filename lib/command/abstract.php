@@ -49,7 +49,9 @@ abstract class Ai1ec_Command {
 		$plugin     = Ai1ec_Request_Parser::get_param( 'plugin', $plugin );
 		$controller = Ai1ec_Request_Parser::get_param( 'controller', $controller );
 		$action     = Ai1ec_Request_Parser::get_param( 'action', $action );
-		if ( (string)AI1EC_PLUGIN_NAME === (string)$plugin &&
+		if (
+			is_scalar( $plugin ) &&
+			(string)AI1EC_PLUGIN_NAME === (string)$plugin &&
 			null !== $controller &&
 			null !== $action
 		) {

@@ -25,10 +25,14 @@ class Ai1ec_Html_Setting_Select extends Ai1ec_Html_Element_Settings {
 				if( false === is_array( $this->_args['value'] ) ){
 					$value = array( $this->_args['value'] );
 				}
-				$options = $this->_registry->dispatch(
-					$callback[0],
-					$callback[1]
-				);
+				try {
+					$options = $this->_registry->dispatch(
+						$callback[0],
+						$callback[1]
+					);
+				} catch (Ai1ec_Bootstrap_Exception $exc) {
+					return '';
+				}
 			}
 		}
 		$options   = apply_filters( 'ai1ec_settings_select_options' , $options, $this->_args['id'] );

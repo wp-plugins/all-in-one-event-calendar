@@ -17,15 +17,22 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 	protected $_dbi = null;
 
 	/**
+	 * DBI utils.
+	 *
+	 * @var Ai1ec_Dbi_Utils
+	 */
+	protected $_dbi_utils;
+
+	/**
 	 * Store locally instance of Ai1ec_Dbi.
 	 *
 	 * @param Ai1ec_Registry_Object $registry Injected object registry.
 	 *
-	 * @return void
 	 */
 	public function __construct( Ai1ec_Registry_Object $registry ) {
 		parent::__construct( $registry );
-		$this->_dbi = $this->_registry->get( 'dbi.dbi' );
+		$this->_dbi       = $this->_registry->get( 'dbi.dbi' );
+		$this->_dbi_utils = $this->_registry->get( 'dbi.dbi-utils' );
 	}
 
 	/**
@@ -54,8 +61,19 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 	 * @return bool Success.
 	 */
 	public function recreate( Ai1ec_Event $event ) {
-		$this->clean( $event->get( 'post_id' ) );
-		return ( false !== $this->create( $event ) );
+		$old_instances = $this->_load_instances( $event->get( 'post_id' ) );
+		$instances     = $this->_create_instances_collection( $event );
+		$insert        = array();
+		foreach ( $instances as $instance ) {
+			if ( ! isset( $old_instances[$instance['start'] . ':' . $instance['end']] ) ) {
+				$insert[] = $instance;
+				continue;
+			}
+			unset( $old_instances[$instance['start'] . ':' . $instance['end']] );
+		}
+		$this->_remove_instances_by_ids( array_values( $old_instances ) );
+		$this->_add_instances( $insert );
+		return true;
 	}
 
 	/**
@@ -167,67 +185,8 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 	 * @return bool Success.
 	 */
 	public function create( Ai1ec_Event $event ) {
-		$events     = array();
-		$event_item = array(
-			'post_id' => $event->get( 'post_id' ),
-			'start'   => $event->get( 'start'   )->format_to_gmt(),
-			'end'     => $event->get( 'end'     )->format_to_gmt(),
-		);
-		$duration = $event->get( 'end' )->diff_sec( $event->get( 'start' ) );
-
-		$_start = $event->get( 'start' )->format_to_gmt();
-		$_end   = $event->get( 'end'   )->format_to_gmt();
-
-		// Always cache initial instance
-		$events[$_start] = $event_item;
-
-		if ( $event->get( 'recurrence_rules' ) || $event->get( 'recurrence_dates' ) ) {
-			/**
-			 * NOTE: this timezone switch is intentional, because underlying
-			 * library doesn't allow us to pass it as an argument. Though no
-			 * lesser importance shall be given to the restore call bellow.
-			 */
-			$start_datetime = $event->get( 'start' );
-			$start_datetime->assert_utc_timezone();
-			$start_timezone = $this->_registry->get( 'date.timezone' )
-				->get_name( $start_datetime->get_timezone() );
-			$events += $this->create_instances_by_recurrence(
-				$event,
-				$event_item,
-				$_start,
-				$duration,
-				$start_timezone
-			);
-		}
-
-		$search_helper = $this->_registry->get( 'model.search' );
-		foreach ( $events as $event_item ) {
-			// Find out if this event instance is already accounted for by an
-			// overriding 'RECURRENCE-ID' of the same iCalendar feed (by comparing the
-			// UID, start date, recurrence). If so, then do not create duplicate
-			// instance of event.
-			$start             = $event_item['start'];
-			$matching_event_id = null;
-			if ( $event->get( 'ical_uid' ) ) {
-				$matching_event_id = $search_helper->get_matching_event_id(
-					$event->get( 'ical_uid' ),
-					$event->get( 'ical_feed_url' ),
-					$event->get( 'start' ),
-					false,
-					$event->get( 'post_id' )
-				);
-			}
-
-			// If no other instance was found
-			if ( null === $matching_event_id ) {
-				$this->_dbi->insert(
-					'ai1ec_event_instances',
-					$event_item,
-					array( '%d', '%d', '%d' )
-				);
-			}
-		}
-
+		$instances = $this->_create_instances_collection( $event );
+		$this->_add_instances( $instances );
 		return true;
 	}
 
@@ -317,4 +276,135 @@ class Ai1ec_Event_Instance extends Ai1ec_Base {
 		return $parsed;
 	}
 
+	/**
+	 * Returns current instances map.
+	 *
+	 * @param int post_id Post ID.
+	 *
+	 * @return array Array of data.
+	 */
+	protected function _load_instances( $post_id ) {
+		$query = $this->_dbi->prepare(
+			'SELECT `id`, `start`, `end` FROM ' .
+			$this->_dbi->get_table_name( 'ai1ec_event_instances' ) .
+			' WHERE post_id = %d',
+			$post_id
+		);
+		$results   = $this->_dbi->get_results( $query );
+		$instances = array();
+		foreach ( $results as $result ) {
+			$instances[(int)$result->start . ':' . (int)$result->end] = (int)$result->id;
+		}
+		return $instances;
+	}
+
+	/**
+	 * Generate and store instance entries in database for given event.
+	 *
+	 * @param Ai1ec_Event $event Instance of event to create entries for.
+	 *
+	 * @return bool Success.
+	 */
+	protected function _create_instances_collection( Ai1ec_Event $event ) {
+		$events     = array();
+		$event_item = array(
+			'post_id' => $event->get( 'post_id' ),
+			'start'   => $event->get( 'start'   )->format_to_gmt(),
+			'end'     => $event->get( 'end'     )->format_to_gmt(),
+		);
+		$duration = $event->get( 'end' )->diff_sec( $event->get( 'start' ) );
+
+		$_start = $event->get( 'start' )->format_to_gmt();
+		$_end   = $event->get( 'end'   )->format_to_gmt();
+
+		// Always cache initial instance
+		$events[$_start] = $event_item;
+
+		if ( $event->get( 'recurrence_rules' ) || $event->get( 'recurrence_dates' ) ) {
+			/**
+			 * NOTE: this timezone switch is intentional, because underlying
+			 * library doesn't allow us to pass it as an argument. Though no
+			 * lesser importance shall be given to the restore call bellow.
+			 */
+			$start_datetime = $event->get( 'start' );
+			$start_datetime->assert_utc_timezone();
+			$start_timezone = $this->_registry->get( 'date.timezone' )
+			                                  ->get_name( $start_datetime->get_timezone() );
+			$events += $this->create_instances_by_recurrence(
+				$event,
+				$event_item,
+				$_start,
+				$duration,
+				$start_timezone
+			);
+		}
+
+		$search_helper = $this->_registry->get( 'model.search' );
+		foreach ( $events as &$event_item ) {
+			// Find out if this event instance is already accounted for by an
+			// overriding 'RECURRENCE-ID' of the same iCalendar feed (by comparing the
+			// UID, start date, recurrence). If so, then do not create duplicate
+			// instance of event.
+			$start             = $event_item['start'];
+			$matching_event_id = null;
+			if ( $event->get( 'ical_uid' ) ) {
+				$matching_event_id = $search_helper->get_matching_event_id(
+					$event->get( 'ical_uid' ),
+					$event->get( 'ical_feed_url' ),
+					$event->get( 'start' ),
+					false,
+					$event->get( 'post_id' )
+				);
+			}
+
+			// If no other instance was found
+			if ( null !== $matching_event_id ) {
+				$event_item = false;
+			}
+		}
+
+		return array_filter( $events );
+	}
+
+	/**
+	 * Removes ai1ec_event_instances entries using their IDS.
+	 *
+	 * @param array $ids Collection of IDS.
+	 *
+	 * @return bool Result.
+	 */
+	protected function _remove_instances_by_ids( array $ids ) {
+		if ( empty( $ids ) ) {
+			return false;
+		}
+		$query  = 'DELETE FROM ' . $this->_dbi->get_table_name(
+				'ai1ec_event_instances'
+			) . ' WHERE id IN (';
+		$ids    = array_filter( array_map( 'intval', $ids ) );
+		$query .= implode( ',', $ids ) . ')';
+		$this->_dbi->query( $query );
+		return true;
+	}
+
+	/**
+	 * Adds new instances collection.
+	 *
+	 * @param array $instances Collection of instances.
+	 *
+	 * @return void
+	 */
+	protected function _add_instances( array $instances ) {
+		$chunks    = array_chunk( $instances, 50 );
+		foreach ( $chunks as $chunk ) {
+			$query = 'INSERT INTO ' . $this->_dbi->get_table_name(
+					'ai1ec_event_instances'
+				) . '(`post_id`, `start`, `end`) VALUES';
+			$chunk  = array_map(
+				array( $this->_dbi_utils, 'array_value_to_sql_value' ),
+				$chunk
+			);
+			$query .= implode( ',', $chunk );
+			$this->_dbi->query( $query );
+		}
+	}
 }

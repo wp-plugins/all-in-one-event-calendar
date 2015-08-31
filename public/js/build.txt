@@ -1,6 +1,7 @@
 
 pages/calendar.js
 ----------------
+domReady.js
 scripts/calendar/print.js
 scripts/calendar/agenda_view.js
 external_libs/modernizr.js
@@ -8,7 +9,6 @@ scripts/calendar/month_view.js
 libs/frontend_utils.js
 external_libs/bootstrap/tab.js
 libs/utils.js
-domReady.js
 external_libs/bootstrap/affix.js
 scripts/common_scripts/frontend/common_event_handlers.js
 external_libs/bootstrap/tooltip.js
@@ -19,6 +19,7 @@ scripts/common_scripts/frontend/common_frontend.js
 external_libs/select2.js
 libs/select2_multiselect_helper.js
 external_libs/twig.js
+libs/twig.js
 agenda.js
 oneday.js
 month.js
@@ -81,7 +82,6 @@ external_libs/bootstrap/button.js
 external_libs/bootstrap/transition.js
 external_libs/bootstrap/collapse.js
 libs/collapse_helper.js
-external_libs/bootstrap/dropdown.js
 external_libs/locales/bootstrap-datepicker.bg.js
 external_libs/locales/bootstrap-datepicker.br.js
 external_libs/locales/bootstrap-datepicker.cs.js
@@ -126,14 +126,42 @@ external_libs/jquery.autocomplete_geomod.js
 external_libs/geo_autocomplete.js
 scripts/add_new_event/event_location/gmaps_helper.js
 scripts/add_new_event/event_location/input_coordinates_event_handlers.js
-scripts/add_new_event/event_date_time/date_time_utility_functions.js
 external_libs/jquery.calendrical_timespan.js
+scripts/add_new_event/event_date_time/date_time_utility_functions.js
 external_libs/bootstrap/button.js
 scripts/add_new_event/event_date_time/date_time_event_handlers.js
 scripts/add_new_event/event_cost_helper.js
 external_libs/jquery.inputdate.js
 external_libs/jquery.tools.js
-external_libs/ai1ec_datepicker.js
+external_libs/locales/bootstrap-datepicker.bg.js
+external_libs/locales/bootstrap-datepicker.br.js
+external_libs/locales/bootstrap-datepicker.cs.js
+external_libs/locales/bootstrap-datepicker.da.js
+external_libs/locales/bootstrap-datepicker.de.js
+external_libs/locales/bootstrap-datepicker.es.js
+external_libs/locales/bootstrap-datepicker.fi.js
+external_libs/locales/bootstrap-datepicker.fr.js
+external_libs/locales/bootstrap-datepicker.id.js
+external_libs/locales/bootstrap-datepicker.is.js
+external_libs/locales/bootstrap-datepicker.it.js
+external_libs/locales/bootstrap-datepicker.ja.js
+external_libs/locales/bootstrap-datepicker.kr.js
+external_libs/locales/bootstrap-datepicker.lt.js
+external_libs/locales/bootstrap-datepicker.lv.js
+external_libs/locales/bootstrap-datepicker.ms.js
+external_libs/locales/bootstrap-datepicker.nb.js
+external_libs/locales/bootstrap-datepicker.nl.js
+external_libs/locales/bootstrap-datepicker.pl.js
+external_libs/locales/bootstrap-datepicker.pt-BR.js
+external_libs/locales/bootstrap-datepicker.pt.js
+external_libs/locales/bootstrap-datepicker.ru.js
+external_libs/locales/bootstrap-datepicker.sl.js
+external_libs/locales/bootstrap-datepicker.sv.js
+external_libs/locales/bootstrap-datepicker.th.js
+external_libs/locales/bootstrap-datepicker.tr.js
+external_libs/locales/bootstrap-datepicker.zh-CN.js
+external_libs/locales/bootstrap-datepicker.zh-TW.js
+external_libs/bootstrap_datepicker.js
 external_libs/bootstrap/transition.js
 external_libs/bootstrap/collapse.js
 external_libs/bootstrap/modal.js
@@ -175,6 +203,7 @@ external_libs/Placeholders.js
 external_libs/bootstrap/tooltip.js
 external_libs/bootstrap/popover.js
 external_libs/bootstrap/modal.js
+external_libs/bootstrap/dropdown.js
 scripts/common_scripts/backend/common_backend.js
 pages/common_backend.js
 
@@ -203,6 +232,7 @@ pages/common_frontend.js
 
 scripts/calendar.js
 ----------------
+domReady.js
 scripts/calendar/print.js
 scripts/calendar/agenda_view.js
 external_libs/modernizr.js
@@ -210,7 +240,6 @@ scripts/calendar/month_view.js
 libs/frontend_utils.js
 external_libs/bootstrap/tab.js
 libs/utils.js
-domReady.js
 external_libs/bootstrap/affix.js
 scripts/common_scripts/frontend/common_event_handlers.js
 external_libs/bootstrap/tooltip.js
@@ -221,6 +250,7 @@ scripts/common_scripts/frontend/common_frontend.js
 external_libs/select2.js
 libs/select2_multiselect_helper.js
 external_libs/twig.js
+libs/twig.js
 agenda.js
 oneday.js
 month.js
@@ -278,6 +308,8 @@ scripts/common_scripts/frontend/common_frontend.js
 
 scripts/calendar/event.js
 ----------------
+external_libs/bootstrap/tab.js
+libs/utils.js
 external_libs/jquery.scrollTo.js
 scripts/calendar/event.js
 
@@ -301,3 +333,10 @@ scripts/widget-creator.js
 external_libs/twig.js
 ----------------
 external_libs/twig.js
+
+libs/captcha.js
+----------------
+libs/captcha/recaptcha.js
+libs/captcha/nocaptcha.js
+libs/captcha/void.js
+libs/captcha.js

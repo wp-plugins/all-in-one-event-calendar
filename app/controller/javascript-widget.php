@@ -88,16 +88,22 @@ class Ai1ec_Controller_Javascript_Widget extends Ai1ec_Base {
 		$require_main   = AI1EC_ADMIN_THEME_JS_PATH . DIRECTORY_SEPARATOR . 'require.js';
 		$widget_file    = AI1EC_PATH . '/public/js/widget/common_widget.js';
 		$translation    = $jscontroller->get_frontend_translation_data();
+		$page_id        = $this->_registry->get(
+			'model.settings'
+		)->get( 'calendar_page_id' );
 		$permalink      = get_permalink(
-			$this->_registry->get( 'model.settings' )
-			->get( 'calendar_page_id' )
+			$page_id
 		);
+		$full_permalink = $this->_registry->get(
+			'template.link.helper'
+		)->get_full_permalink( $page_id );
 		// load the css to hardcode, saving a call
 		$css_rules        = $css_controller->get_compiled_css();
 		$css_rules = addslashes( $css_rules );
 		$translation['permalinks_structure'] = $this->
 			_registry->get( 'model.option' )->get( 'permalink_structure' );
-		$translation['calendar_url'] = $permalink;
+		$translation['calendar_url']      = $permalink;
+		$translation['full_calendar_url'] = $full_permalink;
 		// Let extensions add their scripts.
 		// look at Extended Views or Super Widget for examples
 		$extension_urls = array();

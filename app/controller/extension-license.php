@@ -39,7 +39,6 @@ abstract class Ai1ec_Base_License_Controller extends Ai1ec_Base_Extension_Contro
 	public function initialize_licence_actions() {
 		$this->_register_licence_actions();
 		$this->_register_licence_fields();
-		$this->_register_updating();
 	}
 
 	/**
@@ -52,53 +51,11 @@ abstract class Ai1ec_Base_License_Controller extends Ai1ec_Base_Extension_Contro
 		if ( ! isset( $tabs['extensions'] ) ) {
 			$tabs['extensions'] = array(
 				'name'  => Ai1ec_I18n::__( 'Add-ons' ),
-				'items' => array(
-					'licenses' => Ai1ec_I18n::__( 'Licenses' ),
-				),
+				'items' => array(),
 			);
-		} else if ( ! isset( $tabs['extensions']['items']['licenses'] ) ) {
-			$tabs['extensions']['items']['licenses'] = Ai1ec_I18n::__( 'Licences' );
 		}
+
 		return $tabs;
-	}
-
-	/**
-	 * Check the licence if it has changed and adds the status
-	 *
-	 * @param array $old_options
-	 * @param array $new_options
-	 *
-	 */
-	public function check_licence( array $old_options, array $new_options ) {
-		$old_licence = $old_options[$this->_licence]['value'];
-		$new_licence = $new_options[$this->_licence]['value'];
-		$status      = $old_options[$this->_licence_status]['value'];
-		if ( $new_licence !== $old_licence ) {
-			$license = trim( $new_licence );
-			// data to send in our API request
-			$api_params = array(
-				'edd_action' => 'activate_license',
-				'license'    => $license,
-				'item_name'  => urlencode( $this->get_name() ),// the name of our product in EDD,
-				'url'        => home_url()
-			);
-
-			// Call the custom API.
-			$response = wp_remote_get( add_query_arg( $api_params, $this->_store ) );
-
-			// make sure the response came back okay
-			if ( is_wp_error( $response ) ) {
-				return false;
-			}
-
-			// decode the license data
-			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
-			// $license_data->license will be either "active" or "inactive"
-
-			$this->_registry->get( 'model.settings' )
-				->set( $this->_licence_status, $license_data->license );
-		}
-
 	}
 
 	/**
@@ -112,33 +69,6 @@ abstract class Ai1ec_Base_License_Controller extends Ai1ec_Base_Extension_Contro
 		$dispatcher->register_filter(
 			'ai1ec_add_setting_tabs',
 			array( 'controller.' . $controller, 'add_tabs' )
-		);
-		$dispatcher->register_action(
-			'ai1ec_settings_updated',
-			array( 'controller.' . $controller, 'check_licence' ),
-			10,
-			2
-		);
-	}
-
-	/**
-	 * Register EDD updater class
-	 */
-	protected function _register_updating() {
-		$license_key = $this->_registry->get( 'model.settings' )
-			->get( $this->_licence );
-		// setup the updater
-		$edd_updater = $this->_registry->get(
-			'edd.updater',
-			$this->_store,
-			$this->get_file(),
-			array(
-				'version'   => $this->get_version(),   // current version number
-				'license'   => $license_key,           // license key (used get_option above to retrieve from DB)
-				'item_name' => $this->get_name(),      // name of this plugin
-				'author'    => 'Time.ly Network Inc.', // author of this plugin
-				'url'       => home_url(),
-			)
 		);
 	}
 

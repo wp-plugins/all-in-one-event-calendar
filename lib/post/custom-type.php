@@ -187,7 +187,11 @@ class Ai1ec_Post_Custom_Type extends Ai1ec_Base {
 		// if it's present and has the wrong capability delete it.
 		if (
 			$contributor instanceOf WP_Role &&
-			$contributor->has_cap( 'publish_ai1ec_events' )
+			(
+				$contributor->has_cap( 'publish_ai1ec_events' ) ||
+				! $contributor->has_cap( 'edit_published_ai1ec_events' ) ||
+				! $contributor->has_cap( 'delete_published_ai1ec_events' )
+			)
 		) {
 			remove_role( 'ai1ec_event_assistant' );
 			$contributor = false;
@@ -205,6 +209,8 @@ class Ai1ec_Post_Custom_Type extends Ai1ec_Base {
 			$role->add_cap( 'edit_ai1ec_events' );
 			$role->add_cap( 'read_ai1ec_events' );
 			$role->add_cap( 'delete_ai1ec_events' );
+			$role->add_cap( 'edit_published_ai1ec_events' );
+			$role->add_cap( 'delete_published_ai1ec_events' );
 			$role->add_cap( 'read' );
 			unset( $caps, $role );
 		}

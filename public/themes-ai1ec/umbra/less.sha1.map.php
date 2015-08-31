@@ -79,8 +79,8 @@
     ),
     'less\\big_filtering.less' => 
     array (
-      'size' => 1940,
-      'sha1' => 'feb1d6988a45423c9efb963a199e2ccc9b45b385',
+      'size' => 2648,
+      'sha1' => '91299149e00c2873113501a6ede5b3d6a9bb17d4',
     ),
     'less\\bootstrap\\alerts.less' => 
     array (
@@ -419,8 +419,13 @@
     ),
     'less\\saas-theme.less' => 
     array (
-      'size' => 4921,
-      'sha1' => '6f5b921928f31c52abf57ea1f953462f4aa7edc4',
+      'size' => 4906,
+      'sha1' => '07312c9bfa2aa1aadb1a4c82d83c38b1c2d24dad',
+    ),
+    'less\\sas.less' => 
+    array (
+      'size' => 2489,
+      'sha1' => '5deab9d5aabe96dbf715dcb8bf1bce835de0dabc',
     ),
     'less\\style.less' => 
     array (
@@ -469,8 +474,8 @@
     ),
     'less\\venue-details.less' => 
     array (
-      'size' => 839,
-      'sha1' => 'd785a9269c8ece0ee79922d0311a068badf2ad21',
+      'size' => 932,
+      'sha1' => 'ddfc94e59e47329dcbb93c36edf5dc07587e5bf3',
     ),
     'style.css' => 
     array (

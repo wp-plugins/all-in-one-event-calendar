@@ -66,4 +66,24 @@ class Ai1ec_Content_Filters extends Ai1ec_Base {
 		$wp_filter['the_content'] = $this->_filters_the_content;
 		return $this;
 	}
+
+	/**
+	 * Check if event edit page should display "Move to Trash" button.
+	 *
+	 * @param array $allcaps An array of all the user's capabilities.
+	 * @param array $caps    Actual capabilities for meta capability.
+	 * @param array $args    Optional parameters passed to has_cap(), typically object ID.
+	 * @param \WP_User $user The user object.
+	 *
+	 * @return array Capabilities or empty array.
+	 */
+	public function display_trash_link( $allcaps, $caps, $args, WP_User $user ) {
+		if (
+			isset( $_GET['instance'] ) &&
+			in_array( 'delete_published_ai1ec_events', $caps )
+		) {
+			return array();
+		}
+		return $allcaps;
+	}
 }

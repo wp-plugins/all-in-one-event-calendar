@@ -26,7 +26,8 @@
 								ai1ec-event-id-{{ event.post_id }}
 								ai1ec-event-instance-id-{{ event.instance_id }}
 								{% if event.is_allday %}ai1ec-allday{% endif %}
-								{% if expanded %}ai1ec-expanded{% endif %}">
+								{% if expanded %}ai1ec-expanded{% endif %}"
+								data-end="{{ event.end }}">
 
 								<div class="ai1ec-event-header">
 									<div class="ai1ec-event-toggle">
@@ -40,7 +41,7 @@
 												>{{ text_venue_separator | format( event.venue ) }}</span>
 										{% endif %}
 									</span>
-
+									{{ action_buttons | raw }}
 									{% set edit_post_link = event.edit_post_link %}
 									{% if edit_post_link is not empty %}
 										<a class="post-edit-link" href="{{ edit_post_link | raw }}">

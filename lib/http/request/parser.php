@@ -95,6 +95,7 @@ class Ai1ec_Request_Parser extends Ai1ec_Abstract_Query {
 		$this->add_rule( 'cat_ids',       false, 'int', null, ',' );
 		$this->add_rule( 'tag_ids',       false, 'int', null, ',' );
 		$this->add_rule( 'post_ids',      false, 'int', null, ',' );
+		$this->add_rule( 'instance_ids',  false, 'int', null, ',' );
 		$this->add_rule( 'auth_ids',      false, 'int', null, ',' );
 		$this->add_rule( 'term_ids',      false, 'int', null, ',' );
 		$this->add_rule( 'exact_date',    false, 'string', null, false );

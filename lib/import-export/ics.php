@@ -18,6 +18,13 @@ class Ai1ec_Ics_Import_Export_Engine
 	 */
 	protected $_taxonomy_model = null;
 
+	/**
+	 * Recurrence rule class. Contains filter method.
+	 *
+	 * @var Ai1ec_Recurrence_Rule
+	 */
+	protected $_rule_filter = null;
+
 	/* (non-PHPdoc)
 	 * @see Ai1ec_Import_Export_Engine::import()
 	 */
@@ -141,10 +148,12 @@ class Ai1ec_Ics_Import_Export_Engine
 
 		// Fetch default timezone in case individual properties don't define it
 		$tz = $v->getComponent( 'vtimezone' );
+		$timezone = 'sys.default';
 		if ( ! empty( $tz ) ) {
 			$timezone = $tz->getProperty( 'TZID' );
 		}
 
+		$feed_name     = $v->getProperty( 'X-WR-CALNAME' );
 		$x_wr_timezone = $v->getProperty( 'X-WR-TIMEZONE' );
 		if (
 			isset( $x_wr_timezone[1] ) &&
@@ -453,9 +462,7 @@ class Ai1ec_Ics_Import_Export_Engine
 				}
 				// Detect URL.
 				elseif ( false !== strpos( $el, '://' ) ) {
-					$data['contact_url']   = $this->_parse_legacy_loggable_url(
-						$el
-					);
+					$data['contact_url']   = $el;
 				}
 				// Detect phone number.
 				elseif ( preg_match( '/\d/', $el ) ) {
@@ -479,9 +486,7 @@ class Ai1ec_Ics_Import_Export_Engine
 				'venue'             => $venue,
 				'address'           => $address,
 				'cost'              => $cost,
-				'ticket_url'        => $this->_parse_legacy_loggable_url(
-					$ticket_url
-				),
+				'ticket_url'        => $ticket_url,
 				'show_map'          => $event_do_show_map,
 				'ical_feed_url'     => $feed->feed_url,
 				'ical_source_url'   => $e->getProperty( 'url' ),
@@ -593,34 +598,8 @@ class Ai1ec_Ics_Import_Export_Engine
 			'count'            => $count,
 			'events_to_delete' => $events_in_db,
 			'messages'         => $messages,
+			'name'             => $feed_name,
 		);
-	}
-
-	/**
-	 * Convert loggable URL exported from legacy Ai1EC installation.
-	 *
-	 * @param string $loggable_url Likely loggable URL.
-	 *
-	 * @return string Non-loggable URL.
-	 */
-	protected function _parse_legacy_loggable_url( $loggable_url ) {
-		if ( 0 !== strpos( $loggable_url, AI1EC_REDIRECTION_SERVICE ) ) {
-			return $loggable_url; // it wasn't loggable URL
-		}
-		$value = base64_decode(
-			substr( $loggable_url, strlen( AI1EC_REDIRECTION_SERVICE ) )
-		);
-		$clear_url = null; // return empty if nothing is parseable
-		if ( // valid JSON structure remains
-			null !== ( $decoded = json_decode( $value, true ) ) &&
-			isset( $decoded['l'] )
-		) {
-			$clear_url = $decoded['l'];
-		} else if ( preg_match( '|"l"\s*:\s*"(.+?)","|', $value, $matches ) ) {
-			// reverting to dirty parsing as JSON is broken
-			$clear_url = stripslashes( $matches[1] );
-		} // no more else - impossible to parse anything
-		return $clear_url;
 	}
 
 	/**
@@ -946,7 +925,7 @@ class Ai1ec_Ics_Import_Export_Engine
 			$e->setProperty(
 				'X-TICKETS-URL',
 				$this->_sanitize_value(
-					$event->get_nonloggable_url( $event->get( 'ticket_url' ) )
+					$event->get( 'ticket_url' )
 				)
 			);
 		}
@@ -967,7 +946,7 @@ class Ai1ec_Ics_Import_Export_Engine
 			$event->get( 'contact_name' ),
 			$event->get( 'contact_phone' ),
 			$event->get( 'contact_email' ),
-			$event->get_nonloggable_url( $event->get( 'contact_url' ) ),
+			$event->get( 'contact_url' ),
 		);
 		$contact = array_filter( $contact );
 		$contact = implode( '; ', $contact );
@@ -978,9 +957,10 @@ class Ai1ec_Ics_Import_Export_Engine
 		// ====================
 		$rrule = array();
 		$recurrence = $event->get( 'recurrence_rules' );
+		$recurrence = $this->_filter_rule( $recurrence );
 		if ( ! empty( $recurrence ) ) {
 			$rules = array();
-			foreach ( explode( ';', $event->get( 'recurrence_rules' ) ) as $v) {
+			foreach ( explode( ';', $recurrence ) as $v) {
 				if ( strpos( $v, '=' ) === false ) {
 					continue;
 				}
@@ -1021,6 +1001,7 @@ class Ai1ec_Ics_Import_Export_Engine
 		// = Exception rules =
 		// ===================
 		$exceptions = $event->get( 'exception_rules' );
+		$exceptions = $this->_filter_rule( $exceptions );
 		$exrule = array();
 		if ( ! empty( $exceptions ) ) {
 			$rules = array();
@@ -1078,6 +1059,7 @@ class Ai1ec_Ics_Import_Export_Engine
 		// For other other events which use DATETIME, we must use that as well
 		// We must also match the exact starting time
 		$recurrence_dates = $event->get( 'recurrence_dates' );
+		$recurrence_dates = $this->_filter_rule( $recurrence_dates );
 		if ( ! empty( $recurrence_dates ) ) {
 			$params    = array(
 				'VALUE' => 'DATE-TIME',
@@ -1100,6 +1082,7 @@ class Ai1ec_Ics_Import_Export_Engine
 			}
 		}
 		$exception_dates = $event->get( 'exception_dates' );
+		$exception_dates = $this->_filter_rule( $exception_dates );
 		if ( ! empty( $exception_dates ) ) {
 			$params    = array(
 				'VALUE' => 'DATE-TIME',
@@ -1250,6 +1233,20 @@ class Ai1ec_Ics_Import_Export_Engine
 		);
 		$exclusions[$e->getProperty( 'uid' )][] = $exdate;
 		return $exclusions;
+	}
+
+	/**
+	 * Filter recurrence / exclusion rule or dates. Avoid throwing exception for old, malformed values.
+	 *
+	 * @param string $rule Rule or dates value.
+	 *
+	 * @return string Fixed rule or dates value.
+	 */
+	protected function _filter_rule( $rule ) {
+		if ( null === $this->_rule_filter ) {
+			$this->_rule_filter = $this->_registry->get( 'recurrence.rule' );
+		}
+		return $this->_rule_filter->filter_rule( $rule );
 	}
 
 }

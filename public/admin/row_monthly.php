@@ -12,14 +12,14 @@
 		<div class="radio">
 			<label for="ai1ec_monthly_type_bymonthday">
 				<input type="radio" name="ai1ec_monthly_type"
-					id="ai1ec_monthly_type_bymonthday" value="bymonthday" checked>
+					id="ai1ec_monthly_type_bymonthday" value="bymonthday" <?php echo $bymonthday_checked; ?>>
 				<?php _e( 'On day of the month', AI1EC_PLUGIN_NAME ); ?>
 			</label>
 		</div>
 		<div class="radio">
 			<label for="ai1ec_monthly_type_byday">
 				<input type="radio" name="ai1ec_monthly_type"
-					id="ai1ec_monthly_type_byday" value="byday">
+					id="ai1ec_monthly_type_byday" value="byday" <?php echo $byday_checked; ?>>
 				<?php _e( 'On day of the week', AI1EC_PLUGIN_NAME ); ?>
 			</label>
 		</div>

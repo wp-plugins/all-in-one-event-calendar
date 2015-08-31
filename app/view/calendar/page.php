@@ -56,8 +56,7 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 				) .
 				'</p></div></div>';
 		}
-		$type       = $request->get( 'request_type' );
-
+		$type    = $request->get( 'request_type' );
 		$is_json = $this->_registry->get( 'http.request' )->is_json_required(
 			$view_args['request_format'], $action
 		);
@@ -125,9 +124,7 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 		);
 
 		if (
-			( $view_args['no_navigation'] || $type !== 'html' ) &&
-			'jsonp' !== $type &&
-			$is_json
+			( $view_args['no_navigation'] || $type !== 'html' ) && $is_json
 		) {
 
 			// send data both for json and jsonp as shortcodes are jsonp
@@ -162,6 +159,11 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 					'',
 					$type,
 					$caller
+				),
+				'additional_buttons'           => apply_filters(
+					'ai1ec_additional_buttons',
+					'',
+					$view_args
 				),
 				'show_dropdowns'               => apply_filters(
 					'ai1ec_show_dropdowns',
@@ -208,6 +210,14 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 				),
 				'inline_js_calendar'           => apply_filters(
 					'ai1ec_inline_js_calendar',
+					''
+				),
+				'after_view'                   => apply_filters(
+					'ai1ec_after_view',
+					''
+				),
+				'ai1ec_above_calendar'         => apply_filters(
+					'ai1ec_above_calendar',
 					''
 				),
 			);
@@ -471,6 +481,7 @@ class Ai1ec_Calendar_Page extends Ai1ec_Base {
 					'cat_ids',
 					'tag_ids',
 					'events_limit',
+					'instance_ids',
 				)
 			)
 		);

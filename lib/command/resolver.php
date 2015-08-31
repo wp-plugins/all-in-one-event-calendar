@@ -99,6 +99,16 @@ class Ai1ec_Command_Resolver {
 				'command.compile-core-css', $request
 			)
 		);
+		if (
+			is_admin() &&
+			current_user_can( 'activate_plugins' )
+		) {
+			$this->add_command(
+				$registry->get(
+					'command.check-updates', $request
+				)
+			);
+		}
 		$request->parse();
 		$this->_registry = $registry;
 		$this->_request  = $request;

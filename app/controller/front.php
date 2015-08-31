@@ -502,6 +502,12 @@ class Ai1ec_Front_Controller {
 				'admin_action_editpost',
 				array( 'model.event.parent', 'admin_init_post' )
 			);
+			$dispatcher->register_filter(
+				'user_has_cap',
+				array( 'content.filter', 'display_trash_link' ),
+				10,
+				4
+			);
 		}
 		// post row action for parent/child
 		$dispatcher->register_action(
@@ -635,6 +641,10 @@ class Ai1ec_Front_Controller {
 				array( 'calendar-feed.ics', 'update_ics_feed' )
 			);
 			$dispatcher->register_action(
+				'wp_ajax_ai1ec_feeds_page_post',
+				array( 'calendar-feed.ics', 'handle_feeds_page_post' )
+			);
+			$dispatcher->register_action(
 				'network_admin_notices',
 				array( 'notification.admin', 'send' )
 			);
@@ -655,10 +665,6 @@ class Ai1ec_Front_Controller {
 			$dispatcher->register_action(
 				'add_meta_boxes',
 				array( 'view.admin.add-new-event', 'event_meta_box_container' )
-			);
-			$dispatcher->register_action(
-				'add_meta_boxes',
-				array( 'view.admin.add-new-event', 'event_banner_meta_box_container' )
 			);
 			$dispatcher->register_action(
 				'edit_form_after_title',
@@ -731,6 +737,16 @@ class Ai1ec_Front_Controller {
 			$dispatcher->register_action(
 				'admin_menu',
 				array( 'view.admin.widget-creator', 'add_page' )
+			);
+			$dispatcher->register_filter(
+				'pre_set_site_transient_update_plugins',
+				array( 'calendar.updates', 'check_updates' )
+			);
+			$dispatcher->register_filter(
+				'plugins_api',
+				array( 'calendar.updates', 'plugins_api_filter' ),
+				10,
+				3
 			);
 
 		} else { // ! is_admin()

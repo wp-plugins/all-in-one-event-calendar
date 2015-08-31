@@ -30,6 +30,7 @@ class Ai1ec_Calendar_View_Week extends Ai1ec_Calendar_View_Abstract {
 			'tag_ids'       => array(),
 			'auth_ids'      => array(),
 			'post_ids'      => array(),
+			'instance_ids'  => array(),
 			'exact_date'    => $date_system->current_time(),
 		);
 		$args = wp_parse_args( $view_args, $defaults );
@@ -47,12 +48,17 @@ class Ai1ec_Calendar_View_Week extends Ai1ec_Calendar_View_Abstract {
 			apply_filters(
 				'ai1ec_get_events_relative_to_filter',
 				array(
-					'cat_ids'  => $args['cat_ids'],
-					'tag_ids'  => $args['tag_ids'],
-					'post_ids' => $args['post_ids'],
-					'auth_ids' => $args['auth_ids'],
+					'cat_ids'      => $args['cat_ids'],
+					'tag_ids'      => $args['tag_ids'],
+					'post_ids'     => $args['post_ids'],
+					'auth_ids'     => $args['auth_ids'],
+					'instance_ids' => $args['instance_ids'],
 				),
-				$view_args
+				$view_args,
+				apply_filters(
+					'ai1ec_show_unique_events',
+					false
+				)
 			)
 		);
 
@@ -130,6 +136,8 @@ class Ai1ec_Calendar_View_Week extends Ai1ec_Calendar_View_Abstract {
 				),
 			)
 		);
+
+		$view_args = $this->get_extra_template_arguments( $view_args );
 
 		return
 			$this->_registry->get( 'http.request' )->is_json_required(
