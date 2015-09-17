@@ -137,7 +137,7 @@ https://vimeo.com/135004810
 
 == Changelog ==
 
-= Version 2.3.3 =
+= Version 2.3.4 =
 * Fixed ICS import issue
 
 = Version 2.3.3 =
